@@ -1,5 +1,5 @@
 import React from 'react';
-import { OperatorLegend, EquivalenceSymbol, GlobalSpaceOp, TempSpaceOp, CopyOp, NextNodeOp, ReleaseOp, EmptyNode } from '@/components/operators/OperatorSymbols';
+import { OperatorLegend, EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 
 const IntroductionSection: React.FC = () => {
   return (
@@ -137,33 +137,6 @@ const IntroductionSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Example Rule */}
-        <div className="mt-16 animate-fade-in">
-          <h2 className="text-2xl font-semibold text-center mb-8">
-            Example: Swap Axiom
-          </h2>
-          <div className="bg-card border border-border rounded-lg p-6">
-            <p className="text-muted-foreground mb-6 text-center">
-              Operations on independent operands can be swapped without changing semantics:
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-3 font-mono text-lg">
-              <span className="text-muted-foreground">,</span>
-              <GlobalSpaceOp operand="i" size={24} />
-              <span className="text-muted-foreground">,</span>
-              <TempSpaceOp operand="j" size={24} />
-              <span className="text-muted-foreground">,</span>
-              <EquivalenceSymbol size={32} />
-              <span className="text-muted-foreground">,</span>
-              <TempSpaceOp operand="j" size={24} />
-              <span className="text-muted-foreground">,</span>
-              <GlobalSpaceOp operand="i" size={24} />
-              <span className="text-muted-foreground">,</span>
-            </div>
-            <p className="text-sm text-muted-foreground mt-6 text-center">
-              Creating a global operand i and a temporary operand j can be done in either order.
-            </p>
-          </div>
-        </div>
 
         {/* Navigation hint */}
         <div className="mt-16 text-center">

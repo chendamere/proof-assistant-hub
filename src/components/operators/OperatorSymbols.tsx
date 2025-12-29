@@ -145,9 +145,9 @@ export const ErrorOp: React.FC<OperatorProps> = ({ className, size = 20 }) => (
 export const EquivalenceSymbol: React.FC<{ className?: string; size?: number }> = ({ className, size = 24 }) => (
   <span className={cn("operator-symbol mx-2", className)}>
     <svg width={size} height={size * 0.5} viewBox="0 0 48 24" fill="none" className="text-primary">
-      <path d="M4 8h32M4 16h32" stroke="currentColor" strokeWidth="2.5" />
-      <path d="M30 4l8 8-8 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-      <path d="M18 4l-8 8 8 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <path d="M10 8h28M10 16h28" stroke="currentColor" strokeWidth="2.5" />
+      <path d="M32 4l8 8-8 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <path d="M16 4l-8 8 8 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
     </svg>
   </span>
 );
@@ -162,56 +162,73 @@ export const CommaSep: React.FC<{ className?: string }> = ({ className }) => (
   <span className={cn("text-muted-foreground mx-0.5", className)}>,</span>
 );
 
-// Operator legend component
+// Import SVG operators
+import OaSvg from '@/assets/operators/binary/Oa.svg';
+import ObSvg from '@/assets/operators/binary/Ob.svg';
+import OcSvg from '@/assets/operators/binary/Oc.svg';
+import OdSvg from '@/assets/operators/binary/Od.svg';
+import OeSvg from '@/assets/operators/binary/Oe.svg';
+import OgSvg from '@/assets/operators/unary/Og.svg';
+import OtSvg from '@/assets/operators/unary/Ot.svg';
+import OnSvg from '@/assets/operators/unary/On.svg';
+import OpSvg from '@/assets/operators/unary/Op.svg';
+import OsSvg from '@/assets/operators/unary/Os.svg';
+import OrSvg from '@/assets/operators/nullary/Or.svg';
+
+// SVG-based operator component
+interface SvgOperatorProps {
+  src: string;
+  label: string;
+  description: string;
+  size?: number;
+  operandBefore?: string;
+  operandAfter?: string;
+}
+
+const SvgOperator: React.FC<SvgOperatorProps> = ({ src, label, description, size = 32, operandBefore, operandAfter }) => (
+  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+    <div className="flex items-center gap-1 font-mono">
+      {operandBefore && <span className="text-foreground text-sm">{operandBefore}</span>}
+      <img src={src} alt={label} style={{ width: size, height: size }} className="inline-block" />
+      {operandAfter && <span className="text-foreground text-sm">{operandAfter}</span>}
+    </div>
+    <div className="flex flex-col">
+      <span className="text-sm font-medium text-foreground">{label}</span>
+      <span className="text-xs text-muted-foreground">{description}</span>
+    </div>
+  </div>
+);
+
+// Operator legend component with actual SVGs
 export const OperatorLegend: React.FC = () => (
-  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-    <div className="flex items-center gap-2">
-      <GlobalSpaceOp operand="i" />
-      <span className="text-sm text-muted-foreground">Global space</span>
+  <div className="p-6">
+    <div className="mb-6">
+      <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Binary Operators</h4>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <SvgOperator src={OaSvg} label="Assign" description="i ← j (assign value)" operandBefore="i" operandAfter="j" />
+        <SvgOperator src={ObSvg} label="Subnode" description="Get/set child node" operandBefore="i" operandAfter="j" />
+        <SvgOperator src={OcSvg} label="Copy" description="Copy node reference" operandBefore="i" operandAfter="j" />
+        <SvgOperator src={OdSvg} label="ID" description="Get node identifier" operandBefore="i" operandAfter="j" />
+        <SvgOperator src={OeSvg} label="Equivalence" description="Value comparison branch" operandBefore="i" operandAfter="j" />
+      </div>
     </div>
-    <div className="flex items-center gap-2">
-      <TempSpaceOp operand="i" />
-      <span className="text-sm text-muted-foreground">Temporary space</span>
+    
+    <div className="mb-6">
+      <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Unary Operators</h4>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <SvgOperator src={OgSvg} label="Global Space" description="Allocate global node" operandAfter="i" />
+        <SvgOperator src={OtSvg} label="Temp Space" description="Allocate temporary node" operandAfter="i" />
+        <SvgOperator src={OnSvg} label="Next Node" description="Move to next node" operandBefore="i" />
+        <SvgOperator src={OpSvg} label="Prev Node" description="Move to previous node" operandBefore="i" />
+        <SvgOperator src={OsSvg} label="Release" description="Release node reference" operandBefore="i" />
+      </div>
     </div>
-    <div className="flex items-center gap-2">
-      <CopyOp operand="i" operand2="j" />
-      <span className="text-sm text-muted-foreground">Copy</span>
-    </div>
-    <div className="flex items-center gap-2">
-      <IdOp operand="i" operand2="j" />
-      <span className="text-sm text-muted-foreground">Node ID</span>
-    </div>
-    <div className="flex items-center gap-2">
-      <SubnodeOp operand="i" operand2="j" />
-      <span className="text-sm text-muted-foreground">Subnode</span>
-    </div>
-    <div className="flex items-center gap-2">
-      <ReleaseOp operand="i" />
-      <span className="text-sm text-muted-foreground">Release</span>
-    </div>
-    <div className="flex items-center gap-2">
-      <NextNodeOp operand="i" />
-      <span className="text-sm text-muted-foreground">Next node</span>
-    </div>
-    <div className="flex items-center gap-2">
-      <PrevNodeOp operand="i" />
-      <span className="text-sm text-muted-foreground">Previous node</span>
-    </div>
-    <div className="flex items-center gap-2">
-      <CompareOp operand="i" operand2="j" />
-      <span className="text-sm text-muted-foreground">Compare</span>
-    </div>
-    <div className="flex items-center gap-2">
-      <AssignOp operand="i" operand2="j" />
-      <span className="text-sm text-muted-foreground">Assign</span>
-    </div>
-    <div className="flex items-center gap-2">
-      <ErrorOp />
-      <span className="text-sm text-muted-foreground">Logic error</span>
-    </div>
-    <div className="flex items-center gap-2">
-      <EmptyNode />
-      <span className="text-sm text-muted-foreground">Empty node</span>
+    
+    <div>
+      <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Nullary Operators</h4>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <SvgOperator src={OrSvg} label="Error" description="Logic error state" />
+      </div>
     </div>
   </div>
 );
