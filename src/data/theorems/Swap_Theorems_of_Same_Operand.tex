@@ -1,0 +1,590 @@
+
+
+\chapter{Swap Theorems of the Same Operand}
+
+\section{ Identical node comparison }
+\subsection{Branch function and branch function}
+\[, \Bb{if(i \Ps j)}{,\Bb{if(j \Ps k)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(j \Ps k)}{,\Tc c_3,}{,\Tc c_4,},}, \Rq , \Bb{if(j \Ps k)}{,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Ps j)}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, \Bb{if(i \Ps j)}{,\Bb{if(j \Ps k)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(j \Ps k)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\
+\Rq, i \Od t_1, j \Od t_2,  \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Bb{if(j \Ps k)}{,\Tc c_1,}{,\Tc c_2,},}{, t_1 \Os, t_2 \Os, \Bb{if(j \Ps k)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1, j \Od t_2,  \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, j \Od t_3, k \Od t_4, \Bb{if(t_3 \Pe t_4)}{, t_3 \Os, t_4 \Os, \Tc c_1,}{, t_3 \Os, t_4 \Os, \Tc c_2,},}{, t_1 \Os, t_2 \Os, j \Od t_3, k \Od t_4, \Bb{if(t_3 \Pe t_4)}{, t_3 \Os, t_4 \Os, \Tc c_3,}{, t_3 \Os, t_4 \Os, \Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1, j \Od t_2,  j \Od t_3, k \Od t_4, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Bb{if(t_3 \Pe t_4)}{, t_3 \Os, t_4 \Os, \Tc c_1,}{, t_3 \Os, t_4 \Os, \Tc c_2,},}{, t_1 \Os, t_2 \Os, \Bb{if(t_3 \Pe t_4)}{, t_3 \Os, t_4 \Os, \Tc c_3,}{, t_3 \Os, t_4 \Os, \Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1, j \Od t_2,  j \Od t_3, k \Od t_4, \Bb{if(t_1 \Pe t_2)}{, \Bb{if(t_3 \Pe t_4)}{, t_1 \Os, t_2 \Os, t_3 \Os, t_4 \Os, \Tc c_1,}{, t_1 \Os, t_2 \Os, t_3 \Os, t_4 \Os, \Tc c_2,},}{, \Bb{if(t_3 \Pe t_4)}{, t_1 \Os, t_2 \Os, t_3 \Os, t_4 \Os, \Tc c_3,}{, t_1 \Os, t_2 \Os, t_3 \Os, t_4 \Os, \Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1, j \Od t_2,  j \Od t_3, k \Od t_4, \Bb{if(t_3 \Pe t_4)}{, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, t_3 \Os, t_4 \Os, \Tc c_1,}{, t_1 \Os, t_2 \Os, t_3 \Os, t_4 \Os, \Tc c_3,},}{, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, t_3 \Os, t_4 \Os, \Tc c_2,}{, t_1 \Os, t_2 \Os, t_3 \Os, t_4 \Os, \Tc c_4,},},\\\\\\\\
+\Rq,  j \Od t_3, k \Od t_4, \Bb{if(t_3 \Pe t_4)}{, t_3 \Os, t_4 \Os, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_3,},}{, t_3 \Os, t_4 \Os, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_2,}{, t_1 \Os, t_2 \Os, \Tc c_4,},},\\\\\\\\
+\Rq,  \Bb{if(j \Ps k)}{,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Ps j)}{,\Tc c_2,}{,\Tc c_4,},},
+\end{math}
+\newpage
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Branch function and propositions}
+\[,i \Ps j, \Bb{if(j \Ps k)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(j \Ps k)}{,i \Ps j,\Tc c_1,}{,i \Ps j,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,i \nPs j, \Bb{if(j \Ps k)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(j \Ps k)}{,i \nPs j,\Tc c_1,}{,i \nPs j,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Propositions and propositions} 
+\[,i \Ps j, j \Ps k, \Rq , j \Ps k, i \Ps j,\]
+
+\[,i \Ps j, j \nPs k, \Rq , j \nPs k, i \Ps j,\]
+
+\[,i \nPs j, j \Ps k, \Rq , j \Ps k, i \nPs j,\]
+
+\[,i \nPs j, j \nPs k, \Rq , j \nPs k, i \nPs j,\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Relationship and id operator} 
+\[, i \Od n, \Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{, i \Od n,\Tc c_1,}{, i \Od n,\Tc c_2,},\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, i \Od n, \Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,},\\\\
+\Rq, i \Od n, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Od t_1, i \Od n, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Od t_1,j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, i \Od n, \Tc c_1,}{, t_1 \Os, t_2 \Os, i \Od n, \Tc c_2,},\\\\\\
+\Rq, \Bb{if(i \Ps j)}{, i \Od n,\Tc c_1,}{, i \Od n,\Tc c_2,}, 
+\end{math}
+\newpage
+
+
+\bigskip
+\bigskip
+\[, i \Ps j, i \Od n, \Rq , i \Od n, i \Ps j,\]
+
+\[, i \nPs j, i \Od n, \Rq , i \Od n, i \nPs j,\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Id operator and copy operator,subnode operator} 
+\[,i \Od m, i \Oc n, \Rq ,i \Oc n, i \Od m,    \]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+,i \Od m, i \Oc n,\\\\
+\Rq, i \Oc j, j \Os, i \Od m, i \Oc n, \\\\
+\Rq, i \Oc j, i \Od m, i \Oc n, j \Os, \\\\
+\Rq, i \Oc j, i \Ps j, i \Od m, i \Oc n, j \Os, \\\\
+\Rq, i \Oc j, i \Od m, i \Ps j, i \Oc n, j \Os, \\\\
+\Rq, i \Oc j, i \Od m, i \Ps j, j \Oc n, j \Os, \\\\
+\Rq, i \Oc j, i \Ps j, i \Od m, j \Oc n, j \Os, \\\\
+\Rq, i \Oc j, i \Ps j, j \Oc n, i \Od m, j \Os, \\\\
+\Rq, i \Oc j, i \Ps j, i \Oc n, i \Od m, j \Os, \\\\
+\Rq, i \Oc j, i \Oc n, i \Od m, j \Os, \\\\
+\Rq, i \Oc j, j \Os, i \Oc n, i \Od m, \\\\
+\Rq, i \Oc n, i \Od m,
+\end{math}
+\newpage
+
+
+\[,i \Od m, i \Ob n, \Rq ,i \Ob n, i \Od m,\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Relationship and copy operator,subnode operator} 
+\[, i \Oc n, \Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{, i \Oc n,\Tc c_1,}{, i \Oc n,\Tc c_2,},\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, i \Oc n, \Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,},\\\\
+\Rq, i \Oc n, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Od t_1, i \Oc n, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, i \Oc n, \Tc c_1,}{, t_1 \Os, t_2 \Os, i \Oc n, \Tc c_2,},\\\\\\
+\Rq, \Bb{if(i \Ps j)}{, i \Oc n,\Tc c_1,}{, i \Oc n,\Tc c_2,},
+\end{math}
+\newpage
+
+
+\bigskip
+\bigskip
+
+
+\[, i \Ob n, \Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{, i \Ob n,\Tc c_1,}{, i \Ob n,\Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \Ps j, i \Oc n, \Rq , i \Oc n, i \Ps j,\]
+
+\[,i \Oc m, i \Oc n, \Rq ,i \Oc m, i \Oc n, m \Ps n,\]
+
+\[, i \nPs j, i \Oc n, \Rq , i \Oc n, i \nPs j,\]
+
+\[, i \Ps j, i \Ob n, \Rq , i \Ob n, i \Ps j,\]
+
+\[, i \nPs j, i \Ob n, \Rq , i \Ob n, i \nPs j,\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Copy operator and subnode operator} 
+\[,i \Oc m, i \Oc n, \Rq ,i \Oc n, i \Oc m,    \]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+,i \Oc m, i \Oc n,\\\\
+\Rq, i \Oc j, j \Os, i \Oc m, i \Oc n,\\\\
+\Rq, i \Oc j, i \Oc m, i \Oc n, j \Os,\\\\
+\Rq, i \Oc j, i \Ps j, i \Oc m, i \Oc n, j \Os,\\\\
+\Rq, i \Oc j, i \Ps j, j \Oc m, i \Oc n, j \Os,\\\\
+\Rq, i \Oc j, i \Ps j, i \Oc n, j \Oc m, j \Os,\\\\
+\Rq, i \Oc j, i \Oc n, i \Ps j, j \Oc m, j \Os,\\\\
+\Rq, i \Oc j, i \Oc n, i \Ps j, i \Oc m, j \Os,\\\\
+\Rq, i \Oc j, i \Ps j, i \Oc n, i \Oc m, j \Os,\\\\
+\Rq, i \Oc j, i \Oc n, i \Oc m, j \Os,\\\\
+\Rq, i \Oc j, j \Os, i \Oc n, i \Oc m,\\\\
+\Rq, i \Oc n, i \Oc m,
+\end{math}
+\newpage
+
+
+
+
+\[,i \Oc m, i \Ob n, \Rq ,i \Ob n, i \Oc m,\]
+
+\[,i \Ob m, i \Ob n, \Rq ,i \Ob n, i \Ob m,\]
+
+
+
+
+\section{ Node value comparison }
+\subsection{Operators} 
+\[, i \Od m, \Bb{if(i \Pe j)}{, \Tc c_1,}{, \Tc c_2,}, \Rq , \Bb{if(i \Pe j)}{,i \Od m, \Tc c_1,}{,i \Od m, \Tc c_2,},\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, i \Od m, \Bb{if(i \Pe j)}{, \Tc c_1,}{, \Tc c_2,},\\\\
+\Rq, i \Oc i_0, i_0 \Os, i \Od m, \Bb{if(i \Pe j)}{, \Tc c_1,}{, \Tc c_2,}, \\\\\\
+\Rq, i \Oc i_0, i \Od m, \Bb{if(i \Pe j)}{, i_0 \Os, \Tc c_1,}{, i_0 \Os, \Tc c_2,}, \\\\\\
+\Rq, i \Oc i_0, i \Ps i_0, i \Od m, \Bb{if(i \Pe j)}{, i_0 \Os, \Tc c_1,}{, i_0 \Os, \Tc c_2,}, \\\\\\
+\Rq, i \Oc i_0, i \Od m, i \Ps i_0, \Bb{if(i \Pe j)}{, i_0 \Os, \Tc c_1,}{, i_0 \Os, \Tc c_2,}, \\\\\\
+\Rq, i \Oc i_0, i \Od m, i \Ps i_0, \Bb{if(i_0 \Pe j)}{, i_0 \Os, \Tc c_1,}{, i_0 \Os, \Tc c_2,}, \\\\\\
+\Rq, i \Oc i_0, i \Ps i_0, i \Od m, \Bb{if(i_0 \Pe j)}{, i_0 \Os, \Tc c_1,}{, i_0 \Os, \Tc c_2,}, \\\\\\
+\Rq, i \Oc i_0, i \Ps i_0, \Bb{if(i_0 \Pe j)}{, i_0 \Os, i \Od m, \Tc c_1,}{, i_0 \Os, i \Od m, \Tc c_2,}, \\\\\\
+\Rq, i \Oc i_0, i \Ps i_0, \Bb{if(i \Pe j)}{, i_0 \Os, i \Od m, \Tc c_1,}{, i_0 \Os, i \Od m, \Tc c_2,}, \\\\\\
+\Rq, i \Oc i_0, \Bb{if(i \Pe j)}{, i_0 \Os, i \Od m, \Tc c_1,}{, i_0 \Os, i \Od m, \Tc c_2,}, \\\\\\
+\Rq, i \Oc i_0, i_0 \Os, \Bb{if(i \Pe j)}{, i \Od m, \Tc c_1,}{, i \Od m, \Tc c_2,}, \\\\\\
+\Rq,  \Bb{if(i \Pe j)}{,i \Od m, \Tc c_1,}{,i \Od m, \Tc c_2,},
+\end{math}
+\newpage
+
+\bigskip
+\bigskip
+\[, i \Oc m, \Bb{if(i \Pe j)}{, \Tc c_1,}{, \Tc c_2,}, \Rq , \Bb{if(i \Pe j)}{,i \Oc m, \Tc c_1,}{,i \Oc m, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \Ob m, \Bb{if(i \Pe j)}{, \Tc c_1,}{, \Tc c_2,}, \Rq , \Bb{if(i \Pe j)}{,i \Ob m, \Tc c_1,}{,i \Ob m, \Tc c_2,},\]
+
+
+\bigskip
+\bigskip
+
+\[, i \Pe j, i \Oc n, \Rq , i \Oc n, i \Pe j,\]
+
+\[, i \Pe j, i \Od n, \Rq , i \Od n, i \Pe j,\]
+
+\[, i \Pe j, i \Ob n, \Rq , i \Ob n, i \Pe j,\]
+
+
+\[, i \nPe j, i \Oc n, \Rq , i \Oc n, i \nPe j,\]
+
+\[, i \nPe j, i \Od n, \Rq , i \Od n, i \nPe j,\]
+
+\[, i \nPe j, i \Ob n, \Rq , i \Ob n, i \nPe j,\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Identical node comparison} 
+\subsubsection{One:}
+\[, \Bb{if(i \Ps j)}{,\Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(j \Pe m)}{,\Tc c_3,}{,\Tc c_4,},}, \Rq , \Bb{if(j \Pe m)}{,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Ps j)}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, \Bb{if(i \Ps j)}{,\Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(j \Pe m)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\
+\Rq, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_2,},}{, t_1 \Os, t_2 \Os, \Bb{if(j \Pe m)}{,\Tc c_3,}{,\Tc c_4,},}, \\\\\\\\\\
+\Rq, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, \Bb{if(j \Pe m)}{, t_1 \Os, t_2 \Os,\Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_2,},}{, \Bb{if(j \Pe m)}{, t_1 \Os, t_2 \Os, \Tc c_3,}{, t_1 \Os, t_2 \Os, \Tc c_4,},}, \\\\\\\\\\
+\Rq, i \Od t_1, j \Od t_2, \Bb{if(j \Pe m)}{, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os,\Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_3,},}{, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_2,}{, t_1 \Os, t_2 \Os, \Tc c_4,},}, \\\\\\\\\\
+\Rq, i \Od t_1, \Bb{if(j \Pe m)}{, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os,\Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_3,},}{, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_2,}{, t_1 \Os, t_2 \Os, \Tc c_4,},}, \\\\\\\\\\
+\Rq, \Bb{if(j \Pe m)}{, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os,\Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_3,},}{, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_2,}{, t_1 \Os, t_2 \Os, \Tc c_4,},}, \\\\\\\\\\
+\Rq, \Bb{if(j \Pe m)}{,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Ps j)}{,\Tc c_2,}{,\Tc c_4,},},
+\end{math}
+\newpage
+
+\bigskip
+\bigskip
+\[, i \Ps j,\Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(j \Pe m)}{,i \Ps j, \Tc c_1,}{,i \Ps j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \nPs j,\Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(j \Pe m)}{,i \nPs j, \Tc c_1,}{,i \nPs j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, j \Pe m,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{,j \Pe m, \Tc c_1,}{,j \Pe m, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, j \nPe m,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{,j \nPe m, \Tc c_1,}{,j \nPe m, \Tc c_2,},\]
+
+
+
+\bigskip
+\bigskip
+\[,i \Ps j, j \Pe m, \Rq , j \Pe m, i \Ps j,\]
+
+\[,i \Ps j, j \nPe m, \Rq , j \nPe m, i \Ps j,\]
+
+\[,i \nPs j, j \Pe m, \Rq , j \Pe m, i \nPs j,\]
+
+\[,i \nPs j, j \nPe m, \Rq , j \nPe m, i \nPs j,\]
+
+
+
+\subsubsection{Two:}
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\[, \Bb{if(i \Ps j)}{,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(i \Pe j)}{,\Tc c_3,}{,\Tc c_4,},}, \Rq , \Bb{if(i \Pe j)}{,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Ps j)}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, \Bb{if(i \Ps j)}{,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(i \Pe j)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\
+\Rq, i \Oc i_0, i_0 \Os, \Bb{if(i \Ps j)}{,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(i \Pe j)}{,\Tc c_3,}{,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0, \Bb{if(i \Ps j)}{, i_0 \Os, \Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,},}{, i_0 \Os, \Bb{if(i \Pe j)}{,\Tc c_3,}{,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0, \Bb{if(i \Ps j)}{, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_2,},}{, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_3,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0, i \Ps i_0, \Bb{if(i \Ps j)}{, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_2,},}{, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_3,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0, i \Ps i_0, \Bb{if(i_0 \Ps j)}{, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_2,},}{, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_3,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0, i \Ps i_0, \Bb{if(i \Pe j)}{, \Bb{if(i_0 \Ps j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_3,},}{, \Bb{if(i_0 \Ps j)}{, i_0 \Os,\Tc c_2,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0, \Bb{if(i \Pe j)}{, i \Ps i_0, \Bb{if(i_0 \Ps j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_3,},}{, i \Ps i_0, \Bb{if(i_0 \Ps j)}{, i_0 \Os,\Tc c_2,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0, \Bb{if(i \Pe j)}{, i \Ps i_0, \Bb{if(i \Ps j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_3,},}{, i \Ps i_0, \Bb{if(i \Ps j)}{, i_0 \Os,\Tc c_2,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0,  i \Ps i_0,\Bb{if(i \Pe j)}{, \Bb{if(i \Ps j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_3,},}{, \Bb{if(i \Ps j)}{, i_0 \Os,\Tc c_2,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0, \Bb{if(i \Pe j)}{, \Bb{if(i \Ps j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_3,},}{, \Bb{if(i \Ps j)}{, i_0 \Os,\Tc c_2,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0, i_0 \Os, \Bb{if(i \Pe j)}{, \Bb{if(i \Ps j)}{,\Tc c_1,}{, \Tc c_3,},}{, \Bb{if(i \Ps j)}{,\Tc c_2,}{,\Tc c_4,},}, \\\\\\\\
+\Rq,  \Bb{if(i \Pe j)}{,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Ps j)}{,\Tc c_2,}{,\Tc c_4,},},
+\end{math}
+\newpage
+
+
+\bigskip
+\bigskip
+\
+\bigskip
+\bigskip
+\[, i \Ps j,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pe j)}{,i \Ps j, \Tc c_1,}{,i \Ps j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \nPs j,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pe j)}{,i \nPs j, \Tc c_1,}{,i \nPs j, \Tc c_2,},\]
+
+
+\bigskip
+\bigskip
+\[, i \Pe j,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{,i \Pe j, \Tc c_1,}{,i \Pe j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \nPe j,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{,i \nPe j, \Tc c_1,}{,i \nPe j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+
+
+\[,i \Ps j, i \Pe j, \Rq , i \Pe j, i \Ps j,\]
+
+\[,i \Ps j, i \nPe j, \Rq , i \nPe j, i \Ps j,\]
+
+\[,i \nPs j, i \Pe j, \Rq , i \Pe j, i \nPs j,\]
+
+\[,i \nPs j, i \nPe j, \Rq , i \nPe j, i \nPs j,\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Itself} 
+\[, \Bb{if(i \Pe j)}{,\Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(j \Pe m)}{,\Tc c_3,}{,\Tc c_4,},}, \Rq , \Bb{if(j \Pe m)}{,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pe j)}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+
+\begin{math} 
+, \Bb{if(i \Pe j)}{,\Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(j \Pe m)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\
+\Rq, j \Oc j_0, j_0 \Os, \Bb{if(i \Pe j)}{,\Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(j \Pe m)}{,\Tc c_3,}{,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, \Bb{if(i \Pe j)}{, j_0 \Os,\Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_2,},}{, j_0 \Os,\Bb{if(j \Pe m)}{,\Tc c_3,}{,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, \Bb{if(i \Pe j)}{,\Bb{if(j \Pe m)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_2,},}{,\Bb{if(j \Pe m)}{, j_0 \Os,\Tc c_3,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, j \Ps j_0, \Bb{if(i \Pe j)}{,\Bb{if(j \Pe m)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_2,},}{,\Bb{if(j \Pe m)}{, j_0 \Os,\Tc c_3,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, j \Ps j_0, \Bb{if(i \Pe j_0)}{,\Bb{if(j \Pe m)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_2,},}{,\Bb{if(j \Pe m)}{, j_0 \Os,\Tc c_3,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, j \Ps j_0, \Bb{if(j \Pe m)}{,\Bb{if(i \Pe j_0)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{,\Bb{if(i \Pe j_0)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, \Bb{if(j \Pe m)}{, j \Ps j_0,\Bb{if(i \Pe j_0)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{, j \Ps j_0,\Bb{if(i \Pe j_0)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, \Bb{if(j \Pe m)}{, j \Ps j_0,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{, j \Ps j_0,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, j \Ps j_0, \Bb{if(j \Pe m)}{,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, \Bb{if(j \Pe m)}{,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, \Bb{if(j \Pe m)}{, j_0 \Os,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_3,},}{, j_0 \Os,\Bb{if(i \Pe j)}{,\Tc c_2,}{,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, j_0 \Os, \Bb{if(j \Pe m)}{,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pe j)}{,\Tc c_2,}{,\Tc c_4,},}, \\\\\\\\
+\Rq,  \Bb{if(i \Pe j)}{,\Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(j \Pe m)}{,\Tc c_2,}{,\Tc c_4,},}, 
+\end{math}
+\newpage
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\[,i \Pe j,\Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_2,}, \Rq ,\Bb{if(j \Pe m)}{,i \Pe j, \Tc c_1,}{,i \Pe j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[,i \nPe j,\Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_2,}, \Rq ,\Bb{if(j \Pe m)}{,i \nPe j, \Tc c_1,}{,i \nPe j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+
+\[,i \Pe j, j \Pe m, \Rq , j \Pe m, i \Pe j,\]
+
+\[,i \nPe j, j \Pe m, \Rq , j \Pe m, i \nPe j,\]
+
+\[,i \nPe j, j \nPe m, \Rq , j \nPe m, i \nPe j,\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\section{ Node null comparison }
+\subsection{Operators} 
+\[, i \Od m, \Bb{if(i \Pu)}{, \Tc c_1,}{, \Tc c_2,}, \Rq , \Bb{if(i \Pu)}{,i \Od m, \Tc c_1,}{,i \Od m, \Tc c_2,},\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, i \Od m, \Bb{if(i \Pu)}{, \Tc c_1,}{, \Tc c_2,},\\\\
+\Rq, i \Od m, \Ot j, \Bb{if(i \Pe j)}{, j \Os, \Tc c_1,}{, j \Os, \Tc c_2,},\\\\\\
+\Rq, \Ot j, i \Od m, \Bb{if(i \Pe j)}{, j \Os, \Tc c_1,}{, j \Os, \Tc c_2,},\\\\\\
+\Rq, \Ot j, \Bb{if(i \Pe j)}{, i \Od m, j \Os, \Tc c_1,}{, i \Od m, j \Os, \Tc c_2,},\\\\\\
+\Rq, \Ot j, \Bb{if(i \Pe j)}{, j \Os, i \Od m, \Tc c_1,}{, j \Os, i \Od m, \Tc c_2,},\\\\\\
+\Rq,  \Bb{if(i \Pu)}{,i \Od m, \Tc c_1,}{,i \Od m, \Tc c_2,},
+\end{math}
+\newpage
+
+
+
+\bigskip
+\bigskip
+\[, i \Oc m, \Bb{if(i \Pu)}{, \Tc c_1,}{, \Tc c_2,}, \Rq , \Bb{if(i \Pu)}{,i \Oc m, \Tc c_1,}{,i \Oc m, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \Ob m, \Bb{if(i \Pu)}{, \Tc c_1,}{, \Tc c_2,}, \Rq , \Bb{if(i \Pu)}{,i \Ob m, \Tc c_1,}{,i \Ob m, \Tc c_2,},\]
+
+
+\bigskip
+\bigskip
+
+\[, i \Pu, i \Oc n, \Rq , i \Oc n, i \Pu,\]
+
+\[, i \Pu, i \Od n, \Rq , i \Od n, i \Pu,\]
+
+\[, i \Pu, i \Ob n, \Rq , i \Ob n, i \Pu,\]
+
+
+\[, i \nPu, i \Oc n, \Rq , i \Oc n, i \nPu,\]
+
+\[, i \nPu, i \Od n, \Rq , i \Od n, i \nPu,\]
+
+\[, i \nPu, i \Ob n, \Rq , i \Ob n, i \nPu,\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Identical node comparison} 
+\[, \Bb{if(i \Ps j)}{,\Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(i \Pu)}{,\Tc c_3,}{,\Tc c_4,},}, \Rq , \Bb{if(i \Pu)}{,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Ps j)}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, \Bb{if(i \Ps j)}{,\Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(i \Pu)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\\\
+\Rq, \Bb{if(i \Ps j)}{, \Ot t, \Bb{if(i \Pe t)}{, t \Os, \Tc c_1,}{, t \Os, \Tc c_2,},}{, \Ot t, \Bb{if(i \Pe t)}{, t \Os, \Tc c_3,}{, t \Os, \Tc c_4,},},\\\\\\\\\\
+\Rq, \Ot t, \Bb{if(i \Ps j)}{, \Bb{if(i \Pe t)}{, t \Os, \Tc c_1,}{, t \Os, \Tc c_2,},}{,\Bb{if(i \Pe t)}{, t \Os, \Tc c_3,}{, t \Os, \Tc c_4,},},\\\\\\\\\\
+\Rq, \Ot t, \Bb{if(i \Pe t)}{, \Bb{if(i \Ps j)}{, t \Os, \Tc c_1,}{, t \Os, \Tc c_3,},}{,\Bb{if(i \Ps j)}{, t \Os, \Tc c_2,}{, t \Os, \Tc c_4,},},\\\\\\\\\\
+\Rq, \Ot t, \Bb{if(i \Pe t)}{, t \Os, \Bb{if(i \Ps j)}{, \Tc c_1,}{, \Tc c_3,},}{, t \Os,\Bb{if(i \Ps j)}{, \Tc c_2,}{, \Tc c_4,},},\\\\\\\\\\
+\Rq,  \Bb{if(i \Pu)}{,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Ps j)}{,\Tc c_2,}{,\Tc c_4,},},
+\end{math}
+\newpage
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+
+\[, i \Ps j,\Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pu)}{,i \Ps j, \Tc c_1,}{,i \Ps j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \nPs j,\Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pu)}{,i \nPs j, \Tc c_1,}{,i \nPs j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \Pu,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{,i \Pu, \Tc c_1,}{,i \Pu, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \nPu,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{,i \nPu, \Tc c_1,}{,i \nPu, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+
+
+\[,i \Ps j, i \Pu, \Rq , i \Pu, i \Ps j,\]
+
+\[,i \Ps j, i \nPu, \Rq , i \nPu, i \Ps j,\]
+
+\[,i \nPs j, i \Pu, \Rq , i \Pu, i \nPs j,\]
+
+\[,i \nPs j, i \nPu, \Rq , i \nPu, i \nPs j,\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Node value comparison} 
+\[, \Bb{if(i \Pe j)}{,\Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(i \Pu)}{,\Tc c_3,}{,\Tc c_4,},}, \Rq , \Bb{if(i \Pu)}{,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pe j)}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, \Bb{if(i \Pe j)}{,\Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(i \Pu)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\\\
+\Rq, \Bb{if(i \Pe j)}{, \Ot t, \Bb{if(i \Pe t)}{, t \Os, \Tc c_1,}{, t \Os, \Tc c_2,},}{, \Ot t, \Bb{if(i \Pe t)}{, t \Os, \Tc c_3,}{, t \Os, \Tc c_4,},},\\\\\\\\\\
+\Rq, \Ot t, \Bb{if(i \Pe j)}{, \Bb{if(i \Pe t)}{, t \Os, \Tc c_1,}{, t \Os, \Tc c_2,},}{, \Bb{if(i \Pe t)}{, t \Os, \Tc c_3,}{, t \Os, \Tc c_4,},},\\\\\\\\\\
+\Rq, \Ot t, \Bb{if(i \Pe t)}{, \Bb{if(i \Pe j)}{, t \Os, \Tc c_1,}{, t \Os, \Tc c_3,},}{, \Bb{if(i \Pe j)}{, t \Os, \Tc c_2,}{, t \Os, \Tc c_4,},},\\\\\\\\\\
+\Rq, \Ot t, \Bb{if(i \Pe t)}{, t \Os, \Bb{if(i \Pe j)}{, \Tc c_1,}{, \Tc c_3,},}{, t \Os, \Bb{if(i \Pe j)}{, \Tc c_2,}{, \Tc c_4,},},\\\\\\\\\\
+\Rq,  \Bb{if(i \Pu)}{,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pe j)}{,\Tc c_2,}{,\Tc c_4,},},
+\end{math}
+\newpage
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\[,i \Pe j,\Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,}, \Rq ,\Bb{if(i \Pu)}{,i \Pe j, \Tc c_1,}{,i \Pe j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[,i \nPe j,\Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,}, \Rq ,\Bb{if(i \Pu)}{,i \nPe j, \Tc c_1,}{,i \nPe j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[,i \Pu,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq ,\Bb{if(i \Pe j)}{,i \Pu, \Tc c_1,}{,i \Pu, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[,i \nPu,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq ,\Bb{if(i \Pe j)}{,i \nPu, \Tc c_1,}{,i \nPu, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+
+\[,i \Pe j, i \Pu, \Rq , i \Pu, i \Pe j,\]
+
+\[,i \Pe j, i \nPu, \Rq , i \nPu, i \Pe j,\]
+
+\[,i \nPe j, i \Pu, \Rq , i \Pu, i \nPe j,\]
+
+\[,i \nPe j, i \nPu, \Rq , i \nPu, i \nPe j,\]
+
+\newpage
+

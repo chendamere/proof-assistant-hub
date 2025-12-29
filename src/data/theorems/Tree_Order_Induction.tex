@@ -1,0 +1,389 @@
+
+\chapter{Tree Order Induction}
+\section{Definition of flag object SVi with identical node.}
+
+
+
+\subsection{Swap definition:}
+\[,\It \Ps i, \Ot m, \Rq , \Ot m, \It \Ps i,\]
+
+\[,\It \Ps i, \Og m, \Rq , \Og m, \It \Ps i,\]
+
+\[,\It \Ps i, j \Od n, \Rq , j \Od n, \It \Ps i,\]
+
+\[,\It \Ps i, j \Oc n, \Rq , j \Oc n, \It \Ps i,\]
+
+\[,\It \Ps i, j \Ob n, \Rq , j \Ob n, \It \Ps i,\]
+
+\[,\It \Ps i, j \Os, \Rq , j \Os, \It \Ps i,\]
+
+\[,\It \Ps i, j \On, \Rq , j \On, \It \Ps i,\]
+
+\[,\It \Ps i, \Or, \Rq , \Or, \It \Ps i,\]
+\bigskip
+\[,\It \Ps i, \Bls{m \Oe n}{,}{,} \Rq , \Bls{m \Oe n}{,\It \Ps i,}{,\It \Ps i,}\]
+\bigskip
+\[,\It \Ps i, \Bls{}{,}{,} \Rq , \Bls{}{,\It \Ps i,}{,\It \Ps i,}\]
+\bigskip
+\[, \Brs{,}{,},\It \Ps i, \Rq \Brs{,\It \Ps i,}{,\It \Ps i,},\]
+
+
+
+\bigskip
+\bigskip
+\subsection{Substitution definition:}
+\[,i \Ps j, \It \Ps i, \Rq , i\Ps j, \It \Ps j,\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\section{Definition of flag object SVi with subnode.}
+\[, i \Pb j, \It \Pb j, \Rq , i \Pb j, \It \Ps i,\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\section{Theorems of flag object SVi with identical node.}
+\subsection{Swap with previous node operator:}
+\[,\It \Ps i, j \Op, \Rq ,j \Op, \It \Ps i,\]
+
+\bigskip
+\bigskip
+\subsection{Swap with branch function:}
+\[,\It \Ps i, \Bb{if(m \Pe n)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Pe n)}{,\It \Ps i, \Tc c_1,}{,\It \Ps i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\It \Ps i, \Bb{if(m \Pu)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Pu)}{,\It \Ps i, \Tc c_1,}{,\It \Ps i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\It \Ps i, \Bb{if(m \Ps n)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Ps n)}{,\It \Ps i, \Tc c_1,}{,\It \Ps i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\It \Ps i, \Bb{if(m \Pn n)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Pn n)}{,\It \Ps i, \Tc c_1,}{,\It \Ps i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\It \Ps i, \Bb{if(m \Pc n)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Pc n)}{,\It \Ps i, \Tc c_1,}{,\It \Ps i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\It \Ps i, \Bb{if(m \Pb n)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Pb n)}{,\It \Ps i, \Tc c_1,}{,\It \Ps i, \Tc c_2,},\]
+
+
+\bigskip
+\bigskip
+\subsection{Swap with propositions:}
+\[,\It \Ps i, m \Pe n, \Rq , m \Pe n, \It \Ps i,\]
+
+\[,\It \Ps i, m \Pu, \Rq , m \Pu, \It \Ps i,\]
+
+\[,\It \Ps i, m \Ps n, \Rq , m \Ps n, \It \Ps i,\]
+
+\[,\It \Ps i, m \Pn n, \Rq , m \Pn n, \It \Ps i,\]
+
+\[,\It \Ps i, m \Pc n, \Rq , m \Pc n, \It \Ps i,\]
+
+\[,\It \Ps i, m \Pb n, \Rq , m \Pb n, \It \Ps i,\]
+
+\[,\It \Ps i, m \nPe n, \Rq , m \nPe n, \It \Ps i,\]
+
+\[,\It \Ps i, m \nPu, \Rq , m \nPu, \It \Ps i,\]
+
+\[,\It \Ps i, m \nPs n, \Rq , m \nPs n, \It \Ps i,\]
+
+\[,\It \Ps i, m \nPn n, \Rq , m \nPn n, \It \Ps i,\]
+
+\[,\It \Ps i, m \nPc n, \Rq , m \nPc n, \It \Ps i,\]
+
+\[,\It \Ps i, m \nPb n, \Rq , m \nPb n, \It \Ps i,\]
+
+
+\bigskip
+\bigskip
+\subsection{ Propositions and recursive function:}
+\[,\It \Ps i, R(m), \Rq , R(m), \It \Ps i,\]
+\[,\It \Ps i, R\_(m), \Rq , R\_(m), \It \Ps i,\]
+
+
+
+\bigskip
+\bigskip
+\subsection{Swap with the same operand's operator:}
+\[,\It \Ps i, i \Oc n, \Rq , i \Oc n, \It \Ps i,\]
+
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, \It \Ps i, i \Oc n,\\
+\Rq, i \Oc i_0, i_0 \Os, \It \Ps i, i \Oc n, \\\\
+\Rq, i \Oc i_0, \It \Ps i, i \Oc n, i_0 \Os, \\\\
+\Rq, i \Oc i_0, i \Ps i_0, \It \Ps i, i \Oc n, i_0 \Os, \\\\
+\Rq, i \Oc i_0, i \Ps i_0, \It \Ps i_0, i \Oc n, i_0 \Os, \\\\
+\Rq, i \Oc i_0, i \Ps i_0, i \Oc n, \It \Ps i_0, i_0 \Os, \\\\
+\Rq, i \Oc i_0, i \Oc n, i \Ps i_0, \It \Ps i_0, i_0 \Os, \\\\
+\Rq, i \Oc i_0, i \Oc n, i \Ps i_0, \It \Ps i, i_0 \Os, \\\\
+\Rq, i \Oc i_0, i \Oc n, \It \Ps i, i_0 \Os, \\\\
+\Rq, i \Oc i_0, i_0 \Os, i \Oc n, \It \Ps i, \\\\
+\Rq, i \Oc n, \It \Ps i,
+\end{math}
+\bigskip
+\bigskip
+
+\[,\It \Ps i, i \Od n, \Rq , i \Od n, \It \Ps i,\]
+
+\[,\It \Ps i, i \Ob n, \Rq , i \Ob n, \It \Ps i,\]
+
+
+
+
+\bigskip
+\bigskip
+\subsection{Swap with the same operand's  branch function:}
+\[,\It \Ps i, \Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pe j)}{,\It \Ps i, \Tc c_1,}{,\It \Ps i, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[,\It \Ps i, \Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pu)}{,\It \Ps i, \Tc c_1,}{,\It \Ps i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\It \Ps i, \Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{,\It \Ps i, \Tc c_1,}{,\It \Ps i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\It \Ps i, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,\It \Ps i, \Tc c_1,}{,\It \Ps i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\It \Ps i, \Bb{if(i \Pn j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pn j)}{,\It \Ps i, \Tc c_1,}{,\It \Ps i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\It \Ps i, \Bb{if(j \Pn i)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(j \Pn i)}{,\It \Ps i, \Tc c_1,}{,\It \Ps i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\It \Ps i, \Bb{if(i \Pb j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pb j)}{,\It \Ps i, \Tc c_1,}{,\It \Ps i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\It \Ps i, \Bb{if(j \Pb i)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(j \Pb i)}{,\It \Ps i, \Tc c_1,}{,\It \Ps i, \Tc c_2,},\]
+
+
+\bigskip
+\bigskip
+\subsection{Swap with the same operand's propositions:}
+\[,\It \Ps i, i \Pe j, \Rq , i \Pe j, \It \Ps i,\]
+
+\[,\It \Ps i, i \Pu, \Rq , i \Pu, \It \Ps i,\]
+
+\[,\It \Ps i, i \Ps j, \Rq , i \Ps j, \It \Ps i,\]
+
+\[,\It \Pc i, i \Ps j, \Rq , i \Pc j, \It \Ps i,\]
+
+\[,\It \Ps i, i \Pn j, \Rq , i \Pn j, \It \Ps i,\]
+
+\[,\It \Ps i, j \Pn i, \Rq , j \Pn i, \It \Ps i,\]
+
+\[,\It \Ps i, i \Pb j, \Rq , i \Pb j, \It \Ps i,\]
+
+\[,\It \Ps i, j \Pb i, \Rq , j \Pb i, \It \Ps i,\]
+
+\[,\It \Ps i, i \nPe j, \Rq , i \nPe j, \It \Ps i,\]
+
+\[,\It \Ps i, i \nPu, \Rq , i \nPu, \It \Ps i,\]
+
+\[,\It \Ps i, i \nPs j, \Rq , i \nPs j, \It \Ps i,\]
+
+\[,\It \Ps i, i \nPc j, \Rq , i \nPc j, \It \Ps i,\]
+
+\[,\It \Ps i, i \nPn j, \Rq , i \nPn j, \It \Ps i,\]
+
+\[,\It \Ps i, j \nPn i, \Rq , j \nPn i, \It \Ps i,\]
+
+\[,\It \Ps i, i \nPb j, \Rq , i \nPb j, \It \Ps i,\]
+
+\[,\It \Ps i, j \nPb i, \Rq , j \nPb i, \It \Ps i,\]
+
+
+
+
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\section{Axiom of tree order induction}
+\subsection{axiom of inference:}
+\begin{math}
+\Bigl\{ ^{<premise \; 1>}_{<premise \;  2>}\Bigl\} \Ri <conclusion>
+\end{math}
+\bigskip
+\bigskip
+\subsection{premise 1:}
+\begin{math}
+, i \Pu, \Tt c_1, \Rq , i \Pu, \Tt c_2,
+\end{math}
+\bigskip
+\bigskip
+\subsection{premise 2:}
+\begin{math}
+,\It \Pb i, \Tt c_1 , \Rq , \It \Pb i, \Tt c_2 , \Ri \\\\
+,i \nPu, \It \Ps i, \Tt c_1, \Rq , i \nPu, \It \Ps i, \Tt c_2,
+\end{math}
+\bigskip
+\bigskip
+\subsection{conclusion:}
+\begin{math}
+, \Tt c_1, \Rq , \Tt c_2,
+\end{math}
+
+
+\bigskip
+\bigskip
+\section{Theorems of tree order induction}
+\[, i \Pb j, j \Pb i, \Rq , \Or,\]
+
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, i \Pu, i \Pb j, j \Pb i,\\
+\Rq, i \Pu, i \nPb j, i \Pb j, j \Pb i,\\
+\Rq, i \Pu, \Or, j \Pb i,\\
+\Rq, i \Pu, \Or,\\\\\\
+premise \; 2:\\
+,\It \Pb i, i \Pb j, j \Pb i, \Rq ,\It \Pb i,  \Or, \Ri \\\\
+,i \nPu, \It \Ps i, i \Pb j, j \Pb i, \\\\
+\Rq,i \nPu, \It \Ps i, i \Pb j, i \Pb j, j \Pb i, \\\\
+\Rq,i \nPu, i \Pb j, \It \Ps i, i \Pb j, j \Pb i, \\\\
+\Rq,i \nPu, i \Pb j, \It \Pb j, i \Pb j, j \Pb i, \\\\
+\Rq,i \nPu, i \Pb j, \It \Pb j, j \Pb i, i \Pb j, \\\\
+\Rq,i \nPu, i \Pb j, \It \Pb j, \Or, \\\\
+\Rq,i \nPu, i \Pb j, \It \Ps i, \Or, \\\\
+\Rq,i \nPu, \It \Ps i, i \Pb j, \Or, \\\\
+\Rq,i \nPu, \It \Ps i, \Or, \\\\\\
+conclusion:\\
+, i \Pb j, j \Pb i, \Rq , \Or,
+\end{math}
+\bigskip
+\bigskip  
+
+
+\[,i \Pb i, \Rq , \Or, \]
+
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, i \Pb i,\\
+\Rq, i \Oc i_1, i_1 \Pb i, i_1 \Os, \\\\
+\Rq, i \Oc i_1, i_1 \Pb i, i_1 \Pb i, i_1 \Os, \\\\
+\Rq, i \Oc i_1, i \Oc i_2, i_2 \Os, i_1 \Pb i, i_1 \Pb i, i_1 \Os, \\\\
+\Rq, i \Oc i_1, i \Oc i_2, i_1 \Pb i, i_1 \Pb i, i_1 \Os,  i_2 \Os,\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i_1 \Ps i_2, i_1 \Pb i, i_1 \Pb i, i_1 \Os,  i_2 \Os,\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i_1 \Ps i_2, i_2 \Pb i, i_1 \Pb i, i_1 \Os,  i_2 \Os,\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i_2 \Pb i, i_1 \Pb i, i_1 \Os,  i_2 \Os,\\\\
+\Rq, i \Oc i_1, i \Ps i_1, i \Oc i_2, i_2 \Pb i, i_1 \Pb i, i_1 \Os,  i_2 \Os,\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_1, i_2 \Pb i, i_1 \Pb i, i_1 \Os,  i_2 \Os,\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_1, i \Pc i_1, i_2 \Pb i, i_1 \Pb i, i_1 \Os,  i_2 \Os,\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_1, i \Pc i_1, i_2 \Pb i_1, i_1 \Pb i, i_1 \Os,  i_2 \Os,\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i_2 \Pb i_1, i_1 \Pb i, i_1 \Os,  i_2 \Os,\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_2, i_2 \Pb i_1, i_1 \Pb i, i_1 \Os,  i_2 \Os,\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_2, i \Pb i_1, i_1 \Pb i, i_1 \Os,  i_2 \Os,\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_2, \Or, i_1 \Os,  i_2 \Os,\\\\
+\Rq, \Or,
+\end{math}
+\bigskip
+\bigskip
+
+\[, i \Ps j, i \Pb j, \Rq , \Or,\]
+
+
+\[, i \Pc j, \Rq ,\sim, i \nPb j,\]
+
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, i \Pc j,\\\\
+\Rq,  i \Pc j, \Bb{if(i \Pb j)}{,}{,}, \\\\\\
+\Rq,  i \Pc j, \Bb{if(i \Pb j)}{,i \Pb j,}{,}, \\\\\\
+\Rq, \Bb{if(i \Pb j)}{,  i \Pc j, i \Pb j,}{,  i \Pc j,}, \\\\\\
+\Rq, \Bb{if(i \Pb j)}{,  i \Pc j, i \Oc i_0, i_0 \Os, i \Pb j,}{,  i \Pc j,}, \\\\\\
+\Rq, \Bb{if(i \Pb j)}{,  i \Pc j, i \Oc i_0, i \Pb j, i_0 \Os,}{,  i \Pc j,}, \\\\\\
+\Rq, \Bb{if(i \Pb j)}{,  i \Oc i_0, i \Pc j,  i \Pb j, i_0 \Os,}{,  i \Pc j,}, \\\\\\
+\Rq, \Bb{if(i \Pb j)}{,  i \Oc i_0, i \Ps i_0, i \Pc j,  i \Pb j, i_0 \Os,}{,  i \Pc j,}, \\\\\\
+\Rq, \Bb{if(i \Pb j)}{,  i \Oc i_0, i \Ps i_0, i_0 \Pc j,  i \Pb j, i_0 \Os,}{,  i \Pc j,}, \\\\\\
+\Rq, \Bb{if(i \Pb j)}{,  i \Oc i_0, i \Ps i_0, i_0 \Pc j,  i \Pb i_0, i_0 \Os,}{,  i \Pc j,}, \\\\\\
+\Rq, \Bb{if(i \Pb j)}{,  i \Pc j, i \Oc i_0,  i \Pb i_0, i_0 \Os,}{,  i \Pc j,}, \\\\\\
+\Rq, \Bb{if(i \Pb j)}{,  i \Pc j,  i \Pb i,}{,  i \Pc j,}, \\\\\\
+\Rq, \Bb{if(i \Pb j)}{,  i \Pc j, \Or,}{,  i \Pc j,}, \\\\\\
+\Rq,  i \Pc j, \Bb{if(i \Pb j)}{, \Or,}{,}, \\\\\\
+\Rq,  i \Pc j, i \nPb j,
+\end{math}
+\bigskip
+\bigskip
+
+
+\[ , i \Ps j, \Rq ,\sim, i \nPb j,\]
+
+
+
+\bigskip
+\bigskip
+\section{Definition of Rd(i):r}
+
+\[, Rd(i):r, \Rq ,\Bb{if(i \Pu )}{, i \Oc r,}{, i \Ob j, j \On, Rd(j):r, j \Os,},\]
+
+
+\bigskip
+\bigskip
+\section{Theorems of Rd(i):r}
+\[, i \Pu, Rd(i):r, \Rq , i \Pu, i \Oc r, \]
+
+\[, i \nPu, Rd(i):r, \Rq , i \nPu, i \Ob j, j \On, Rd(j):r, j \Os, \]
+
+
+\[, Rd(i):r, \Rq \sim, r \Pu,\]
+
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, i \Pu,  Rd(i):r,\\
+\Rq, i \Pu, i \Oc r ,\\
+\Rq, i \Pu, i \Oc r , i \Ps r,\\
+\Rq, i \Pu, i \Pu, i \Oc r , i \Ps r,\\
+\Rq, i \Pu, i \Oc r , i \Ps r, i \Pu,\\
+\Rq, i \Pu, i \Oc r , i \Ps r, r \Pu,\\
+\Rq, i \Pu, i \Oc r , r \Pu,\\
+\Rq, i \Pu, Rd(i):r, r \Pu,\\\\\\
+premise \; 2:\\
+,\It \Pb i, Rd(i):r, \Rq ,\It \Pb i, Rd(i):r, r \Pu, \Ri ,\\\\
+,i \nPu, \It \Ps i, Rd(i):r, \\\\
+\Rq, \It \Ps i, i \nPu, Rd(i):r, \\\\
+\Rq, \It \Ps i, i \nPu, i \Ob j, j \On, Rd(j):r, j \Os, \\\\
+\Rq, i \nPu, i \Ob j, j \On, \It \Ps i, Rd(j):r, j \Os, \\\\
+\Rq, i \nPu, i \Ob j, i \Pb j, j \On, \It \Ps i, Rd(j):r, j \Os, \\\\
+\Rq, i \nPu, i \Ob j, j \On, i \Pb j, \It \Ps i, Rd(j):r, j \Os, \\\\
+\Rq, i \nPu, i \Ob j, j \On, i \Pb j, \It \Pb j, Rd(j):r, j \Os, \\\\
+\Rq, i \nPu, i \Ob j, j \On, i \Pb j, \It \Pb j, Rd(j):r, r \Pu, j \Os, \\\\
+\Rq, i \nPu, i \Ob j, j \On, i \Pb j, \It \Ps i, Rd(j):r, r \Pu, j \Os, \\\\
+\Rq, i \nPu, i \Ob j, j \On, \It \Ps i, Rd(j):r, r \Pu, j \Os, \\\\
+\Rq, \It \Ps i, i \nPu, i \Ob j, j \On, Rd(j):r, j \Os, r \Pu, \\\\
+\Rq, \It \Ps i, i \nPu, Rd(i):r, r \Pu, \\\\
+\Rq, i \nPu, \It \Ps i,  Rd(i):r, r \Pu, \\\\\\
+% conclusion:\\
+, Rd(i):r,  Rd(i):r, \Rq ,  Rd(i):r, r \Pu,
+, Rd(i):r, \Rq ,  Rd(i):r, r \Pu,
+\end{math}
+\bigskip
+\bigskip  
+
+
+
+\[, Rd(i):r, \Or, \Rq , \Or,\]
+
+
+\newpage

@@ -1,0 +1,203 @@
+\chapter{Theorems of Assign Operator}
+
+\section{ Unity}
+\[, t \Oa j, \Rq , \Bb{if(t \Pu)}{,\Bb{if(j \Pu)}{,}{, Del(j),}, }{, Ins(t;j),},\]
+
+
+
+\bigskip
+\bigskip
+\section{Swap with identical node propositions }
+\[, m \nPs j, n \nPs j, m \Ps n, t \Oa j, \Rq , m \nPs j, n \nPs j, t \Oa j, m \Ps n,\]
+
+\[, m \nPs j, n \nPs j, m \nPs n, t \Oa j, \Rq , m \nPs j, n \nPs j, t \Oa j, m \nPs n,\]
+
+\[, m \Ps j, t \Oa j, \Rq ,\sim, m \Ps j,\]
+
+\[, m \Ps n, t \Oa j, \Rq ,\sim, m \Ps n,\]
+
+
+\bigskip
+\bigskip
+\section{Swap with R(i) }
+\[, i \nPc j, R(i), t \Oa j, \Rq , i \nPc j, t \Oa j, R(i),\]
+
+\[, i \Pc j, j \nPu, R(i), t \Oa j, \Rq , i \Pc j, j \nPu, t \Oa j, R(i),\]
+
+
+
+\bigskip
+\bigskip
+\section{Swap with node connectivity propositions }
+\[, m \Pc j, t \Oa j, \Rq , t \Oa j, m \Pc j, \]
+
+\[, m \nPc j, t \Oa j, \Rq , t \Oa j, m \nPc j, \]
+
+\[, m \Pc n, t \Oa j, \Rq , t \Oa j, m \Pc n, \]
+
+\[, m \nPc n, t \Oa j, \Rq , t \Oa j, m \nPc n, \]
+
+
+
+\bigskip
+\bigskip
+\section{Swap with self }
+\subsection{Ins and Ins }
+\[, Ins(t;j_1), In(t;j_2), \Rq , Ins(t;j_2), In(t;j_1),\]
+proof:\\
+\begin{math} 
+, Ins(t;j_1), In(t;j_2), \\\\
+\Rq, Ins(t;j_1), t \nPu, t \Oa j_2,\\\\
+\Rq, Ins(t;j_1), t \Oa j_2,\\\\
+\Rq, t \Oc t_0, t_0 \Os, Ins(t;j_1), t \Oa j_2,\\\\
+\Rq, t \Oc t_0, Ins(t;j_1), t \Oa j_2, t_0 \Os,\\\\
+\Rq, t \Oc t_0, t \Ps t_0,  Ins(t;j_1), t \Oa j_2, t_0 \Os,\\\\
+\Rq, t \Oc t_0, t \Ps t_0, t \Pe t_0, Ins(t;j_1), t \Oa j_2, t_0 \Os,\\\\
+\Rq, t \Oc t_0, t \Ps t_0, t \Pe t_0, Ins(t;j_1), t \Pe t_0, t \Oa j_2, t_0 \Os,\\\\
+\Rq, t \Oc t_0, t \Ps t_0, t \Pe t_0, Ins(t;j_1), t \Pe t_0, t_0 \Oa j_2, t_0 \Os,\\\\
+\Rq, t \Oc t_0, t \Ps t_0, t \Pe t_0, Ins(t;j_1), t_0 \Oa j_2, t_0 \Os,\\\\
+\Rq, t \Oc t_0, t \Ps t_0, t \Pe t_0, t \nPu , t \Oa j_1, t_0 \Oa j_2, t_0 \Os,\\\\
+\Rq, t \Oc t_0, t \Ps t_0, t \nPu , t \Pe t_0, t \Oa j_1, t_0 \Oa j_2, t_0 \Os,\\\\
+\Rq, t \Oc t_0, t \Ps t_0, t \nPu , t \nPu , t \Pe t_0, t \Oa j_1, t_0 \Oa j_2, t_0 \Os,\\\\
+\Rq, t \Oc t_0, t \Ps t_0, t \nPu , t_0 \nPu , t \Pe t_0, t \Oa j_1, t_0 \Oa j_2, t_0 \Os,\\\\
+\Rq, t \Oc t_0, t \Ps t_0, t \nPu , t_0 \nPu , t \Pe t_0, t_0 \Oa j_2, t \Oa j_1, t_0 \Os,\\\\
+\Rq, t \Oc t_0, t \Ps t_0, t \nPu , t_0 \nPu , t \Pe t_0, t \Oa j_2, t \Oa j_1, t_0 \Os,\\\\
+\Rq, t \Oc t_0, t \Ps t_0, t \nPu , t \nPu , t \Pe t_0, t \Oa j_2, t \Oa j_1, t_0 \Os,\\\\
+\Rq, t \Oc t_0, t \Ps t_0, t \nPu , t \Pe t_0, t \Oa j_2, t \Oa j_1, t_0 \Os,\\\\
+\Rq, t \Oc t_0, t \Ps t_0, t \Pe t_0, t \nPu , t \Oa j_2, t \Oa j_1, t_0 \Os,\\\\
+\Rq, t \Oc t_0, t \nPu , t \Oa j_2, t \Oa j_1, t_0 \Os,\\\\
+\Rq, t \Oc t_0, t_0 \Os, t \nPu , t \Oa j_2, t \Oa j_1,\\\\
+\Rq, t \nPu , t \Oa j_2, t \Oa j_1,\\\\
+\Rq, In(t;j_2), t \Oa j_1,\\\\
+\Rq, In(t;j_2), t \nPu, t \Oa j_1,\\\\
+\Rq, Ins(t;j_2), In(t;j_1),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+\[, i_1 \nPe i_2, i_1 \nPs j_2, i_2 \nPs j_1, j_1 \nPs j_2, Ins(i_1;j_1), Ins(i_2;j_2), \Rq ,\]
+\[, i_1 \nPe i_2, i_1 \nPs j_2, i_2 \nPs j_1, j_1 \nPs j_2, Ins(i_2;j_2), Ins(i_1;j_1),\]
+proof:\\
+\begin{math} 
+, i_1 \nPe i_2, i_1 \nPs j_2, i_2 \nPs j_1, j_1 \nPs j_2, Ins(i_1;j_1), Ins(i_2;j_2), \\\\
+\Rq, i_1 \nPe i_2, i_1 \nPs j_2, i_2 \nPs j_1, j_1 \nPs j_2, Ins(i_1;j_1), i_2 \nPu, i_2 \Oa j_2,\\\\
+\Rq, i_1 \nPe i_2, i_1 \nPs j_2, j_1 \nPs j_2, i_2 \nPs j_1, Ins(i_1;j_1), i_2 \nPu, i_2 \Oa j_2,\\\\
+\Rq, i_1 \nPe i_2, i_1 \nPs j_2, j_1 \nPs j_2, i_2 \nPs j_1, i_2 \nPu, Ins(i_1;j_1), i_2 \Oa j_2,\\\\
+\Rq, i_1 \nPe i_2, i_1 \nPs j_2, j_1 \nPs j_2, i_2 \nPs j_1, i_2 \nPu, i_1 \nPu, i_1 \Oa j_1, i_2 \Oa j_2,\\\\
+\Rq, i_1 \nPe i_2, i_1 \nPs j_2, j_1 \nPs j_2, i_2 \nPs j_1, i_2 \nPu, i_1 \nPu, i_2 \Oa j_2, i_1 \Oa j_1,\\\\
+\Rq, i_1 \nPe i_2, i_1 \nPs j_2, j_1 \nPs j_2, i_2 \nPs j_1, i_1 \nPu, i_2 \nPu, i_2 \Oa j_2, i_1 \Oa j_1,\\\\
+\Rq, i_1 \nPe i_2, i_1 \nPs j_2, j_1 \nPs j_2, i_2 \nPs j_1, i_1 \nPu, Ins(i_2;j_2), i_1 \Oa j_1,\\\\
+\Rq, i_1 \nPe i_2, j_1 \nPs j_2, i_2 \nPs j_1, i_1 \nPs j_2, i_1 \nPu, Ins(i_2;j_2), i_1 \Oa j_1,\\\\
+\Rq, i_1 \nPe i_2, j_1 \nPs j_2, i_2 \nPs j_1, i_1 \nPs j_2, Ins(i_2;j_2), i_1 \nPu, i_1 \Oa j_1,\\\\
+\Rq, i_1 \nPe i_2, i_1 \nPs j_2, i_2 \nPs j_1, j_1 \nPs j_2, Ins(i_2;j_2), Ins(i_1;j_1),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+\subsection{Del and Del}
+\[, Del(j_1), Del(j_2), \Rq , Del(j_2), Del(j_1), \]
+proof:\\
+\begin{math} 
+, Del(j_1), Del(j_2), \\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{,}{,}, Del(j_1), Del(j_2),\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_1), Del(j_2),}{, Del(j_1), Del(j_2),},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, j_1 \Ps j_2,  Del(j_1), Del(j_2),}{, Del(j_1), Del(j_2),},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, j_1 \Ps j_2,  Del(j_1), j_1 \Ps j_2, Del(j_2),}{, Del(j_1), Del(j_2),},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, j_1 \Ps j_2,  Del(j_1), j_1 \Ps j_2, Del(j_1),}{, Del(j_1), Del(j_2),},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, j_1 \Ps j_2,  Del(j_1), Del(j_1),}{, Del(j_1), Del(j_2),},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, j_1 \Ps j_2,  Del(j_2), Del(j_1),}{, Del(j_1), Del(j_2),},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{, Del(j_1), Del(j_2),},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{, j_1 \nPs j_2, Del(j_1), Del(j_2),},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{, j_1 \nPs j_2, Del(j_1), j_2 \nPu, \Ot t_2,  t_2 \Oa j_2, t_2 \Os,},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{, \Ot t_2, j_1 \nPs j_2, Del(j_1), j_2 \nPu,  t_2 \Oa j_2, t_2 \Os,},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{, \Ot t_2, j_1 \nPs j_2, j_2 \nPu, Del(j_1),  t_2 \Oa j_2, t_2 \Os,},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{, \Ot t_2, j_1 \nPs j_2, j_2 \nPu, j_1 \nPu, \Ot t_1 , t_1 \Oa j_1, t_1 \Os,  t_2 \Oa j_2, t_2 \Os,},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{, \Ot t_1 , \Ot t_2, j_1 \nPs j_2, j_2 \nPu, j_1 \nPu, t_1 \Oa j_1,  t_2 \Oa j_2, t_1 \Os, t_2 \Os,},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{, \Ot t_1 , t_1 \Pu, \Ot t_2, t_2 \Pu,  j_1 \nPs j_2, j_2 \nPu, j_1 \nPu, t_1 \Oa j_1,  t_2 \Oa j_2, t_1 \Os, t_2 \Os,},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{, \Ot t_1 , \Ot t_2, t_1 \Pu, t_2 \Pu,  j_1 \nPs j_2, j_2 \nPu, j_1 \nPu, t_1 \Oa j_1,  t_2 \Oa j_2, t_1 \Os, t_2 \Os,},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{, \Ot t_1 , \Ot t_2, t_1 \Pu, t_2 \Pu,  j_1 \nPs j_2, j_2 \nPu, j_1 \nPu,   t_2 \Oa j_2,t_1 \Oa j_1, t_1 \Os, t_2 \Os,},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{, \Ot t_1 , t_1 \Pu, \Ot t_2, t_2 \Pu,  j_1 \nPs j_2, j_2 \nPu, j_1 \nPu,   t_2 \Oa j_2,t_1 \Oa j_1, t_1 \Os, t_2 \Os,},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{, \Ot t_1 , \Ot t_2,  j_1 \nPs j_2, j_2 \nPu, j_1 \nPu,   t_2 \Oa j_2,t_1 \Oa j_1, t_1 \Os, t_2 \Os,},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{, \Ot t_1 ,  j_1 \nPs j_2, j_1 \nPu, j_2 \nPu, \Ot t_2,   t_2 \Oa j_2, t_2 \Os, t_1 \Oa j_1, t_1 \Os,},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{, \Ot t_1 ,  j_1 \nPs j_2, j_1 \nPu, Del(j_2), t_1 \Oa j_1, t_1 \Os,},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{, \Ot t_1 ,  j_1 \nPs j_2, Del(j_2), j_1 \nPu, t_1 \Oa j_1, t_1 \Os,},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{,  j_1 \nPs j_2, Del(j_2), j_1 \nPu, \Ot t_1 , t_1 \Oa j_1, t_1 \Os,},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{,  j_1 \nPs j_2, Del(j_2),  Del(j_1),},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{, Del(j_2), Del(j_1),}{, Del(j_2),  Del(j_1),},\\\\\\
+\Rq, \Bb{if(j_1 \Ps j_2)}{,}{,}, Del(j_2),  Del(j_1),\\\\\\
+\Rq, Del(j_2), Del(j_1),
+\end{math}
+\bigskip
+\bigskip
+
+\subsection{Ins, Del}
+\[, i \nPu, \Rq , Ins(i;j), Del(j),\]
+proof:\\
+\begin{math} 
+, i \nPu, \\\\
+\Rq,  i \nPu, j \Oc j_2, j_2 \Os, \Ot i_2, i_2 \Os,  \\\\
+\Rq,  i \nPu, j \Oc j_2, \Ot i_2, i_2 \Pu, j_2 \Os, i_2 \Os,  \\\\
+\Rq,  i \nPu, j \Oc j_2, \Ot i_2, i_2 \nPs j, i_2 \Pu, j_2 \Os, i_2 \Os,  \\\\
+\Rq,  i \nPu, j \Oc j_2, j \Ps j_2, \Ot i_2, i_2 \nPs j, i_2 \Pu, j_2 \Os, i_2 \Os,  \\\\
+\Rq, j \Oc j_2, \Ot i_2,  i \nPu, i_2 \Pu, j \Ps j_2, i_2 \nPs j, j_2 \Os, i_2 \Os,  \\\\
+\Rq, j \Oc j_2, \Ot i_2,  i \nPu, i_2 \Pu, j \Ps j_2, i_2 \nPs j, i \Oa j, i_2 \Oa j_2, j_2 \Os, i_2 \Os,  \\\\
+\Rq, i \nPu,  j \Oc j_2, j \Ps j_2, \Ot i_2, i_2 \Pu, i_2 \nPs j, i \Oa j, i_2 \Oa j_2, j_2 \Os, i_2 \Os,  \\\\
+\Rq, i \nPu,  j \Oc j_2, \Ot i_2, i \Oa j, i_2 \Oa j_2, j_2 \Os, i_2 \Os,  \\\\
+\Rq, i \nPu,  \Ot i_2, i \Oa j, j \Oc j_2, i_2 \Oa j_2, j_2 \Os, i_2 \Os,  \\\\
+\Rq, i \nPu,  \Ot i_2, i \Oa j, j \Oc j_2, j \Ps j_2, i_2 \Oa j_2, j_2 \Os, i_2 \Os,  \\\\
+\Rq, i \nPu,  \Ot i_2, i \Oa j, j \Oc j_2, j \Ps j_2, i_2 \Oa j, j_2 \Os, i_2 \Os,  \\\\
+\Rq, i \nPu,  \Ot i_2, i \Oa j, j \Oc j_2, i_2 \Oa j, j_2 \Os, i_2 \Os,  \\\\
+\Rq, i \nPu,  \Ot i_2, i \Oa j, j \Oc j_2, j_2 \Os, i_2 \Oa j, i_2 \Os,  \\\\
+\Rq, i \nPu,  \Ot i_2, i \Oa j, i_2 \Oa j, i_2 \Os,  \\\\
+\Rq, i \nPu,  i \Oa j, \Ot i_2, i_2 \Oa j, i_2 \Os,  \\\\
+\Rq, Ins(i;j), \Ot i_2, i_2 \Oa j, i_2 \Os,  \\\\
+\Rq, Ins(i;j), j \nPu, \Ot i_2, i_2 \Oa j, i_2 \Os,  \\\\
+\Rq, Ins(i;j), Del(j),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+
+\[, j_1 \nPs j_2, i_1 \nPs j_2, Del(j_2), Ins(i_1;j_1), \Rq , j_1 \nPs j_2, i_1 \nPs j_2, Ins(i_1;j_1), Del(j_2),\]
+proof:\\
+\begin{math} 
+,  j_1 \nPs j_2, i_1 \nPs j_2, Del(j_2), Ins(i_1;j_1), \\\\
+\Rq, j_1 \nPs j_2, i_1 \nPs j_2, Del(j_2), i_1 \nPu, i_1 \Oa j_1,  \\\\
+\Rq, j_1 \nPs j_2, i_1 \nPs j_2, i_1 \nPu, Del(j_2), i_1 \Oa j_1,  \\\\
+\Rq, j_1 \nPs j_2, i_1 \nPs j_2, i_1 \nPu, j_2 \nPu, \Ot i_2, i_2 \Oa j_2, i_2 \Os, i_1 \Oa j_1,  \\\\
+\Rq, \Ot i_2, j_1 \nPs j_2, i_1 \nPs j_2, i_1 \nPu, j_2 \nPu, i_2 \Oa j_2, i_1 \Oa j_1, i_2 \Os,  \\\\
+\Rq, \Ot i_2, i_2 \Pu, j_1 \nPs j_2, i_1 \nPs j_2, i_1 \nPu, j_2 \nPu, i_2 \Oa j_2, i_1 \Oa j_1, i_2 \Os,  \\\\
+\Rq, \Ot i_2, i_2 \nPs j_1, i_2 \Pu, j_1 \nPs j_2, i_1 \nPs j_2, i_1 \nPu, j_2 \nPu, i_2 \Oa j_2, i_1 \Oa j_1, i_2 \Os,  \\\\
+\Rq, \Ot i_2, i_1 \nPu, i_2 \Pu, j_2 \nPu, j_1 \nPs j_2, i_1 \nPs j_2, i_2 \nPs j_1, i_2 \Oa j_2, i_1 \Oa j_1, i_2 \Os,  \\\\
+\Rq, \Ot i_2, i_1 \nPu, i_2 \Pu, j_2 \nPu, j_1 \nPs j_2, i_1 \nPs j_2, i_2 \nPs j_1, i_1 \Oa j_1, i_2 \Oa j_2, i_2 \Os,  \\\\
+\Rq, i_1 \nPs j_2, i_1 \nPu, j_1 \nPs j_2, j_2 \nPu, \Ot i_2, i_2 \Pu, i_2 \nPs j_1, i_1 \Oa j_1, i_2 \Oa j_2, i_2 \Os,  \\\\
+\Rq, i_1 \nPs j_2, i_1 \nPu, j_1 \nPs j_2, j_2 \nPu, \Ot i_2, i_2 \nPs j_1, i_1 \Oa j_1, i_2 \Oa j_2, i_2 \Os,  \\\\
+\Rq, i_1 \nPs j_2, i_1 \nPu, j_1 \nPs j_2, j_2 \nPu, \Ot i_2, i_1 \Oa j_1, i_2 \Oa j_2, i_2 \Os,  \\\\
+\Rq, i_1 \nPs j_2, i_1 \nPu, j_1 \nPs j_2, j_2 \nPu, i_1 \Oa j_1, \Ot i_2, i_2 \Oa j_2, i_2 \Os,  \\\\
+\Rq, i_1 \nPs j_2, i_1 \nPu, j_1 \nPs j_2, i_1 \Oa j_1, j_2 \nPu, \Ot i_2, i_2 \Oa j_2, i_2 \Os,  \\\\
+\Rq, i_1 \nPs j_2, i_1 \nPu, j_1 \nPs j_2, i_1 \Oa j_1, Del(j_2),  \\\\
+\Rq, j_1 \nPs j_2, i_1 \nPs j_2, i_1 \nPu, i_1 \Oa j_1, Del(j_2),  \\\\
+\Rq, j_1 \nPs j_2, i_1 \nPs j_2, Ins(i_1;j_1), Del(j_2),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+\subsection{Other}
+\[, i_1 \Pu, i_2 \Pu, , j_1 \nPu, j_2 \nPu, j_1 \Ps j_2, i_1 \Oa j_1, i_2 \Oa j_2, \Rq \]
+\[, i_1 \Pu, i_2 \Pu, , j_1 \nPu, j_2 \nPu, j_1 \Ps j_2, i_2 \Oa j_2, i_1 \Oa j_1,  \]
+
+
+\newpage
