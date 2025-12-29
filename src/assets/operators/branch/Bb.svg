@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="500" height="900" viewBox="0 0 500 900" xml:space="preserve">
+<svg width="500" height="900" xmlns="http://www.w3.org/2000/svg" text-rendering="geometricPrecision" shape-rendering="geometricPrecision">
+
+
+ <g>
+  <g>
+   <path id="svg_2" d="m154,45.29409l89,-0" opacity="undefined" stroke-width="10" stroke="#020202"/>
+   <path id="svg_3" d="m74,455.29409l89,-0" opacity="undefined" stroke-width="10" stroke="#020202"/>
+   <path id="svg_5" d="m154,865.29409l89,-0.0" opacity="undefined" stroke-width="10" stroke="#020202"/>
+   <path transform="rotate(90 159 454.647)" stroke="#020202" id="svg_6" d="m-255,454.79409l819.99999,-0.29409" opacity="undefined" stroke-width="10"/>
+  </g>
+ </g>
+ 
+
+  <g>
+  <g transform="rotate(180 159 454.647) translate(-200,-1)">
+    <path id="svg_2" d="m154,45.29409l89,-0" opacity="undefined" stroke-width="10" stroke="#020202"/>
+    <path id="svg_3" d="m74,455.29409l89,-0" opacity="undefined" stroke-width="10" stroke="#020202"/>
+    <path id="svg_5" d="m154,865.29409l89,-0.0" opacity="undefined" stroke-width="10" stroke="#020202"/>
+    <path transform="rotate(90 159 454.647)" stroke="#020202" id="svg_6" d="m-255,454.79409l819.99999,-0.29409" opacity="undefined" stroke-width="10"/>
+  </g>
+ </g>
+</svg>
+</svg>
