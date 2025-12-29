@@ -998,6 +998,691 @@ export const axioms: Rule[] = [
     section: 'Axioms of Relationships',
     subsection: 'Axioms of next node operator and propositions'
   },
+
+  // ============= RECURSIVE FUNCTIONS =============
+  // Definition of R(i)
+  {
+    id: 'def-R-i',
+    name: 'Recursive Function R(i)',
+    type: 'definition',
+    category: 'induction',
+    description: 'Definition of the recursive function R(i) that traverses to null',
+    leftSide: ',R(i),',
+    rightSide: ',\\Bb{if(i \\Pu)}{,}{, i \\On, R(i),},',
+    section: 'Recursive Functions',
+    subsection: 'Definition of R(i)'
+  },
+  {
+    id: 'thm-R-i-null',
+    name: 'R(i) on Null',
+    type: 'theorem',
+    category: 'induction',
+    description: 'R(i) simplifies when i is null',
+    leftSide: ', i \\Pu, R(i),',
+    rightSide: ', i \\Pu,',
+    section: 'Recursive Functions',
+    subsection: 'Theorems of R(i)'
+  },
+  {
+    id: 'thm-R-i-not-null',
+    name: 'R(i) on Non-Null',
+    type: 'theorem',
+    category: 'induction',
+    description: 'R(i) expands when i is not null',
+    leftSide: ', i \\nPu, R(i),',
+    rightSide: ', i \\nPu, i \\On, R(i),',
+    section: 'Recursive Functions',
+    subsection: 'Theorems of R(i)'
+  },
+  {
+    id: 'thm-R-i-result',
+    name: 'R(i) Result',
+    type: 'theorem',
+    category: 'induction',
+    description: 'R(i) terminates with null result',
+    leftSide: ', R(i),',
+    rightSide: ', R(i), i \\Pu,',
+    section: 'Recursive Functions',
+    subsection: 'Theorems of R(i)'
+  },
+  {
+    id: 'thm-R-i-release',
+    name: 'R(i) with Release',
+    type: 'theorem',
+    category: 'induction',
+    description: 'R(i) followed by release simplifies',
+    leftSide: ', R(i), i \\Os,',
+    rightSide: ', i \\Os,',
+    section: 'Recursive Functions',
+    subsection: 'Theorems of R(i)'
+  },
+
+  // Definition of Rc(i;j)
+  {
+    id: 'def-Rc-ij',
+    name: 'Recursive Function Rc(i;j)',
+    type: 'definition',
+    category: 'induction',
+    description: 'Definition of paired recursive function Rc(i;j)',
+    leftSide: ',Rc(i;j),',
+    rightSide: ',\\Bb{if(i \\Pu)}{,}{,\\Bb{if(j \\Pu)}{,}{, i \\On, j \\On, Rc(i;j),},},',
+    section: 'Recursive Functions',
+    subsection: 'Definition of Rc(i;j)'
+  },
+  {
+    id: 'thm-Rc-i-null',
+    name: 'Rc(i;j) when i is Null',
+    type: 'theorem',
+    category: 'induction',
+    description: 'Rc(i;j) simplifies when i is null',
+    leftSide: ', i \\Pu, Rc(i;j),',
+    rightSide: ', i \\Pu,',
+    section: 'Recursive Functions',
+    subsection: 'Theorems of Rc(i;j)'
+  },
+  {
+    id: 'thm-Rc-j-null',
+    name: 'Rc(i;j) when j is Null',
+    type: 'theorem',
+    category: 'induction',
+    description: 'Rc(i;j) simplifies when j is null',
+    leftSide: ', j \\Pu, Rc(i;j),',
+    rightSide: ', j \\Pu,',
+    section: 'Recursive Functions',
+    subsection: 'Theorems of Rc(i;j)'
+  },
+
+  // Tree Order Induction
+  {
+    id: 'def-tree-induction',
+    name: 'Tree Order Induction',
+    type: 'axiom',
+    category: 'induction',
+    description: 'Axiom of inference for tree order induction',
+    leftSide: 'premise: i \\Pu ⊢ P(i); \\In \\Pn i, P(i) ⊢ P(i)',
+    rightSide: 'conclusion: P(i)',
+    section: 'Tree Order Induction',
+    subsection: 'Axiom of Tree Order Induction'
+  },
+  {
+    id: 'thm-Pb-transitive',
+    name: 'Pb Transitivity',
+    type: 'theorem',
+    category: 'induction',
+    description: 'The before relationship is transitive',
+    leftSide: ', i \\Pb j, j \\Pb k,',
+    rightSide: ', i \\Pb j, j \\Pb k, i \\Pb k,',
+    section: 'Tree Order Induction',
+    subsection: 'Theorems of tree order'
+  },
+
+  // Next Order Induction
+  {
+    id: 'def-SHi-swap',
+    name: 'Flag Object SHi Swap',
+    type: 'definition',
+    category: 'induction',
+    description: 'Swap definition for flag object SHi with identical node',
+    leftSide: ',\\In \\Ps i, \\Ot m,',
+    rightSide: ', \\Ot m, \\In \\Ps i,',
+    section: 'Next Order Induction',
+    subsection: 'Definition of flag object SHi'
+  },
+  {
+    id: 'def-SHi-next',
+    name: 'Flag Object SHi with Next',
+    type: 'definition',
+    category: 'induction',
+    description: 'Definition of flag object SHi with next node',
+    leftSide: ', \\In \\Pn i,',
+    rightSide: ', i \\Oc i_0, i_0 \\Op, \\In \\Ps i_0, i_0 \\Os,',
+    section: 'Next Order Induction',
+    subsection: 'Definition of flag object SHi with next node'
+  },
+
+  // Rcpo and Rcpm
+  {
+    id: 'def-IsCpo',
+    name: 'IsCpo Condition',
+    type: 'definition',
+    category: 'induction',
+    description: 'Definition of IsCpo(i;r) condition',
+    leftSide: ',IsCpo(i;r),',
+    rightSide: ', i \\nPc r, r \\Pu,',
+    section: 'Recursive Functions',
+    subsection: 'Definition of IsCpo'
+  },
+  {
+    id: 'def-Rcpo',
+    name: 'Recursive Function Rcpo(i;r)',
+    type: 'definition',
+    category: 'induction',
+    description: 'Definition of copy operation recursive function',
+    leftSide: ', Rcpo(i;r),',
+    rightSide: ', \\Bb{if(i \\Pu)}{,}{, r \\Ob r_0, i \\Od t, t \\Oa r_0, r_0 \\Os, i \\On, Rcpo(i;r), },',
+    section: 'Recursive Functions',
+    subsection: 'Definition of Rcpo'
+  },
+  {
+    id: 'thm-Rcpo-null',
+    name: 'Rcpo on Null',
+    type: 'theorem',
+    category: 'induction',
+    description: 'Rcpo(i;r) simplifies when i is null',
+    leftSide: ', i \\Pu, Rcpo(i;r),',
+    rightSide: ', i \\Pu,',
+    section: 'Recursive Functions',
+    subsection: 'Theorems of Rcpo'
+  },
+
+  // Cpo Function
+  {
+    id: 'def-Cpo',
+    name: 'Function Cpo(r)',
+    type: 'definition',
+    category: 'induction',
+    description: 'Definition of the Cpo copy function',
+    leftSide: ', Cpo(r),',
+    rightSide: ', r \\Od m, m \\Oa r, m \\Os,',
+    section: 'Functions',
+    subsection: 'Definition of Cpo(r)'
+  },
+  {
+    id: 'thm-Cpo-property',
+    name: 'Cpo Property',
+    type: 'theorem',
+    category: 'induction',
+    description: 'Cpo(r) implies r is not null',
+    leftSide: ', Cpo(r),',
+    rightSide: '~, r \\nPu,',
+    section: 'Functions',
+    subsection: 'Property of Cpo'
+  },
+
+  // ============= ARITHMETIC OPERATIONS =============
+  // Addition
+  {
+    id: 'thm-add-swap-copy',
+    name: 'Addition Swap with Copy',
+    type: 'theorem',
+    category: 'arithmetic',
+    description: 'Addition operation swaps with copy operator',
+    leftSide: ', i+j:r, m \\Oc n,',
+    rightSide: ', m \\Oc n, i+j:r,',
+    section: 'Addition',
+    subsection: 'Swap'
+  },
+  {
+    id: 'thm-add-swap-id',
+    name: 'Addition Swap with ID',
+    type: 'theorem',
+    category: 'arithmetic',
+    description: 'Addition operation swaps with ID operator',
+    leftSide: ', i+j:r, m \\Od n,',
+    rightSide: ', m \\Od n, i+j:r,',
+    section: 'Addition',
+    subsection: 'Swap'
+  },
+  {
+    id: 'thm-add-swap-release',
+    name: 'Addition Swap with Release',
+    type: 'theorem',
+    category: 'arithmetic',
+    description: 'Addition operation swaps with release operator',
+    leftSide: ', i+j:r, m \\Os,',
+    rightSide: ', m \\Os, i+j:r,',
+    section: 'Addition',
+    subsection: 'Swap'
+  },
+  {
+    id: 'thm-add-swap-prop',
+    name: 'Addition Swap with Proposition',
+    type: 'theorem',
+    category: 'arithmetic',
+    description: 'Addition operation swaps with value proposition',
+    leftSide: ', i+j:r, m \\Pe n,',
+    rightSide: ', m \\Pe n, i+j:r,',
+    section: 'Addition',
+    subsection: 'Swap'
+  },
+  {
+    id: 'thm-add-general',
+    name: 'Addition General Property',
+    type: 'theorem',
+    category: 'arithmetic',
+    description: 'Addition can always be performed with release',
+    leftSide: ',',
+    rightSide: ', i+j:r, r \\Os,',
+    section: 'Addition',
+    subsection: 'General property'
+  },
+
+  // Multiplication
+  {
+    id: 'def-mult',
+    name: 'Multiplication Definition',
+    type: 'definition',
+    category: 'arithmetic',
+    description: 'Definition of multiplication operation',
+    leftSide: ', i × j:r,',
+    rightSide: ', \\Ot r, r \\Oc r_0, i \\Oc i_0, Rcpm(i_0;j;r_0), i_0 \\Os, r_0 \\Os,',
+    section: 'Multiplication',
+    subsection: 'Definition'
+  },
+  {
+    id: 'thm-mult-swap-copy',
+    name: 'Multiplication Swap with Copy',
+    type: 'theorem',
+    category: 'arithmetic',
+    description: 'Multiplication operation swaps with copy operator',
+    leftSide: ', i × j:r, m \\Oc n,',
+    rightSide: ', m \\Oc n, i × j:r,',
+    section: 'Multiplication',
+    subsection: 'Swap'
+  },
+  {
+    id: 'thm-mult-swap-release',
+    name: 'Multiplication Swap with Release',
+    type: 'theorem',
+    category: 'arithmetic',
+    description: 'Multiplication operation swaps with release operator',
+    leftSide: ', i × j:r, m \\Os,',
+    rightSide: ', m \\Os, i × j:r,',
+    section: 'Multiplication',
+    subsection: 'Swap'
+  },
+  {
+    id: 'thm-mult-swap-prop',
+    name: 'Multiplication Swap with Proposition',
+    type: 'theorem',
+    category: 'arithmetic',
+    description: 'Multiplication operation swaps with propositions',
+    leftSide: ', i × j:r, m \\Pe n,',
+    rightSide: ', m \\Pe n, i × j:r,',
+    section: 'Multiplication',
+    subsection: 'Swap'
+  },
+
+  // ============= DELETE AND INSERT FUNCTIONS =============
+  // Del(j) Definition
+  {
+    id: 'def-Del',
+    name: 'Delete Function Del(j)',
+    type: 'definition',
+    category: 'operators',
+    description: 'Definition of the delete node function',
+    leftSide: ',Del(j),',
+    rightSide: ', j \\nPu, \\Ot t, t \\Oa j, t \\Os,',
+    section: 'Axioms of Assign Operator',
+    subsection: 'Definition of Del(j)'
+  },
+  {
+    id: 'thm-Del-swap-id',
+    name: 'Del Swap with ID',
+    type: 'theorem',
+    category: 'operators',
+    description: 'Delete function swaps with ID operator when nodes differ',
+    leftSide: ', m \\nPs j, m \\Od n, Del(j),',
+    rightSide: ', m \\nPs j, Del(j), m \\Od n,',
+    section: 'Delete Node Function',
+    subsection: 'Swap'
+  },
+  {
+    id: 'thm-Del-swap-global',
+    name: 'Del Swap with Global',
+    type: 'theorem',
+    category: 'operators',
+    description: 'Delete function swaps with global space operator',
+    leftSide: ', \\Og g, Del(j),',
+    rightSide: ', Del(j), \\Og g,',
+    section: 'Delete Node Function',
+    subsection: 'Swap'
+  },
+
+  // Ins(t;j) Definition
+  {
+    id: 'def-Ins',
+    name: 'Insert Function Ins(t;j)',
+    type: 'definition',
+    category: 'operators',
+    description: 'Definition of the insert node function',
+    leftSide: ',Ins(t;j),',
+    rightSide: ', t \\nPu, t \\Oa j,',
+    section: 'Axioms of Assign Operator',
+    subsection: 'Definition of Ins(t;j)'
+  },
+  {
+    id: 'thm-Ins-property',
+    name: 'Ins Implies Value Equality',
+    type: 'theorem',
+    category: 'operators',
+    description: 'Insert function implies value equality',
+    leftSide: ', Ins(t;j),',
+    rightSide: '~, t \\Pe j,',
+    section: 'Insert Node Function',
+    subsection: 'Property'
+  },
+
+  // ============= PARADOX AND LOGIC =============
+  {
+    id: 'thm-contradiction',
+    name: 'Contradiction Rule',
+    type: 'theorem',
+    category: 'logic',
+    description: 'Error implies any code',
+    leftSide: ', \\Or , \\Ri , \\Tc c_1,',
+    rightSide: ', \\Tc c_2,',
+    section: 'Paradox',
+    subsection: 'Theorems of contradiction'
+  },
+  {
+    id: 'thm-value-contradiction',
+    name: 'Value Contradiction',
+    type: 'theorem',
+    category: 'logic',
+    description: 'Contradictory value comparison implies error',
+    leftSide: ', i \\Pe j, i \\nPe j,',
+    rightSide: ', \\Or,',
+    section: 'Paradox',
+    subsection: 'Theorems of contradiction'
+  },
+  {
+    id: 'thm-null-contradiction',
+    name: 'Null Contradiction',
+    type: 'theorem',
+    category: 'logic',
+    description: 'Contradictory null comparison implies error',
+    leftSide: ', i \\Pu, i \\nPu,',
+    rightSide: ', \\Or,',
+    section: 'Paradox',
+    subsection: 'Theorems of contradiction'
+  },
+  {
+    id: 'thm-identical-contradiction',
+    name: 'Identical Contradiction',
+    type: 'theorem',
+    category: 'logic',
+    description: 'Contradictory identical comparison implies error',
+    leftSide: ', i \\Ps j, i \\nPs j,',
+    rightSide: ', \\Or,',
+    section: 'Paradox',
+    subsection: 'Theorems of contradiction'
+  },
+
+  // ============= NODE CONNECTIVITY =============
+  {
+    id: 'def-Pc',
+    name: 'Node Connectivity Definition',
+    type: 'definition',
+    category: 'relationships',
+    description: 'Definition of node connectivity relation Pc',
+    leftSide: ', \\Blb{i \\Pc j}{,}{,}',
+    rightSide: ',i \\Oc i_0, Rcpo(i_0;j), i_0 \\Os, \\Blb{i \\Ps j}{,}{,}',
+    section: 'Node Connectivity',
+    subsection: 'Definition'
+  },
+  {
+    id: 'thm-Pc-reflexive',
+    name: 'Pc Reflexivity',
+    type: 'theorem',
+    category: 'relationships',
+    description: 'Node connectivity is reflexive',
+    leftSide: ', i \\nPu,',
+    rightSide: ', i \\nPu, i \\Pc i,',
+    section: 'Node Connectivity',
+    subsection: 'Theorems'
+  },
+  {
+    id: 'thm-Pc-transitive',
+    name: 'Pc Transitivity',
+    type: 'theorem',
+    category: 'relationships',
+    description: 'Node connectivity is transitive',
+    leftSide: ', i \\Pc j, j \\Pc k,',
+    rightSide: ', i \\Pc j, j \\Pc k, i \\Pc k,',
+    section: 'Node Connectivity',
+    subsection: 'Theorems'
+  },
+
+  // ============= NODE CONTINUITY =============
+  {
+    id: 'def-Pn',
+    name: 'Node Continuity Definition',
+    type: 'definition',
+    category: 'relationships',
+    description: 'Definition of next node relation Pn',
+    leftSide: ', \\Blb{i \\Pn j}{,}{,}',
+    rightSide: ', i \\On, \\Blb{i \\Ps j}{,}{,}',
+    section: 'Node Continuity',
+    subsection: 'Definition'
+  },
+  {
+    id: 'thm-Pn-unique',
+    name: 'Next Node Uniqueness',
+    type: 'theorem',
+    category: 'relationships',
+    description: 'Next node is unique',
+    leftSide: ', i \\Pn j, i \\Pn k,',
+    rightSide: ', i \\Pn j, i \\Pn k, j \\Ps k,',
+    section: 'Node Continuity',
+    subsection: 'Theorems'
+  },
+
+  // ============= SUBNODE RELATIONSHIP =============
+  {
+    id: 'thm-subnode-transitive',
+    name: 'Subnode Transitivity',
+    type: 'theorem',
+    category: 'relationships',
+    description: 'Subnode relationship with connectivity implies connectivity',
+    leftSide: ', i \\Ob j, j \\Pc k,',
+    rightSide: ', i \\Ob j, j \\Pc k, i \\Pc k,',
+    section: 'Relationship of Subnode',
+    subsection: 'Theorems'
+  },
+
+  // ============= NUMBER COMPARISONS =============
+  {
+    id: 'thm-Pe-reflexive',
+    name: 'Value Equality Reflexivity',
+    type: 'theorem',
+    category: 'relationships',
+    description: 'Value equality is reflexive',
+    leftSide: ', i \\nPu,',
+    rightSide: ', i \\nPu, i \\Pe i,',
+    section: 'Number Equal Relationship',
+    subsection: 'Theorems'
+  },
+  {
+    id: 'thm-Pe-symmetric',
+    name: 'Value Equality Symmetry',
+    type: 'theorem',
+    category: 'relationships',
+    description: 'Value equality is symmetric',
+    leftSide: ', i \\Pe j,',
+    rightSide: ', j \\Pe i,',
+    section: 'Number Equal Relationship',
+    subsection: 'Theorems'
+  },
+  {
+    id: 'thm-Pe-transitive',
+    name: 'Value Equality Transitivity',
+    type: 'theorem',
+    category: 'relationships',
+    description: 'Value equality is transitive',
+    leftSide: ', i \\Pe j, j \\Pe k,',
+    rightSide: ', i \\Pe j, j \\Pe k, i \\Pe k,',
+    section: 'Number Equal Relationship',
+    subsection: 'Theorems'
+  },
+
+  // More/Less Than
+  {
+    id: 'def-Pne',
+    name: 'More Than Definition',
+    type: 'definition',
+    category: 'arithmetic',
+    description: 'Definition of more than relationship',
+    leftSide: ', \\Blb{i \\Pne j}{,}{,}',
+    rightSide: ', j \\Oc j_0, Rcpo(j_0;i), j_0 \\Os, \\Blb{i \\nPs j}{,}{,}',
+    section: 'Number More Less Than',
+    subsection: 'Definition'
+  },
+  {
+    id: 'def-Pnm',
+    name: 'Less Than Definition',
+    type: 'definition',
+    category: 'arithmetic',
+    description: 'Definition of less than relationship',
+    leftSide: ', \\Blb{i \\Pnm j}{,}{,}',
+    rightSide: ', i \\Oc i_0, Rcpo(i_0;j), i_0 \\Os, \\Blb{i \\nPs j}{,}{,}',
+    section: 'Number More Less Than',
+    subsection: 'Definition'
+  },
+  {
+    id: 'thm-Pne-Pnm-opposite',
+    name: 'More/Less Opposite',
+    type: 'theorem',
+    category: 'arithmetic',
+    description: 'More than and less than are opposite relationships',
+    leftSide: ', i \\Pne j,',
+    rightSide: ', j \\Pnm i,',
+    section: 'Number More Less Than',
+    subsection: 'Theorems'
+  },
+
+  // ============= IDENTICAL NODE COMPARISON THEOREMS =============
+  {
+    id: 'thm-Ps-reflexive',
+    name: 'Identical Node Reflexivity',
+    type: 'theorem',
+    category: 'propositions',
+    description: 'Identical node comparison is reflexive',
+    leftSide: ', i \\nPu,',
+    rightSide: ', i \\nPu, i \\Ps i,',
+    section: 'Identical Node Comparison',
+    subsection: 'Unity'
+  },
+  {
+    id: 'thm-Ps-symmetric',
+    name: 'Identical Node Symmetry',
+    type: 'theorem',
+    category: 'propositions',
+    description: 'Identical node comparison is symmetric',
+    leftSide: ', i \\Ps j,',
+    rightSide: ', j \\Ps i,',
+    section: 'Identical Node Comparison',
+    subsection: 'Symmetry'
+  },
+  {
+    id: 'thm-Ps-transitive',
+    name: 'Identical Node Transitivity',
+    type: 'theorem',
+    category: 'propositions',
+    description: 'Identical node comparison is transitive',
+    leftSide: ', i \\Ps j, j \\Ps k,',
+    rightSide: ', i \\Ps j, j \\Ps k, i \\Ps k,',
+    section: 'Identical Node Comparison',
+    subsection: 'Transitivity'
+  },
+
+  // ============= NULL COMPARISON THEOREMS =============
+  {
+    id: 'thm-Pu-branch-prop',
+    name: 'Null Branch to Proposition',
+    type: 'theorem',
+    category: 'propositions',
+    description: 'Convert null branch function to proposition',
+    leftSide: ', \\Bb{if(m \\Pu)}{, m \\Pu,}{,},',
+    rightSide: ', \\Bb{if(m \\Pu)}{,}{,},',
+    section: 'Node Null Comparison',
+    subsection: 'Branch function to propositions'
+  },
+  {
+    id: 'thm-nPu-branch-prop',
+    name: 'Not Null Branch to Proposition',
+    type: 'theorem',
+    category: 'propositions',
+    description: 'Convert not null branch function to proposition',
+    leftSide: ', \\Bb{if(m \\Pu)}{,}{, m \\nPu,},',
+    rightSide: ', \\Bb{if(m \\Pu)}{,}{,},',
+    section: 'Node Null Comparison',
+    subsection: 'Branch function to propositions'
+  },
+
+  // ============= EMPTY BRANCH FUNCTION =============
+  {
+    id: 'thm-empty-branch-value',
+    name: 'Empty Branch Value',
+    type: 'theorem',
+    category: 'logic',
+    description: 'Empty branch with value comparison',
+    leftSide: ', \\Bs{i \\Oe j}{,}{,},',
+    rightSide: ', \\Bb{if(i \\Pe j)}{,}{,},',
+    section: 'Empty Branch Function',
+    subsection: 'Theorems'
+  },
+  {
+    id: 'thm-empty-branch-null',
+    name: 'Empty Branch Null',
+    type: 'theorem',
+    category: 'logic',
+    description: 'Empty branch with null comparison',
+    leftSide: ', \\Bs{i \\Pu}{,}{,},',
+    rightSide: ', \\Bb{if(i \\Pu)}{,}{,},',
+    section: 'Empty Branch Function',
+    subsection: 'Theorems'
+  },
+
+  // ============= NODE RING =============
+  {
+    id: 'def-node-ring',
+    name: 'Node Ring Definition',
+    type: 'definition',
+    category: 'relationships',
+    description: 'Definition of node ring structure',
+    leftSide: ', i \\Pn j, j \\Pc i,',
+    rightSide: ', i is part of ring,',
+    section: 'Node Ring',
+    subsection: 'Definition'
+  },
+
+  // ============= ASSIGN OPERATOR TEMP SPACE =============
+  {
+    id: 'thm-assign-temp-swap',
+    name: 'Assign Temp Swap',
+    type: 'theorem',
+    category: 'operators',
+    description: 'Assign operator swaps with temp space operator',
+    leftSide: ', \\Ot g, t \\Oa j,',
+    rightSide: ', t \\Oa j, \\Ot g,',
+    section: 'Assign Operator Temp Space',
+    subsection: 'Swap'
+  },
+
+  // ============= SWAP THEOREMS OF SAME OPERAND =============
+  {
+    id: 'thm-same-operand-id-copy',
+    name: 'Same Operand ID-Copy Swap',
+    type: 'theorem',
+    category: 'operators',
+    description: 'ID and Copy operators on same operand can swap',
+    leftSide: ', i \\Od m, i \\Oc n,',
+    rightSide: ', i \\Oc n, i \\Od m,',
+    section: 'Swap Theorems Same Operand',
+    subsection: 'Operators'
+  },
+  {
+    id: 'thm-same-operand-id-subnode',
+    name: 'Same Operand ID-Subnode Swap',
+    type: 'theorem',
+    category: 'operators',
+    description: 'ID and Subnode operators on same operand can swap',
+    leftSide: ', i \\Od m, i \\Ob n,',
+    rightSide: ', i \\Ob n, i \\Od m,',
+    section: 'Swap Theorems Same Operand',
+    subsection: 'Operators'
+  },
 ];
 
 export const categories: { id: RuleCategory; name: string; description: string }[] = [
