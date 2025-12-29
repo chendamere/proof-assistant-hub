@@ -185,12 +185,17 @@ interface SvgOperatorProps {
   operandAfter?: string;
 }
 
-const SvgOperator: React.FC<SvgOperatorProps> = ({ src, label, description, size = 32, operandBefore, operandAfter }) => (
-  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
-    <div className="flex items-center gap-1 font-mono">
-      {operandBefore && <span className="text-foreground text-sm">{operandBefore}</span>}
-      <img src={src} alt={label} style={{ width: size, height: size }} className="inline-block" />
-      {operandAfter && <span className="text-foreground text-sm">{operandAfter}</span>}
+const SvgOperator: React.FC<SvgOperatorProps> = ({ src, label, description, size = 24, operandBefore, operandAfter }) => (
+  <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+    <div className="flex items-center gap-0.5 font-mono">
+      {operandBefore && <span className="text-foreground text-xs">{operandBefore}</span>}
+      <img 
+        src={src} 
+        alt={label} 
+        style={{ width: size, height: size }} 
+        className="inline-block opacity-80 invert brightness-[0.85] sepia saturate-[3] hue-rotate-[10deg]" 
+      />
+      {operandAfter && <span className="text-foreground text-xs">{operandAfter}</span>}
     </div>
     <div className="flex flex-col">
       <span className="text-sm font-medium text-foreground">{label}</span>
