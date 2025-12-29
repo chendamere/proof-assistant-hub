@@ -1,0 +1,240 @@
+\chapter{Axioms of assign operator}
+
+\section{General axioms}
+\subsection{Substitution}
+\[,t \Pe j, t \Oa j, \Rq , t \Pe j, j \Oa j,\]
+
+\[, t_1 \Pe t_2, t_1 \Oa j, \Rq , t_1 \Pe t_2, t_2 \Oa j, \]
+
+\[, j_1 \Ps j_2, t \Oa j_1, \Rq , j_1 \Ps j_2, t \Oa j_2, \]
+
+
+\bigskip
+\bigskip
+\subsection{Unity}
+\[, i \Pu, \Rq , i \Pu, i \Oa i, \]
+
+
+
+\bigskip
+\bigskip
+\subsection{Swap}
+\[, g \Os, t \Oa j, \Rq , t \Oa j, g \Os, \]
+\[, g \Os, j \Oa j, \Rq , j \Oa j, g \Os, \]
+
+\[, \Ot g, t \Oa j, \Rq , t \Oa j, \Ot g, \]
+
+\[, m \Oc n, t \Oa j, \Rq , t \Oa j, m \Oc n, \]
+
+\[, m \nPs j, n \nPs j, \Blb{m \Oe n}{, t \Oa j, }{, t \Oa j,} \Rq , m \nPs j, n \nPs j, t \Oa j, \Blb{m \Oe n}{,}{,} \]
+
+
+
+
+
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\section{Definition of Del(j)}
+\[,Del(j), \Rq , j \nPu, \Ot t, t \Oa j, t \Os, \]
+
+
+
+
+
+
+
+\bigskip
+\bigskip
+\section{Axioms of Del(j)}
+\subsection{Mutation}
+\[, m \Ps j, m \On, Del(j), \Rq , m \Ps j, Del(j), \]
+
+
+
+\bigskip
+\bigskip
+\subsection{Swap}
+
+\subsubsection{Id operator}
+\[, m \nPs j, m \Od n, Del(j), \Rq , m \nPs j, Del(j), m \Od n, \]
+
+
+\subsubsection{Next Node operator}
+\[, m \nPs j, m \On, Del(j), \Rq , m \nPs j, Del(j), m \On, \]
+
+\subsubsection{Global space operator}
+\[, \Og g, Del(j), \Rq , Del(j), \Og g, \]
+
+\subsubsection{Subnode operator}
+\[, m \nPs j, m \Ob n, Del(j), \Rq , m \nPs j, Del(j), m \Ob n, \]
+
+
+
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\section{Definition of Ins(t;j)}
+\[,Ins(t;j), \Rq , t \nPu, t \Oa j,  \]
+
+
+
+
+
+
+
+\bigskip
+\bigskip
+\section{Axioms of Ins(t;j)}
+\subsection{Mutation}
+\[, Ins(t;j),  \Rq \sim, t \Pe j,\]
+
+\[, Ins(t;j), j \Ob n, \Rq \sim, n \nPs i, n \Pn n, \]
+
+
+
+\bigskip
+\bigskip
+\subsection{Swap}
+
+\subsubsection{Id operator}
+\[, j \Od n, Ins(t;j), \Rq , Ins(t;j), j \Oc j_0, j_0 \On,  j_0 \Od n, j_0 \Os, \]
+
+\[, m \nPs j, m \Od n, Ins(t;j), \Rq , m \nPs j, Ins(t;j), m \Od n, \]
+
+
+\subsubsection{Next Node operator}
+\[, m \nPs j, m \On, Ins(t;j), \Rq , m \nPs j, Ins(t;j), m \On, \]
+
+\[, m \Ps j, m \On, Ins(t;j), \Rq , m \Ps j, Ins(t;j), m \On, m \On, \]
+
+\subsubsection{Global space operator}
+\[, \Og g, g \nPs j, Ins(t;j), \Rq , Ins(t;j), \Og g, j \nPn g,  \]
+
+\[, \Og g, g \Ps j, Ins(t;j), \Rq , Ins(t;j), \Og g, g \Op, g \Ps j,  \]
+
+\subsubsection{Subnode operator}
+\[, j \nPu, j \Ob n, Ins(t;j), \Rq , j \nPu, Ins(t;j), j \Oc j_0, j_0 \On, j_0 \Ob n, j_0 \Os, \]
+
+\[, m \nPs j, m \Ob n, n \nPs j, Ins(t;j), \Rq , m \nPs j, Ins(t;j), m \Ob n, j \nPn n,  \]
+
+\[, m \nPs j, m \Ob n, n \Ps j, Ins(t;j), \Rq , m \nPs j, Ins(t;j), m \Ob n, n \Op, n \Ps j, \]
+
+
+
+\subsubsection{Node value}
+\[, m \nPs j, j \Pe m, Ins(t;j), \Rq , m \nPs j, Ins(t;j), j \Oc j_0, j_0 \On, j_0 \Pe m, j_0 \Os, \]
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\section{Swap definition of SHi}
+\subsection{Ins(t;j)}
+\[, i \nPc j, \In \Ps i, Ins(t;j), \Rq , i \nPc j, Ins(t;j), \In \Ps i, \]
+
+\[, i \Pc j, j \Pnm i, \In \Ps i, Ins(t;j), \Rq , i \Pc j, j \Pnm i, Ins(t;j), \In \Ps i,\]
+
+\[, i \Ps j, \In \Ps i, Ins(t;j), \Rq , i \Ps j, Ins(t;j), \In \Pp i,\]
+
+\[, i \Pc j, j \Pnl i, \In \Ps i, Ins(t;j), \Rq , i \Pc j, j \Pnl i, Ins(t;j), \In \Pp i,\]
+
+\bigskip
+\bigskip
+\subsection{Del(j)}
+\[, i \nPc j, \In \Ps i, Del(j), \Rq , i \nPc j, Del(j), \In \Ps i, \]
+
+\[, i \Pc j, j \Pnm i, \In \Ps i, Del(j), \Rq , i \Pc j, j \Pnm i, Del(j), \In \Ps i,\]
+
+\[, i \Ps j, \In \Ps i, Del(j), \Rq , i \Ps j, Del(j), \In \Pn i,\]
+
+\[, i \Pc j, j \Pnl i, \In \Ps i, Del(j), \Rq , i \Pc j, j \Pnl i, Del(j), \In \Pn i,\]
+
+
+
+
+\bigskip
+\bigskip
+\section{Swap definition of SHj}
+\subsection{Ins(t;j)}
+\[, i \nPc j, \Ip \Ps i, Ins(t;j), \Rq , i \nPc j, Ins(t;j), \Ip \Ps i, \]
+
+\[, i \Pc j, j \Pnl i, \Ip \Ps i, Ins(t;j), \Rq , i \Pc j, j \Pnl i, Ins(t;j), \Ip \Ps i,\]
+
+\[, i \Ps j, \Ip \Ps i, Ins(t;j), \Rq , i \Ps j, Ins(t;j), \Ip \Ps i,\]
+
+\[, i \Pc j, j \Pnm i, \Ip \Ps i, Ins(t;j), \Rq , i \Pc j, j \Pnm i, Ins(t;j), \Ip \Pn i,\]
+
+\bigskip
+\bigskip
+\subsection{Del(j)}
+\[, i \nPc j, \Ip \Ps i, Del(j), \Rq , i \nPc j, Del(j), \Ip \Ps i, \]
+
+\[, i \Pc j, j \Pnl i, \Ip \Ps i, Del(j), \Rq , i \Pc j, j \Pnl i, Del(j), \Ip \Ps i,\]
+
+\[, i \Ps j, \Ip \Ps i, Del(j), \Rq , i \Ps j, Del(j), \Ip \Ps i,\]
+
+\[, i \Pc j, j \Pnm i, \Ip \Ps i, Del(j), \Rq , i \Pc j, j \Pnm i, Del(j), \Ip \Pp i,\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\section{Axioms of swap with self}
+\bigskip
+\subsection{Ins;Ins}
+\begin{math} 
+i_1 \nPu, i_2 \nPu:\\
+i_1 \Pe i_2:\\\\
+, i_1 \nPu, i_2 \nPu, i_1 \Pe i_2, i_1 \Oa j_1, i_2 \Oa j_2, \Rq \\\\
+, i_1 \nPu, i_2 \nPu, i_1 \Pe i_2, i_2 \Oa j_2, i_1 \Oa j_1,\\\\\\
+i_1 \nPe i_2:\\\\
+, i_1 \nPu, i_2 \nPu, i_1 \nPe i_2, j_1 \nPs j_2, i_1 \nPs j_2, i_2 \nPs j_1, i_1 \Oa j_1, i_2 \Oa j_2,\Rq \\\\
+, i_1 \nPu, i_2 \nPu, i_1 \nPe i_2, j_1 \nPs j_2, i_1 \nPs j_2, i_2 \nPs j_1, i_2 \Oa j_2, i_1 \Oa j_1, 
+\end{math}
+
+
+
+\bigskip
+\bigskip
+\subsection{Del;Del}
+\begin{math} 
+i_1 \Pu, i_2 \Pu:\\\\
+, i_1 \Pu, i_2 \Pu, j_1 \nPu, j_2 \nPu, j_1 \nPs j_2, i_1 \Oa j_1, i_2 \Oa j_2,\Rq  \\\\
+, i_1 \Pu, i_2 \Pu, j_1 \nPu, j_2 \nPu, j_1 \nPs j_2, i_2 \Oa j_2, i_1 \Oa j_1, 
+\end{math}
+
+
+
+
+\bigskip
+\bigskip
+\subsection{Ins;Del}
+\begin{math} 
+ i_1 \nPu, i_2 \Pu:\\\\
+j_1 \Ps j_2:\\
+, i_1 \nPu, i_2 \Pu, j_1 \Ps j_2, i_2 \nPs j_1, \Rq\\\\
+, i_1 \nPu, i_2 \Pu, j_1 \Ps j_2, i_2 \nPs j_1,  i_1 \Oa j_1,i_2 \Oa j_2, \\\\\\
+j_1 \nPs j_2:\\
+, i_1 \nPu, i_2 \Pu, j_2 \nPu, j_1 \nPs j_2, i_1 \nPs j_2, i_2 \nPs j_1, i_1 \Oa j_1, i_2 \Oa j_2,\Rq  \\\\
+, i_1 \nPu, i_2 \Pu, j_2 \nPu, j_1 \nPs j_2, i_1 \nPs j_2, i_2 \nPs j_1, i_2 \Oa j_2, i_1 \Oa j_1, 
+\end{math}
+
+
+
+\newpage
