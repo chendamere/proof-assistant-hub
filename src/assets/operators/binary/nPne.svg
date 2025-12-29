@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="300" height="300" viewBox="0 0 300 300" xml:space="preserve">
+
+<g transform="translate(-52,0)">
+
+<g transform="matrix(1 0 0 1 150 150)" id="2080fdcd-82a3-461c-8b2b-b9316fc02548"  >
+<rect style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1; visibility: hidden;" vector-effect="non-scaling-stroke"  x="-150" y="-150" rx="0" ry="0" width="300" height="300" />
+</g>
+<g transform="matrix(1.39 0 0 1.57 150 150)" style="" id="88116627-9f1b-45a2-aacb-e02c37e63ab9"  >
+		<text xml:space="preserve" font-family="Lato" font-size="200" font-style="normal" font-weight="400" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1; white-space: pre;" ><tspan x="-92.3" y="62.83" >!</tspan></text>
+</g>
+</g>
+
+<g transform="translate(18,0) ">
+
+<line x1="-82.285411" y1="0" x2="82.285411" y2="0" transform="translate(150 122.06536)" fill="none" stroke="#000" stroke-width="10" stroke-linecap="round"/><line x1="-82.285411" y1="0" x2="82.285411" y2="0" transform="translate(150 178.688644)" fill="none" stroke="#000" stroke-width="10" stroke-linecap="round"/><line x1="-82.285411" y1="0" x2="82.285411" y2="0" transform="matrix(0 0.348648 1 0 150 150)" fill="none" stroke="#000" stroke-width="10" stroke-linecap="round"/>
+
+</g>
+</svg>

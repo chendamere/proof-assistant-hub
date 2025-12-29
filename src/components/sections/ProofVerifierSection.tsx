@@ -128,12 +128,7 @@ const ProofVerifierSection: React.FC = () => {
     setResult(null);
   };
 
-  const exampleRules = [
-    { left: ', i = i,', right: ',' },
-    { left: ', i = j,', right: ', j = i,' },
-    { left: 'A ⟺ B', right: 'B ⟺ A' },
-    { left: ', ⊙i, i⊕,', right: ',' },
-  ];
+  const exampleRules: { left: string; right: string }[] = [];
 
   return (
     <section id="verifier" className="py-20 px-6">
