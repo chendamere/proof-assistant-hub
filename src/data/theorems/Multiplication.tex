@@ -1,0 +1,537 @@
+\chapter{Multiplication}
+
+\bigskip
+\bigskip
+\section{Definition}
+\[, i \times j:r, \Rq , \Ot r, r \Oc r_0, i \Oc i_0, Rcpm(i_0;j;r_0), i_0 \Os, r_0 \Os, \]
+
+
+
+\bigskip
+\bigskip
+\section{Swap}
+\subsection{Operator}
+\[, i \times j:r, m \Oc n, \Rq , m \Oc n, i \times j:r,\]
+
+\[, i \times j:r, m \Ob n, \Rq , m \Ob n, i \times j:r,\]
+
+\[, i \times j:r, m \Od n, \Rq , m \Od n, i \times j:r,\]
+
+\[, i \times j:r, \Ot m, \Rq , \Ot m, i \times j:r,\]
+
+\[, i \times j:r, \Og m, \Rq , \Og m, i \times j:r,\]
+
+\[, i \times j:r, m \Os, \Rq , m \Os, i \times j:r,\]
+
+\[, i \times j:r, m \On, \Rq , m \On, i \times j:r,\]
+
+\[, i \times j:r, m \Op, \Rq , m \Op, i \times j:r,\]
+
+\[, i \times j:r, \Bls{m \Oe n}{,}{,} \Rq , \Bls{m \Oe n}{, i \times j:r,}{, i \times j:r,}\]
+
+
+\bigskip
+\bigskip
+\subsection{Recursive Function}
+\[, i \times j:r, R(m), \Rq , R(m), i \times j:r,\]
+
+\[, i \times j:r, Rc(m;n), \Rq , Rc(m;n), i \times j:r,\]
+
+
+
+\bigskip
+\bigskip
+\subsection{Propositions}
+\[, i \times j:r, m \Pe n, \Rq , m \Pe n, i \times j:r,\]
+
+\[, i \times j:r, m \Pu, \Rq , m \Pu, i \times j:r,\]
+
+\[, i \times j:r, m \Ps n, \Rq , m \Ps n, i \times j:r,\]
+
+\[, i \times j:r, m \Pc n, \Rq , m \Pc n, i \times j:r,\]
+
+\[, i \times j:r, m \Pn n, \Rq , m \Pn n, i \times j:r,\]
+
+\[, i \times j:r, m \Pb n, \Rq , m \Pb n, i \times j:r,\]
+
+\[, i \times j:r, m \Pne n, \Rq , m \Pne n, i \times j:r,\]
+
+\[, i \times j:r, m \Pnm n, \Rq , m \Pnm n, i \times j:r,\]
+
+
+\[, i \times j:r, m \nPe n, \Rq , m \nPe n, i \times j:r,\]
+
+\[, i \times j:r, m \nPu, \Rq , m \nPu, i \times j:r,\]
+
+\[, i \times j:r, m \nPs n, \Rq , m \nPs n, i \times j:r,\]
+
+\[, i \times j:r, m \nPc n, \Rq , m \nPc n, i \times j:r,\]
+
+\[, i \times j:r, m \nPn n, \Rq , m \nPn n, i \times j:r,\]
+
+\[, i \times j:r, m \nPb n, \Rq , m \nPb n, i \times j:r,\]
+
+\[, i \times j:r, m \nPne n, \Rq , m \nPne n, i \times j:r,\]
+
+\[, i \times j:r, m \nPnm n, \Rq , m \nPnm n, i \times j:r,\]
+
+
+
+\bigskip
+\bigskip
+\subsection{Itself}
+\[, i_1 \times j:r_1, i_2 \times j:r_2, \Rq , i_2 \times j:r_2, i_1 \times j:r_1,\]
+
+\[, i_1 \times j_1:r_1, i_2 \times j_2:r_2, \Rq , i_2 \times j_2:r_2, i_1 \times j_1:r_1,\]
+
+
+\[, i_1 \times j:r_1, i_2 + j:r_2, \Rq , i_2 + j:r_2, i_1 \times j:r_1,\]
+
+\[, i_1 \times j_1:r_1, i_2 + j_2:r_2, \Rq , i_2 + j_2:r_2, i_1 \times j_1:r_1,\]
+
+\[, i \times j:r_1, i + j:r_2, \Rq , i + j:r_2, i \times j:r_1,\]
+
+\[, i \times j:r_1, i \times j:r_2, \Rq , i \times j:r_2, i \times j:r_1,\]
+
+
+\bigskip
+\bigskip
+\subsection{The same operand}
+Skip ......
+
+
+\bigskip
+\bigskip
+\section{General property}
+\[, \Rq , i \times j:r, r \Os, \]
+proof:\\
+\begin{math} 
+, i \times j:r, r \Os,\\\\
+\Rq,  \Ot r, i \Oc i_0, r \Oc r_0, Rcpm(i_0;j;r_0), i_0 \Os, r_0 \Os, r \Os, \\\\
+\Rq,  \Ot r, i \Oc i_0, r \Oc r_0, IsCpm(i_0;j;r_0), Rcpm(i_0;j;r_0), i_0 \Os, r_0 \Os, r \Os, \\\\
+\Rq,  \Ot r, i \Oc i_0, r \Oc r_0, IsCpm(i_0;j;r_0), Rcpm(i_0;j;r_0), i_0 \Os, r \Os, r_0 \Os, \\\\
+\Rq,  \Ot r, i \Oc i_0, r \Oc r_0, IsCpm(i_0;j;r_0), Rcpm(i_0;j;r_0), i_0 \Os, r \Os, \&Tm(r_0), \\\\
+\Rq,  \Ot r, i \Oc i_0, r \Oc r_0, r \Os, IsCpm(i_0;j;r_0), Rcpm(i_0;j;r_0), i_0 \Os, \&Tm(r_0), \\\\
+\Rq,  \Ot r, i \Oc i_0, r \Oc r_0, r \Os, IsCpm(i_0;j;r_0), i_0 \Os, \&Tm(r_0), \\\\
+\Rq,  \Ot r, i \Oc i_0, r \Oc r_0, r \Os, IsCpm(i_0;j;r_0), i_0 \Os, r_0 \Os, \\\\
+\Rq,  \Ot r, i \Oc i_0,i_0 \Os, r \Oc r_0, r_0 \Os, r \Os,  \\\\
+\Rq, \\\\
+\end{math}
+\bigskip
+\bigskip
+
+\[, i \times j:r, \Rq , \Ot r, i \Oc i_0, j \Oc j_0, r \Oc r_0, Rcpm(i_0;j_0;r_0), i_0 \Os,j_0 \Os, r_0 \Os, \]
+
+
+
+
+
+
+\[, i \times j:r, \Or, \Rq , \Or,\]
+
+\[, i \times j:r_1, i \times j:r_2, \Rq \sim, r_1 \Pne r_2,\]
+proof:\\
+\begin{math} 
+, i \times j:r_1, i \times j:r_2,\\\\
+\Rq, \Ot r_1, i \Oc i_1, j \Oc j_1, r_1 \Oc r_{10}, Rcpm(i_1;j_1;r_{10}), i_1 \Os, j_1 \Os, r_{10} \Os,  \\\\
+     \Ot r_2, i \Oc i_2, j \Oc j_2, r_2 \Oc r_{20}, Rcpm(i_2;j_2;r_{20}), i_2 \Os, j_2 \Os, r_{20} \Os, \\
+\\
+\\\Rq, \Ot r_1, i \Oc i_1, j \Oc j_1, r_1 \Oc r_{10}, IsCpm(i_1;j_1;r_{10}), Rcpm(i_1;j_1;r_{10}), i_1 \Os, j_1 \Os, r_{10} \Os,  \\\\
+     \Ot r_2, i \Oc i_2, j \Oc j_2, r_2 \Oc r_{20}, IsCpm(i_2;j_2;r_{20}), Rcpm(i_2;j_2;r_{20}), i_2 \Os, j_2 \Os, r_{20} \Os, \\
+\\
+\\\Rq, \Ot r_1, i \Oc i_1, j \Oc j_1, r_1 \Oc r_{10}, \Ot r_2, i \Oc i_2, j \Oc j_2, r_2 \Oc r_{20},\\\\
+      IsCpm(i_1;j_1;r_{10}), Rcpm(i_1;j_1;r_{10}),  \\\\
+      IsCpm(i_2;j_2;r_{20}), Rcpm(i_2;j_2;r_{20}),\\\\
+      i_1 \Os, j_1 \Os, r_{10} \Os, i_2 \Os, j_2 \Os, r_{20} \Os, \\
+\\
+\\\Rq, \Ot r_1, i \Oc i_1, j \Oc j_1, r_1 \Oc r_{10}, \Ot r_2, i \Oc i_2, j \Oc j_2, r_2 \Oc r_{20},\\\\
+      IsCpm(i_1;j_1;r_{10}), r_{10} \nPc r_{20}, Rcpm(i_1;j_1;r_{10}),  \\\\
+      IsCpm(i_2;j_2;r_{20}), Rcpm(i_2;j_2;r_{20}),\\\\
+      i_1 \Os, j_1 \Os, r_{10} \Os, i_2 \Os, j_2 \Os, r_{20} \Os, \\
+\\
+\\\Rq, \Ot r_1, i \Oc i_1, j \Oc j_1, r_1 \Oc r_{10}, \Ot r_2, i \Oc i_2, j \Oc j_2, r_2 \Oc r_{20},\\\\
+      IsCpm(i_1;j_1;r_{10}),IsCpm(i_2;j_2;r_{20}),  r_{10} \nPc r_{20}, \\\\
+      Rcpm(i_1;j_1;r_{10}),  Rcpm(i_2;j_2;r_{20}),\\\\
+      i_1 \Os, j_1 \Os, r_{10} \Os, i_2 \Os, j_2 \Os, r_{20} \Os, \\
+\\
+\\\Rq, \Ot r_1, i \Oc i_1, j \Oc j_1, r_1 \Oc r_{10}, \Ot r_2, i \Oc i_2, j \Oc j_2, r_2 \Oc r_{20},\\\\
+      IsCpm(i_1;j_1;r_{10}),IsCpm(i_2;j_2;r_{20}),  r_{10} \nPc r_{20}, \\\\
+      i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20},\\\\
+      Rcpm(i_1;j_1;r_{10}),  Rcpm(i_2;j_2;r_{20}),\\\\
+      i_1 \Os, j_1 \Os, r_{10} \Os, i_2 \Os, j_2 \Os, r_{20} \Os, \\
+\\
+\\\Rq, \Ot r_1, i \Oc i_1, j \Oc j_1, r_1 \Oc r_{10}, \Ot r_2, i \Oc i_2, j \Oc j_2, r_2 \Oc r_{20},\\\\
+      IsCpm(i_1;j_1;r_{10}),IsCpm(i_2;j_2;r_{20}),  r_{10} \nPc r_{20}, \\\\
+      i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20},\\\\
+      Rcpm(i_1;j_1;r_{10}),  Rcpm(i_2;j_2;r_{20}), r_1 \Pne r_2,\\\\
+      i_1 \Os, j_1 \Os, r_{10} \Os, i_2 \Os, j_2 \Os, r_{20} \Os, \\
+\\
+\\\Rq, i \times j:r_1, i \times j:r_2, r_1 \Pne r_2,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+
+\[, i_1 \Pne i_2, i_1 \times j:r, \Rq , i_1 \Pne i_2, i_2 \times j:r,\]
+proof:\\
+\begin{math} 
+, i_1 \Pne i_2, i_1 \times j:r,\\\\
+\Rq, i_1 \Pne i_2, \Ot r, i_1 \Oc i_{10}, r \Oc r_0,\\\\\
+     Rcpm(i_{10};j;r_0), i_{10} \Os, r_0 \Os, \\
+     \\
+\\\Rq, i_1 \Pne i_2, \Ot r, i_1 \Oc i_{10}, r \Oc r_0, i_2 \Oc i_{20}, i_{20} \Os, \\\\\
+     IsCpm(i_{10};j;r_0),\\\\
+     Rcpm(i_{10};j;r_0), i_{10} \Os, r_0 \Os, \\
+     \\
+\\\Rq, i_1 \Pne i_2, \Ot r, i_1 \Oc i_{10}, r \Oc r_0, i_2 \Oc i_{20}, \\\\\
+     IsCpm(i_{10};j;r_0),IsCpm(i_{20};j;r_0), i_{10} \Pne i_{20},\\\\
+     Rcpm(i_{10};j;r_0), i_{10} \Os, i_{20} \Os, r_0 \Os, \\
+     \\
+\\\Rq, i_1 \Pne i_2, \Ot r, i_1 \Oc i_{10}, r \Oc r_0, i_2 \Oc i_{20}, \\\\\
+     IsCpm(i_{10};j;r_0),IsCpm(i_{20};j;r_0), i_{10} \Pne i_{20},\\\\
+     Rcpm(i_{20};j;r_0), i_{10} \Os, i_{20} \Os, r_0 \Os, \\
+     \\
+\\\Rq, i_1 \Pne i_2, \Ot r, r \Oc r_0, i_2 \Oc i_{20}, \\\\\
+     IsCpm(i_{20};j;r_0),\\\\
+     Rcpm(i_{20};j;r_0), i_{20} \Os, r_0 \Os, \\
+     \\
+\\\Rq, i_1 \Pne i_2, i_2 \times j:r,\\
+\\
+\end{math}
+\bigskip
+\bigskip
+
+\[, i \times j:r, i \Os, \Rq , \Ot r, r \Oc r_0, Rcpm(i;j;r_0), i \Os, r_0 \Os, \]
+
+
+\[, i \Pu, i \times j:r, \Rq \sim, r \Pu,\]
+
+\[, j \Pu, i \times j:r, \Rq \sim, r \Pu,\]
+
+
+
+\bigskip
+\bigskip
+\section{ Commutativity}
+\[, i \times j:r, \Rq , j \times i:r,\]
+proof:\\
+\begin{math} 
+, i \times j:r,\\\\
+\Rq, \Ot r, i \Oc i_0,r \Oc r_0, Rcpo(i_0;j;r_0), i_0 \Os, r_0 \Os, \\
+\\
+\\\Rq, \Ot r, i \Oc i_0,r \Oc r_0, j \Oc j_0, j_0 \Os, \\\\
+        IsCpm(i_0;j;r_0), Rcpm(i_0;j;r_0), i_0 \Os, r_0 \Os, \\
+\\
+\\\Rq, \Ot r, i \Oc i_0,r \Oc r_0, j \Oc j_0, \\\\
+        IsCpm(i_0;j;r_0),IsCpm(i_0;j_0;r_0), j \Pne j_0,\\\\
+        Rcpm(i_0;j;r_0), j_0 \Os, i_0 \Os, r_0 \Os, \\
+\\
+\\\Rq, \Ot r, i \Oc i_0,r \Oc r_0, j \Oc j_0, \\\\
+        IsCpm(i_0;j;r_0),IsCpm(i_0;j_0;r_0), j \Pne j_0,\\\\
+        Rcpm(i_0;j_0;r_0), j_0 \Os, i_0 \Os, r_0 \Os, \\
+\\
+\\\Rq, \Ot r, i \Oc i_0,r \Oc r_0, j \Oc j_0, \\\\
+        IsCpm(i_0;j_0;r_0),\\\\
+        Rcpm(i_0;j_0;r_0), R(j_0), j_0 \Os, i_0 \Os, r_0 \Os, \\
+\\
+\\\Rq, \Ot r, i \Oc i_0,r \Oc r_0, j \Oc j_0, \\\\
+        IsCpm(i_0;j_0;r_0),\\\\
+        Rcpm(j_0;i_0;r_0), R(i_0), j_0 \Os, i_0 \Os, r_0 \Os, \\
+\\
+\\\Rq, \Ot r, i \Oc i_0,r \Oc r_0, j \Oc j_0, \\\\
+        IsCpm(i_0;j_0;r_0),IsCpm(i;j_0;r_0), i \Pne i_0,\\\\
+        Rcpm(j_0;i_0;r_0), j_0 \Os, i_0 \Os, r_0 \Os, \\
+\\
+\\\Rq, \Ot r, i \Oc i_0,r \Oc r_0, j \Oc j_0, \\\\
+        IsCpm(i_0;j_0;r_0),IsCpm(i;j_0;r_0), i \Pne i_0,\\\\
+        Rcpm(j_0;i;r_0), j_0 \Os, i_0 \Os, r_0 \Os, \\
+\\
+\\\Rq, \Ot r, r \Oc r_0, j \Oc j_0, \\\\
+        IsCpm(j_0;i;r_0),Rcpm(j_0;i;r_0), j_0 \Os, r_0 \Os, \\
+\\
+\\\Rq, j \times i:r, \\
+\\
+\end{math}
+\bigskip
+\bigskip
+
+
+
+\[, i \times j:r_1, j \times i:r_2, \Rq \sim, r_1 \Pne r_2, \]
+proof:\\
+\begin{math} 
+, i \times j:r_1, j \times i:r_2,\\\\
+\Rq, i \times j:r_1, i \times j:r_2,\\\\
+\Rq, i \times j:r_1, i \times j:r_2, r_1 \Pne r_2,\\\\
+\Rq, i \times j:r_1, j \times i:r_2, r_1 \Pne r_2,\\
+\\
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+\bigskip
+\bigskip
+\section{Distributivity}
+\[, i + j:r_1, r_1 \times k:r, r_1 \Os, \Rq , i \times k:r_1, j \times k:r_2, r_1+r_2:r, r_1 \Os, r_2 \Os,\]
+proof:\\
+\begin{math} 
+, i + j:r_1, r_1 \times k:r, r_1 \Os,\\\\
+\Rq, \Ot r_1, i \Oc i_0, j \Oc j_0, r_1 \Oc r_{10},\\\\
+     Rcpo(i_0;r_{10}), Rcpo(j_0;r_{10}), i_0 \Os, j_0 \Os, r_{10} \Os, \\\\
+     \Ot r, r \Oc r_0, Rcpm(r_1;k;r_0), r_1 \Os, r_0 \Os, \\
+\\
+\\\Rq, \Ot r_1, i \Oc i_0, j \Oc j_0, r_1 \Oc r_{10},\\\\
+     IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}),IsCpo(j_0;r_{10}),  Rcpo(j_0;r_{10}), \\\\
+     \Ot r, r \Oc r_0, IsCpm(r_1;k;r_0),Rcpm(r_1;k;r_0),\\\\
+     i_0 \Os, j_0 \Os, r_{10} \Os, r_1 \Os, r_0 \Os, \\
+\\
+\\\Rq, \Ot r_1, i \Oc i_0, j \Oc j_0, r_1 \Oc r_{10},\Ot r, r \Oc r_0,\\\\
+     IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}),IsCpo(j_0;r_{10}),  Rcpo(j_0;r_{10}), \\\\
+      IsCpm(r_1;k;r_0),Rcpm(r_1;k;r_0),\\\\
+     i_0 \Os, j_0 \Os, r_{10} \Os, r_1 \Os, r_0 \Os, \\
+\\
+\\\Rq, \Ot r_1, i \Oc i_0, j \Oc j_0, r_1 \Oc r_{10},\Ot r, r \Oc r_0,\\\\
+     IsCpo(i_0;r_{10}), r_{10} \nPc r_0, Rcpo(i_0;r_{10}),IsCpo(j_0;r_{10}), r_{10} \nPc r_0,  Rcpo(j_0;r_{10}), \\\\
+      IsCpm(r_1;k;r_0),Rcpm(r_1;k;r_0),\\\\
+     i_0 \Os, j_0 \Os, r_{10} \Os, r_1 \Os, r_0 \Os, \\
+\\
+\\\Rq, \Ot r_1, i \Oc i_0, j \Oc j_0, r_1 \Oc r_{10},\Ot r, r \Oc r_0,\\\\
+     IsCpm(i_0;j_0;r_{10}), IsCpm(i_0;j_0;r_0), k \nPc r_0, k \nPc r_{10}, r_0 \nPc r_{10}, r_1 \Ps r_{10},\\\\
+     Rcpo(i_0;r_{10}), Rcpo(j_0;r_{10}),Rcpm(r_1;k;r_0),\\\\
+     i_0 \Os, j_0 \Os, r_{10} \Os, r_1 \Os, r_0 \Os, \\
+\\
+\\\Rq, \Ot r_1, i \Oc i_0, j \Oc j_0, r_1 \Oc r_{10},\Ot r, r \Oc r_0,\\\\
+     IsCpm(i_0;j_0;r_{10}), IsCpm(i_0;j_0;r_0), k \nPc r_0, k \nPc r_{10}, r_0 \nPc r_{10}, r_1 \Ps r_{10},\\\\
+     Rcpm(i_0;k;r_0),Rcpm(j_0;k;r_0),\\\\
+     i_0 \Os, j_0 \Os, r_{10} \Os, r_1 \Os, r_0 \Os, \\
+\\
+\\\Rq, i \Oc i_0, j \Oc j_0, \Ot r, r \Oc r_0,\\\\
+     IsCpm(i_0;k;r_0), Rcpm(i_0;k;r_0), \\\\
+     IsCpm(j_0;k;r_0), Rcpm(j_0;k;r_0),\\\\
+     i_0 \Os, j_0 \Os, r_0 \Os, \\
+\\
+\\\Rq,  i \Oc i_0, j \Oc j_0, \Ot r, r \Oc r_0,\\\\
+     IsCpm(i_0;k;r_0), \Ot r_1, r_1 \Oc r_{10}, Rcpm(i_0;k;r_{10}), Rcpo(r_1;r_0), r_1 \Os, r_{10} \Os, \\\\
+     IsCpm(j_0;k;r_0), \Ot r_2, r_2 \Oc r_{20}, Rcpm(j_0;k;r_{20}), Rcpo(r_2;r_0), r_2 \Os, r_{20} \Os, \\\\
+     i_0 \Os, j_0 \Os, r_0 \Os, \\
+\\
+\\\Rq, i \Oc i_0, \Ot r_1, r_1 \Oc r_{10}, Rcpm(i_0;k;r_{10}), r_{10} \Os, i_0 \Os, \\\\
+     j \Oc j_0, \Ot r_2, r_2 \Oc r_{20}, Rcpm(j_0;k;r_{20}), r_{20} \Os, j_0 \Os, \\\\
+     \Ot r, r \Oc r_0, Rcpo(r_1;r_0), Rcpo(r_2;r_0), r_2 \Os, r_1 \Os, r_0 \Os, \\
+\\
+\\\Rq, i \times k:r_1 , j \times k:r_2, \\\\
+     \Ot r, r \Oc r_0, Rcpo(r_1;r_0), Rcpo(r_2;r_0), r_2 \Os, r_1 \Os, r_0 \Os, \\
+\\
+\\\Rq, i \times k:r_1, j \times k:r_2, r_1+r_2:r, r_1 \Os, r_2 \Os,\\
+\\
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+% combine lines
+\[, i+j:r_3, r_3 \times k:r_1, r_3 \Os, i \times k:r_4, j \times k:r_5, r_4+r_5:r_2, r_4 \Os, r_5 \Os, \Rq \sim, r_1 \Pne r_2, \]
+proof:\\
+\begin{math} 
+, i+j:r_3, r_3 \times k:r_1, r_3 \Os,\\\\
+i \times k:r_4, j \times k:r_5, r_4+r_5:r_2, r_4 \Os, r_5 \Os,\\\\\
+\Rq, i \times k:r_6, j \times k:r_7, r_6+r_7:r_1, r_6 \Os, r_7 \Os,\\\\
+     i \times k:r_4, j \times k:r_5, r_4+r_5:r_2, r_4 \Os, r_5 \Os,\\\\
+\\\Rq, i \times k:r_6,i \times k:r_4, j \times k:r_7, j \times k:r_5,\\\\
+      r_6+r_7:r_1, r_4+r_5:r_2, r_6 \Os, r_7 \Os, r_4 \Os, r_5 \Os,\\\\
+\\\Rq, i \times k:r_6,i \times k:r_4, r_6 \Pne r_4, j \times k:r_7, j \times k:r_5, r_7 \Pne r_5,\\\\
+      r_6+r_7:r_1, r_4+r_5:r_2, r_6 \Os, r_7 \Os, r_4 \Os, r_5 \Os,\\\\
+\\\Rq, i \times k:r_6,i \times k:r_4, j \times k:r_7, j \times k:r_5, r_6 \Pne r_4, r_7 \Pne r_5,\\\\
+      r_6+r_7:r_1, r_4+r_5:r_2, r_6 \Os, r_7 \Os, r_4 \Os, r_5 \Os,\\\\
+\\\Rq, i \times k:r_6,i \times k:r_4, j \times k:r_7, j \times k:r_5, r_6 \Pne r_4, r_7 \Pne r_5,\\\\
+      r_4+r_5:r_1, r_4+r_5:r_2, r_6 \Os, r_7 \Os, r_4 \Os, r_5 \Os,\\\\
+\\\Rq, i \times k:r_6,i \times k:r_4, j \times k:r_7, j \times k:r_5, r_6 \Pne r_4, r_7 \Pne r_5,\\\\
+      r_4+r_5:r_1, r_4+r_5:r_2, r_1 \Pne r_2, r_6 \Os, r_7 \Os, r_4 \Os, r_5 \Os,\\\\
+\\\Rq, i+j:r_3, r_3 \times k:r_1, r_3 \Os, \\\\
+     i \times k:r_4, j \times k:r_5, r_4+r_5:r_2, r_4 \Os, r_5 \Os, r_1 \Pne r_2,  
+\end{math}
+\bigskip
+\bigskip
+
+
+
+\bigskip
+\bigskip
+\section{Associativity}
+\[, j \times i:r_1, r_1 \times k:r, r_1 \Os, \Rq , j \times k:r_1, r_1 \times i:r, r_1 \Os, \]
+proof:\\
+\begin{math} 
+, j \times i:r_1, r_1 \times k:r, r_1 \Os,\\\\
+\Rq, \Ot r_1, r_1 \Oc r_{10}, j \Oc j_0, Rcpm(j_0;i;r_{10}), j_0 \Os, r_{10} \Os,\\\\
+      \Ot r, r \Oc r_0, Rcpm(r_1;k;r_0), r_1 \Os, r_0 \Os,  \\
+        \\
+\\\Rq, \Ot r_1, r_1 \Oc r_{10}, j \Oc j_0,\\\\
+        IsCpm(j_0;i;r_{10}), Rcpm(j_0;i;r_{10}), j_0 \Os, r_{10} \Os,\\\\
+      \Ot r, r \Oc r_0, IsCpm(r_1;k;r_0), Rcpm(r_1;k;r_0), r_1 \Os, r_0 \Os,  \\
+        \\
+\\\Rq, \Ot r_1, r_1 \Oc r_{10}, j \Oc j_0, \Ot r, r \Oc r_0, \\\\
+        IsCpm(j_0;i;r_{10}), Rcpm(j_0;i;r_{10}),\\\\
+      IsCpm(r_1;k;r_0), Rcpm(r_1;k;r_0), j_0 \Os, r_{10} \Os, r_1 \Os, r_0 \Os,  \\
+        \\
+\\\Rq, \Ot r_1, r_1 \Oc r_{10}, j \Oc j_0, \Ot r, r \Oc r_0, \\\\
+        IsCpm(j_0;i;r_{10}), r_0 \nPc r_{10}, Rcpm(j_0;i;r_{10}),\\\\
+      IsCpm(r_1;k;r_0), Rcpm(r_1;k;r_0), j_0 \Os, r_{10} \Os, r_1 \Os, r_0 \Os,  \\
+        \\
+\\\Rq, \Ot r_1, r_1 \Oc r_{10}, j \Oc j_0, \Ot r, r \Oc r_0, \\\\
+        IsCpm(j_0;i;r_{10}),IsCpm(j_0;i;r_0), k \nPc r_0, k \nPc r_{10}, r_0 \nPc r_{10},\\\\
+       Rcpm(j_0;i;r_{10}), Rcpm(r_1;k;r_0), j_0 \Os, r_{10} \Os, r_1 \Os, r_0 \Os,  \\
+        \\
+\\\Rq, \Ot r_1, r_1 \Oc r_{10}, j \Oc j_0, \Ot r, r \Oc r_0, \\\\
+        IsCpm(j_0;i;r_{10}),IsCpm(j_0;i;r_0), k \nPc r_0, k \nPc r_{10}, r_0 \nPc r_{10},\\\\
+       Rcpm(j_0;k;r_{10}), Rcpm(r_1;i;r_0), j_0 \Os, r_{10} \Os, r_1 \Os, r_0 \Os,  \\
+        \\
+\\\Rq, j \times k:r_1, r_1 \times i:r, r_1 \Os,\\
+\\
+\end{math}
+\bigskip
+\bigskip
+
+% extra comma
+\[, j \times i:r_3, r_3 \times k:r_1, r_3 \Os, j \times k:r_4, r_4 \times i:r_2, r_4 \Os, \Rq \sim, r_1 \Pne r_2, \]
+proof:\\
+\begin{math} 
+, j \times i:r_3, r_3 \times k:r_1, r_3 \Os,\\\\
+      j \times k:r_4, r_4 \times i:r_2, r_4 \Os,\\\\
+\Rq, j \times i:r_3, r_3 \times k:r_1, r_3 \Os,\\\\
+     j \times i:r_4, r_4 \times k:r_2, r_4 \Os,\\
+     \\
+\\\Rq, j \times i:r_3,j \times i:r_4,\\\\
+      r_3 \times k:r_1, r_4 \times k:r_2, r_3 \Os, r_4 \Os,\\
+     \\
+\\\Rq, j \times i:r_3,j \times i:r_4, r_3 \Pne r_4,\\\\
+      r_3 \times k:r_1, r_4 \times k:r_2, r_3 \Os, r_4 \Os,\\
+     \\
+\\\Rq, j \times i:r_3,j \times i:r_4, r_3 \Pne r_4,\\\\
+      r_4 \times k:r_1, r_4 \times k:r_2, r_3 \Os, r_4 \Os,\\
+     \\
+\\\Rq, j \times i:r_3,j \times i:r_4, r_3 \Pne r_4,\\\\
+      r_4 \times k:r_1, r_4 \times k:r_2, r_1 \Pne r_2, r_3 \Os, r_4 \Os,\\
+     \\
+\\\Rq, j \times i:r_3, r_3 \times k:r_1, r_3 \Os,\\\\
+     j \times k:r_4, r_4 \times i:r_2, r_4 \Os, r_1 \Pne r_2,\\
+\\
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+\bigskip
+\bigskip
+\section{Monotonicity}
+\[,i \Pnm j, k_1 \Pne k_2, k_1 \nPu, i \times k_1:r_1, j \times k_2:r_2, \Rq \sim, r_1 \Pnm r_2, \]
+proof:\\
+\begin{math} 
+,i \Pnm j, k_1 \Pne k_2, k_1 \nPu, i \times k_1:r_1, j \times k_2:r_2,\\
+\\
+\Rq,i \Pnm j, k_1 \Pne k_2, k_1 \nPu, k_1 \times i:r_1, k_2 \times j:r_2,\\
+     \\     
+\\\Rq,i \Pnm j, k_1 \Pne k_2, k_1 \nPu,\\\\
+      \Ot r_1, r_1 \Oc r_{10}, k \Oc k_{10}, Rcpm(k_{10};i;r_{10}), k_{10} \Os, r_{10} \Os, \\\\
+      \Ot r_2, r_2 \Oc r_{20}, k \Oc k_{20}, Rcpm(k_{20};j;r_{20}), k_{20} \Os, r_{20} \Os, \\\\
+     \\     
+\\\Rq,i \Pnm j, k_1 \Pne k_2, k_1 \nPu, \Ot r_1, r_1 \Oc r_{10}, k \Oc k_{10},\\\\
+      IsCpm(k_{10};i;r_{10}), Rcpm(k_{10};i;r_{10}), k_{10} \Os, r_{10} \Os, \\\\
+      \Ot r_2, r_2 \Oc r_{20}, k \Oc k_{20},IsCpm(k_{20};j;r_{20}), Rcpm(k_{20};j;r_{20}), k_{20} \Os, r_{20} \Os, \\\\
+     \\     
+\\\Rq,i \Pnm j, k_1 \Pne k_2, k_1 \nPu, \Ot r_1, r_1 \Oc r_{10}, k \Oc k_{10},\Ot r_2, r_2 \Oc r_{20}, k \Oc k_{20},\\\\
+      IsCpm(k_{10};i;r_{10}), Rcpm(k_{10};i;r_{10}), \\\\
+      IsCpm(k_{20};j;r_{20}), Rcpm(k_{20};j;r_{20}), k_{10} \Os, r_{10} \Os, k_{20} \Os, r_{20} \Os, \\\\
+     \\     
+\\\Rq,i \Pnm j, k_1 \Pne k_2, k_1 \nPu, \Ot r_1, r_1 \Oc r_{10}, k \Oc k_{10},\Ot r_2, r_2 \Oc r_{20}, k \Oc k_{20},\\\\
+      IsCpm(k_{10};i;r_{10}), r_{10} \nPc r_{20}, Rcpm(k_{10};i;r_{10}), \\\\
+      IsCpm(k_{20};j;r_{20}), Rcpm(k_{20};j;r_{20}), k_{10} \Os, r_{10} \Os, k_{20} \Os, r_{20} \Os, \\\\
+     \\     
+\\\Rq, \Ot r_1, r_1 \Oc r_{10}, k \Oc k_{10},\Ot r_2, r_2 \Oc r_{20}, k \Oc k_{20},\\\\
+      IsCpm(k_{10};i;r_{10}), IsCpm(k_{10};i;r_{20}), IsCpm(k_{20};j;r_{20}), IsCpm(k_{20};j;r_{10}), r_{10} \nPc r_{20}, \\\\
+      r_1 \Ps r_{10}, r_2 \Ps r_{20}, i \Pnm j, k_{10} \Pne k_{20}, k_{10} \nPu,\\\\
+       Rcpm(k_{10};i;r_{10}), Rcpm(k_{20};j;r_{20}), k_{10} \Os, r_{10} \Os, k_{20} \Os, r_{20} \Os, \\\\
+     \\     
+\\\Rq, \Ot r_1, r_1 \Oc r_{10}, k \Oc k_{10},\Ot r_2, r_2 \Oc r_{20}, k \Oc k_{20},\\\\
+      IsCpm(k_{10};i;r_{10}), IsCpm(k_{10};i;r_{20}), IsCpm(k_{20};j;r_{20}), IsCpm(k_{20};j;r_{10}), r_{10} \nPc r_{20}, \\\\
+      r_1 \Ps r_{10}, r_2 \Ps r_{20}, i \Pnm j, k_{10} \Pne k_{20}, k_{10} \nPu,\\\\
+       Rcpm(k_{10};i;r_{10}), Rcpm(k_{20};j;r_{20}), r_1 \Pnm r_2, k_{10} \Os, r_{10} \Os, k_{20} \Os, r_{20} \Os, \\\\
+     \\     
+\\\Rq,i \Pnm j, k_1 \Pne k_2, k_1 \nPu, i \times k_1:r_1, j \times k_2:r_2, r_1 \Pnm r_2,\\
+\\
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+\[,i \Pnm j, k \nPu, i \times k:r_1, j \times k:r_2, \Rq \sim, r_1 \Pnm r_2,\]
+proof:\\
+\begin{math} 
+, i \Pnm j, k \nPu, i \times k:r_1, j \times k:r_2,\\\\
+\Rq, i \Pnm j, k \nPu, k \Oc k_1, k_1 \Os, i \times k:r_1, j \times k:r_2,\\
+\\
+\Rq, k \Oc k_1, i \Pnm j, k \nPu, k \Pne k_1, i \times k:r_1, j \times k:r_2, k_1 \Os,\\
+\\
+\Rq, k \Oc k_1, i \Pnm j, k \nPu, k \Pne k_1, i \times k_1:r_1, j \times k:r_2, k_1 \Os,\\
+\\
+\Rq, k \Oc k_1, i \Pnm j, k \nPu, k \Pne k_1, i \times k_1:r_1, j \times k:r_2, r_1 \Pnm r_2, k_1 \Os,\\
+\\
+\Rq,i \Pnm j, k \nPu, i \times k:r_1, j \times k:r_2, r_1 \Pnm r_2, \\
+\\
+\end{math}
+\bigskip
+\bigskip
+
+
+\[, i \Pnm j, k_1 \Pnm k_2, i \times k_1:r_1, j \times k_2:r_2, \Rq \sim, r_1 \Pnm r_2,\]
+proof:\\
+\begin{math} 
+, i \Pnm j, k_1 \Pnm k_2, i \times k_1:r_1, j \times k_2:r_2,\\\\
+\Rq, i \Pnm j, k_1 \Pnm k_2, i \times k_1:r_1, j \times k_1:r_3, r_3 \Os, j \times k_2:r_2,\\
+\\
+\Rq, i \Pnm j, k_1 \Pnm k_2, k_1 \nPu, i \times k_1:r_1, j \times k_1:r_3, j \times k_2:r_2, r_3 \Os,\\
+\\
+\Rq, i \Pnm j, k_1 \Pnm k_2, k_1 \nPu, i \times k_1:r_1, j \times k_1:r_3, r_1 \Pnm r_3, j \times k_2:r_2, r_3 \Os,\\
+\\
+\Rq, i \times k_1:r_1, i \Pnm j, \Bb{if(j \Pu)}{,}{,}, k_1 \Pnm k_2, j \times k_1:r_3, j \times k_2:r_2, r_1 \Pnm r_3, r_3 \Os,\\
+\\
+\\\Rq, i \times k_1:r_1, i \Pnm j, \\\\
+        \Bb{if(j \Pu)}{, j \Pu, k_1 \Pnm k_2, j \times k_1:r_3, j \times k_2:r_2, r_1 \Pnm r_3,}{, k_1 \Pnm k_2, j \times k_1:r_3, j \times k_2:r_2, r_1 \Pnm r_3,}, r_3 \Os,\\
+\\
+\\\Rq, i \times k_1:r_1, i \Pnm j, \\\\
+        \Bb{if(j \Pu)}{, k_1 \Pnm k_2, j \times k_1:r_3, j \Pu, j \times k_2:r_2, r_2 \Pu, r_1 \Pnm r_3, r_1 \nPu, r_1 \Pnm r_2,}{, k_1 \Pnm k_2, j \times k_1:r_3, j \times k_2:r_2, r_1 \Pnm r_3,}, r_3 \Os,\\
+\\
+\\\Rq, i \times k_1:r_1, i \Pnm j, \\\\
+        \Bb{if(j \Pu)}{, k_1 \Pnm k_2, j \times k_1:r_3, j \times k_2:r_2, r_1 \Pnm r_3, r_1 \Pnm r_2,}{, k_1 \Pnm k_2, j \times k_1:r_3, j \times k_2:r_2, r_1 \Pnm r_3,}, r_3 \Os,\\
+\\
+\\\Rq, i \times k_1:r_1, i \Pnm j, \\\\
+        \Bb{if(j \Pu)}{, k_1 \Pnm k_2, j \times k_1:r_3, j \times k_2:r_2, r_1 \Pnm r_3, r_1 \Pnm r_2,}{,j \nPu, k_1 \Pnm k_2, j \times k_1:r_3, j \times k_2:r_2, r_1 \Pnm r_3,}, r_3 \Os,\\
+\\
+\\\Rq, i \times k_1:r_1, i \Pnm j, \\\\
+        \Bb{if(j \Pu)}{, k_1 \Pnm k_2, j \times k_1:r_3, j \times k_2:r_2, r_1 \Pnm r_3, r_1 \Pnm r_2,}{,j \nPu, k_1 \Pnm k_2, j \times k_1:r_3, j \times k_2:r_2, r_3 \Pnm r_2, r_1 \Pnm r_3, r_1 \Pnm r_2,}, r_3 \Os,\\
+\\
+\\\Rq, i \times k_1:r_1, i \Pnm j, \\\\
+        \Bb{if(j \Pu)}{, k_1 \Pnm k_2, j \times k_1:r_3, j \times k_2:r_2, r_1 \Pnm r_3, r_1 \Pnm r_2,}{, k_1 \Pnm k_2, j \times k_1:r_3, j \times k_2:r_2, r_1 \Pnm r_3, r_1 \Pnm r_2,}, r_3 \Os,\\
+\\
+\\\Rq, i \Pnm j, k_1 \Pnm k_2, i \times k_1:r_1, j \times k_2:r_2, r_1 \Pnm r_2, \\
+\\
+\end{math}
+\bigskip
+\bigskip
+
+
+
+\newpage

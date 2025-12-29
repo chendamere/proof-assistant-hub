@@ -1,0 +1,122 @@
+\chapter{Paradox}
+
+
+\bigskip
+\bigskip
+\section{Theorems of contradiction}
+\[, \Rq , \Or , \Ri , \Tc c_1, \Rq , \Tc c_2,\]
+proof:\\
+\begin{math} 
+, \Rq , \Or , \Ri \\\\
+, \Tc c_1,\\\\
+\Rq, \Or, \Tc c_1,  \\
+\\
+\Rq, \Or,  \\
+\\
+\Rq, \Or, \Tc c_2,  \\
+\\
+\Rq, \Tc c_2,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+\[, i \Pe j, \Rq ,i \nPe j, \Ri , \Rq , \Or ,\]
+proof:\\
+\begin{math} 
+, i \Pe j, \Rq ,i \nPe j, \Ri \\\\
+, \\\\
+\Rq, \Bb{if(i \Pe j)}{,}{,},  \\\\
+\\
+\Rq, \Bb{if(i \Pe j)}{, i \Pe j, }{, i \nPe j,},  \\\\
+\\
+\Rq, \Bb{if(i \Pe j)}{, i \Pe j, i \Pe j, }{, i \nPe j, i \nPe j,},  \\\\
+\\
+\Rq, \Bb{if(i \Pe j)}{, i \Pe j, i \nPe j, }{, i \Pe j, i \nPe j,},  \\\\
+\\
+\Rq, \Bb{if(i \Pe j)}{, \Or , }{, \Or ,},  \\\\
+\\
+\Rq, \Bb{if(i \Pe j)}{, }{,}, \Or ,  \\\\
+\\
+\Rq, \Or,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+\[, i \Pu, \Rq ,i \nPu, \Ri , \Rq , \Or ,\]
+
+\[, i \Ps j, \Rq ,i \nPs j, \Ri , \Rq , \Or ,\]
+
+\[, i \Pc j, \Rq ,i \nPc j, \Ri , \Rq , \Or ,\]
+
+\[, i \Pn j, \Rq ,i \nPn j, \Ri , \Rq , \Or ,\]
+
+\[, i \Pb j, \Rq ,i \nPb j, \Ri , \Rq , \Or ,\]
+
+\[, i \Pne j, \Rq ,i \nPne j, \Ri , \Rq , \Or ,\]
+
+\[, i \Pnm j, \Rq ,i \nPnm j, \Ri , \Rq , \Or ,\]
+
+\newpage
+\bigskip
+\bigskip
+\section{Definition of paradox}
+  paradox:  " This statement is false." 
+\[,\Blb{if(Pdx)}{,}{,} \Rq , \Bb{if(Pdx)}{, \Ot m, m \Od n, m \Os,}{, \Ot n,}, \Blb{if(n \Pu)}{, n \Os, }{, n \Os, }\]
+
+
+\[, Pdx, \Rq , \Bb{if(Pdx)}{, }{, \Or,}, \]
+
+
+\[, !Pdx, \Rq , \Bb{if(Pdx)}{, \Or,}{, }, \]
+
+
+
+\bigskip
+\bigskip
+\section{Theorems of paradox propositions}
+\[, Pdx, \Rq , !Pdx,\]
+proof:\\
+\begin{math} 
+, Pdx, \\\\
+\Rq, \Bb{if(Pdx)}{,}{, \Or,},  \\\\
+\\
+\Rq, \Bb{if(Pdx)}{, \Ot m, m \Od n, m \Os,}{, \Ot n,}, \Bb{if(n \Pu)}{, n \Os, }{, n \Os, \Or, },  \\\\
+\\
+\Rq, \Bb{if(Pdx)}{, \Ot m, m \Od n, m \Os,}{, \Ot n,}, n \Pu, n \Os,  \\\\
+\\
+\Rq, \Bb{if(Pdx)}{, \Ot m, m \Od n, n \Pu, n \Os, m \Os,}{, \Ot n, n \Pu, n \Os,},  \\\\
+\\
+\Rq, \Bb{if(Pdx)}{, \Ot m, m \Od n, n \nPu, n \Pu, n \Os, m \Os,}{, \Ot n, n \Os,},  \\\\
+\\
+\Rq, \Bb{if(Pdx)}{, \Ot m, m \Od n, \Or, n \Os, m \Os,}{, \Ot n, n \Os,},  \\\\
+\\
+\Rq, \Bb{if(Pdx)}{, \Ot m, m \Od n, \Or,}{,},  \\\\
+\\
+\Rq, \Bb{if(Pdx)}{, \Or,}{,},  \\\\
+\\
+\Rq, !Pdx,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+\bigskip
+\bigskip
+\section{Proof of paradox }
+Because  the recursive function if(pdx) is infinite,rule
+\[, \Rq , \Bb{if(Pdx)}{,}{,},\]
+%\[,\Bb{if(Pdx)}{, \Tc c_1,}{, \Tc c_2,},  \Rq ,\Bb{if(Pdx)}{, Pdx, \Tc c_1,}{, \Tc c_2,}, \]
+%\[,\Bb{if(Pdx)}{, \Tc c_1,}{, \Tc c_2,},  \Rq ,\Bb{if(Pdx)}{, \Tc c_1,}{, !Pdx, \Tc c_2,}, \]
+does not exist.
+So we can't get rule of contradiction:
+\[, \Rq , \Or,\]
+
+\newpage
