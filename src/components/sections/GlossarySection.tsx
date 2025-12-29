@@ -1,13 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { axioms, categories, getTypeBadgeClass, Rule, RuleType, RuleCategory } from '@/data/axioms';
+import { axioms, getTypeBadgeClass, Rule, RuleType } from '@/data/axioms';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { Input } from '@/components/ui/input';
-import { Search, Filter, ChevronDown, ChevronUp } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp } from 'lucide-react';
 
 const GlossarySection: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<RuleType | 'all'>('all');
-  const [selectedCategory, setSelectedCategory] = useState<RuleCategory | 'all'>('all');
   const [expandedRule, setExpandedRule] = useState<string | null>(null);
 
   const filteredRules = useMemo(() => {
@@ -19,28 +18,10 @@ const GlossarySection: React.FC = () => {
         rule.rightSide.toLowerCase().includes(searchQuery.toLowerCase());
       
       const matchesType = selectedType === 'all' || rule.type === selectedType;
-      const matchesCategory = selectedCategory === 'all' || rule.category === selectedCategory;
       
-      return matchesSearch && matchesType && matchesCategory;
+      return matchesSearch && matchesType;
     });
-  }, [searchQuery, selectedType, selectedCategory]);
-
-  const groupedRules = useMemo(() => {
-    const groups: Record<RuleCategory, Rule[]> = {
-      operators: [],
-      relationships: [],
-      propositions: [],
-      induction: [],
-      arithmetic: [],
-      logic: [],
-    };
-    
-    filteredRules.forEach(rule => {
-      groups[rule.category].push(rule);
-    });
-    
-    return groups;
-  }, [filteredRules]);
+  }, [searchQuery, selectedType]);
 
   const counts = useMemo(() => ({
     axiom: axioms.filter(r => r.type === 'axiom').length,
@@ -136,33 +117,6 @@ const GlossarySection: React.FC = () => {
             </div>
           </div>
 
-          {/* Category Filter */}
-          <div className="flex flex-wrap gap-2 mt-4">
-            <Filter className="w-4 h-4 text-muted-foreground self-center" />
-            <button
-              onClick={() => setSelectedCategory('all')}
-              className={`px-2 py-1 rounded text-xs transition-colors ${
-                selectedCategory === 'all' 
-                  ? 'bg-accent text-accent-foreground' 
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              All Categories
-            </button>
-            {categories.map(cat => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`px-2 py-1 rounded text-xs transition-colors ${
-                  selectedCategory === cat.id 
-                    ? 'bg-accent text-accent-foreground' 
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Results count */}
@@ -171,32 +125,15 @@ const GlossarySection: React.FC = () => {
         </p>
 
         {/* Rules List */}
-        <div className="space-y-8">
-          {categories.map(category => {
-            const categoryRules = groupedRules[category.id];
-            if (categoryRules.length === 0) return null;
-
-            return (
-              <div key={category.id}>
-                <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
-                  {category.name}
-                  <span className="text-xs text-muted-foreground font-normal">
-                    ({categoryRules.length})
-                  </span>
-                </h3>
-                <div className="space-y-2">
-                  {categoryRules.map(rule => (
-                    <RuleCard 
-                      key={rule.id} 
-                      rule={rule} 
-                      isExpanded={expandedRule === rule.id}
-                      onToggle={() => setExpandedRule(expandedRule === rule.id ? null : rule.id)}
-                    />
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+        <div className="space-y-2">
+          {filteredRules.map(rule => (
+            <RuleCard 
+              key={rule.id} 
+              rule={rule} 
+              isExpanded={expandedRule === rule.id}
+              onToggle={() => setExpandedRule(expandedRule === rule.id ? null : rule.id)}
+            />
+          ))}
         </div>
 
         {filteredRules.length === 0 && (
