@@ -1,0 +1,547 @@
+\chapter{Theorems of Delete Node Function Del(j)}
+
+\section{General theorems}
+\subsection{Property}
+\[,Del(j) \Rq , j \nPu, Del(j) \]
+
+
+
+\subsection{Substitution}
+\[, j_1 \Ps j_2, Del(j_1), \Rq , j_1 \Ps j_2, Del(j_2),\]
+
+
+\bigskip
+\bigskip
+\subsection{Swap with operator}
+\[, g \Os, Del(j), \Rq , Del(j), g \Os,\]
+
+\[, \Ot g, Del(j), \Rq , Del(j), \Ot g,\]
+
+\[, m \Oc n, Del(j), \Rq , Del(j), m \Oc n,\]
+
+\[, j \Oc n, Del(j), \Rq , Del(j), j \Oc n,\]
+proof:\\
+\begin{math} 
+, j \Oc n, Del(j),\\\\
+\Rq, j \Oc j_0, j_0 \Os, j \Oc n, Del(j),\\\\
+\Rq, j \Oc j_0, j \Oc n, Del(j), j_0 \Os,\\\\
+\Rq, j \Oc j_0, j \Ps j_0, j \Oc n, Del(j), j_0 \Os,\\\\
+\Rq, j \Oc j_0, j \Oc n, j \Ps j_0, Del(j), j_0 \Os,\\\\
+\Rq, j \Oc j_0, j \Oc n, j \Ps j_0, Del(j_0), j_0 \Os,\\\\
+\Rq, j \Oc j_0, j \Ps j_0, Del(j_0), j \Oc n, j_0 \Os,\\\\
+\Rq, j \Oc j_0, j \Ps j_0, Del(j), j \Oc n, j_0 \Os,\\\\
+\Rq, j \Oc j_0,  Del(j), j \Oc n, j_0 \Os,\\\\
+\Rq, j \Oc j_0, j_0 \Os,  Del(j), j \Oc n,\\\\
+\Rq, Del(j), j \Oc n,
+\end{math}
+\bigskip
+\bigskip
+
+
+\[, j \Pn m, m \Op, Del(j), \Rq , j \Pn m, Del(j),\]
+proof:\\
+\begin{math} 
+, j \Pn m, m \Op, Del(j),\\\\
+\Rq, m \Op, j \Ps m, Del(j),\\\\
+\Rq, m \Op, j \Ps m, m \On, Del(j),\\\\
+\Rq, j \Pn m, m \Op, m \On, Del(j),\\\\
+\Rq, j \Pn m, m \On, m \Op, Del(j),\\\\
+\Rq, j \Pn m, Del(j),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+\[, j \nPn m, m \Op, Del(j), \Rq , j \nPn m, Del(j), m \Op,\]
+
+
+
+\bigskip
+\bigskip
+\subsection{Swap with propositions}
+\[, m \nPs j, n \nPs j, m \Pe n, Del(j), \Rq , m \nPs j, n \nPs j, Del(j), m \Pe n, \]
+
+\[, m \nPs j, n \nPs j, m \nPe n, Del(j), \Rq , m \nPs j, n \nPs j, Del(j), m \nPe n, \]
+
+\[, m \nPs j, m \Pu, Del(j), \Rq , m \nPs j, Del(j), m \Pu, \]
+proof:\\
+\begin{math} 
+, m \nPs j, m \Pu, Del(j),\\\\
+\Rq, m \nPs j, \Ot n, m \Pe n, n \Os, Del(j),\\\\
+\Rq, m \nPs j, \Ot n, n \nPs j, m \Pe n, n \Os, Del(j),\\\\
+\Rq, m \nPs j, \Ot n, n \nPs j, m \Pe n, Del(j), n \Os,\\\\
+\Rq, \Ot n, m \nPs j, n \nPs j, m \Pe n, Del(j), n \Os,\\\\
+\Rq, \Ot n, m \nPs j, n \nPs j, Del(j), m \Pe n, n \Os,\\\\
+\Rq, m \nPs j, \Ot n, n \nPs j, Del(j), m \Pe n, n \Os,\\\\
+\Rq, m \nPs j, \Ot n, Del(j), m \Pe n, n \Os,\\\\
+\Rq, m \nPs j, Del(j), \Ot n, m \Pe n, n \Os,\\\\
+\Rq, m \nPs j, Del(j), m \Pu,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+\[,  m \Pu, Del(j), \Rq , m \nPs j, Del(j), m \Pu, \]
+proof:\\
+\begin{math} 
+,   m \Pu, Del(j),\\\\
+\Rq,  m \Pu, j \nPu, Del(j),\\\\
+\Rq,  m \Pu, j \nPu, m \nPs j, Del(j),\\\\
+\Rq,  j \nPu, m \nPs j, m \Pu, Del(j),\\\\
+\Rq,  j \nPu, m \nPs j, Del(j), m \Pu,\\\\
+\Rq,  m \nPs j, j \nPu, Del(j), m \Pu,\\\\
+\Rq, m \nPs j, Del(j), m \Pu,
+\end{math}
+\bigskip
+\bigskip
+
+
+\[,  m \Pu, Del(j), \Rq \sim, m \Pu, \]
+proof:\\
+\begin{math} 
+,   m \Pu, Del(j),\\\\
+\Rq,  m \Pu, j \nPu, Del(j),\\\\
+\Rq,  m \Pu, j \nPu, m \nPs j, Del(j),\\\\
+\Rq,  m \Pu, m \Pu, j \nPu, m \nPs j, Del(j),\\\\
+\Rq,  m \Pu, j \nPu, m \nPs j, m \Pu, Del(j),\\\\
+\Rq,  m \Pu, j \nPu, m \nPs j, Del(j), m \Pu,\\\\
+\Rq,  m \Pu, j \nPu, Del(j), m \Pu,\\\\
+\Rq, m \Pu, Del(j), m \Pu,
+\end{math}
+\bigskip
+\bigskip
+
+
+\[, m \nPs j, m \nPu, Del(j), \Rq , m \nPs j, Del(j), m \nPu, \]
+
+
+\bigskip
+\bigskip
+\section{Swap with identical node propositions }
+\[, m \nPs j, n \nPs j, m \Ps n, Del(j), \Rq , m \nPs j, n \nPs j, Del(j), m \Ps n, \]
+proof:\\
+\begin{math} 
+,  m \nPs j, n \nPs j, m \Ps n, Del(j),\\\\
+\Rq,  m \nPs j, n \nPs j, m \Od dm, n \Od dn, dm \Pe dn, dm \Os, dn \Os, Del(j),\\\\
+\Rq,  m \nPs j, n \nPs j, m \Od dm, n \Od dn, dm \Pe dn, Del(j), dm \Os, dn \Os,\\\\
+\Rq,  m \nPs j, n \nPs j, m \Od dm, dm \nPs j, n \Od dn, dn \nPs j, dm \Pe dn, Del(j), dm \Os, dn \Os,\\\\
+\Rq,  m \nPs j, n \nPs j, m \Od dm, n \Od dn, dm \nPs j, dn \nPs j, dm \Pe dn, Del(j), dm \Os, dn \Os,\\\\
+\Rq,  m \nPs j, n \nPs j, m \Od dm, n \Od dn, dm \nPs j, dn \nPs j, Del(j), dm \Pe dn, dm \Os, dn \Os,\\\\
+\Rq,  m \nPs j, n \nPs j, m \Od dm, n \Od dn, Del(j), dm \Pe dn, dm \Os, dn \Os,\\\\
+\Rq,  m \nPs j, m \Od dm, n \nPs j, n \Od dn, Del(j), dm \Pe dn, dm \Os, dn \Os,\\\\
+\Rq,  m \nPs j, m \Od dm, n \nPs j, Del(j), n \Od dn, dm \Pe dn, dm \Os, dn \Os,\\\\
+\Rq, n \nPs j,  m \nPs j, m \Od dm, Del(j), n \Od dn, dm \Pe dn, dm \Os, dn \Os,\\\\
+\Rq, n \nPs j,  m \nPs j, Del(j), m \Od dm, n \Od dn, dm \Pe dn, dm \Os, dn \Os,\\\\
+\Rq, m \nPs j, n \nPs j, Del(j), m \Ps n,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+\[, m \nPs j, n \nPs j, m \nPs n, Del(j), \Rq , m \nPs j, n \nPs j, Del(j), m \nPs n, \]
+
+\[, j \Pn k, Del(j), \Rq , k \nPs j, Del(j), k \Ps j, \]
+proof:\\
+\begin{math} 
+, j \Pn k, Del(j),\\\\
+\Rq, j \Oc j_0, j_0 \On, k \Ps j_0, j_0 \Os, Del(j),\\\\
+\Rq, j \Oc j_0, j_0 \On, k \Ps j_0, j_0 \Os, j \nPu, Del(j),\\\\
+\Rq, j \Oc j_0, j_0 \On, j \Pn j_0,  k \Ps j_0, j_0 \Os, j \nPu, Del(j),\\\\
+\Rq, j \Oc j_0, j_0 \On, j \nPu, j \Pn j_0,  k \Ps j_0, j_0 \Os, Del(j),\\\\
+\Rq, j \Oc j_0, j_0 \On, j \nPu, j \Pn j_0, j \Pnm j_0,  k \Ps j_0, j_0 \Os, Del(j),\\\\
+\Rq, j \Oc j_0, j_0 \On, j \nPu, j \Pn j_0, j \Pnm j_0, j_0 \nPs j, k \Ps j_0, j_0 \Os, Del(j),\\\\
+\Rq, j \Oc j_0, j_0 \On, j \nPu, j \Pn j_0, j \Pnm j_0, j_0 \nPs j, j_0 \nPs j, k \Ps j_0, j_0 \Os, Del(j),\\\\
+\Rq, j \Oc j_0, j_0 \On, j \nPu, j \Pn j_0, j \Pnm j_0, j_0 \nPs j, k \nPs j, k \Ps j_0, j_0 \Os, Del(j),\\\\
+\Rq, j \Oc j_0, j_0 \On, j \nPu, j \Pn j_0, j \Pnm j_0, j_0 \nPs j, k \nPs j, k \Ps j_0, Del(j), j_0 \Os,\\\\
+\Rq, j \Oc j_0, j_0 \On, j \nPu, j \Pn j_0, j \Pnm j_0, j_0 \nPs j, k \nPs j, Del(j), k \Ps j_0, j_0 \Os,\\\\
+\Rq, j \Oc j_0, j_0 \On, k \nPs j, Del(j), k \Ps j_0, j_0 \Os,\\\\
+\Rq, k \nPs j, j \Oc j_0, j_0 \On, Del(j), k \Ps j_0, j_0 \Os,\\\\
+\Rq, k \nPs j, j \Oc j_0, j \Ps j_0, j_0 \On, Del(j), k \Ps j_0, j_0 \Os,\\\\
+\Rq, k \nPs j, j \Oc j_0, j \Ps j_0, Del(j), k \Ps j_0, j_0 \Os,\\\\
+\Rq, k \nPs j, j \Oc j_0, Del(j), k \Ps j_0, j_0 \Os,\\\\
+\Rq, k \nPs j, Del(j), j \Oc j_0, k \Ps j_0, j_0 \Os,\\\\
+\Rq, k \nPs j, Del(j), j \Oc j_0, j \Ps j_0, k \Ps j_0, j_0 \Os,\\\\
+\Rq, k \nPs j, Del(j), j \Oc j_0, j \Ps j_0, k \Ps j, j_0 \Os,\\\\
+\Rq, k \nPs j, Del(j), j \Oc j_0, j \Ps j_0, j_0 \Os, k \Ps j,\\\\
+\Rq, k \nPs j, Del(j), j \Oc j_0, j_0 \Os, k \Ps j,\\\\
+\Rq, k \nPs j, Del(j), k \Ps j,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+\[, j \Pn k, Del(j), \Rq \sim, k \Ps j, \]
+proof:\\
+\begin{math} 
+, j \Pn k, Del(j),\\\\
+\Rq, j \Pn k, j \Pn k, Del(j),\\\\
+\Rq, j \Pn k, k \nPs j, Del(j), k \Ps j,\\\\
+\Rq, j \Pn k, k \nPs j, j \nPu, Del(j), k \Ps j,\\\\
+\Rq, j \nPu, j \Pn k, k \nPs j, Del(j), k \Ps j,\\\\
+\Rq, j \nPu, j \Pn k, j \Pnm k, k \nPs j, Del(j), k \Ps j,\\\\
+\Rq, j \nPu, j \Pn k, j \Pnm k, Del(j), k \Ps j,\\\\
+\Rq, j \nPu, j \Pn k, Del(j), k \Ps j,\\\\
+\Rq,  j \Pn k, Del(j), k \Ps j,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+\[, m \Ps j, Del(j), \Rq \sim, m \Ps j, \]
+proof:\\
+\begin{math} 
+, m \Ps j, Del(j),\\\\
+\Rq, m \Ps j, m \On, Del(j),\\\\
+\Rq, m \On, j \Pn m, Del(j),\\\\
+\Rq, m \On, j \Pn m, Del(j), m \Ps j,\\\\
+\Rq, m \Ps j, m \On, Del(j), m \Ps j,\\\\
+\Rq, m \Ps j, Del(j), m \Ps j,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+\[, m \Ps j, m \Ps n, Del(j), \Rq \sim, m \Ps n, \]
+proof:\\
+\begin{math} 
+, m \Ps j, m \Ps n, Del(j),\\\\
+\Rq, m \Ps j, n \Ps j,  Del(j),\\\\
+\Rq, m \Ps j, n \Ps j,  Del(j), n \Ps j,\\\\
+\Rq, n \Ps j, m \Ps j,  Del(j), n \Ps j,\\\\
+\Rq, n \Ps j, m \Ps j,  Del(j), m \Ps j, n \Ps j,\\\\
+\Rq, n \Ps j, m \Ps j,  Del(j), m \Ps j, m \Ps n,\\\\
+\Rq, n \Ps j, m \Ps j,  Del(j), m \Ps n,\\\\
+\Rq, m \Ps j, n \Ps j,  Del(j), m \Ps n,\\\\
+\Rq, m \Ps j, m \Ps n, Del(j), m \Ps n,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+\[, m \nPs j, m \Ps n, Del(j), \Rq \sim, m \Ps n, \]
+proof:\\
+\begin{math} 
+, m \nPs j, m \Ps n, Del(j),\\\\
+\Rq, m \nPs j, m \nPs j, m \Ps n, m \Ps n, Del(j),\\\\
+\Rq, m \nPs j, m \Ps n, m \nPs j, m \Ps n, Del(j),\\\\
+\Rq, m \nPs j, m \Ps n, n \nPs j, m \Ps n, Del(j),\\\\
+\Rq, m \Ps n, m \nPs j, n \nPs j, m \Ps n, Del(j),\\\\
+\Rq, m \Ps n, m \nPs j, n \nPs j, Del(j), m \Ps n,\\\\
+\Rq, m \nPs j, n \nPs j, m \Ps n, Del(j), m \Ps n,\\\\
+\Rq, m \nPs j, m \nPs j, m \Ps n, Del(j), m \Ps n,\\\\
+\Rq, m \nPs j, m \Ps n, Del(j), m \Ps n,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+\[, m \Ps n, Del(j), \Rq \sim, m \Ps n, \]
+proof:\\
+\begin{math} 
+, m \Ps n, Del(j),\\\\
+\Rq, \Bb{if(m \Ps j)}{,}{,}, m \Ps n, Del(j),\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, m \Ps n, Del(j),}{, m \Ps n, Del(j),},\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, m \Ps j, m \Ps n, Del(j),}{,m \nPs j, m \Ps n, Del(j),},\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, m \Ps j, m \Ps n, Del(j), m \Ps n,}{,m \nPs j, m \Ps n, Del(j), m \Ps n,},\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, m \Ps n, Del(j), m \Ps n,}{, m \Ps n, Del(j), m \Ps n,},\\\\\\
+\Rq, \Bb{if(m \Ps j)}{,}{,}, m \Ps n, Del(j), m \Ps n,\\\\\\
+\Rq, m \Ps n, Del(j), m \Ps n,
+\end{math}
+\bigskip
+\bigskip
+
+
+\[, m \nPs j, j \nPn m, Del(j), \Rq \sim, m \nPs j,\]
+proof:\\
+\begin{math} 
+, m \nPs j, j \nPn m, Del(j),\\\\
+\Rq, m \nPs j, j \nPn m, j \Oc k, k \Os, Del(j),\\\\
+\Rq, m \nPs j, j \nPn m, j \Oc k, k \On, k \Os, Del(j),\\\\
+\Rq, m \nPs j, j \nPn m, j \Oc k, k \On, Del(j), k \Os,\\\\
+\Rq, m \nPs j, j \nPn m, j \Oc k, k \On, j \Pn k, Del(j), k \Os,\\\\
+\Rq, m \nPs j, j \Oc k, k \On, j \Pn k, j \nPn m, Del(j), k \Os,\\\\
+\Rq, m \nPs j, j \Oc k, k \On, j \Pn k, j \nPn m, m \nPs k, Del(j), k \Os,\\\\
+\Rq, m \nPs j, j \Oc k, k \On, j \Pn k, j \nPn m, m \nPs k, j \nPu, Del(j), k \Os,\\\\
+\Rq, m \nPs j, j \Oc k, k \On, j \nPu, j \Pn k, j \nPn m, m \nPs k, Del(j), k \Os,\\\\
+\Rq, m \nPs j, j \Oc k, k \On, j \nPu, j \Pn k, j \Pnm k, j \nPn m, m \nPs k, Del(j), k \Os,\\\\
+\Rq, m \nPs j, j \Oc k, k \On, j \nPu, j \Pn k, j \Pnm k, k \nPs j, j \nPn m, m \nPs k, Del(j), k \Os,\\\\
+\Rq, j \Oc k, k \On, j \nPu, j \Pn k, j \Pnm k, j \nPn m, m \nPs j, k \nPs j, m \nPs k, Del(j), k \Os,\\\\
+\Rq, j \Oc k, k \On, j \nPu, j \Pn k, j \Pnm k, j \nPn m, m \nPs j, k \nPs j, Del(j), m \nPs k, k \Os,\\\\
+\Rq, m \nPs j, j \nPn m, j \Oc k, k \On, j \nPu, j \Pn k, j \Pnm k, k \nPs j, Del(j), m \nPs k, k \Os,\\\\
+\Rq, m \nPs j, j \nPn m, j \Oc k, k \On, j \Pn k, Del(j), m \nPs k, k \Os,\\\\
+\Rq, m \nPs j, j \nPn m, j \Oc k, k \On, j \Pn k, Del(j), k \Ps j, m \nPs k, k \Os,\\\\
+\Rq, m \nPs j, j \nPn m, j \Oc k, k \On, j \Pn k, Del(j), k \Ps j, m \nPs j, k \Os,\\\\
+\Rq, m \nPs j, j \nPn m, j \Oc k, k \On, j \Pn k, Del(j), m \nPs j, k \Os,\\\\
+\Rq, m \nPs j, j \nPn m, j \Oc k, k \On, Del(j), m \nPs j, k \Os,\\\\
+\Rq, m \nPs j, j \nPn m, j \Oc k, k \On, k \Os, Del(j), m \nPs j,\\\\
+\Rq, m \nPs j, j \nPn m, j \Oc k, k \Os, Del(j), m \nPs j,\\\\
+\Rq, m \nPs j, j \nPn m, Del(j), m \nPs j,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+\[, \Bb{if(m \Ps j)}{,}{, j \Pn m, }, Del(j), \Rq \sim, m \Ps j,  \]
+proof:\\
+\begin{math} 
+, \Bb{if(m \Ps j)}{,}{, j \Pn m, }, Del(j),\\\\\\
+\Rq,  \Bb{if(m \Ps j)}{, Del(j),}{, j \Pn m, Del(j), },\\\\\\
+\Rq,  \Bb{if(m \Ps j)}{, m \Ps j, Del(j),}{, j \Pn m, Del(j), },\\\\\\
+\Rq,  \Bb{if(m \Ps j)}{,m \Ps j, Del(j), m \Ps j,}{, j \Pn m, Del(j), m \Ps j, },\\\\\\
+\Rq,  \Bb{if(m \Ps j)}{,m \Ps j, }{, j \Pn m, }, Del(j), m \Ps j,\\\\\\
+\Rq, \Bb{if(m \Ps j)}{,}{, j \Pn m, }, Del(j), m \Ps j,
+\end{math}
+\bigskip
+\bigskip
+
+
+\[, Del(j), m \Ps j, \Rq , \Bb{if(m \Ps j)}{,}{, j \Pn m, }, \sim\]
+proof:\\
+\begin{math} 
+, Del(j), m \Ps j,\\\\\\
+\Rq, \Bb{if(m \Ps j)}{,}{,}, Del(j), m \Ps j,\\\\\\
+\Rq, \Bb{if(m \Ps j)}{,}{, \Bb{if(j \Pn m)}{,}{,},}, Del(j), m \Ps j,\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, }{, m \nPs j, \Bb{if(j \Pn m)}{,}{,},}, Del(j), m \Ps j,\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, }{, m \nPs j, \Bb{if(j \Pn m)}{, }{, j \nPn m, },}, Del(j), m \Ps j,\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, Del(j), m \Ps j, }{, m \nPs j, \Bb{if(j \Pn m)}{, Del(j), m \Ps j, }{, j \nPn m, Del(j), m \Ps j, },},\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, Del(j), m \Ps j, }{, \Bb{if(j \Pn m)}{, m \nPs j, Del(j), m \Ps j, }{, m \nPs j, j \nPn m, Del(j), m \Ps j, },},\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, Del(j), m \Ps j, }{, \Bb{if(j \Pn m)}{, m \nPs j, Del(j), m \Ps j, }{, m \nPs j, j \nPn m, Del(j),m \nPs j, m \Ps j, },},\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, Del(j), m \Ps j, }{, \Bb{if(j \Pn m)}{, m \nPs j, Del(j), m \Ps j, }{, m \nPs j, j \nPn m, Del(j), \Or,},},\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, Del(j), m \Ps j, }{, \Bb{if(j \Pn m)}{, m \nPs j, Del(j), m \Ps j, }{, \Or,},},\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, Del(j), m \Ps j, }{, j \Pn m, m \nPs j, Del(j), m \Ps j,},\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, }{, j \Pn m, m \nPs j,}, Del(j), m \Ps j,\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, }{, m \nPs j, j \Pn m,}, Del(j), m \Ps j,\\\\\\
+\Rq, \Bb{if(m \Ps j)}{,}{, j \Pn m, }, Del(j), m \Ps j,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+ \[, \Bb{if(m \Ps j)}{,}{, j \Pn m, }, Del(j), \Rq , Del(j), m \Ps j,  \]
+proof:\\
+\begin{math} 
+, \Bb{if(m \Ps j)}{,}{, j \Pn m, }, Del(j),\\\\\\
+\Rq, \Bb{if(m \Ps j)}{,}{, j \Pn m, }, Del(j), m \Ps j,\\\\\\
+\Rq, Del(j), m \Ps j,
+\end{math}
+\bigskip
+\bigskip
+
+
+\[, m \nPs j, j \nPn m, Del(j), \Rq , Del(j), m \nPs j, \]
+proof:\\
+\begin{math} 
+,  Del(j), m \nPs j,\\\\
+\Rq, \Bb{if(m \Ps j)}{,}{, }, Del(j), m \nPs j,\\\\\\
+\Rq, \Bb{if(m \Ps j)}{,}{, \Bb{if(j \Pn m)}{,}{, }, }, Del(j), m \nPs j,\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, Del(j), m \nPs j,}{, \Bb{if(j \Pn m)}{, Del(j), m \nPs j,}{,  Del(j), m \nPs j,}, },\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, m \Ps j, Del(j), m \nPs j,}{, \Bb{if(j \Pn m)}{,j \Pn m, Del(j), m \nPs j,}{,  Del(j), m \nPs j,}, },\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, m \Ps j, Del(j), m \Ps j, m \nPs j,}{, \Bb{if(j \Pn m)}{,j \Pn m, Del(j), m \Ps j, m \nPs j,}{,  Del(j), m \nPs j,}, },\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, m \Ps j, Del(j), \Or,}{, \Bb{if(j \Pn m)}{,j \Pn m, Del(j), \Or,}{,  Del(j), m \nPs j,}, },\\\\\\
+\Rq, \Bb{if(m \Ps j)}{, \Or,}{, \Bb{if(j \Pn m)}{, \Or,}{,  Del(j), m \nPs j,}, },\\\\\\
+\Rq, m \nPs j, \Bb{if(j \Pn m)}{, \Or,}{,  Del(j), m \nPs j,},\\\\\\
+\Rq, m \nPs j,  j \nPn m, Del(j), m \nPs j,\\\\\\
+\Rq, m \nPs j, j \nPn m, Del(j),
+\end{math}
+\bigskip
+\bigskip
+
+
+\bigskip
+\bigskip
+\section{Other }
+\[, i \Pne j, i \nPs j, Del(j), i \Ps j, \Rq , \Or,\]
+proof:\\
+\begin{math} 
+, i \Pne j, i \nPs j, Del(j), i \Ps j,\\\\
+\Rq, \Bb{if(j \Pn i)}{,}{, }, i \Pne j, i \nPs j, Del(j), i \Ps j,\\\\\\
+\Rq, \Bb{if(j \Pn i)}{, j \Pn i,}{, }, i \Pne j, i \nPs j, Del(j), i \Ps j,\\\\\\
+\Rq, \Bb{if(j \Pn i)}{, j \Pn i, i \Pne j, i \nPs j, Del(j), i \Ps j, }{, i \Pne j, i \nPs j, Del(j), i \Ps j, },\\\\\\
+\Rq, \Bb{if(j \Pn i)}{, j \Pn i, i \Pne j, i \nPs j, j \nPu, Del(j), i \Ps j, }{, i \Pne j, i \nPs j, Del(j), i \Ps j, },\\\\\\
+\Rq, \Bb{if(j \Pn i)}{, j \nPu, j \Pn i, i \Pne j, i \nPs j, Del(j), i \Ps j, }{, i \Pne j, i \nPs j, Del(j), i \Ps j, },\\\\\\
+\Rq, \Bb{if(j \Pn i)}{, j \nPu, j \Pn i, j \Pnm i, i \Pne j, i \nPs j, Del(j), i \Ps j, }{, i \Pne j, i \nPs j, Del(j), i \Ps j, },\\\\\\
+\Rq, \Bb{if(j \Pn i)}{, j \nPu, j \Pn i, \Or, i \nPs j, Del(j), i \Ps j, }{, i \Pne j, i \nPs j, Del(j), i \Ps j, },\\\\\\
+\Rq, \Bb{if(j \Pn i)}{, \Or, }{, i \Pne j, i \nPs j, Del(j), i \Ps j, },\\\\\\
+\Rq,j \nPn i, i \Pne j, i \nPs j, Del(j), i \Ps j,\\\\\\
+\Rq, i \Pne j, i \nPs j,j \nPn i, Del(j), i \Ps j,\\\\\\
+\Rq, i \Pne j, Del(j), i \nPs j, i \Ps j,\\\\\\
+\Rq, i \Pne j, Del(j), \Or,\\\\\\
+\Rq, \Or,
+\end{math}
+\bigskip
+\bigskip
+
+
+\[, i \Pne j, Del(j), i \Ps j, \Rq ,  i \Pne j, i \Ps j, Del(j),\]
+proof:\\
+\begin{math} 
+, i \Pne j, Del(j), i \Ps j,\\\\
+\Rq, \Bb{if(i \Ps j)}{,}{, }, i \Pne j, Del(j), i \Ps j,\\\\\\
+\Rq, \Bb{if(i \Ps j)}{,}{,i \nPs j, }, i \Pne j, Del(j), i \Ps j,\\\\\\
+\Rq, \Bb{if(i \Ps j)}{, i \Pne j, Del(j), i \Ps j,}{,i \nPs j, i \Pne j, Del(j), i \Ps j, },\\\\\\
+\Rq, \Bb{if(i \Ps j)}{, i \Pne j, Del(j), i \Ps j,}{, i \Pne j,i \nPs j, Del(j), i \Ps j, },\\\\\\
+\Rq, \Bb{if(i \Ps j)}{, i \Pne j, Del(j), i \Ps j,}{, \Or,},\\\\\\
+\Rq, i \Ps j, i \Pne j, Del(j), i \Ps j, \\\\\\
+\Rq, i \Pne j,i \Ps j, Del(j), i \Ps j, \\\\\\
+\Rq, i \Pne j, i \Ps j, Del(j),
+\end{math}
+\bigskip
+\bigskip
+
+
+\[, i \Ps j, Del(j),  \Rq ,  i \Pne j, Del(j), i \Ps j,\]
+
+
+\[, j \Pn k, j \Oc n, Del(j), \Rq , j \Pn k, k \Oc n, Del(j), \]
+proof:\\
+\begin{math} 
+, j \Pn k, j \Oc n, Del(j),\\\\
+\Rq, j \Pn k, Del(j), j \Oc n,\\\\
+\Rq, j \Pn k, Del(j), j \Ps k, j \Oc n,\\\\
+\Rq, j \Pn k, Del(j), j \Ps k, k \Oc n,\\\\
+\Rq, j \Pn k, Del(j), k \Oc n,\\\\
+\Rq, j \Pn k, k \Oc n, Del(j),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\section{Swap with node connectivity propositions }
+\[, R(i), Del(j), \Rq , Del(j), R(i), \]
+
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, i \Pu, R(i), Del(j),\\\\
+\Rq, i \Pu, Del(j),\\\\
+\Rq, i \Pu, Del(j), i \Pu,\\\\
+\Rq, i \Pu, Del(j), i \Pu, R(i),\\\\
+\Rq, i \Pu,  Del(j), R(i),\\\\
+premise \; 2:\\
+, \In \Pn i, R(i), Del(j),  \Rq , \In \Pn i,  Del(j), R(i), \Ri \\\\
+, i \nPu, \In \Ps i, R(i), Del(j),\\\\
+\Rq, \In \Ps i, i \nPu, R(i), Del(j),\\\\
+\Rq, \In \Ps i, i \nPu, i \On, R(i), Del(j),\\\\
+\Rq, i \nPu, i \On, \In \Pn i, R(i), Del(j),\\\\
+\Rq, i \nPu, i \On, \In \Pn i, Del(j), R(i),\\\\
+\Rq, \In \Ps i, i \nPu, i \On, Del(j), R(i),\\\\
+\Rq, \In \Ps i, \Bb{if(i \Ps j)}{,}{,},  i \nPu, i \On, Del(j), R(i),\\\\\\
+\Rq, \In \Ps i, \Bb{if(i \Ps j)}{, i \nPu, i \On, Del(j), R(i),}{, i \nPu, i \On, Del(j), R(i),},\\\\\\
+\Rq, \In \Ps i, \Bb{if(i \Ps j)}{,i \Ps j, i \nPu, i \On, Del(j), R(i),}{, i \nPu, i \On, Del(j), R(i),},\\\\\\
+\Rq, \In \Ps i, \Bb{if(i \Ps j)}{, i \nPu,i \Ps j, i \On, Del(j), R(i),}{, i \nPu, i \On, Del(j), R(i),},\\\\\\
+\Rq, \In \Ps i, \Bb{if(i \Ps j)}{, i \nPu,i \Ps j, Del(j), R(i),}{, i \nPu, i \On, Del(j), R(i),},\\\\\\
+\Rq, \In \Ps i, \Bb{if(i \Ps j)}{,i \Ps j, i \nPu, Del(j), R(i),}{, i \nPu, i \On, Del(j), R(i),},\\\\\\
+\Rq, \In \Ps i, \Bb{if(i \Ps j)}{, i \nPu, Del(j), R(i),}{, i \nPu, i \On, Del(j), R(i),},\\\\\\
+\Rq, \In \Ps i, \Bb{if(i \Ps j)}{, i \nPu, Del(j), R(i),}{, i \nPs j, i \nPu, i \On, Del(j), R(i),},\\\\\\
+\Rq, \In \Ps i, \Bb{if(i \Ps j)}{, i \nPu, Del(j), R(i),}{, i \nPu, i \nPs j, i \On, Del(j), R(i),},\\\\\\
+\Rq, \In \Ps i, \Bb{if(i \Ps j)}{, i \nPu, Del(j), R(i),}{, i \nPu, i \nPs j, Del(j), i \On, R(i),},\\\\\\
+\Rq, \In \Ps i, \Bb{if(i \Ps j)}{, i \nPu, Del(j), R(i),}{, i \nPs j, i \nPu, Del(j), i \On, R(i),},\\\\\\
+\Rq, \In \Ps i, \Bb{if(i \Ps j)}{, i \nPu, Del(j), R(i),}{, i \nPs j, Del(j), i \nPu, i \On, R(i),},\\\\\\
+\Rq, \In \Ps i, \Bb{if(i \Ps j)}{, i \nPu, Del(j), R(i),}{, i \nPs j, Del(j), i \nPu, R(i),},\\\\\\
+\Rq, \In \Ps i, \Bb{if(i \Ps j)}{, i \nPu, Del(j), R(i),}{, i \nPs j, i \nPu, Del(j), R(i),},\\\\\\
+\Rq, \In \Ps i, \Bb{if(i \Ps j)}{, i \nPu, Del(j), R(i),}{,  i \nPu, Del(j), R(i),},\\\\\\
+\Rq, \In \Ps i, \Bb{if(i \Ps j)}{, }{, }, i \nPu, Del(j), R(i),\\\\\\
+\Rq,i \nPu, \In \Ps i, Del(j), R(i),\\\\
+conclusion:\\
+, R(i), Del(j), \Rq , Del(j), R(i),
+\end{math}
+\bigskip
+\bigskip
+
+
+\[, m \Pu , n \Pu, m \Ps n, Del(j), \Rq , m \Pu, n \Pu, Del(j), m \Ps n, \]
+proof:\\
+\begin{math} 
+, m \Pu , n \Pu, m \Ps n, Del(j),\\\\
+\Rq, m \Pu , n \Pu, m \Ps n, j \nPu, Del(j),\\\\
+\Rq, m \Pu , j \nPu, n \Pu, m \Ps n, Del(j),\\\\
+\Rq, m \Pu , j \nPu, m \nPs j,  n \Pu, m \Ps n, Del(j),\\\\
+\Rq, m \Pu , m \nPs j,  n \Pu, j \nPu, m \Ps n, Del(j),\\\\
+\Rq, m \Pu , m \nPs j,  n \Pu, j \nPu, n \nPs j,  m \Ps n, Del(j),\\\\
+\Rq, m \Pu ,  n \Pu, j \nPu, m \nPs j, n \nPs j,  m \Ps n, Del(j),\\\\
+\Rq, m \Pu ,  n \Pu, j \nPu, m \nPs j, n \nPs j, Del(j),  m \Ps n,\\\\
+\Rq, m \Pu ,  n \Pu, j \nPu, n \nPs j, m \nPs j, Del(j),  m \Ps n,\\\\
+\Rq, m \Pu ,  n \Pu, j \nPu, m \nPs j, Del(j),  m \Ps n,\\\\
+\Rq,  n \Pu, m \Pu , j \nPu, m \nPs j, Del(j),  m \Ps n,\\\\
+\Rq,  n \Pu, m \Pu , j \nPu, Del(j),  m \Ps n,\\\\
+\Rq,  n \Pu, m \Pu , Del(j),  m \Ps n,\\\\
+\Rq, m \Pu, n \Pu, Del(j), m \Ps n,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+\[, m \Pu , n \Pu, m \nPs n, Del(j), \Rq , m \Pu, n \Pu, Del(j), m \nPs n, \]
+
+
+\[, m \Pc n, Del(j), \Rq , Del(j), m \Pc n, \]
+proof:\\
+\begin{math} 
+, m \Pc n, Del(j),\\\\
+\Rq, m \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, m_0 \Os, n_0 \Os, Del(j),\\\\
+\Rq, m \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, Del(j), m_0 \Os, n_0 \Os,\\\\
+\Rq, m \Oc m_0, n \Oc n_0, R(m_0), m_0 \Pu, R(n_0), m_0 \Ps n_0, Del(j), m_0 \Os, n_0 \Os,\\\\
+\Rq, m \Oc m_0, n \Oc n_0, R(m_0), m_0 \Pu, R(n_0), n_0 \Pu, m_0 \Ps n_0, Del(j), m_0 \Os, n_0 \Os,\\\\
+\Rq, m \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Pu, n_0 \Pu, m_0 \Ps n_0, Del(j), m_0 \Os, n_0 \Os,\\\\
+\Rq, m \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Pu, n_0 \Pu, Del(j), m_0 \Ps n_0, m_0 \Os, n_0 \Os,\\\\
+\Rq, m \Oc m_0, n \Oc n_0, R(m_0), m_0 \Pu, R(n_0), n_0 \Pu, Del(j), m_0 \Ps n_0, m_0 \Os, n_0 \Os,\\\\
+\Rq, m \Oc m_0, n \Oc n_0, R(m_0), R(n_0), Del(j), m_0 \Ps n_0, m_0 \Os, n_0 \Os,\\\\
+\Rq, m \Oc m_0, n \Oc n_0, Del(j), R(m_0), R(n_0), m_0 \Ps n_0, m_0 \Os, n_0 \Os,\\\\
+\Rq, Del(j), m \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, m_0 \Os, n_0 \Os,\\\\
+\Rq, Del(j), m \Pc n,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+
+\[, m \nPc n, Del(j), \Rq , Del(j), m \nPc n, \]
+
+\[, i \Pc j, Del(j), \Rq , Del(j), i \Pc j, \]
+proof:\\
+\begin{math} 
+, i \Pc j, Del(j),\\\\
+\Rq, j \Oc j_0, j_0 \Os, i \Pc j, Del(j),\\\\
+\Rq, j \Oc j_0, j \Ps j_0, j_0 \Os, i \Pc j, Del(j),\\\\
+\Rq, j \Oc j_0, i \Pc j, j \Ps j_0, Del(j), j_0 \Os,\\\\
+\Rq, j \Oc j_0, i \Pc j, j \Ps j_0, Del(j_0), j_0 \Os,\\\\
+\Rq, j \Oc j_0, j \Ps j_0, i \Pc j, Del(j_0), j_0 \Os,\\\\
+\Rq, j \Oc j_0, j \Ps j_0, Del(j_0), i \Pc j, j_0 \Os,\\\\
+\Rq, j \Oc j_0, j \Ps j_0, Del(j), i \Pc j, j_0 \Os,\\\\
+\Rq, j \Oc j_0, Del(j), i \Pc j, j_0 \Os,\\\\
+\Rq, j \Oc j_0, j_0 \Os, Del(j), i \Pc j,\\\\
+\Rq, Del(j), i \Pc j,
+\end{math}
+\bigskip
+\bigskip
+
+
+\[, i \nPc j, Del(j), \Rq , Del(j), i \nPc j, \]
+
+
+
+
+\newpage
