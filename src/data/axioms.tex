@@ -1,0 +1,167 @@
+
+\chapter{Rules of Operators}
+\section{Axioms of Operators}
+
+\subsection{swap axioms of operator}
+\subsubsection{id operator:}
+
+\[,i \Od m, i \Od n, \Rq ,i \Od n, i \Od m,\]
+
+\[,i \Od m, j \Od n, \Rq ,j \Od n, i \Od m,\]
+\[,i \Od m, j \Oc n, \Rq ,j \Oc n, i \Od m,\]
+\[,i \Od m, j \Ob n, \Rq ,j \Ob n, i \Od m,\]
+
+\[,i \Od m,  \Og n, \Rq , \Og n, i \Od m,\]
+\[,i \Od m,  \Ot n, \Rq , \Ot n, i \Od m,\]
+
+\[,i \Od m, j \On, \Rq , j \On, i \Od m,\]
+
+\[,i \Od m, j \Os, \Rq , j \Os, i \Od m,\]
+
+\[,i \Od m, \Blb{j \Oe t}{,}{,}, \Rq , \Blb{j \Oe t}{,i \Od m,}{,i \Od m,},\]
+
+
+
+
+
+\bigskip
+\subsubsection{copy operator:}
+\[,i \Oc m, j \Oc n, \Rq ,j \Oc n, i \Oc m,\]
+\[,i \Oc m, j \Ob n, \Rq ,j \Ob n, i \Oc m,\]
+
+\[,i \Oc m,  \Og n, \Rq , \Og n, i \Oc m,\]
+\[,i \Oc m,  \Ot n, \Rq , \Ot n, i \Oc m,\]
+
+\[,i \Oc m, j \On, \Rq , j \On, i \Oc m,\]
+
+\[,i \Oc m, j \Os, \Rq , j \Os, i \Oc m,\]
+
+\[,i \Oc m, \Blb{j \Oe t}{,}{,} \Rq , \Blb{j \Oe t}{,i \Oc m,}{,i \Oc m,}\]
+
+
+
+\bigskip
+\subsubsection{subnode operator:}
+\[,i \Ob m, j \Ob n, \Rq ,j \Ob n, i \Ob m,\]
+
+\[,i \Ob m,  \Og n, \Rq , \Og n, i \Ob m,\]
+\[,i \Ob m,  \Ot n, \Rq , \Ot n, i \Ob m,\]
+
+\[,i \Ob m, j \On, \Rq , j \On, i \Ob m,\]
+
+\[,i \Ob m, j \Os, \Rq , j \Os, i \Ob m,\]
+
+\[,i \Ob m, \Blb{j \Oe t}{,}{,}, \Rq , \Blb{j \Oe t}{,i \Ob m,}{,i \Ob m,},\]
+
+\bigskip
+\subsubsection{temporary space operator:}
+\[, \Ot m,  \Ot n, \Rq , \Ot n, \Ot m,\]
+\[, \Ot m,  \Og n, \Rq , \Og n, \Ot m,\]
+
+\[, \Ot m, j \On, \Rq , j \On,  \Ot m,\]
+
+\[, \Ot m, j \Os, \Rq , j \Os,  \Ot m,\]
+
+\[, \Ot m, \Blb{j \Oe t}{,}{,}, \Rq , \Blb{j \Oe t}{, \Ot m,}{, \Ot m,},\]
+
+
+\bigskip
+\subsubsection{global space operator:}
+\[, \Og m,  \Og n, \Rq , \Og n, \Og m,\]
+
+\[, \Og m, j \On, \Rq , j \On,  \Og m,\]
+
+\[, \Og m, j \Os, \Rq , j \Os,  \Og m,\]
+
+\[, \Og m, \Blb{j \Oe t}{,}{,}, \Rq , \Blb{j \Oe t}{, \Og m,}{, \Og m,},\]
+
+
+\bigskip
+\subsubsection{next node operator:}
+
+\[,i \On, j \On, \Rq , j \On, i \On,\]
+
+\[,i \On, i \Op, \Rq , i \Op, i \On,\]
+
+\[,i \On, j \Os, \Rq , j \Os,i \On,\]
+
+\[,i \On, \Blb{j \Oe t}{,}{,} \Rq , \Blb{j \Oe t}{,i \On,}{,i \On,}\]
+
+
+
+\bigskip
+\subsubsection{release operator:}
+
+\[,i \Os, j \Os, \Rq , j \Os,i \Os,\]
+
+\[,i \Os, \Blb{j \Oe t}{,}{,} \Rq , \Blb{j \Oe t}{,i \Os,}{,i \Os,}\]
+\[,i \Os, \Blb{j \Oe j}{,}{,} \Rq , \Blb{j \Oe j}{,i \Os,}{,i \Os,}\]
+
+\bigskip
+\subsection{fundamental axioms of logic error operator}
+
+\[,\Or, \Rq ,\Or, \Tc code,\]
+
+
+\[,i \On, \Or, \Rq ,\Or,\]
+\[,i \Os, \Or, \Rq ,\Or,\]
+\[,i \Oa j, \Or, \Rq ,\Or,\]
+
+
+
+\bigskip
+\subsection{ fundamental axioms of equivalent comparison operator}
+
+\[,\Brs{,}{,} ,\Tc c, \Rq, \Brs{,\Tc c,}{,\Tc c,},\]
+
+\bigskip
+
+\[, \Blb{i \Oe i}{,}{,}, \Rq , \Blb{i \Oe i}{,}{, \Or,},\]
+
+
+\bigskip
+
+\[, \Blb{i \Oe j}{,}{,}, \Rq , \Blb{j \Oe i}{,}{,},\]
+
+
+\bigskip
+
+\[, \Bb{i \Oe j}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{i \Oe j}{, \Bb{i \Oe j}{,\Tc c_1,}{,\Tc c_3,},}{,\Tc c_2,} ,\]
+
+\bigskip
+
+\[, \Bb{i \Oe j}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{i \Oe j}{, \Tc c_1,}{,\Bb{i \Oe j}{,\Tc c_3,}{,\Tc c_2,},} ,\]
+
+
+\bigskip
+
+\[, \Blb{i \Oe j}{,\Blb{i \Oe m}{,}{,}}{,}, \Rq , \Blb{i \Oe j}{, \Blb{j \Oe m}{,}{,}}{,}, \]
+
+
+\bigskip
+\[, \Bb{i \Oe j}{,\Bb{m \Oe n}{,\Tc c_1,}{,\Tc c_2,},}{, \Bb{m \Oe n}{,\Tc c_3,}{,\Tc c_4,},}, \Rq ,  \Bb{m \Oe n}{,\Bb{i \Oe j}{,\Tc c_1,}{,\Tc c_3,},}{, \Bb{i \Oe j}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+
+\bigskip
+\subsection{fundamental axioms of release operator}
+
+\[,i \On ,i \Os , \Rq ,i \Os,\]
+
+
+
+\bigskip
+\subsection{axioms of creativity}
+
+\[, \Rq , \Bs{i \Oe j}{,}{,} ,\]
+
+\[, \Rq ,i \Oc m ,m \Os,\]
+\[, \Rq ,i \Od m ,m \Os,\]
+\[, \Rq ,i \Ob m ,m \Os,\]
+
+\[, \Rq ,\Og m ,m \Os,\]
+\[, \Rq ,\Ot m ,m \Os,\]
+
+
+\[, \Rq ,i \On ,i \Op,\]
+
+\[, \Rq , ,\]
