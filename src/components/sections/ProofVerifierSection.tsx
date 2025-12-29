@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { axioms, Rule, getTypeBadgeClass } from '@/data/axioms';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
-import { CheckCircle2, XCircle, AlertCircle, Sparkles, ArrowRight, RotateCcw } from 'lucide-react';
+import { CheckCircle2, XCircle, AlertCircle, Sparkles, ArrowRight, RotateCcw, Keyboard } from 'lucide-react';
 
 interface VerificationResult {
   isValid: boolean;
@@ -12,11 +12,74 @@ interface VerificationResult {
   similarity?: number;
 }
 
+// Keyboard shortcuts for operators
+const operatorShortcuts = [
+  { key: 'a', syntax: '\\Oa', label: 'Assign', description: 'Ctrl+A' },
+  { key: 'b', syntax: '\\Ob', label: 'Subnode', description: 'Ctrl+B' },
+  { key: 'c', syntax: '\\Oc', label: 'Copy', description: 'Ctrl+C' },
+  { key: 'd', syntax: '\\Od', label: 'ID', description: 'Ctrl+D' },
+  { key: 'e', syntax: '\\Oe', label: 'Equiv', description: 'Ctrl+E' },
+  { key: 'g', syntax: '\\Og', label: 'Global', description: 'Ctrl+G' },
+  { key: 't', syntax: '\\Ot', label: 'Temp', description: 'Ctrl+T' },
+  { key: 'n', syntax: '\\On', label: 'Next', description: 'Ctrl+N' },
+  { key: 'p', syntax: '\\Op', label: 'Prev', description: 'Ctrl+P' },
+  { key: 's', syntax: '\\Os', label: 'Release', description: 'Ctrl+S' },
+  { key: 'r', syntax: '\\Or', label: 'Error', description: 'Ctrl+R' },
+];
+
 const ProofVerifierSection: React.FC = () => {
   const [leftInput, setLeftInput] = useState('');
   const [rightInput, setRightInput] = useState('');
   const [result, setResult] = useState<VerificationResult | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [activeField, setActiveField] = useState<'left' | 'right'>('left');
+  const [showShortcuts, setShowShortcuts] = useState(false);
+  
+  const leftTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const rightTextareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const insertAtCursor = useCallback((syntax: string) => {
+    const textarea = activeField === 'left' ? leftTextareaRef.current : rightTextareaRef.current;
+    const setInput = activeField === 'left' ? setLeftInput : setRightInput;
+    const currentValue = activeField === 'left' ? leftInput : rightInput;
+    
+    if (textarea) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const newValue = currentValue.substring(0, start) + syntax + currentValue.substring(end);
+      setInput(newValue);
+      
+      // Set cursor position after inserted text
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + syntax.length, start + syntax.length);
+      }, 0);
+    }
+  }, [activeField, leftInput, rightInput]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>, field: 'left' | 'right') => {
+    if (e.ctrlKey || e.metaKey) {
+      const shortcut = operatorShortcuts.find(s => s.key === e.key.toLowerCase());
+      if (shortcut) {
+        e.preventDefault();
+        const textarea = field === 'left' ? leftTextareaRef.current : rightTextareaRef.current;
+        const setInput = field === 'left' ? setLeftInput : setRightInput;
+        const currentValue = field === 'left' ? leftInput : rightInput;
+        
+        if (textarea) {
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          const newValue = currentValue.substring(0, start) + shortcut.syntax + currentValue.substring(end);
+          setInput(newValue);
+          
+          setTimeout(() => {
+            textarea.focus();
+            textarea.setSelectionRange(start + shortcut.syntax.length, start + shortcut.syntax.length);
+          }, 0);
+        }
+      }
+    }
+  }, [leftInput, rightInput]);
 
   const normalizeExpression = (expr: string): string => {
     return expr
@@ -150,6 +213,42 @@ const ProofVerifierSection: React.FC = () => {
           </p>
         </div>
 
+        {/* Keyboard Shortcuts Toggle */}
+        <div className="mb-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowShortcuts(!showShortcuts)}
+            className="gap-2"
+          >
+            <Keyboard className="w-4 h-4" />
+            {showShortcuts ? 'Hide' : 'Show'} Keyboard Shortcuts
+          </Button>
+        </div>
+
+        {/* Keyboard Shortcuts Panel */}
+        {showShortcuts && (
+          <div className="bg-card border border-border rounded-lg p-4 mb-6 animate-fade-in">
+            <h4 className="text-sm font-semibold text-primary mb-3">Quick Insert Shortcuts</h4>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+              {operatorShortcuts.map((shortcut) => (
+                <button
+                  key={shortcut.key}
+                  onClick={() => insertAtCursor(shortcut.syntax)}
+                  className="flex flex-col items-center p-2 rounded-md bg-muted/30 hover:bg-muted/50 transition-colors border border-border/50"
+                >
+                  <code className="text-xs font-mono text-foreground">{shortcut.syntax}</code>
+                  <span className="text-[10px] text-muted-foreground mt-1">{shortcut.description}</span>
+                  <span className="text-[10px] text-primary">{shortcut.label}</span>
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground mt-3">
+              Click a button or use keyboard shortcuts while typing. Active field: <span className="text-primary font-mono">{activeField === 'left' ? 'Left (A)' : 'Right (B)'}</span>
+            </p>
+          </div>
+        )}
+
         {/* Input Area */}
         <div className="bg-card border border-border rounded-lg p-6 mb-8">
           <div className="grid md:grid-cols-[1fr,auto,1fr] gap-4 items-center">
@@ -159,10 +258,13 @@ const ProofVerifierSection: React.FC = () => {
                 Left Side (A)
               </label>
               <Textarea
+                ref={leftTextareaRef}
                 placeholder=", i = j,"
                 value={leftInput}
                 onChange={(e) => setLeftInput(e.target.value)}
-                className="font-mono bg-muted/50 border-border min-h-[100px] resize-none"
+                onFocus={() => setActiveField('left')}
+                onKeyDown={(e) => handleKeyDown(e, 'left')}
+                className={`font-mono bg-muted/50 border-border min-h-[100px] resize-none ${activeField === 'left' ? 'ring-2 ring-primary/50' : ''}`}
               />
             </div>
 
@@ -177,10 +279,13 @@ const ProofVerifierSection: React.FC = () => {
                 Right Side (B)
               </label>
               <Textarea
+                ref={rightTextareaRef}
                 placeholder=", j = i,"
                 value={rightInput}
                 onChange={(e) => setRightInput(e.target.value)}
-                className="font-mono bg-muted/50 border-border min-h-[100px] resize-none"
+                onFocus={() => setActiveField('right')}
+                onKeyDown={(e) => handleKeyDown(e, 'right')}
+                className={`font-mono bg-muted/50 border-border min-h-[100px] resize-none ${activeField === 'right' ? 'ring-2 ring-primary/50' : ''}`}
               />
             </div>
           </div>
@@ -297,8 +402,7 @@ const ProofVerifierSection: React.FC = () => {
         {/* Syntax Guide */}
         <div className="mt-8 text-center">
           <p className="text-sm text-muted-foreground">
-            <span className="text-primary">Tip:</span> Use standard ASCII characters or copy operators from the glossary.
-            Commas (,) separate code elements. Use ⊙, ⊚, ⊗, ⊘, ⊖, ⊕, ⊝, ⊛ for operators, or their text equivalents.
+            <span className="text-primary">Tip:</span> Use keyboard shortcuts (Ctrl+A, Ctrl+B, etc.) to quickly insert operators, or click the buttons above.
           </p>
         </div>
       </div>
