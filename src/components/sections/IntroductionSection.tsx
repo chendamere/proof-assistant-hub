@@ -125,13 +125,9 @@ const IntroductionSection: React.FC = () => {
 
         {/* Operators Section */}
         <div className="animate-fade-in delay-500">
-          <h2 className="text-2xl font-semibold text-center mb-8">
-            The 11 Operators
+          <h2 className="text-2xl font-semibold text-center mb-6">
+            Operators
           </h2>
-          <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Universal Language uses 11 operators to manipulate data structures. 
-            Each operator is represented by a unique symbol.
-          </p>
           <div className="bg-card border border-border rounded-lg overflow-hidden">
             <OperatorLegend />
           </div>

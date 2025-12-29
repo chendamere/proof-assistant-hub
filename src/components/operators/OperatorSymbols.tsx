@@ -180,60 +180,111 @@ interface SvgOperatorProps {
   src: string;
   label: string;
   description: string;
+  syntax: string;
   size?: number;
   operandBefore?: string;
   operandAfter?: string;
 }
 
-const SvgOperator: React.FC<SvgOperatorProps> = ({ src, label, description, size = 24, operandBefore, operandAfter }) => (
-  <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+const SvgOperator: React.FC<SvgOperatorProps> = ({ src, label, description, syntax, size = 10, operandBefore, operandAfter }) => (
+  <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
     <div className="flex items-center gap-0.5 font-mono">
-      {operandBefore && <span className="text-foreground text-xs">{operandBefore}</span>}
+      {operandBefore && <span className="text-foreground text-[10px]">{operandBefore}</span>}
       <img 
         src={src} 
         alt={label} 
         style={{ width: size, height: size }} 
         className="inline-block opacity-80 invert brightness-[0.85] sepia saturate-[3] hue-rotate-[10deg]" 
       />
-      {operandAfter && <span className="text-foreground text-xs">{operandAfter}</span>}
+      {operandAfter && <span className="text-foreground text-[10px]">{operandAfter}</span>}
     </div>
-    <div className="flex flex-col">
-      <span className="text-sm font-medium text-foreground">{label}</span>
-      <span className="text-xs text-muted-foreground">{description}</span>
+    <div className="flex flex-col flex-1 min-w-0">
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-medium text-foreground">{label}</span>
+        <code className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-mono">{syntax}</code>
+      </div>
+      <span className="text-[10px] text-muted-foreground truncate">{description}</span>
     </div>
   </div>
 );
 
-// Operator legend component with actual SVGs
-export const OperatorLegend: React.FC = () => (
-  <div className="p-6">
-    <div className="mb-6">
-      <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Binary Operators</h4>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        <SvgOperator src={OaSvg} label="Assign" description="i ← j (assign value)" operandBefore="i" operandAfter="j" />
-        <SvgOperator src={ObSvg} label="Subnode" description="Get/set child node" operandBefore="i" operandAfter="j" />
-        <SvgOperator src={OcSvg} label="Copy" description="Copy node reference" operandBefore="i" operandAfter="j" />
-        <SvgOperator src={OdSvg} label="ID" description="Get node identifier" operandBefore="i" operandAfter="j" />
-        <SvgOperator src={OeSvg} label="Equivalence" description="Value comparison branch" operandBefore="i" operandAfter="j" />
+// Operator data for search functionality
+const operatorData = [
+  { category: 'binary', src: OaSvg, label: 'Assign', description: 'i ← j (assign value)', syntax: 'iOaj', operandBefore: 'i', operandAfter: 'j' },
+  { category: 'binary', src: ObSvg, label: 'Subnode', description: 'Get/set child node', syntax: 'iObj', operandBefore: 'i', operandAfter: 'j' },
+  { category: 'binary', src: OcSvg, label: 'Copy', description: 'Copy node reference', syntax: 'iOcj', operandBefore: 'i', operandAfter: 'j' },
+  { category: 'binary', src: OdSvg, label: 'ID', description: 'Get node identifier', syntax: 'iOdj', operandBefore: 'i', operandAfter: 'j' },
+  { category: 'binary', src: OeSvg, label: 'Equivalence', description: 'Value comparison branch', syntax: 'iOej', operandBefore: 'i', operandAfter: 'j' },
+  { category: 'unary', src: OgSvg, label: 'Global Space', description: 'Allocate global node', syntax: 'Ogi', operandAfter: 'i' },
+  { category: 'unary', src: OtSvg, label: 'Temp Space', description: 'Allocate temporary node', syntax: 'Oti', operandAfter: 'i' },
+  { category: 'unary', src: OnSvg, label: 'Next Node', description: 'Move to next node', syntax: 'iOn', operandBefore: 'i' },
+  { category: 'unary', src: OpSvg, label: 'Prev Node', description: 'Move to previous node', syntax: 'iOp', operandBefore: 'i' },
+  { category: 'unary', src: OsSvg, label: 'Release', description: 'Release node reference', syntax: 'iOs', operandBefore: 'i' },
+  { category: 'nullary', src: OrSvg, label: 'Error', description: 'Logic error state', syntax: 'Or' },
+];
+
+// Operator legend component with search and actual SVGs
+export const OperatorLegend: React.FC = () => {
+  const [searchTerm, setSearchTerm] = React.useState('');
+  
+  const filteredOperators = operatorData.filter(op => 
+    op.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    op.syntax.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    op.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
+  const binaryOps = filteredOperators.filter(op => op.category === 'binary');
+  const unaryOps = filteredOperators.filter(op => op.category === 'unary');
+  const nullaryOps = filteredOperators.filter(op => op.category === 'nullary');
+
+  return (
+    <div className="p-4">
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search operators..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full px-3 py-2 text-sm rounded-lg bg-muted/50 border border-border focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
+        />
       </div>
+      
+      {binaryOps.length > 0 && (
+        <div className="mb-4">
+          <h4 className="text-xs font-semibold text-primary mb-2 uppercase tracking-wide">Binary Operators</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            {binaryOps.map(op => (
+              <SvgOperator key={op.syntax} {...op} />
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {unaryOps.length > 0 && (
+        <div className="mb-4">
+          <h4 className="text-xs font-semibold text-primary mb-2 uppercase tracking-wide">Unary Operators</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            {unaryOps.map(op => (
+              <SvgOperator key={op.syntax} {...op} />
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {nullaryOps.length > 0 && (
+        <div>
+          <h4 className="text-xs font-semibold text-primary mb-2 uppercase tracking-wide">Nullary Operators</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            {nullaryOps.map(op => (
+              <SvgOperator key={op.syntax} {...op} />
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {filteredOperators.length === 0 && (
+        <p className="text-center text-muted-foreground text-sm py-4">No operators found</p>
+      )}
     </div>
-    
-    <div className="mb-6">
-      <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Unary Operators</h4>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        <SvgOperator src={OgSvg} label="Global Space" description="Allocate global node" operandAfter="i" />
-        <SvgOperator src={OtSvg} label="Temp Space" description="Allocate temporary node" operandAfter="i" />
-        <SvgOperator src={OnSvg} label="Next Node" description="Move to next node" operandBefore="i" />
-        <SvgOperator src={OpSvg} label="Prev Node" description="Move to previous node" operandBefore="i" />
-        <SvgOperator src={OsSvg} label="Release" description="Release node reference" operandBefore="i" />
-      </div>
-    </div>
-    
-    <div>
-      <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Nullary Operators</h4>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        <SvgOperator src={OrSvg} label="Error" description="Logic error state" />
-      </div>
-    </div>
-  </div>
-);
+  );
+};
