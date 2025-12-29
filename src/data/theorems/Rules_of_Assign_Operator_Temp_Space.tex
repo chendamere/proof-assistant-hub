@@ -1,0 +1,432 @@
+\chapter{Rules of assign operator in temporary space}
+
+\section{Definition of Flag object Tm}
+
+\[, m \On, &Tm(m), \Rq , &Tm(m),\]
+
+\[, t \Oa m, &Tm(m), \Rq , &Tm(m),\]
+
+\[, t \Oa m, t \Os, &Tm(m), \Rq , t \Os, &Tm(m),\]
+
+
+
+
+
+
+
+\bigskip
+\bigskip
+\section{Definition of Flag object Fam}
+\subsection{Transformation}
+\[, &Fam(i), i \Oc j, \Rq , i \Oc j, &Fam(i), &Fam(j), \]
+
+\[, &Fam(i), i \Ob j, \Rq , i \Ob j, &Fam(i), &Fam(j), \]
+
+
+\[, &Fam(i), &Fam(i),  \Rq , &Fam(i),\]
+
+
+
+\bigskip
+\bigskip
+\subsection{Swap with self}
+\[, &Fam(i), &Fam(j), \Rq , &Fam(j), &Fam(i),\]
+
+
+\bigskip
+\bigskip
+\subsection{Swap with operators}
+\[, &Fam(i), j \Od n, \Rq , j \Od n, &Fam(i),\]
+\[, &Fam(i), i \Od n, \Rq , i \Od n, &Fam(i),\]
+
+
+\[, &Fam(i), \Og j, \Rq , \Og j, &Fam(i),\]
+\[, &Fam(i), \Ot j, \Rq , \Ot j, &Fam(i),\]
+
+
+
+\[,i \nPs j, &Fam(i), j \Oc n, \Rq ,i \nPs j, j \Oc n, &Fam(i),\]
+\[,i \nPs j, &Fam(i), j \Ob n, \Rq ,i \nPs j, j \Ob n, &Fam(i),\]
+
+\[, &Fam(i), j \Os, \Rq , j \Os, &Fam(i),\]
+
+\[, &Fam(i), j \On, \Rq , j \On, &Fam(i),\]
+\[, &Fam(i), i \On, \Rq , i \On, &Fam(i),\]
+
+\[, &Fam(i), j \Oa n, \Rq , j \Oa n, &Fam(i),\]
+
+\bigskip
+\[, &Fam(i), \Bls{m \Oe n}{,}{,} \Rq , \Bls{m \Oe n}{, &Fam(i),}{, &Fam(i),}\]
+\bigskip
+\[, &Fam(i), \Bls{}{,}{,} \Rq , \Bls{}{, &Fam(i),}{, &Fam(i),}\]
+\bigskip
+\[ \Brs{,}{,}, &Fam(i), \Rq \Brs{, &Fam(i),}{, &Fam(i),},\]
+
+\[, &Fam(i), \Or, \Rq , \Or, &Fam(i),\]
+
+
+\bigskip
+\bigskip
+\subsection{Clear Fam}
+% \Ri is rule induction
+\[, &Fam(i), i \Oc m, \Tc c, m \Os, \Rq , i \Oc m, \Tt ct, &Fam(m), m \Os, \Ri \]
+\[, &Fam(i), i \Oc m, \Tc c, m \Os, \Rq , i \Oc m, \Tt ct, m \Os,\]
+
+
+\[, &Fam(i), i \Ob m, \Tc c, m \Os, \Rq , i \Ob m, \Tt ct, &Fam(m), m \Os, \Ri \]
+\[, &Fam(i), i \Ob m, \Tc c, m \Os, \Rq , i \Ob m, \Tt ct, m \Os,\]
+
+
+
+
+
+
+\bigskip
+\bigskip
+\section{Theorems of Flag object Fam}
+
+\[, &Fam(i), i \Oc m, \Tc c, m \Os, \Rq , i \Oc m, \Tt ct, &Fam(m), m \Os, \Ri \]
+\[, i \Oc m, \Tt ct, &Fam(m), m \Os, \Rq , i \Oc m, \Tt ct, m \Os,\]
+
+
+\[, &Fam(i), i \Ob m, \Tc c, m \Os, \Rq , i \Ob m, \Tt ct, &Fam(m), m \Os, \Ri \]
+\[, i \Ob m, \Tt ct, &Fam(m), m \Os, \Rq , i \Ob m, \Tt ct, m \Os,\]
+
+
+\[, &Fam(i), i \Op, \Rq , i \Op, &Fam(i),\]
+
+proof:\\
+\begin{math} 
+,  &Fam(i), i \Op,\\\\
+\Rq, i \On, i \Op,  &Fam(i), i \Op,\\\\
+\Rq, i \Op, i \On,  &Fam(i), i \Op,\\\\
+\Rq, i \Op,  &Fam(i), i \On, i \Op,\\\\
+\Rq, i \Op, &Fam(i),
+\end{math}
+\bigskip
+\bigskip
+
+
+\[, &Fam(i), m \Op, \Rq , m \Op, &Fam(i),\]
+
+
+
+\[, i \Ps j, &Fam(i), \Rq , &Fam(i), i \Ps j,\]
+proof:\\
+\begin{math} 
+, i \Ps j, &Fam(i),\\\\
+\Rq, i \Od m,j \Od n, m \Pe n, m \Os, n \Os, &Fam(i),\\\\
+\Rq, i \Od m,j \Od n, \Bb{m \Oe n}{,}{, \Or,}, m \Os, n \Os, &Fam(i),\\\\
+\Rq, i \Od m,j \Od n, \Bb{m \Oe n}{,}{, \Or,}, &Fam(i), m \Os, n \Os,\\\\
+\Rq, i \Od m,j \Od n, \Bb{m \Oe n}{, &Fam(i),}{, \Or, &Fam(i),}, m \Os, n \Os,\\\\
+\Rq, i \Od m,j \Od n, \Bb{m \Oe n}{, &Fam(i),}{, &Fam(i), \Or,}, m \Os, n \Os,\\\\
+\Rq, i \Od m,j \Od n, &Fam(i), \Bb{m \Oe n}{,}{, \Or,}, m \Os, n \Os,\\\\
+\Rq, i \Od m, &Fam(i),j \Od n, \Bb{m \Oe n}{,}{, \Or,}, m \Os, n \Os,\\\\
+\Rq, &Fam(i), i \Od m,j \Od n, \Bb{m \Oe n}{,}{, \Or,}, m \Os, n \Os,\\\\
+\Rq,  &Fam(i), i \Ps j,
+\end{math}
+\bigskip
+\bigskip
+
+
+\[,i \Ps j, &Fam(i), j \Oc n, \Rq ,i \Ps j, j \Oc n, &Fam(i), &Fam(n),\]
+proof:\\
+\begin{math} 
+, i \Ps j, &Fam(i), j \Oc n,\\\\
+\Rq, &Fam(i), i \Ps j, j \Oc n,\\\\
+\Rq, &Fam(i), i \Ps j, i \Oc n,\\\\
+\Rq, i \Ps j, &Fam(i), i \Oc n,\\\\
+\Rq, i \Ps j, i \Oc n, &Fam(i), &Fam(n),\\\\
+\Rq, i \Ps j, j \Oc n, &Fam(i), &Fam(n),
+\end{math}
+\bigskip
+\bigskip
+
+\[,i \Ps j, &Fam(i), j \Ob n, \Rq ,i \Ps j, j \Ob n, &Fam(i), &Fam(j),\]
+
+
+
+
+\bigskip
+\bigskip
+\subsection{Swap with branch function:}
+\[,&Fam(i), \Bb{if(m \Pe n)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Pe n)}{,&Fam(i), \Tc c_1,}{,&Fam(i), \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,&Fam(i), \Bb{if(m \Pu)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Pu)}{,&Fam(i), \Tc c_1,}{,&Fam(i), \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,&Fam(i), \Bb{if(m \Ps n)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Ps n)}{,&Fam(i), \Tc c_1,}{,&Fam(i), \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,&Fam(i), \Bb{if(m \Pn n)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Pn n)}{,&Fam(i), \Tc c_1,}{,&Fam(i), \Tc c_2,},\]
+\bigskip
+\bigskip
+
+
+\bigskip
+\bigskip
+\subsection{Swap with propositions:}
+\[,&Fam(i), m \Pe n, \Rq , m \Pe n, &Fam(i),\]
+
+\[,&Fam(i), m \Pu, \Rq , m \Pu, &Fam(i),\]
+
+\[,&Fam(i), m \Ps n, \Rq , m \Ps n, &Fam(i),\]
+
+\[,&Fam(i), m \Pn n, \Rq , m \Pn n, &Fam(i),\]
+
+
+
+\[,&Fam(i), m \nPe n, \Rq , m \nPe n, &Fam(i),\]
+
+\[,&Fam(i), m \nPu, \Rq , m \nPu, &Fam(i),\]
+
+\[,&Fam(i), m \nPs n, \Rq , m \nPs n, &Fam(i),\]
+
+\[,&Fam(i), m \nPn n, \Rq , m \nPn n, &Fam(i),\]
+
+
+
+
+\bigskip
+\bigskip
+\subsection{Swap with recursive function:}
+\[, &Fam(i), R(m), \Rq , R(m), &Fam(i),\]
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, m \Pu, &Fam(i), R(m),\\
+\Rq, &Fam(i), m \Pu, R(m),\\
+\Rq, &Fam(i), m \Pu,\\
+\Rq, m \Pu, &Fam(i),\\
+\Rq, m \Pu, R(m), &Fam(i),\\\\\\
+premise \; 2:\\
+,\In \Pn m, &Fam(i), R(m), \Rq ,\In \Pn m, R(m), &Fam(i),\Ri \\\\
+,m \nPu, \In \Ps m, &Fam(i), R(m),, \\\\
+\Rq,\In \Ps m, &Fam(i), m \nPu, R(m), \\\\
+\Rq,\In \Ps m, &Fam(i), m \nPu, m \On, R(m), \\\\
+\Rq,\In \Ps m, m \nPu, m \On, &Fam(i), R(m), \\\\
+\Rq, m \nPu, m \On,\In \Pn m, &Fam(i), R(m), \\\\
+\Rq, m \nPu, m \On,\In \Pn m, R(m), &Fam(i), \\\\
+\Rq,\In \Ps m, m \nPu, m \On, R(m), &Fam(i), \\\\
+\Rq,\In \Ps m, m \nPu, R(m), &Fam(i), \\\\
+\Rq, m \nPu,\In \Ps m, R(m), &Fam(i), \\\\\\
+conclusion:\\
+, &Fam(i), R(m), \Rq , R(m), &Fam(i),
+\end{math}
+\bigskip
+\bigskip  
+
+
+\[,&Fam(i), R\_(m), \Rq , R\_(m), &Fam(i),\]
+
+\[,&Fam(i), Rc(m;n), \Rq , Rc(m;n), &Fam(i),\]
+
+\[,&Fam(i), R(i), \Rq , R(i), &Fam(i),\]
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, i \Pu, &Fam(i), R(i),\\
+\Rq, &Fam(i), i \Pu, R(i),\\
+\Rq, &Fam(i), i \Pu,\\
+\Rq, i \Pu, &Fam(i),\\
+\Rq, i \Pu, R(i), &Fam(i),\\\\\\
+premise \; 2:\\
+,\In \Pn i, &Fam(i), R(i), \Rq ,\In \Pn i, R(i), &Fam(i),\Ri \\\\
+,i \nPu, \In \Ps i, &Fam(i), R(i),, \\\\
+\Rq,\In \Ps i, &Fam(i), i \nPu, R(i), \\\\
+\Rq,\In \Ps i, &Fam(i), i \nPu, i \On, R(i), \\\\
+\Rq,\In \Ps i, i \nPu, i \On, &Fam(i), R(i), \\\\
+\Rq, i \nPu, i \On,\In \Pn i, &Fam(i), R(i), \\\\
+\Rq, i \nPu, i \On,\In \Pn i, R(i), &Fam(i), \\\\
+\Rq,\In \Ps i, i \nPu, i \On, R(i), &Fam(i), \\\\
+\Rq,\In \Ps i, i \nPu, R(i), &Fam(i), \\\\
+\Rq, i \nPu,\In \Ps i, R(i), &Fam(i), \\\\\\
+conclusion:\\
+, &Fam(i), R(i), \Rq , R(i), &Fam(i),
+\end{math}
+\bigskip
+\bigskip  
+
+
+
+\[,&Fam(i), R\_(i), \Rq , R\_(i), &Fam(i),\]
+
+\[,&Fam(i), Rc(i;n), \Rq , Rc(i;n), &Fam(i),\]
+
+
+\[, &Fam(i), i \Oc m, R(m), R(n), m \Ps n, m \Os, \Rq , i \Oc m, R(m), R(n), m \Ps n, m \Os, &Fam(i), \]
+proof:\\
+\begin{math} 
+, &Fam(i), i \Oc m, R(m), R(n), m \Ps n, m \Os,\\\\
+\Rq, i \Oc m, &Fam(i), &Fam(m), R(m), R(n), m \Ps n, m \Os,\\\\
+\Rq, i \Oc m,R(m), R(n), m \Ps n, &Fam(i), &Fam(m), m \Os,\\\\
+\Rq , i \Oc m, R(m), R(n), m \Ps n, &Fam(i), m \Os, \\\\
+\Rq , i \Oc m, R(m), R(n), m \Ps n, m \Os, &Fam(i), 
+\end{math}
+\bigskip
+\bigskip
+
+\[, &Fam(i), j \Oc m, R(m), R(n), m \Ps n, m \Os, \Rq , j \Oc m, R(m), R(n), m \Ps n, m \Os, &Fam(i), \]
+proof:\\
+\begin{math} 
+, &Fam(i), j \Oc m, R(m), R(n), m \Ps n, m \Os,\\\\
+\Rq, \Bb{if(i \Ps j)}{,}{,}, &Fam(i), j \Oc m, R(m), R(n), m \Ps n, m \Os,\\\\
+\\
+\Rq, \Bb{if(i \Ps j)}{, i \Ps j, &Fam(i), j \Oc m, R(m), R(n), m \Ps n, m \Os,}{, i \nPs j, &Fam(i), j \Oc m, R(m), R(n), m \Ps n, m \Os,},\\\\
+\\
+\Rq, \Bb{if(i \Ps j)}{, i \Ps j, &Fam(i), i \Oc m, R(m), R(n), m \Ps n, m \Os,}{, i \nPs j, &Fam(i), j \Oc m, R(m), R(n), m \Ps n, m \Os,},\\\\
+\\
+\Rq, \Bb{if(i \Ps j)}{, i \Ps j, i \Oc m, R(m), R(n), m \Ps n, m \Os, &Fam(i),}{, i \nPs j, &Fam(i), j \Oc m, R(m), R(n), m \Ps n, m \Os,},\\\\
+\\
+\Rq, \Bb{if(i \Ps j)}{, i \Ps j, j \Oc m, R(m), R(n), m \Ps n, m \Os, &Fam(i),}{, i \nPs j, &Fam(i), j \Oc m, R(m), R(n), m \Ps n, m \Os,},\\\\
+\\
+\Rq, \Bb{if(i \Ps j)}{, i \Ps j, j \Oc m, R(m), R(n), m \Ps n, m \Os, &Fam(i),}{, i \nPs j, j \Oc m, &Fam(i), R(m), R(n), m \Ps n, m \Os,},\\\\
+\\
+\Rq, \Bb{if(i \Ps j)}{, i \Ps j, j \Oc m, R(m), R(n), m \Ps n, m \Os, &Fam(i),}{, i \nPs j, j \Oc m, R(m), R(n), m \Ps n, m \Os, &Fam(i),},\\\\
+\\
+\Rq, \Bb{if(i \Ps j)}{, j \Oc m, R(m), R(n), m \Ps n, m \Os, &Fam(i),}{, j \Oc m, R(m), R(n), m \Ps n, m \Os, &Fam(i),},\\\\
+\\
+\Rq, \Bb{if(i \Ps j)}{, }{,}, j \Oc m, R(m), R(n), m \Ps n, m \Os, &Fam(i),\\\\
+\\
+\Rq, j \Oc m, R(m), R(n), m \Ps n, m \Os, &Fam(i),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+\bigskip
+\bigskip
+\subsection{Swap with branch function:}
+\[,&Fam(i), \Bb{if(m \Pc n)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Pc n)}{,&Fam(i), \Tc c_1,}{,&Fam(i), \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,&Fam(i), \Bb{if(m \Pb n)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Pb n)}{,&Fam(i), \Tc c_1,}{,&Fam(i), \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,&Fam(i), \Bb{if(m \Pne n)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Pne n)}{,&Fam(i), \Tc c_1,}{,&Fam(i), \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,&Fam(i), \Bb{if(m \Pnm n)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Pnm n)}{,&Fam(i), \Tc c_1,}{,&Fam(i), \Tc c_2,},\]
+
+
+\bigskip
+\bigskip
+\subsection{Swap with propositions:}
+\[, &Fam(i), i \Pc j, \Rq , i \Pc j, &Fam(i),\]
+proof:\\
+\begin{math} 
+, &Fam(i), i \Pc j,\\\\
+\Rq , &Fam(i), i \Oc m, j \Oc n, R(m), R(n), m \Ps n, n \Os, m \Os,\\\\
+\Rq ,i \Oc m, &Fam(i),  &Fam(m),  j \Oc n, R(m), R(n), m \Ps n, n \Os, m \Os,\\\\
+\Rq ,i \Oc m,  j \Oc n, R(m), R(n), m \Ps n, n \Os, &Fam(i),  &Fam(m), m \Os,\\\\
+\Rq ,i \Oc m,  j \Oc n, R(m), R(n), m \Ps n, n \Os, &Fam(i), m \Os,\\\\
+\Rq , i \Oc m, j \Oc n, R(m), R(n), m \Ps n, m \Os, n \Os, &Fam(i),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+\[, &Fam(i), m \Pc n, \Rq , m \Pc n, &Fam(i),\]
+proof:\\
+\begin{math} 
+, &Fam(i), m \Pc n,\\\\
+\Rq , &Fam(i), m \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, m_0 \Os, n_0 \Os,\\\\\\
+\Rq , \Bb{if(i \Ps m)}{,}{,}, &Fam(i), m \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, n_0 \Os, m_0 \Os,\\\\\\
+\Rq , \Bb{if(i \Ps m)}{,i \Ps m, &Fam(i), m \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, n_0 \Os, m_0 \Os, }{, i \nPs m , &Fam(i), m \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, n_0 \Os, m_0 \Os,},\\\\\\
+\Rq , \Bb{if(i \Ps m)}{,i \Ps m, &Fam(i), i \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, n_0 \Os, m_0 \Os, }{, i \nPs m , &Fam(i), m \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, n_0 \Os, m_0 \Os,},\\\\\\
+\Rq , \Bb{if(i \Ps m)}{,i \Ps m, i \Oc m_0, &Fam(i), &Fam(m_0), n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, n_0 \Os, m_0 \Os, }{, i \nPs m , &Fam(i), m \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, n_0 \Os, m_0 \Os,},\\\\\\
+\Rq , \Bb{if(i \Ps m)}{,i \Ps m, i \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, n_0 \Os, &Fam(i), &Fam(m_0), m_0 \Os, }{, i \nPs m , &Fam(i), m \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, n_0 \Os, m_0 \Os,},\\\\\\
+\Rq , \Bb{if(i \Ps m)}{,i \Ps m, i \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, n_0 \Os, &Fam(i),  m_0 \Os, }{, i \nPs m , &Fam(i), m \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, n_0 \Os, m_0 \Os,},\\\\\\
+\Rq , \Bb{if(i \Ps m)}{,i \Ps m, i \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, n_0 \Os, &Fam(i),  m_0 \Os, }{, i \nPs m , m \Oc m_0, &Fam(i), n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, n_0 \Os, m_0 \Os,},\\\\\\
+\Rq , \Bb{if(i \Ps m)}{,i \Ps m, i \Oc m_0, n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, n_0 \Os, &Fam(i),  m_0 \Os, }{, i \nPs m , m \Oc m_0,n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, n_0 \Os, &Fam(i),  m_0 \Os,},\\\\\\
+\Rq , \Bb{if(i \Ps m)}{,i \Ps m, }{, i \nPs m ,}, m \Oc m_0,n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0, n_0 \Os, &Fam(i),  m_0 \Os,\\\\\\
+\Rq ,  m \Oc m_0,n \Oc n_0, R(m_0), R(n_0), m_0 \Ps n_0,  m_0 \Os, n_0 \Os, &Fam(i),\\\\
+\Rq , m \Pc n, &Fam(i),
+\end{math}
+\bigskip
+\bigskip
+
+
+\[,&Fam(i), m \Pb n, \Rq , m \Pb n, &Fam(i),\]
+
+\[,&Fam(i), m \Pne n, \Rq , m \Pne n, &Fam(i),\]
+
+\[,&Fam(i), m \Pnm n, \Rq , m \Pnm n, &Fam(i),\]
+
+\[,&Fam(i), m \nPc n, \Rq , m \nPc n, &Fam(i),\]
+
+\[,&Fam(i), m \nPb n, \Rq , m \nPb n, &Fam(i),\]
+
+\[,&Fam(i), m \nPne n, \Rq , m \nPne n, &Fam(i),\]
+
+\[,&Fam(i), m \nPnm n, \Rq , m \nPnm n, &Fam(i),\]
+
+
+
+\bigskip
+\bigskip
+\subsection{ Swap  of the same operand}
+(skip......)
+
+
+
+
+
+
+
+
+\bigskip
+\bigskip
+\section{Axiom of Flag object Tm and Fam}
+
+\subsection{axiom of inference 1:}
+\begin{math}
+, &Fam(i), \Tc c, \Rq , \Tc c, &Fam(i), \Ri \\\\
+, \Ot i, \Tc c, i \Os, \Rq , \Ot i, \Tc c, &Tm(i),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+\subsection{axiom of inference 2:}
+\begin{math}
+, &Fam(i), \Tc c, \Rq , \Tc c, &Fam(i), &Fam(m), \Ri \\\\
+, \Ot i, \Tc c, i \Os, m \Os, \Rq , \Ot i, \Tc c, i \Os, &Tm(m),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+\bigskip
+\bigskip
+\section{Theorems of Tm}
+\[, &Tm(m), \Rq , m \Op, &Tm(m),\]
+
+\[, &Tm(m), \Rq , R(m), &Tm(m),\]
+
+
+\bigskip
+\bigskip
+\section{Theorems of temporary space}
+\[, \Ot m, m \Os, \Rq , \Ot m, &Tm(m),\]
+
+\[, \Ot m, t \Oa m, m \Os, \Rq , \Ot m, t \Oa m,  &Tm(m),\]
+
+
+\[, \Ot m, &Tm(m), \Rq , \Ot m, t \Oa m,  &Tm(m),\]
+
+
+\[, \Ot m, m \Os, \Rq , \Ot m, t \Oa m, m \Os,\]
+
+\newpage

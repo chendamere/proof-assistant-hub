@@ -1,0 +1,1342 @@
+\chapter{Rules of Relationship of Node Connectivity}
+
+\section{Definition of Node Connectivity}
+\[,\Blb{if(i \Pc j)}{,}{,} \Rq , i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\]
+\bigskip
+\bigskip
+\[, i \Pc j, \Rq , \Bb{if(i \Pc j)}{,}{, \Or,},\]
+\bigskip
+\bigskip
+\[, i \nPc j, \Rq , \Bb{if(i \Pc j)}{, \Or,}{,},\]
+\bigskip
+\bigskip
+
+
+\section{Axiom of node id operator} 
+\[, i \Od m, \Rq \sim, m \nPc j, \]
+
+
+
+\bigskip
+\bigskip
+\section{Theorems of Relationship of Node Connectivity}
+\subsection{  Node Connectivity propositions to Identical node comparison propositions}
+\[,i \Pc j, \Rq , i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), i_1 \Ps j_1, i_1 \Os, j_1 \Os,  \]
+
+
+\[,i \nPc j, \Rq , i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), i_1 \nPs j_1, i_1 \Os, j_1 \Os,  \]
+
+\subsection{Branch function to propositions}
+\[,\Bb{if(i \Pc j)}{,\Tc c,}{,\Or,}, \Rq ,i \Pc j, \Tc c,\]
+\bigskip
+\bigskip
+\[,\Bb{if(i \Pc j)}{,\Or,}{,\Tc c,}, \Rq ,i \nPc j, \Tc c,\]
+\bigskip
+\bigskip
+
+
+\subsection{Empty branch function} 
+\[, \Blb{if(i \Pc j)}{,}{,} \Rq , \Blb{}{, i \Pc j,}{, i \nPc j,}\]
+
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, \Blb{if(i \Pc j)}{,}{,}\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), \Blb{}{, i_1 \Ps j_1, i_1 \Os, j_1 \Os,}{, i_1 \nPs j_1, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, \Blb{}{, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), i_1 \Ps j_1, i_1 \Os, j_1 \Os,}{, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), i_1 \nPs j_1, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, \Blb{}{,i \Pc j,}{,i \nPc j,}
+\end{math}
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+
+
+
+
+
+\subsection{ Unity}
+\[, \Rq , \Bs{if(i \Pc j)}{,}{,},\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, \Bb{if(i \Pc j}{,}{,},\\\\\\
+\Rq,i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), \Bb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,},  \\\\\\\\
+\Rq,i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), \Bb{if(i_1 \Ps j_1)}{,}{,}, i_1 \Os, j_1 \Os,  \\\\\\\\
+\Rq,i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), i_1 \Os, j_1 \Os,  \\\\\\\\
+\Rq,i \Oc i_1, j \Oc j_1, R(i_1), i_1 \Os, R(j_1), j_1 \Os,  \\\\\\\\
+\Rq,i \Oc i_1, j \Oc j_1, i_1 \Os, R(j_1), j_1 \Os,  \\\\\\\\
+\Rq,i \Oc i_1, j \Oc j_1, i_1 \Os, j_1 \Os,  \\\\\\\\
+\Rq,i \Oc i_1, i_1 \Os, j \Oc j_1, j_1 \Os,  \\\\\\\\
+\Rq, j \Oc j_1, j_1 \Os,  \\\\\\\\
+\Rq,
+\end{math}
+
+
+
+\[, i \Pc j, \Or, \Rq , \Or,\]
+\[, i \nPc j, \Or, \Rq , \Or,\]
+
+
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{ Symmetry}
+\[, \Bls{if(i \Pc j)}{,}{,} \Rq , \Bls{if(j \Pc i)}{,}{,} \]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, \Blb{if(i \Pc j)}{,}{,}\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, j \Oc j_1, i \Oc i_1, R(i_1), R(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, j \Oc j_1, i \Oc i_1, R(j_1), R(i_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, j \Oc j_1, i \Oc i_1, R(j_1), R(i_1), \Blb{if(j_1 \Ps i_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, j \Oc j_1, i \Oc i_1, R(j_1), R(i_1), \Blb{if(j_1 \Ps i_1)}{, j_1 \Os, i_1 \Os,}{, j_1 \Os, i_1 \Os,}\\\\\\\\
+\Rq, \Blb{if(j \Pc i)}{,}{,}
+\end{math}
+
+
+\[, i \Pc j, \Rq , j \Pc i,\]
+\[, i \nPc j, \Rq , j \nPc i,\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{ Swap}
+\subsubsection{Branch function and operator:}
+\[,\Ot m, \Blb{if(i \Pc j)}{,}{,} \Rq , \Blb{if(i \Pc j)}{,\Ot m,}{,\Ot m,}\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+,\Ot m, \Blb{if(i \Pc j)}{,}{,}\\\\
+\Rq, \Ot m, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, \Ot m, R(i_1), R(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), \Ot m, \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), \Blb{if(i_1 \Ps j_1)}{, \Ot m, i_1 \Os, j_1 \Os,}{, \Ot m, i_1 \Os, j_1 \Os,}\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os, \Ot m,}{, i_1 \Os, j_1 \Os, \Ot m,}\\\\\\
+\Rq, \Blb{if(i \Pc j)}{,\Ot m,}{,\Ot m,}
+\end{math}
+
+
+\[,\Og m, \Blb{if(i \Pc j)}{,}{,} \Rq , \Blb{if(i \Pc j)}{,\Og m,}{,\Og m,}\]
+
+\[, m \Oc n, \Blb{if(i \Pc j)}{,}{,} \Rq , \Blb{if(i \Pc j)}{, m \Oc n,}{, m \Oc n,}\]
+
+\[, m \Od n, \Blb{if(i \Pc j)}{,}{,} \Rq , \Blb{if(i \Pc j)}{, m \Od n,}{, m \Od n,}\]
+
+\[, m \Ob n, \Blb{if(i \Pc j)}{,}{,} \Rq , \Blb{if(i \Pc j)}{, m \Ob n,}{, m \Ob n,}\]
+
+\[, m \Os, \Blb{if(i \Pc j)}{,}{,} \Rq , \Blb{if(i \Pc j)}{, m \Os,}{, m \Os,}\]
+
+\[, m \On, \Blb{if(i \Pc j)}{,}{,} \Rq , \Blb{if(i \Pc j)}{, m \On,}{, m \On,}\]
+
+\[, m \Op, \Blb{if(i \Pc j)}{,}{,} \Rq , \Blb{if(i \Pc j)}{, m \Op,}{, m \Op,}\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{Branch function and Branch function:}
+\[, \Bb{if(i \Pc j)}{,\Bb{if(m \Pc n)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(m \Pc n)}{,\Tc c_3,}{,\Tc c_4,},}, \Rq , \Bb{if(m \Pc n)}{,\Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pc j)}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, \Bb{if(i \Pc j)}{,\Bb{if(m \Pc n)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(m \Pc n)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1),\\\\
+\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os, \Bb{if(m \Pc n)}{,\Tc c_1,}{,\Tc c_2,},}{,i_1 \Os, j_1 \Os, \Bb{if(m \Pc n)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1),\\\\
+\Bb{if(i_1 \Ps j_1)}{, \Bb{if(m \Pc n)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_2,},}{, \Bb{if(m \Pc n)}{,i_1 \Os, j_1 \Os,\Tc c_3,}{,i_1 \Os, j_1 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1),\\\\
+\Bb{if(i_1 \Ps j_1)}{,m \Oc m_1, n \Oc n_1, R(m_1), R(n_1), \Bb{if(m_1 \Ps n_1)}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_1,}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_2,},}{,m \Oc m_1, n \Oc n_1, R(m_1), R(n_1), \Bb{if(m_1 \Ps n_1)}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_3,}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_4,},},\\\\\\\\
+\Rq,m \Oc m_1, n \Oc n_1, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1),\\\\
+\Bb{if(i_1 \Ps j_1)}{, R(m_1), R(n_1), \Bb{if(m_1 \Ps n_1)}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_1,}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_2,},}{, R(m_1), R(n_1), \Bb{if(m_1 \Ps n_1)}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_3,}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_4,},},\\\\\\\\
+\Rq,m \Oc m_1, n \Oc n_1, R(m_1), R(n_1), i \Oc i_1, j \Oc j_1, R(i_1), R(j_1),\\\\
+\Bb{if(i_1 \Ps j_1)}{, \Bb{if(m_1 \Ps n_1)}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_1,}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_2,},}{,\Bb{if(m_1 \Ps n_1)}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_3,}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_4,},},\\\\\\\\
+\Rq,m \Oc m_1, n \Oc n_1, R(m_1), R(n_1), i \Oc i_1, j \Oc j_1, R(i_1), R(j_1),\\\\
+\Bb{if(m_1 \Ps n_1)}{, \Bb{if(i_1 \Ps j_1)}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_1,}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_3,},}{,\Bb{if(i_1 \Ps j_1)}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_2,}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_4,},},\\\\\\\\
+\Rq,m \Oc m_1, n \Oc n_1, R(m_1), R(n_1), i \Oc i_1, j \Oc j_1,\\\\
+\Bb{if(m_1 \Ps n_1)}{, R(i_1), R(j_1), \Bb{if(i_1 \Ps j_1)}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_1,}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_3,},}{, R(i_1), R(j_1),\Bb{if(i_1 \Ps j_1)}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_2,}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_4,},},\\\\\\\\
+\Rq,m \Oc m_1, n \Oc n_1, R(m_1), R(n_1), \\\\
+\Bb{if(m_1 \Ps n_1)}{,i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), \Bb{if(i_1 \Ps j_1)}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_1,}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i \Oc i_1, j \Oc j_1, R(i_1), R(j_1),\Bb{if(i_1 \Ps j_1)}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_2,}{,m_1 \Os, n_1 \Os,i_1 \Os, j_1 \Os,\Tc c_4,},},\\\\\\\\
+\Rq,m \Oc m_1, n \Oc n_1, R(m_1), R(n_1), \\\\
+\Bb{if(m_1 \Ps n_1)}{,i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os, m_1 \Os, n_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,m_1 \Os, n_1 \Os,\Tc c_3,},}{,i \Oc i_1, j \Oc j_1, R(i_1), R(j_1),\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,m_1 \Os, n_1 \Os,\Tc c_2,}{,i_1 \Os, j_1 \Os,m_1 \Os, n_1 \Os,\Tc c_4,},},\\\\\\\\
+\Rq,m \Oc m_1, n \Oc n_1, R(m_1), R(n_1), \\\\
+\Bb{if(m_1 \Ps n_1)}{, \Bb{if(i \Pc j)}{, m_1 \Os, n_1 \Os,\Tc c_1,}{,m_1 \Os, n_1 \Os,\Tc c_3,},}{,\Bb{if(i \Pc j)}{,m_1 \Os, n_1 \Os,\Tc c_2,}{,m_1 \Os, n_1 \Os,\Tc c_4,},},\\\\\\\\
+\Rq,m \Oc m_1, n \Oc n_1, R(m_1), R(n_1), \\\\
+\Bb{if(m_1 \Ps n_1)}{, m_1 \Os, n_1 \Os, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_3,},}{,m_1 \Os, n_1 \Os,\Bb{if(i \Pc j)}{,\Tc c_2,}{,\Tc c_4,},},\\\\\\\\
+\Rq,\Bb{if(m \Pc n)}{, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pc j)}{,\Tc c_2,}{,\Tc c_4,},},
+\end{math}
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\[, \Bb{if(i \Pc j)}{,\Bb{if(m \Ps n)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(m \Ps n)}{,\Tc c_3,}{,\Tc c_4,},}, \Rq , \Bb{if(m \Ps n)}{,\Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pc j)}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\[, \Bb{if(i \Pc j)}{,\Bb{if(m \Pe n)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(m \Pe n)}{,\Tc c_3,}{,\Tc c_4,},}, \Rq , \Bb{if(m \Pe n)}{,\Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pc j)}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\[, \Bb{if(i \Pc j)}{,\Bb{if(m \Pu)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(m \Pu)}{,\Tc c_3,}{,\Tc c_4,},}, \Rq , \Bb{if(m \Pu)}{,\Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pc j)}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{Branch function and propositions:}
+\[,m \Pc n, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,m \Pc n,\Tc c_1,}{,m \Pc n,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,m \nPc n, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,m \nPc n,\Tc c_1,}{,m \nPc n,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,m \Ps n, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,m \Ps n,\Tc c_1,}{,m \Ps n,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,m \nPs n, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,m \nPs n,\Tc c_1,}{,m \nPs n,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,m \Pe n, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,m \Pe n,\Tc c_1,}{,m \Pe n,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,m \nPe n, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,m \nPe n,\Tc c_1,}{,m \nPe n,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,m \Pu, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,m \Pu,\Tc c_1,}{,m \Pu,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,m \nPu, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,m \nPu,\Tc c_1,}{,m \nPu,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+
+\[,m \Pc n, \Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{,m \Pc n,\Tc c_1,}{,m \Pc n,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,m \nPc n, \Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{,m \nPc n,\Tc c_1,}{,m \nPc n,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,m \Pc n, \Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pe j)}{,m \Pc n,\Tc c_1,}{,m \Pc n,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,m \nPc n, \Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pe j)}{,m \nPc n,\Tc c_1,}{,m \nPc n,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,m \Pc n, \Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pu)}{,m \Pc n,\Tc c_1,}{,m \Pc n,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,m \nPc n, \Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pu)}{,m \nPc n,\Tc c_1,}{,m \nPc n,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{Branch function and recursive function:}
+\[,R(m), \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,R(m),\Tc c_1,}{,R(m),\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,R\_(m), \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,R\_(m),\Tc c_1,}{,R\_(m),\Tc c_2,},\]
+\bigskip
+\bigskip
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{Branch function and flag object :}
+\[,\In \Ps m, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,\In \Ps m,\Tc c_1,}{,\In \Ps m,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,\In \Pn m, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,\In \Pn m,\Tc c_1,}{,\In \Pn m,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,\Ip \Ps m, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,\Ip \Ps m,\Tc c_1,}{,\Ip \Ps m,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+\[,\Ip \Pp m, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,\Ip \Pp m,\Tc c_1,}{,\Ip \Pp m,\Tc c_2,},\]
+\bigskip
+\bigskip
+
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{ Propositions and operator:}
+\[, i \Pc j, \Ot m, \Rq , \Ot m, i \Pc j,\]
+\[, i \Pc j, \Og m, \Rq , \Og m, i \Pc j,\]
+
+\[, i \Pc j, m \Oc n, \Rq , m \Oc n, i \Pc j,\]
+\[, i \Pc j, m \Od n, \Rq , m \Od n, i \Pc j,\]
+\[, i \Pc j, m \Ob n, \Rq , m \Ob n, i \Pc j,\]
+
+\[, i \Pc j, m \Os, \Rq , m \Os, i \Pc j,\]
+\[, i \Pc j, m \On, \Rq , m \On, i \Pc j,\]
+\[, i \Pc j, m \Op, \Rq , m \Op, i \Pc j,\]
+
+\bigskip
+\bigskip
+\[, i \nPc j, \Ot m, \Rq , \Ot m, i \nPc j,\]
+\[, i \nPc j, \Og m, \Rq , \Og m, i \nPc j,\]
+
+\[, i \nPc j, m \Oc n, \Rq , m \Oc n, i \nPc j,\]
+\[, i \nPc j, m \Od n, \Rq , m \Od n, i \nPc j,\]
+\[, i \nPc j, m \Ob n, \Rq , m \Ob n, i \nPc j,\]
+
+\[, i \nPc j, m \Os, \Rq , m \Os, i \nPc j,\]
+\[, i \nPc j, m \On, \Rq , m \On, i \nPc j,\]
+\[, i \nPc j, m \Op, \Rq , m \Op, i \nPc j,\]
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{ Propositions and Propositions:}
+\[,i \Pc j, m \Pc n, \Rq , m \Pc n, i \Pc j,\]
+\[,i \Pc j, m \nPc n, \Rq , m \nPc n, i \Pc j,\]
+%\[,i \nPc j, m \Pc n, \Rq , m \Pc n, i \nPc j,\]
+\[,i \nPc j, m \nPc n, \Rq , m \nPc n, i \nPc j,\]
+
+\[,i \Pc j, m \Ps n, \Rq , m \Ps n, i \Pc j,\]
+\[,i \Pc j, m \nPs n, \Rq , m \nPs n, i \Pc j,\]
+\[,i \nPc j, m \Ps n, \Rq , m \Ps n, i \nPc j,\]
+\[,i \nPc j, m \nPs n, \Rq , m \nPs n, i \nPc j,\]
+
+
+\[,i \Pc j, m \Pe n, \Rq , m \Pe n, i \Pc j,\]
+\[,i \Pc j, m \nPe n, \Rq , m \nPe n, i \Pc j,\]
+\[,i \nPc j, m \Pe n, \Rq , m \Pe n, i \nPc j,\]
+\[,i \nPc j, m \nPe n, \Rq , m \nPe n, i \nPc j,\]
+
+\[,i \Pc j, m \Pu, \Rq , m \Pu, i \Pc j,\]
+\[,i \Pc j, m \nPu, \Rq , m \nPu, i \Pc j,\]
+\[,i \nPc j, m \Pu, \Rq , m \Pu, i \nPc j,\]
+\[,i \nPc j, m \nPu, \Rq , m \nPu, i \nPc j,\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{ Propositions and recursive function:}
+\[,i \Pc j, R(m), \Rq , R(m), i \Pc j,\]
+\[,i \Pc j, R\_(m), \Rq , R\_(m), i \Pc j,\]
+\[,i \nPc j,R(m), \Rq , R(m), i \nPc j,\]
+\[,i \nPc j, R\_(m), \Rq , R\_(m), i \nPc j,\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{ Propositions and flag object:}
+\[,i \Pc j, \In \Ps m, \Rq , \In \Ps m, i \Pc j,\]
+\[,i \Pc j, \In \Pn m, \Rq , \In \Pn m, i \Pc j,\]
+\[,i \nPc j,\In \Ps m, \Rq , \In \Ps m, i \nPc j,\]
+\[,i \nPc j, \In \Pn m, \Rq , \In \Pn m, i \nPc j,\]
+
+\[,i \Pc j, \Ip \Ps m, \Rq , \Ip \Ps m, i \Pc j,\]
+\[,i \Pc j, \Ip \Pp m, \Rq , \Ip \Pp m, i \Pc j,\]
+\[,i \nPc j,\Ip \Ps m, \Rq , \Ip \Ps m, i \nPc j,\]
+\[,i \nPc j, \Ip \Pp m, \Rq , \Ip \Pp m, i \nPc j,\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{ Propositions to Propositions with branch function}
+\[, \Bb{if(i \Pc j)}{,m \nPc n,}{,}, \Rq , \Bb{if(m \Pc n)}{,i \nPc j,}{,},\]
+
+\bigskip
+\bigskip
+\[, \Bb{if(i \Pc j)}{,}{,m \Pc n,}, \Rq , \Bb{if(m \Pc n)}{,}{,i \Pc j,},\]
+
+
+\bigskip
+\bigskip
+\[, \Bb{if(i \Pc j)}{,m \nPs n,}{,}, \Rq , \Bb{if(m \Ps n)}{,i \nPc j,}{,},\]
+
+\bigskip
+\bigskip
+\[, \Bb{if(i \Pc j)}{,}{,m \Ps n,}, \Rq , \Bb{if(m \Ps n)}{,}{,i \Pc j,},\]
+
+\bigskip
+\bigskip
+\[, \Bb{if(i \Pc j)}{,m \nPe n,}{,}, \Rq , \Bb{if(m \Pe n)}{,i \nPc j,}{,},\]
+
+\bigskip
+\bigskip
+\[, \Bb{if(i \Pc j)}{,}{,m \Pe n,}, \Rq , \Bb{if(m \Pe n)}{,}{,i \Pc j,},\]
+
+\bigskip
+\bigskip
+\[, \Bb{if(i \Pc j)}{,m \nPu,}{,}, \Rq , \Bb{if(m \Pu)}{,i \nPc j,}{,},\]
+
+\bigskip
+\bigskip
+\[, \Bb{if(i \Pc j)}{,}{,m \Pu,}, \Rq , \Bb{if(m \Pu)}{,}{,i \Pc j,},\]
+
+
+
+
+
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Transitivity}
+\subsubsection{Branch function with branch function:}
+\[, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,\Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Tc c_2,},\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math}
+,\Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,},\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), \Bb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,\Tc c_1,}{, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), \Bb{if(i_1 \Ps j_1)}{,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i_2 \Os, j \Oc j_1, R(i_1), R(j_1),\\\\
+\Bb{if(i_1 \Ps j_1)}{,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), i_2 \Os, j \Oc j_1, R(i_1), R(j_1), \\\\
+\Bb{if(i_1 \Ps j_1)}{,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{, i_1 \Os, j_1 \Os,\Tc c_2a,}\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2),  j \Oc j_1, R(i_1), R(j_1), \\\\
+\Bb{if(i_1 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2,  j \Oc j_1, R(i_2), R(i_1), R(j_1), \\\\
+\Bb{if(i_1 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_2, j \Oc j_1, R(i_2), R(i_1), R(j_1),\\\\
+\Bb{if(i_1 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Ps i_1, i \Oc i_2, i \Ps i_2, j \Oc j_1, R(i_2), R(i_1), R(j_1), \\\\
+\Bb{if(i_1 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_1, i \Ps i_2, j \Oc j_1, R(i_2), R(i_1), R(j_1),\\\\
+\Bb{if(i_1 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_1, i_1 \Ps i_2, j \Oc j_1, R(i_2), R(i_1), R(j_1),\\\\
+\Bb{if(i_1 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_1, j \Oc j_1, i_1 \Ps i_2, R(i_2), R(i_1), R(j_1),\\\\
+\Bb{if(i_1 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_1, j \Oc j_1, i_1 \Ps i_2, R(i_2), R(i_1), i_1 \Ps i_2, R(j_1), \\\\
+\Bb{if(i_1 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_1, j \Oc j_1, i_1 \Ps i_2, R(i_2), R(i_1), R(j_1), i_1 \Ps i_2, \\\\
+\Bb{if(i_1 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_1, j \Oc j_1, i_1 \Ps i_2, R(i_2), R(i_1), R(j_1), i_1 \Ps i_2,\\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_1, j \Oc j_1, i_1 \Ps i_2, R(i_2), R(i_1), i_1 \Ps i_2, R(j_1),\\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_1, j \Oc j_1, i_1 \Ps i_2, R(i_2), R(i_1), R(j_1),\\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_1, i_1 \Ps i_2, j \Oc j_1, R(i_2), R(i_1), R(j_1), \\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_1, i \Ps i_2, j \Oc j_1, R(i_2), R(i_1), R(j_1), \\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Ps i_1, i \Oc i_2, i \Ps i_2, j \Oc j_1, R(i_2), R(i_1), R(j_1), \\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Ps i_2, j \Oc j_1, R(i_2), R(i_1), R(j_1), \\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, j \Oc j_1, R(i_2), R(i_1), R(j_1), \\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_1, R(j_1), \\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_1, j \Oc j_2, j_2 \Os, R(j_1), \\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_1, j \Oc j_2, R(j_2), j_2 \Os, R(j_1),\\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os,\Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_1, j \Oc j_2, R(j_2), R(j_1),\\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os, j_2 \Os, \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_1, j \Ps j_1, j \Oc j_2, R(j_2), R(j_1), \\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os, j_2 \Os, \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_1, j \Ps j_1, j \Oc j_2, j \Ps j_2, R(j_2), R(j_1),\\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os, j_2 \Os, \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_1, j \Oc j_2, j \Ps j_1, j \Ps j_2, R(j_2), R(j_1), \\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os, j_2 \Os, \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_1, j \Oc j_2, j \Ps j_1, j_1 \Ps j_2, R(j_2), R(j_1),\\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os, j_2 \Os, \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_1, j \Oc j_2, j \Ps j_1, j_1 \Ps j_2, R(j_2), R(j_1), j_1 \Ps j_2,\\\\
+\Bb{if(i_2 \Ps j_1)}{,i_2 \Os, j_2 \Os, \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_1, j \Oc j_2, j \Ps j_1, j_1 \Ps j_2, R(j_2), R(j_1), j_1 \Ps j_2,\\\\
+\Bb{if(i_2 \Ps j_2)}{,i_2 \Os, j_2 \Os, \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_1, j \Oc j_2, j \Ps j_1, j_1 \Ps j_2, R(j_2), R(j_1),\\\\
+\Bb{if(i_2 \Ps j_2)}{,i_2 \Os, j_2 \Os, \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_1, j \Oc j_2, j \Ps j_1, j \Ps j_2, R(j_2), R(j_1), \\\\
+\Bb{if(i_2 \Ps j_2)}{,i_2 \Os, j_2 \Os, \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_1, j \Ps j_1, j \Oc j_2, j \Ps j_2, R(j_2), R(j_1),\\\\
+\Bb{if(i_2 \Ps j_2)}{,i_2 \Os, j_2 \Os, \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_1, j \Oc j_2, j \Ps j_2, R(j_2), R(j_1), \\\\
+\Bb{if(i_2 \Ps j_2)}{,i_2 \Os, j_2 \Os, \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_1, j \Oc j_2, R(j_2), R(j_1), \\\\
+\Bb{if(i_2 \Ps j_2)}{,i_2 \Os, j_2 \Os, \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i_1 \Os, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_1, j \Oc j_2, R(j_2), \\\\
+\Bb{if(i_2 \Ps j_2)}{,i_2 \Os, j_2 \Os,R(j_1), \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i_1 \Os,R(j_1), j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_2, R(j_2),  \\\\
+\Bb{if(i_2 \Ps j_2)}{,i_2 \Os, j_2 \Os, j \Oc j_1,R(j_1), \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i_1 \Os, j \Oc j_1,R(j_1), j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_2, R(j_2), \\\\
+\Bb{if(i_2 \Ps j_2)}{,i_2 \Os, j_2 \Os, j \Oc j_1,R(j_1), \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i_1 \Os, j \Oc j_1, j_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), R(i_1), j \Oc j_2, R(j_2), \\\\
+\Bb{if(i_2 \Ps j_2)}{,i_2 \Os, j_2 \Os, j \Oc j_1,R(j_1), \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, R(i_2), j \Oc j_2, R(j_2),  \\\\
+\Bb{if(i_2 \Ps j_2)}{,i_2 \Os, j_2 \Os, R(i_1), j \Oc j_1,R(j_1), \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, R(i_1), i_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_2, R(i_2), j \Oc j_2, R(j_2),  \\\\
+\Bb{if(i_2 \Ps j_2)}{,i_2 \Os, j_2 \Os, i \Oc i_1, R(i_1), j \Oc j_1,R(j_1), \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i \Oc i_1, R(i_1), i_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_2, R(i_2), j \Oc j_2, R(j_2), \\\\
+\Bb{if(i_2 \Ps j_2)}{,i_2 \Os, j_2 \Os, i \Oc i_1, R(i_1), j \Oc j_1,R(j_1), \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, i \Oc i_1,  i_1 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_2, R(i_2), j \Oc j_2, R(j_2),\\\\
+\Bb{if(i_2 \Ps j_2)}{,i_2 \Os, j_2 \Os, i \Oc i_1, R(i_1), j \Oc j_1,R(j_1), \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{,i_2 \Os, j_2 \Os, \Tc c_2,},\\\\\\\\
+\Rq,  \Bb{if(i \Pc j)}{, i \Oc i_1, R(i_1), j \Oc j_1,R(j_1), \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{, \Tc c_2,},\\\\\\\\
+\Rq,  \Bb{if(i \Pc j)}{, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), \Bb{if(i_1 \Ps j_1)}{,i_1 \Os, j_1 \Os,\Tc c_1,}{,i_1 \Os, j_1 \Os,\Tc c_3,},}{, \Tc c_2,},\\\\\\\\
+\Rq,  \Bb{if(i \Pc j)}{,  \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_3,},}{, \Tc c_2,},
+\end{math}
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\[, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Bb{if(i \Pc j)}{,\Tc c_3,}{,\Tc c_2,},},\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{Branch function with propositions:}
+\[, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,i \Pc j,\Tc c_1,}{,\Tc c_2,},\]
+
+\[, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,\Tc c_1,}{,i \nPc j,\Tc c_2,},\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{Propositions with branch function:}
+\[,i \Pc j, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , i \Pc j, \Tc c_1,\]
+
+\[,i \nPc j, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , i \nPc j, \Tc c_2,\]
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{Propositions with propositions:}
+\[,i \Pc j, \Rq , i \Pc j, i \Pc j,\]
+
+\[,i \nPc j, \Rq , i \nPc j, i \nPc j,\]
+
+
+
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{ Substitution}
+\subsubsection{Propositions with branch function:}
+\[,i \Pc j, \Bb{if(j \Pc m)}{,\Tc c_1,}{,\Tc c_2,}, \Rq ,i \Pc j, \Bb{if(i \Pc m)}{,\Tc c_1,}{,\Tc c_2,}, \]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, i \Pc j, \Bb{if(j \Pc m)}{,\Tc c_1,}{,\Tc c_2,},\\\\
+\Rq,i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), i_1 \Ps j_1, i_1 \Os, j_1 \Os,  \Bb{if(j \Pc m)}{,\Tc c_1,}{,\Tc c_2,},  \\\\\\
+\Rq,i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), i_1 \Ps j_1, i_1 \Os, j_1 \Os, \\\\
+j \Oc j_2,m \Oc m_2, R(j_2), R(m_2), \Bb{if(j_2 \Ps m_2)}{,j_2 \Os, m_2 \Os, \Tc c_1,}{,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq,i \Oc i_1, j \Oc j_1,j \Oc j_2, R(j_1), R(j_2), R(i_1), i_1 \Ps j_1,\\\\
+i_1 \Os, j_1 \Os,m \Oc m_2, R(m_2), \Bb{if(j_2 \Ps m_2)}{,j_2 \Os, m_2 \Os, \Tc c_1,}{,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq,i \Oc i_1, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2), R(i_1), i_1 \Ps j_1,\\\\
+i_1 \Os, j_1 \Os,m \Oc m_2, R(m_2), \Bb{if(j_2 \Ps m_2)}{,j_2 \Os, m_2 \Os, \Tc c_1,}{,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq,i \Oc i_1, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2), j_1 \Ps j_2, R(i_1), i_1 \Ps j_1,\\\\
+i_1 \Os, j_1 \Os,m \Oc m_2, R(m_2), \Bb{if(j_2 \Ps m_2)}{,j_2 \Os, m_2 \Os, \Tc c_1,}{,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq,i \Oc i_1, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2),R(i_1), j_1 \Ps j_2,  i_1 \Ps j_1,\\\\
+i_1 \Os, j_1 \Os,m \Oc m_2, R(m_2), \Bb{if(j_2 \Ps m_2)}{,j_2 \Os, m_2 \Os, \Tc c_1,}{,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq,i \Oc i_1, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2),R(i_1), j_1 \Ps j_2,  i_1 \Ps j_2,\\\\
+i_1 \Os, j_1 \Os,m \Oc m_2, R(m_2), \Bb{if(j_2 \Ps m_2)}{,j_2 \Os, m_2 \Os, \Tc c_1,}{,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2), j_1 \Ps j_2, \\\\
+i \Oc i_1,R(i_1),  i_1 \Ps j_2,\\\\
+i_1 \Os, j_1 \Os,m \Oc m_2, R(m_2), \Bb{if(j_2 \Ps m_2)}{,j_2 \Os, m_2 \Os, \Tc c_1,}{,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2), j_1 \Ps j_2, \\\\
+i \Oc i_1, i \Oc i_2, i_2 \Os, R(i_1),  i_1 \Ps j_2,\\\\
+i_1 \Os, j_1 \Os,m \Oc m_2, R(m_2), \Bb{if(j_2 \Ps m_2)}{,j_2 \Os, m_2 \Os, \Tc c_1,}{,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2), j_1 \Ps j_2, \\\\
+i \Oc i_1, i \Oc i_2, R(i_2), i_2 \Os, R(i_1),  i_1 \Ps j_2,\\\\
+i_1 \Os, j_1 \Os,m \Oc m_2, R(m_2), \Bb{if(j_2 \Ps m_2)}{,j_2 \Os, m_2 \Os, \Tc c_1,}{,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2), j_1 \Ps j_2, \\\\
+i \Oc i_1, i \Oc i_2, R(i_1), R(i_2),  i_1 \Ps j_2,\\\\
+i_1 \Os, j_1 \Os,m \Oc m_2, R(m_2), \Bb{if(j_2 \Ps m_2)}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2), j_1 \Ps j_2, \\\\
+i \Oc i_1, i \Oc i_2, i_1 \Ps i_2, R(i_1), R(i_2),  i_1 \Ps j_2,\\\\
+i_1 \Os, j_1 \Os,m \Oc m_2, R(m_2), \Bb{if(j_2 \Ps m_2)}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2), j_1 \Ps j_2, \\\\
+i \Oc i_1, i \Oc i_2, i_1 \Ps i_2, R(i_1), R(i_2), i_1 \Ps i_2, i_1 \Ps j_2,\\\\
+i_1 \Os, j_1 \Os,m \Oc m_2, R(m_2), \Bb{if(j_2 \Ps m_2)}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2), j_1 \Ps j_2, \\\\
+i \Oc i_1, i \Oc i_2, i_1 \Ps i_2, R(i_1), R(i_2), i_1 \Ps i_2, i_2 \Ps j_2,\\\\
+i_1 \Os, j_1 \Os,m \Oc m_2, R(m_2), \Bb{if(j_2 \Ps m_2)}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2), j_1 \Ps j_2, \\\\
+i \Oc i_1, i \Oc i_2, i_1 \Ps i_2, R(i_1), R(i_2), i_1 \Ps i_2,i_1 \Os, j_1 \Os, \\\\
+m \Oc m_2, R(m_2), i_2 \Ps j_2,\Bb{if(j_2 \Ps m_2)}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2), j_1 \Ps j_2, \\\\
+i \Oc i_1, i \Oc i_2, i_1 \Ps i_2, R(i_1), R(i_2), i_1 \Ps i_2,i_1 \Os, j_1 \Os, \\\\
+m \Oc m_2, R(m_2), i_2 \Ps j_2,\Bb{if(i_2 \Ps m_2)}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2), j_1 \Ps j_2, \\\\
+i \Oc i_1, i \Oc i_2, i_1 \Ps i_2, R(i_1), R(i_2), i_1 \Ps i_2, i_2 \Ps j_2,i_1 \Os, j_1 \Os, \\\\
+m \Oc m_2, R(m_2),\Bb{if(i_2 \Ps m_2)}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2), j_1 \Ps j_2, \\\\
+i \Oc i_1, i \Oc i_2, i_1 \Ps i_2, R(i_1), R(i_2), i_1 \Ps i_2, i_1 \Ps j_2,i_1 \Os, j_1 \Os, \\\\
+m \Oc m_2, R(m_2),\Bb{if(i_2 \Ps m_2)}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2), j_1 \Ps j_2, \\\\
+i \Oc i_1, i \Oc i_2, i_1 \Ps i_2, R(i_1), R(i_2), i_1 \Ps j_2,i_1 \Os, j_1 \Os, \\\\
+m \Oc m_2, R(m_2),\Bb{if(i_2 \Ps m_2)}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2), j_1 \Ps j_2, \\\\
+i \Oc i_1, i \Oc i_2, R(i_1), R(i_2), i_1 \Ps j_2,i_1 \Os, j_1 \Os, \\\\
+m \Oc m_2, R(m_2),\Bb{if(i_2 \Ps m_2)}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2),  \\\\
+i \Oc i_1, i \Oc i_2, R(i_1), R(i_2), j_1 \Ps j_2,i_1 \Ps j_2,i_1 \Os, j_1 \Os, \\\\
+m \Oc m_2, R(m_2),\Bb{if(i_2 \Ps m_2)}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2),  \\\\
+i \Oc i_1, i \Oc i_2, R(i_1), R(i_2), j_1 \Ps j_2,i_1 \Ps j_1,i_1 \Os, j_1 \Os, \\\\
+m \Oc m_2, R(m_2),\Bb{if(i_2 \Ps m_2)}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2),j_1 \Ps j_2,  \\\\
+i \Oc i_1, i \Oc i_2, R(i_1), R(i_2), i_1 \Ps j_1,i_1 \Os, j_1 \Os, \\\\
+m \Oc m_2, R(m_2),\Bb{if(i_2 \Ps m_2)}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2,j_1 \Ps j_2, R(j_1), R(j_2),  \\\\
+i \Oc i_1, i \Oc i_2, R(i_1), R(i_2), i_1 \Ps j_1,i_1 \Os, j_1 \Os, \\\\
+m \Oc m_2, R(m_2),\Bb{if(i_2 \Ps m_2)}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq, j \Oc j_1,j \Oc j_2, R(j_1), R(j_2),  \\\\
+i \Oc i_1, i \Oc i_2, R(i_1), R(i_2), i_1 \Ps j_1,i_1 \Os, j_1 \Os, \\\\
+m \Oc m_2, R(m_2),\Bb{if(i_2 \Ps m_2)}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq,i \Oc i_1 j \Oc j_1, R(i_1), R(j_1),i_1 \Ps j_1,i_1 \Os, j_1 \Os,  \\\\
+, i \Oc i_2, R(i_2),  j \Oc j_2, R(j_2),\\\\
+m \Oc m_2, R(m_2),\Bb{if(i_2 \Ps m_2)}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os,j_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq,i \Pc j, i \Oc i_2, R(i_2),  j \Oc j_2, R(j_2),j_2 \Os,\\\\
+m \Oc m_2, R(m_2),\Bb{if(i_2 \Ps m_2)}{, i_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq,i \Pc j, i \Oc i_2, R(i_2),m \Oc m_2, R(m_2),\Bb{if(i_2 \Ps m_2)}{, i_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq,i \Pc j, i \Oc i_2,m \Oc m_2, R(i_2), R(m_2),\Bb{if(i_2 \Ps m_2)}{, i_2 \Os, m_2 \Os, \Tc c_1,}{, i_2 \Os, m_2 \Os, \Tc c_2,},  \\\\\\
+\Rq,i \Pc j, \Bb{if(i \Pc m)}{, \Tc c_1,}{, \Tc c_2,},
+\end{math}
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{Propositions with propositions:}
+\[,i \Pc j, j \Pc m, \Rq , i \Pc j, i \Pc m,\]
+
+\[,i \Pc j, j \nPc m, \Rq , i \Pc j, i \nPc m,\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{Identical node propositions with  branch function:}
+\[,i \Ps j, \Bb{if(j \Pc m)}{,\Tc c_1,}{,\Tc c_2,}, \Rq ,i \Ps j, \Bb{if(i \Pc m)}{,\Tc c_1,}{,\Tc c_2,}, \]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{Identical node propositions with  propositions:}
+\[,i \Ps j, j \Pc m, \Rq , i \Ps j, i \Pc m,\]
+
+\[,i \Ps j, j \nPc m, \Rq , i \Ps j, i \nPc m,\]
+
+
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{ Opposition}
+\[,i \Pc j, i \nPc j, \Rq , \Or,\]
+
+
+\[,i \nPc j, i \Pc j, \Rq , \Or,\]
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{ Swap  of the same operand}
+
+
+\subsubsection{Operators:} 
+\[, i \Od m, \Bb{if(i \Pc j)}{, \Tc c_1,}{, \Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,i \Od m, \Tc c_1,}{,i \Od m, \Tc c_2,},\]
+
+
+\bigskip
+\bigskip
+\[, i \Oc m, \Bb{if(i \Pc j)}{, \Tc c_1,}{, \Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,i \Oc m, \Tc c_1,}{,i \Oc m, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \Ob m, \Bb{if(i \Pc j)}{, \Tc c_1,}{, \Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,i \Ob m, \Tc c_1,}{,i \Ob m, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \On, \Bb{if(i \Pc j)}{, \Tc c_1,}{, \Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,i \On, \Tc c_1,}{,i \On, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \Op, \Bb{if(i \Pc j)}{, \Tc c_1,}{, \Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,i \Op, \Tc c_1,}{,i \Op, \Tc c_2,},\]
+
+
+\bigskip
+\bigskip
+
+\[, i \Pc j, i \Oc n, \Rq , i \Oc n, i \Pc j,\]
+
+\[, i \Pc j, i \Od n, \Rq , i \Od n, i \Pc j,\]
+
+\[, i \Pc j, i \Ob n, \Rq , i \Ob n, i \Pc j,\]
+
+\[, i \Pc j, i \On, \Rq , i \On, i \Pc j,\]
+\bigskip
+proof:\\
+\begin{math} 
+, i \Pc j, i \On,\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1),i_1 \Ps j_1, i_1 \Os, j_1 \Os, i \On,\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), i_1 \Ps j_1, i_1 \Os, j_1 \Os, i \On, i \Oc i_2, i_2 \Os,\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), i_1 \Ps j_1, i_1 \Os, j_1 \Os, i \On, i \Oc i_2, R(i_2), i_2 \Os,\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2), i_2 \Os, i_1 \Os, j_1 \Os,\\\\\\
+\Rq, i \Oc i_1, i \Ps i_1, j \Oc j_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2), i_2 \Os, i_1 \Os, j_1 \Os,\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, i \Ps i_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2), i_2 \Os, i_1 \Os, j_1 \Os,\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1,  \Bb{if(i \Pu)}{,}{,}, i \Ps i_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2), i_2 \Os, i_1 \Os, j_1 \Os,\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1,  \\\\
+\Bb{if(i \Pu)}{, i \Ps i_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),}{, i \Ps i_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),}, i_2 \Os, i_1 \Os, j_1 \Os,\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1,  \\\\
+\Bb{if(i \Pu)}{, i \Pu, i \Ps i_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),}{, i \nPu, i \Ps i_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),}, i_2 \Os, i_1 \Os, j_1 \Os,\\\\\\
+\Rq <1>\\\\\\
+<2> \Rq , i \Pu, i \Ps i_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\
+<3> \Rq , i \nPu, i \Ps i_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+<2>\\\\
+\Rq , i \Ps i_1, i \Pu, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i \Ps i_1, i_1 \Pu, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i \Ps i_1, i \On, i \Oc i_2, i_1 \Pu, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i \Ps i_1, i \On, i \Oc i_2, i_1 \Pu, R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i \Ps i_1, i \On, i \Oc i_2, i_1 \Pu, R\_(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i \Ps i_1, i \On, i \Oc i_2, i_1 \Pu, i_1 \On, i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Oc i_2, i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Ps i_1, i \Oc i_2, i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Ps i_1, i \Oc i_2, i \Ps i_2, i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Oc i_2, i \Ps i_1, i \Ps i_2, i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Oc i_2, i \Ps i_1, i_1 \Ps i_2, i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Oc i_2, i \Ps i_1, i_1 \Ps i_2, R(i_2), i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps j_1, \\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Oc i_2, i \Ps i_1, i_1 \Ps i_2, R(i_2), i_1 \Op, R\_(i_1),i_1 \Ps i_2, R(j_1),  i_1 \Ps j_1, \\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Oc i_2, i \Ps i_1, i_1 \Ps i_2, R(i_2), i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps i_2, i_1 \Ps j_1, \\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Oc i_2, i \Ps i_1, i_1 \Ps i_2, R(i_2), i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps i_2, i_2 \Ps j_1, \\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Oc i_2, R(i_2), i_1 \Op, R\_(i_1), R(j_1), i_2 \Ps j_1, \\\\\\
+\Rq , i \Ps i_1, i \On, i_1 \Pu, i_1 \On, i_1 \Op, R\_(i_1), i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, \\\\\\
+\Rq , i \Ps i_1, i_1 \Pu, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, \\\\\\
+\Rq , i \Ps i_1, i \Pu, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, \\\\\\
+\Rq , i \Pu, i \Ps i_1, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, \\\\\\
+<3>\\\\
+\Rq , i \Ps i_1, i \nPu, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i \Ps i_1, i_1 \nPu, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i \Ps i_1, i \On, i_1 \nPu, R(i_1), i \Oc i_2, R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i \Ps i_1, i \On, i_1 \nPu, i_1 \On, R(i_1), i \Oc i_2, R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On, R(i_1), i \Oc i_2, R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,i \Ps i_1, R(i_1), i \Oc i_2, R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,i \Ps i_1,  i \Oc i_2,R(i_1), R(i_2), R(j_1), i_1 \Ps j_1,\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,i \Ps i_1,  i \Oc i_2, i \Ps i_2, R(i_1), R(i_2), R(j_1), i_1 \Ps j_1,\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,  i \Oc i_2,i \Ps i_1, i \Ps i_2, R(i_1), R(i_2), R(j_1), i_1 \Ps j_1,\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,  i \Oc i_2,i \Ps i_1, i_1 \Ps i_2, R(i_1), R(i_2), R(j_1), i_1 \Ps j_1,\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,  i \Oc i_2,i \Ps i_1, i_1 \Ps i_2, R(i_1), R(i_2),i_1 \Ps i_2, R(j_1), i_1 \Ps j_1,\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,  i \Oc i_2,i \Ps i_1, i_1 \Ps i_2, R(i_1), R(i_2), R(j_1),i_1 \Ps i_2, i_1 \Ps j_1,\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,  i \Oc i_2,i \Ps i_1, i_1 \Ps i_2, R(i_1), R(i_2), R(j_1),i_1 \Ps i_2, i_2 \Ps j_1,\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,  i \Oc i_2,  R(i_1), R(i_2), R(j_1), i_2 \Ps j_1,\\\\\\
+\Rq , i \Ps i_1, i_1 \nPu, i_1 \On,  R(i_1), i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,\\\\\\
+\Rq , i \Ps i_1, i_1 \nPu,  R(i_1), i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,\\\\\\
+\Rq , i \Ps i_1, i \nPu,  R(i_1), i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,\\\\\\
+\Rq , i \nPu, i \Ps i_1,  R(i_1), i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,\\\\\\\\
+<1>\\\\
+\Rq ,  i \Oc i_1, j \Oc j_1,  \\\\
+\Bb{if(i \Pu)}{, i \Pu, i \Ps i_1, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, }{,  i \nPu, i \Ps i_1,  R(i_1), i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,}, i_2 \Os, i_1 \Os, j_1 \Os,\\\\\\\\
+\Rq ,  i \Oc i_1, j \Oc j_1, \\\\
+\Bb{if(i \Pu)}{, i \Ps i_1, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, }{, i \Ps i_1,  R(i_1), i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,}, i_2 \Os, i_1 \Os, j_1 \Os,\\\\\\\\
+\Rq ,  i \Oc i_1, i \Ps i_1, j \Oc j_1,  \Bb{if(i \Pu)}{, i_1 \Os, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, }{,  R(i_1), i_1 \Os, i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,}, i_2 \Os, j_1 \Os,\\\\\\\\
+\Rq ,  i \Oc i_1, j \Oc j_1,  \Bb{if(i \Pu)}{, i_1 \Os, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, }{, i_1 \Os, i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,}, i_2 \Os, j_1 \Os,\\\\\\\\
+\Rq ,  i \Oc i_1, i_1 \Os, j \Oc j_1,  \Bb{if(i \Pu)}{, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, }{, i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,}, i_2 \Os, j_1 \Os,\\\\\\\\
+\Rq , j \Oc j_1,  \Bb{if(i \Pu)}{, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, }{, i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,}, i_2 \Os, j_1 \Os,\\\\\\\\
+\Rq , j \Oc j_1,  \Bb{if(i \Pu)}{, }{,}, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, i_2 \Os, j_1 \Os,\\\\\\\\
+\Rq , i \On, i \Oc i_2,j \Oc j_1, R(i_2), R(j_1), i_2 \Ps j_1, i_2 \Os, j_1 \Os,\\\\\\\\
+\Rq , i \On, i \Pc j,\\\\\\\\
+\end{math}
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+
+
+\[, i \Pc j, i \Op, \Rq , i \Op, i \Pc j,\]
+
+
+\[, i \nPc j, i \Oc n, \Rq , i \Oc n, i \nPc j,\]
+
+\[, i \nPc j, i \Od n, \Rq , i \Od n, i \nPc j,\]
+
+\[, i \nPc j, i \Ob n, \Rq , i \Ob n, i \nPc j,\]
+
+\[, i \nPc j, i \On, \Rq , i \On, i \nPc j,\]
+\bigskip
+proof:\\
+\begin{math} 
+, i \nPc j, i \On,\\\\
+\Rq, i \nPc j, i \On, \Bb{if(i \Pc j)}{,}{,}, \\\\\\
+\Rq, i \nPc j, i \On, \Bb{}{, i \Pc j,}{, i \nPc j,}, \\\\\\
+\Rq, \Bb{}{, i \nPc j, i \On, i \Pc j,}{, i \nPc j, i \On, i \nPc j,}, \\\\\\
+\Rq, \Bb{}{, i \nPc j, i \Pc j, i \On,}{, i \nPc j, i \On, i \nPc j,}, \\\\\\
+\Rq, \Bb{}{, \Or, i \On,}{, i \nPc j, i \On, i \nPc j,}, \\\\\\
+\Rq, \Bb{}{, \Or,}{, i \nPc j, i \On, i \nPc j,}, \\\\\\
+\Rq, \Bb{}{, i \On, \Or,}{, i \nPc j, i \On, i \nPc j,}, \\\\\\
+\Rq, \Bb{}{, i \On,  i \Pc j, i \nPc j,}{, i \nPc j, i \On, i \nPc j,}, \\\\\\
+\Rq, \Bb{}{,  i \Pc j, i \On, i \nPc j,}{, i \nPc j, i \On, i \nPc j,}, \\\\\\
+\Rq, \Bb{}{,  i \Pc j,}{, i \nPc j,}, i \On, i \nPc j, \\\\\\
+\Rq, \Bb{if(i \Pc j)}{,}{,}, i \On, i \nPc j,  \\\\\\
+\Rq, i \On, i \nPc j, 
+\end{math}
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+
+
+\[, i \nPc j, i \Op , \Rq , i \Op, i \nPc j,\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{Identical node comparison:} 
+
+\[, \Bb{if(i \Ps j)}{,\Bb{if(j \Pc m)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(j \Pc m)}{,\Tc c_3,}{,\Tc c_4,},}, \Rq , \Bb{if(j \Pc m)}{,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Ps j)}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\[, \Bb{if(i \Ps j)}{,\Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(i \Pc j)}{,\Tc c_3,}{,\Tc c_4,},}, \Rq , \Bb{if(i \Pc j)}{,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Ps j)}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\[, i \Ps j,\Bb{if(j \Pc m)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(j \Pc m)}{,i \Ps j, \Tc c_1,}{,i \Ps j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \nPs j,\Bb{if(j \Pc m)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(j \Pc m)}{,i \nPs j, \Tc c_1,}{,i \nPs j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \Ps j,\Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,i \Ps j, \Tc c_1,}{,i \Ps j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \nPs j,\Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,i \nPs j, \Tc c_1,}{,i \nPs j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, j \Pc m,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{,j \Pc m, \Tc c_1,}{,j \Pc m, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, j \nPc m,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{,j \nPc m, \Tc c_1,}{,j \nPc m, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \Pc j,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{,i \Pc j, \Tc c_1,}{,i \Pc j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \nPc j,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{,i \nPc j, \Tc c_1,}{,i \nPc j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+
+
+\[,i \Ps j, i \Pc j, \Rq , i \Pc j, i \Ps j,\]
+
+\[,i \Ps j, i \nPc j, \Rq , i \nPc j, i \Ps j,\]
+
+\[,i \nPs j, i \Pc j, \Rq , i \Pc j, i \nPs j,\]
+
+\[,i \nPs j, i \nPc j, \Rq , i \nPc j, i \nPs j,\]
+
+\[,i \Ps j, j \Pc m, \Rq , j \Pc m, i \Ps j,\]
+
+\[,i \Ps j, j \nPc m, \Rq , j \nPc m, i \Ps j,\]
+
+\[,i \nPs j, j \Pc m, \Rq , j \Pc m, i \nPs j,\]
+
+\[,i \nPs j, j \nPc m, \Rq , j \nPc m, i \nPs j,\]
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{Node value comparison:} 
+
+\[, \Bb{if(i \Pe j)}{,\Bb{if(j \Pc m)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(j \Pc m)}{,\Tc c_3,}{,\Tc c_4,},}, \Rq , \Bb{if(j \Pc m)}{,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pe j)}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\[, \Bb{if(i \Pe j)}{,\Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(i \Pc j)}{,\Tc c_3,}{,\Tc c_4,},}, \Rq , \Bb{if(i \Pc j)}{,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pe j)}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\[, i \Pe j,\Bb{if(j \Pc m)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(j \Pc m)}{,i \Pe j, \Tc c_1,}{,i \Pe j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \nPe j,\Bb{if(j \Pc m)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(j \Pc m)}{,i \nPe j, \Tc c_1,}{,i \nPe j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \Pe j,\Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,i \Pe j, \Tc c_1,}{,i \Pe j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \nPe j,\Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,i \nPe j, \Tc c_1,}{,i \nPe j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, j \Pc m,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pe j)}{,j \Pc m, \Tc c_1,}{,j \Pc m, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, j \nPc m,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pe j)}{,j \nPc m, \Tc c_1,}{,j \nPc m, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \Pc j,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pe j)}{,i \Pc j, \Tc c_1,}{,i \Pc j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \nPc j,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pe j)}{,i \nPc j, \Tc c_1,}{,i \nPc j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+
+
+\[,i \Pe j, i \Pc j, \Rq , i \Pc j, i \Pe j,\]
+
+\[,i \Pe j, i \nPc j, \Rq , i \nPc j, i \Pe j,\]
+
+\[,i \nPe j, i \Pc j, \Rq , i \Pc j, i \nPe j,\]
+
+\[,i \nPe j, i \nPc j, \Rq , i \nPc j, i \nPe j,\]
+
+\[,i \Pe j, j \Pc m, \Rq , j \Pc m, i \Pe j,\]
+
+\[,i \Pe j, j \nPc m, \Rq , j \nPc m, i \Pe j,\]
+
+\[,i \nPe j, j \Pc m, \Rq , j \Pc m, i \nPe j,\]
+
+\[,i \nPe j, j \nPc m, \Rq , j \nPc m, i \nPe j,\]
+
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{Node null comparison:} 
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\[, \Bb{if(i \Pu)}{,\Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(i \Pc j)}{,\Tc c_3,}{,\Tc c_4,},}, \Rq , \Bb{if(i \Pc j)}{,\Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pu)}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+
+
+\bigskip
+\bigskip
+\[, i \Pu,\Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,i \Pu, \Tc c_1,}{,i \Pu, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \nPu,\Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pc j)}{,i \nPu, \Tc c_1,}{,i \nPu, \Tc c_2,},\]
+
+
+\bigskip
+\bigskip
+\[, i \Pc j,\Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pu)}{,i \Pc j, \Tc c_1,}{,i \Pc j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, i \nPc j,\Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pu)}{,i \nPc j, \Tc c_1,}{,i \nPc j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+
+
+\[,i \Pu, i \Pc j, \Rq , i \Pc j, i \Pu,\]
+
+\[,i \Pu, i \nPc j, \Rq , i \nPc j, i \Pu,\]
+
+\[,i \nPu, i \Pc j, \Rq , i \Pc j, i \nPu,\]
+
+\[,i \nPu, i \nPc j, \Rq , i \nPc j, i \nPu,\]
+
+
+
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{Itself:} 
+\[, \Bb{if(i \Pc j)}{,\Bb{if(j \Pc m)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(j \Pc m)}{,\Tc c_3,}{,\Tc c_4,},}, \Rq , \Bb{if(j \Pc m)}{,\Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pc j)}{,\Tc c_2,}{,\Tc c_4,},},\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\[,i \Pc j,\Bb{if(j \Pc m)}{,\Tc c_1,}{,\Tc c_2,}, \Rq ,\Bb{if(j \Pc m)}{,i \Pc j, \Tc c_1,}{,i \Pc j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[,i \nPc j,\Bb{if(j \Pc m)}{,\Tc c_1,}{,\Tc c_2,}, \Rq ,\Bb{if(j \Pc m)}{,i \nPc j, \Tc c_1,}{,i \nPc j, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+
+\[,i \Pc j, j \Pc m, \Rq , j \Pc m, i \Pc j,\]
+
+\[,i \Pc j, j \nPc m, \Rq , j \nPc m, i \Pc j,\]
+
+\[,i \nPc j, j \Pc m, \Rq , j \Pc m, i \nPc j,\]
+
+\[,i \nPc j, j \nPc m, \Rq , j \nPc m, i \nPc j,\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsubsection{flag object:} 
+\bigskip
+\bigskip
+\[,\In \Ps i, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq ,\Bb{if(i \Pc j)}{,\In \Ps i, \Tc c_1,}{,\In \Ps i, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[, \In \Pn i, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq ,\Bb{if(i \Pc j)}{,\In \Pn i, \Tc c_1,}{,\In \Pn i, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[,\Ip \Ps i, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq ,\Bb{if(i \Pc j)}{,\Ip \Ps i, \Tc c_1,}{,\Ip \Ps i, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+\[,\Ip \Pp i, \Bb{if(i \Pc j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq ,\Bb{if(i \Pc j)}{,\Ip \Pp i, \Tc c_1,}{,\Ip \Pp i, \Tc c_2,},\]
+
+\bigskip
+\bigskip
+
+\[,i \Pc j, \In \Ps i, \Rq , \In \Ps i, i \Pc j,\]
+
+\[,i \nPc j, \In \Ps i, \Rq , \In \Ps i, i \nPc j,\]
+
+\[,i \Pc j, \In \Pn i, \Rq , \In \Pn i, i \Pc j,\]
+
+\[,i \nPc j, \In \Pn i, \Rq , \In \Pn i, i \nPc j,\]
+
+\[,i \Pc j, \Ip \Ps i, \Rq , \Ip \Ps i, i \Pc j,\]
+
+\[,i \nPc j, \Ip \Ps i, \Rq , \Ip \Ps i, i \nPc j,\]
+
+\[,i \Pc j, \Ip \Pp i, \Rq , \Ip \Pp i, i \Pc j,\]
+
+\[,i \nPc j, \Ip \Pp i, \Rq , \Ip \Pp i, i \nPc j,\]
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Node Connectivity propositions to identical node propositions} 
+\[, i \Ps j, \Rq \sim, i \Pc j,\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, i \Ps j,\\\\
+\Rq, i \Ps j, i \Oc i_1, i_1 \Os,\\\\
+\Rq, i \Ps j, i \Oc i_1, R(i_1), i_1 \Os,\\\\
+\Rq, i \Ps j, i \Oc i_1, R(i_1), i_1 \Os, j \Oc j_1, j_1 \Os,\\\\
+\Rq, i \Ps j, i \Oc i_1, R(i_1), i_1 \Os, j \Oc j_1, R(j_1), j_1 \Os,\\\\
+\Rq, i \Ps j, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), i_1 \Os, j_1 \Os,\\\\
+\Rq, i \Ps j, i \Oc i_1, i \Ps i_1, j \Oc j_1, R(i_1), R(j_1), i_1 \Os, j_1 \Os,\\\\
+\Rq, i \Oc i_1, i \Ps j, i \Ps i_1, j \Oc j_1, R(i_1), R(j_1), i_1 \Os, j_1 \Os,\\\\
+\Rq, i \Oc i_1, i \Ps j, j \Ps i_1, j \Oc j_1, R(i_1), R(j_1), i_1 \Os, j_1 \Os,\\\\
+\Rq, i \Oc i_1, i \Ps j, j \Ps i_1, j \Oc j_1, j \Ps j_1, R(i_1), R(j_1), i_1 \Os, j_1 \Os,\\\\
+\Rq, i \Oc i_1, i \Ps j, j \Oc j_1, j \Ps i_1, j \Ps j_1, R(i_1), R(j_1), i_1 \Os, j_1 \Os,\\\\
+\Rq, i \Oc i_1, i \Ps j, j \Oc j_1, j \Ps i_1, i_1 \Ps j_1, R(i_1), R(j_1), i_1 \Os, j_1 \Os,\\\\
+\Rq, i \Oc i_1, i \Ps j, j \Oc j_1, j \Ps i_1, i_1 \Ps j_1, R(i_1), R(j_1), i_1 \Ps j_1, i_1 \Os, j_1 \Os,\\\\
+\Rq, i \Ps j, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), i_1 \Ps j_1, i_1 \Os, j_1 \Os,\\\\
+\Rq, i \Ps j, i \Pc j,
+\end{math}
+\bigskip
+\bigskip
+
+\[, i \nPc j, \Rq \sim, i \nPs j,\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, i \nPc j,\\\\
+\Rq, i \nPc j, \Bb{if(i\Ps j)}{,}{,},\\\\\\
+\Rq, i \nPc j, \Bb{if(i\Ps j)}{, i \Ps j,}{,},\\\\\\
+\Rq, i \nPc j, \Bb{if(i\Ps j)}{, i \Ps j, i \Pc j, }{,},\\\\\\
+\Rq, \Bb{if(i\Ps j)}{, i \nPc j, i \Ps j, i \Pc j, }{, i \nPc j,},\\\\\\
+\Rq, \Bb{if(i\Ps j)}{, i \nPc j, i \Pc j, i \Ps j, }{, i \nPc j,},\\\\\\
+\Rq, \Bb{if(i\Ps j)}{, \Or, i \Ps j, }{, i \nPc j,},\\\\\\
+\Rq, \Bb{if(i\Ps j)}{, \Or, }{, i \nPc j,},\\\\\\
+\Rq, \Bb{if(i\Ps j)}{, i \nPc j, \Or, }{, i \nPc j,},\\\\\\
+\Rq, i \nPc j, \Bb{if(i\Ps j)}{, \Or, }{,},\\\\\\
+\Rq, i \nPc j, i \nPs j,\\\\\\
+\end{math}
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+
+
+
+\subsection{Node null proposition} 
+\[,i \Pu, j \Pu,  \Blb{if(i \Ps j)}{,}{,} \Rq , i \Pu, j \Pu,  \Blb{if(i \Pc j)}{,}{,}\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+,i \Pu, j \Pu,  \Blb{if(i \Pc j)}{,}{,}\\\\\\
+\Rq,i \Pu, j \Pu, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, j \Pu, i \Oc i_1,i \Pu, j \Oc j_1, R(i_1), R(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, j \Pu, i \Oc i_1,i \Ps i_1, i \Pu, j \Oc j_1, R(i_1), R(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, j \Pu, i \Oc i_1,i \Ps i_1, i_1 \Pu, j \Oc j_1, R(i_1), R(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, j \Pu, i \Oc i_1,i \Ps i_1, i_1 \Pu, R(i_1), j \Oc j_1, R(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, j \Pu, i \Oc i_1,i \Ps i_1, i_1 \Pu, j \Oc j_1, R(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, j \Pu, i \Oc i_1,i \Ps i_1, i \Pu, j \Oc j_1, R(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, i \Pu, j \Pu, i \Oc i_1, j \Oc j_1, R(j_1), i \Ps i_1,\Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, i \Pu, j \Pu, i \Oc i_1, j \Oc j_1, R(j_1), i \Ps i_1,\Blb{if(i \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, i \Pu, j \Pu, i \Oc i_1, i \Ps i_1, j \Oc j_1, R(j_1),\Blb{if(i \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, i \Pu, j \Pu, i \Oc i_1, j \Oc j_1, R(j_1),\Blb{if(i \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, i \Pu, i \Oc i_1, j \Oc j_1, j \Pu, R(j_1),\Blb{if(i \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, i \Pu, i \Oc i_1, j \Oc j_1,j \Ps j_1, j \Pu, R(j_1),\Blb{if(i \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, i \Pu, i \Oc i_1, j \Oc j_1,j \Ps j_1, j_1 \Pu, R(j_1),\Blb{if(i \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, i \Pu, i \Oc i_1, j \Oc j_1,j \Ps j_1, j_1 \Pu,\Blb{if(i \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, i \Pu, i \Oc i_1, j \Oc j_1,j \Ps j_1, j \Pu,\Blb{if(i \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, i \Pu, j \Pu, i \Oc i_1, j \Oc j_1,j \Ps j_1,\Blb{if(i \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, i \Pu, j \Pu, i \Oc i_1, j \Oc j_1,j \Ps j_1,\Blb{if(i \Ps j)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, i \Pu, j \Pu, i \Oc i_1, j \Oc j_1,\Blb{if(i \Ps j)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, i \Pu, j \Pu, i \Oc i_1, i_1 \Os, j \Oc j_1, j_1 \Os, \Blb{if(i \Ps j)}{,}{,}\\\\\\\\
+\Rq, i \Pu, j \Pu, \Blb{if(i \Ps j)}{,}{,}
+\end{math}
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+
+
+\bigskip
+\bigskip
+\[,i \Pu, j \Pu, i \Ps j, \Rq ,i \Pu, j \Pu, i \Pc j,\]
+
+\[,i \Pu, j \Pu, i \nPs j, \Rq ,i \Pu, j \Pu, i \nPc j,\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Temporary space operator} 
+\[, \Ot i, \Rq \sim, i \nPc j, \]
+\bigskip
+proof:\\
+\begin{math} 
+, \Ot i,\\
+\Rq,  j \Oc j_1, j_1 \Os, \Ot i,\\\\
+\Rq,  j \Oc j_1, R(j_1), j_1 \Os, \Ot i,\\\\
+\Rq,  j \Oc j_1, R(j_1), \Ot i, j_1 \Os,\\\\
+\Rq,  j \Oc j_1, R(j_1), \Ot i, i \nPs j_1, j_1 \Os,\\\\
+\Rq,  j \Oc j_1, R(j_1), \Ot i, i \Pu,  i \nPs j_1, j_1 \Os,\\\\
+\Rq,  j \Oc j_1, R(j_1), \Ot i, i \Pu,  i \Oc i_1, i_1 \Os, i \nPs j_1, j_1 \Os,\\\\
+\Rq,  j \Oc j_1, R(j_1), \Ot i, i \Pu,  i \Oc i_1, i \nPs j_1, i_1 \Os, j_1 \Os,\\\\
+\Rq,  j \Oc j_1, R(j_1), \Ot i, i \Pu,  i \Oc i_1, i \Ps i_1, i \nPs j_1, i_1 \Os, j_1 \Os,\\\\
+\Rq,  j \Oc j_1, R(j_1), \Ot i, i \Pu,  i \Oc i_1, i \Ps i_1, i_1 \nPs j_1, i_1 \Os, j_1 \Os,\\\\
+\Rq,  j \Oc j_1, R(j_1), \Ot i,  i \Oc i_1, i \Ps i_1,  i \Pu,i_1 \nPs j_1, i_1 \Os, j_1 \Os,\\\\
+\Rq,  j \Oc j_1, R(j_1), \Ot i,  i \Oc i_1, i \Ps i_1,  i_1 \Pu,i_1 \nPs j_1, i_1 \Os, j_1 \Os,\\\\
+\Rq,  j \Oc j_1, R(j_1), \Ot i,  i \Oc i_1, i \Ps i_1,  i_1 \Pu, R(i_1), i_1 \nPs j_1, i_1 \Os, j_1 \Os,\\\\
+\Rq,  j \Oc j_1, R(j_1), \Ot i,  i \Oc i_1, R(i_1), i_1 \nPs j_1, i_1 \Os, j_1 \Os,\\\\
+\Rq, \Ot i,  i \Oc i_1,  j \Oc j_1, R(i_1), R(j_1), i_1 \nPs j_1, i_1 \Os, j_1 \Os,\\\\
+\Rq, \Ot i,  i \nPc j,
+\end{math}
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Node id operator} 
+\[, i \Od m, \Rq \sim, m \nPs j, \]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Transformation of definition } 
+\[,\Blb{if(i \Pc j)}{,}{,} \Rq , i \Oc i_1, j \Oc j_1, R(i_1), R\_(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+,\Blb{if(i \Pc j)}{,}{,}\\\\\\
+\Rq, i \Oc i_1, j \Oc j_2, R(i_1), R(j_2), \Blb{if(i_1 \Ps j_2)}{, i_1 \Os, j_2 \Os,}{, i_1 \Os, j_2 \Os,}\\\\\\\\
+\Rq, i \Oc i_1, j \Oc j_2, j \Oc j_1, j_1 \Os, R(i_1), R(j_2), \Blb{if(i_1 \Ps j_2)}{, i_1 \Os, j_2 \Os,}{, i_1 \Os, j_2 \Os,}\\\\\\\\
+\Rq, i \Oc i_1, j \Oc j_2, j \Oc j_1, R\_(j_1), j_1 \Os, R(i_1), R(j_2),\Blb{if(i_1 \Ps j_2)}{, i_1 \Os, j_2 \Os,}{, i_1 \Os, j_2 \Os,}\\\\\\\\
+\Rq, i \Oc i_1, R(i_1), j \Oc j_2, j \Oc j_1, R(j_2), R\_(j_1),\Blb{if(i_1 \Ps j_2)}{, i_1 \Os, j_1 \Os, j_2 \Os,}{, i_1 \Os, j_1 \Os, j_2 \Os,}\\\\\\\\
+\Rq, i \Oc i_1, R(i_1), j \Oc j_2, j \Oc j_1, j_2 \Ps j_1, R(j_2), R\_(j_1), \Blb{if(i_1 \Ps j_2)}{, i_1 \Os, j_1 \Os, j_2 \Os,}{, i_1 \Os, j_1 \Os, j_2 \Os,}\\\\\\\\
+\Rq, i \Oc i_1, R(i_1), j \Oc j_2, j \Oc j_1, j_2 \Ps j_1, R(j_2), R\_(j_1), j_2 \Ps j_1, \Blb{if(i_1 \Ps j_2)}{, i_1 \Os, j_1 \Os, j_2 \Os,}{, i_1 \Os, j_1 \Os, j_2 \Os,}\\\\\\\\
+\Rq, i \Oc i_1, R(i_1), j \Oc j_2, j \Oc j_1, j_2 \Ps j_1, R(j_2), R\_(j_1), j_2 \Ps j_1, \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os, j_2 \Os,}{, i_1 \Os, j_1 \Os, j_2 \Os,}\\\\\\\\
+\Rq, i \Oc i_1, R(i_1), j \Oc j_2, j \Oc j_1, j_2 \Ps j_1, R(j_2), R\_(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os, j_2 \Os,}{, i_1 \Os, j_1 \Os, j_2 \Os,}\\\\\\\\
+\Rq, i \Oc i_1, R(i_1), j \Oc j_2, j \Oc j_1, R(j_2), R\_(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os, j_2 \Os,}{, i_1 \Os, j_1 \Os, j_2 \Os,}\\\\\\\\
+\Rq, i \Oc i_1, R(i_1), j \Oc j_2, R(j_2), j_2 \Os, j \Oc j_1, R\_(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, i \Oc i_1, R(i_1), j \Oc j_1, R\_(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R\_(j_1),\Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}
+\end{math}
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+
+\[,\Blb{if(i \Pc j)}{,}{,} \Rq , i \Oc i_1, j \Oc j_1, R\_(i_1), R\_(j_1), \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\]
+
+
+
+\[, i \Pc j, i \Oc n, \Rq , i \Oc n, n \Pc j, \]
+
+
+\newpage

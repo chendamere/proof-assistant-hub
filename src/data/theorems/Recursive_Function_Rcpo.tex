@@ -1,0 +1,2853 @@
+\chapter{Recursive Function Rcpo(i;r)}
+
+\section{Definition of IsCpo(i;r)}
+\[,IsCpo(i;r), \Rq , i \nPc r, r \Pu, \]
+
+\bigskip
+\bigskip
+\section{Property of IsCpo(i;r)}
+\[,IsCpo(i;r), \Rq \sim, i \nPc r, \]
+
+\[,IsCpo(i;r), \Rq \sim, i \nPs r, \]
+
+\[,IsCpo(i;r), \Rq \sim, r \Pu, \]
+
+\[,IsCpo(i;r), \Rq \sim, IsCpo(i;r), \]
+
+\[,IsCpo(i;r), j \nPc r, \Rq , IsCpo(i;r), IsCpo(j;r),\]
+
+\[, IsCpo(i;r), i \Oc i_0, \Rq , i \Oc i_0,  IsCpo(i_0;r),\]
+
+\[, i_1 \Ps i_2, IsCpo(i_1;r), \Rq , i_1 \Ps i_2, IsCpo(i_2;r),\]
+
+
+\[, IsCpo(i;r), Cpo(r), r\On , \Rq , Cpo(r), r \On, IsCpo(i;r),\]
+
+\[, IsCpo(i;r), i \Pu, Cpo(r),  \Rq , IsCpo(i;r), Cpo(r), i \Pu,\]
+
+\[, IsCpo(i;r), i \nPu, Cpo(r),  \Rq , IsCpo(i;r), Cpo(r), i \nPu,\]
+
+\[, IsCpo(i;r), i \On, Cpo(r),  \Rq , IsCpo(i;r), Cpo(r), i \On,\]
+
+\[, IsCpo(i;r), i \On,  \Rq , i \On, IsCpo(i;r),\]
+
+\[, IsCpo(i;r), \In \Ps i, \Rq , \In \Ps i, IsCpo(i;r), \]
+
+\[, IsCpo(j;r), \In \Ps i, \Rq , \In \Ps i, IsCpo(j;r), \]
+
+\[, IsCpo(i;r), \In \Ps i, Cpo(r), \Rq , IsCpo(i;r), Cpo(r), \In \Ps i,\]
+
+\[, \Ot r, \Rq \sim, IsCpo(i;r), \]
+
+% forgot comma
+\[, r_1 \nPs r_2, IsCpo(i;r_1), Cpo(r_2), \Rq , r_1 \nPs r_2, Cpo(r_2), IsCpo(i;r_1),\]
+
+\[, r_1 \nPc r_2, IsCpo(i;r_1), Cpo(r_2), \Rq , r_1 \nPc r_2, Cpo(r_2), IsCpo(i;r_1),\]
+
+\[, i \nPc r, j \nPc r, i \Pne j, Cpo(r), \Rq , i \nPc r, j \nPc r, Cpo(r), i \Pne j, \]
+
+\[, IsCpo(i;r), IsCpo(j;r), i \Pne j, Cpo(r), \Rq , IsCpo(i;r), IsCpo(j;r), Cpo(r), i \Pne j, \]
+
+\[, i \nPc r, j \nPc r, i \Pnm j, Cpo(r), \Rq , i \nPc r, j \nPc r, Cpo(r), i \Pnm j, \]
+
+\[, IsCpo(i;r), IsCpo(j;r), i \Pnm j, Cpo(r), \Rq , IsCpo(i;r), IsCpo(j;r), Cpo(r), i \Pnm j, \]
+
+\bigskip
+\bigskip
+\section{Definition of Rcpo(i;r)}
+\[,Rcpo(i;r), \Rq , \Bb{if(i \Pu)}{,}{, Cpo(r), r \On, i \On, Rcpo(i;r),}, \]
+
+
+
+\bigskip
+\bigskip
+\section{Property of Rcpo(i;r)}
+\[, i \Pu, Rcpo(i;r), \Rq , i \Pu, \]
+
+\[, i \nPu, Rcpo(i;r), \Rq , i \nPu, Cpo(r), r \On, i \On, Rcpo(i;r), \]
+
+
+\[, IsCpo(i;r), Rcpo(i;r), \Rq \sim, i \Pu, r \Pu,\]
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, i \Pu, IsCpo(i;r), Rcpo(i;r),\\
+\Rq,  IsCpo(i;r), i \Pu, Rcpo(i;r),\\\\
+\Rq,  IsCpo(i;r), i \Pu,\\\\
+\Rq,  IsCpo(i;r), r \Pu, i \Pu, i \Pu,\\\\
+\Rq,  IsCpo(i;r), i \Pu, i \Pu, r \Pu,\\\\
+\Rq,  IsCpo(i;r), i \Pu, Rcpo(i;r), i \Pu, r \Pu,\\\\
+\Rq, i \Pu, IsCpo(i;r), Rcpo(i;r), i \Pu, r \Pu,\\\\
+premise \; 2:\\
+,\In \Pn i,  IsCpo(i;r), Rcpo(i;r), \Rq ,\In \Pn i, IsCpo(i;r), Rcpo(i;r), i \Pu, r \Pu, \Ri \\\\
+,i \nPu, \In \Ps i,  IsCpo(i;r), Rcpo(i;r),\\\\
+\Rq, \In \Ps i,  IsCpo(i;r), i \nPu, Rcpo(i;r), \\\\
+\Rq, \In \Ps i,  IsCpo(i;r), i \nPu, Cpo(r), r \On, i \On, Rcpo(i;r), \\\\
+\Rq, i \nPu,  IsCpo(i;r), \In \Ps i, Cpo(r), r \On, i \On, Rcpo(i;r), \\\\
+\Rq, i \nPu,  IsCpo(i;r), Cpo(r), \In \Ps i, r \On, i \On, Rcpo(i;r), \\\\
+\Rq, i \nPu,  IsCpo(i;r), Cpo(r), r \On, i \On, \In \Pn i, Rcpo(i;r), \\\\
+\Rq, i \nPu, Cpo(r), r \On,  IsCpo(i;r), i \On, \In \Pn i, Rcpo(i;r), \\\\
+\Rq, i \nPu, Cpo(r), r \On, i \On, \In \Pn i,  IsCpo(i;r), Rcpo(i;r), \\\\
+\Rq, i \nPu, Cpo(r), r \On, i \On, \In \Pn i,  IsCpo(i;r), Rcpo(i;r), i \Pu, r \Pu, \\\\
+\Rq, \In \Ps i,  IsCpo(i;r), i \nPu, Cpo(r), r \On, i \On, Rcpo(i;r), i \Pu, r \Pu, \\\\
+\Rq, \In \Ps i,  IsCpo(i;r), i \nPu, Rcpo(i;r), i \Pu, r \Pu, \\\\
+\Rq,i \nPu, \In \Ps i, IsCpo(i;r), Rcpo(i;r), i \Pu, r \Pu,\\\\
+conclusion:\\\\
+, IsCpo(i;r), Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), i \Pu, r \Pu,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+\[, IsCpo(i;r), i \nPu, Rcpo(i;r), \Rq \sim, m \nPs r, \]
+\[, IsCpo(i;r), m \nPs r, Rcpo(i;r), \Rq \sim, m \nPs r, \]
+
+\[, IsCpo(i;r), Rcpo(i;r), \Or, \Rq , \Or, \]
+
+
+
+\bigskip
+\bigskip
+\section{Swap}
+\subsection{Operator}
+\[, IsCpo(i;r), \Ot j, Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), \Ot j, \]
+
+\[, IsCpo(i;r), j \Oc j_0, Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), j \Oc j_0, \]
+
+\[, IsCpo(i;r), j \Os, Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), j \Os, \]
+
+
+\[, IsCpo(i;r), j \nPs r, j \On, Rcpo(i;r), \Rq , IsCpo(i;r), j \nPs r, Rcpo(i;r), j \On, \]
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, i \Pu, IsCpo(i;r), j \nPs r, j \On, Rcpo(i;r),\\
+\Rq,  IsCpo(i;r), j \nPs r, j \On, i \Pu, Rcpo(i;r),\\\\
+\Rq,  IsCpo(i;r), j \nPs r, j \On, i \Pu,\\\\
+\Rq,  IsCpo(i;r), j \nPs r, i \Pu, j \On,\\\\
+\Rq,  IsCpo(i;r), j \nPs r, i \Pu, Rcpo(i;r), j \On,\\\\
+\Rq, i \Pu, IsCpo(i;r), j \nPs r, Rcpo(i;r), j \On,\\\\
+premise \; 2:\\
+, \In \Pn i, IsCpo(i;r), j \nPs r, j \On, Rcpo(i;r), \Rq ,\In \Pn i, IsCpo(i;r), j \nPs r, Rcpo(i;r), j \On, \Ri \\\\
+, i \nPu, \In \Ps i, IsCpo(i;r), j \nPs r, j \On, Rcpo(i;r),\\\\
+\Rq, \In \Ps i,  IsCpo(i;r), j \nPs r, j \On, i \nPu, Rcpo(i;r), \\\\
+\Rq, \In \Ps i,  IsCpo(i;r), j \nPs r, j \On, i \nPu, Cpo(r), r \On, i \On, Rcpo(i;r), \\\\
+\Rq, i \nPu, \In \Ps i,  IsCpo(i;r), j \nPs r, j \On, Cpo(r), r \On, i \On, Rcpo(i;r), \\\\
+\Rq, i \nPu, \In \Ps i,  IsCpo(i;r), j \nPs r, Cpo(r), j \On, r \On, i \On, Rcpo(i;r), \\\\
+\Rq, i \nPu, \In \Ps i,  IsCpo(i;r), j \nPs r, Cpo(r), r \On, i \On, j \On, Rcpo(i;r), \\\\
+\Rq, i \nPu, \In \Ps i,  IsCpo(i;r), j \nPs r, Cpo(r), r \On, j \nPs r, i \On, j \On, Rcpo(i;r), \\\\
+\Rq, i \nPu, j \nPs r,  IsCpo(i;r), \In \Ps i, Cpo(r), r \On, i \On, j \nPs r, j \On, Rcpo(i;r), \\\\
+\Rq, i \nPu, j \nPs r,  IsCpo(i;r), Cpo(r), \In \Ps i, r \On, i \On, j \nPs r, j \On, Rcpo(i;r), \\\\
+\Rq, i \nPu, j \nPs r,  IsCpo(i;r), Cpo(r), r \On, i \On, \In \Pn i, j \nPs r, j \On, Rcpo(i;r), \\\\
+\Rq, i \nPu, j \nPs r, Cpo(r), r \On,  IsCpo(i;r), i \On, \In \Pn i, j \nPs r, j \On, Rcpo(i;r), \\\\
+\Rq, i \nPu, j \nPs r, Cpo(r), r \On, i \On, \In \Pn i,  IsCpo(i;r), j \nPs r, j \On, Rcpo(i;r), \\\\
+\Rq, i \nPu, j \nPs r, Cpo(r), r \On, i \On, \In \Pn i,  IsCpo(i;r), j \nPs r, Rcpo(i;r), j \On, \\\\
+\Rq, \In \Ps i, IsCpo(i;r), j \nPs r, i \nPu, Cpo(r), r \On, j \nPs r, i \On,  Rcpo(i;r), j \On, \\\\
+\Rq, \In \Ps i, IsCpo(i;r), j \nPs r, i \nPu, Cpo(r), r \On, i \On,  Rcpo(i;r), j \On, \\\\
+\Rq, \In \Ps i, IsCpo(i;r), j \nPs r, i \nPu, Rcpo(i;r), j \On, \\\\
+\Rq, i \nPu, \In \Ps i, IsCpo(i;r), j \nPs r, Rcpo(i;r), j \On,\\\\
+conclusion:\\\\
+, IsCpo(i;r), j \nPs r, j \On, Rcpo(i;r), \Rq , IsCpo(i;r), j \nPs r, Rcpo(i;r), j \On,
+\end{math}
+\bigskip
+\bigskip
+
+\[, IsCpo(i;r), j \nPc r, j \On, Rcpo(i;r), \Rq , IsCpo(i;r), j \nPc r, Rcpo(i;r), j \On, \]
+
+
+\[, IsCpo(i;r), r \nPn j, j \Op, Rcpo(i;r), \Rq , IsCpo(i;r), r \nPn j, Rcpo(i;r), j \Op, \]
+
+\[, IsCpo(i;r), j \nPc r, j \Op, Rcpo(i;r), \Rq , IsCpo(i;r), j \nPc r, Rcpo(i;r), j \Op, \]
+
+
+
+\bigskip
+\bigskip
+\subsection{Propositions node null}
+\[, IsCpo(i;r), j \nPs r, j \Pu, Rcpo(i;r), \Rq , IsCpo(i;r), j \nPs r, Rcpo(i;r), j \Pu,\]
+
+\[, IsCpo(i;r), j \nPs r, j \nPu, Rcpo(i;r), \Rq , IsCpo(i;r), j \nPs r, Rcpo(i;r), j \nPu,\]
+
+\[, IsCpo(i;r), j \nPc r, j \Pu, Rcpo(i;r), \Rq , IsCpo(i;r), j \nPc r, Rcpo(i;r), j \Pu,\]
+
+\[, IsCpo(i;r), j \nPc r, j \nPu, Rcpo(i;r), \Rq , IsCpo(i;r), j \nPc r, Rcpo(i;r), j \nPu,\]
+
+\[, IsCpo(i;r), j \nPu, Rcpo(i;r), \Rq \sim, j \nPu,\]
+
+\[, IsCpo(i;r), j \nPu, j \On, Rcpo(i;r), \Rq , IsCpo(i;r), j \nPu, Rcpo(i;r), j \nPu, j \On,\]
+
+\[, IsCpo(i;r), j \nPs r, j \nPu, j \On, Rcpo(i;r), \Rq , IsCpo(i;r),  j \nPs r, Rcpo(i;r), j \nPu, j \On,\]
+
+\[, IsCpo(i;r), j \nPc r, j \nPu, j \On, Rcpo(i;r), \Rq , IsCpo(i;r),  j \nPc r, Rcpo(i;r), j \nPu, j \On,\]
+
+
+\bigskip
+\bigskip
+\subsection{Propositions identical node}
+\[, IsCpo(i;r), m \Ps n, Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), m \Ps n,\]
+
+\[, IsCpo(i;r), m \nPs n, Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), m \nPs n,\]
+
+
+
+\bigskip
+\bigskip
+\subsection{Propositions  node connectivity}
+\[, IsCpo(i;r), m \Pc n, Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), m \Pc n,\]
+
+\[, IsCpo(i;r), m \nPc n, Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), m \nPc n,\]
+
+\[, IsCpo(i;r), i \nPc r, Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), i \nPc r,\]
+
+\[, IsCpo(i;r), m \Pc r, Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), m \Pc r,\]
+
+\[, IsCpo(i;r), m \nPc r, Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), m \nPc r,\]
+
+
+
+
+\bigskip
+\bigskip
+\subsection{IsCpo}
+\[, IsCpo(i;r), Rcpo(i;r), \Rq \sim, IsCpo(i;r), \]
+
+\[, IsCpo(i;r), IsCpo(j;r), Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), IsCpo(j;r), \]
+
+\[, IsCpo(i;r_1), r_1 \nPc r_2, IsCpo(j;r_2), Rcpo(i;r_1), \Rq \]
+\[, IsCpo(i;r_1), r_1 \nPc r_2, Rcpo(i;r_1), IsCpo(j;r_2), \]
+
+
+\bigskip
+\bigskip
+\subsection{Cpo}
+\[, IsCpo(i;r), Cpo(r), r \On, Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), Cpo(r), r \On,\]
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, i \Pu,  IsCpo(i;r), Cpo(r), r \On, Rcpo(i;r),\\
+\Rq,   IsCpo(i;r), i \Pu, Cpo(r), r \On, Rcpo(i;r),\\\\
+\Rq,   IsCpo(i;r), Cpo(r), i \Pu, r \On, Rcpo(i;r),\\\\
+\Rq,   IsCpo(i;r), Cpo(r), r \On, i \Pu, Rcpo(i;r),\\\\
+\Rq,   IsCpo(i;r), Cpo(r), r \On, i \Pu,\\\\
+\Rq,   IsCpo(i;r), i \Pu, Cpo(r), r \On,\\\\
+\Rq,   IsCpo(i;r), i \Pu, Rcpo(i;r), Cpo(r), r \On,\\\\
+\Rq, i \Pu, IsCpo(i;r), Rcpo(i;r), Cpo(r), r \On,\\\\
+premise \; 2:\\
+, \In \Pn i, IsCpo(i;r), Cpo(r), r \On, Rcpo(i;r),\\\\
+\Rq ,\In \Pn i, IsCpo(i;r), Rcpo(i;r), Cpo(r), r \On, \Ri \\\\
+, i \nPu, \In \Ps i, IsCpo(i;r), Cpo(r), r \On, Rcpo(i;r),\\\\
+\Rq, \In \Ps i,  IsCpo(i;r), i \nPu, Cpo(r), r \On, Rcpo(i;r), \\\\
+\Rq, \In \Ps i,  IsCpo(i;r), Cpo(r), i \nPu, r \On, Rcpo(i;r), \\\\
+\Rq, \In \Ps i,  IsCpo(i;r), Cpo(r), r \On, i \nPu, Rcpo(i;r), \\\\
+\Rq, \In \Ps i,  IsCpo(i;r), Cpo(r), r \On, i \nPu, Cpo(r), r \On, i \On, Rcpo(i;r), \\\\
+\Rq, \In \Ps i,  IsCpo(i;r), Cpo(r), r \On, IsCpo(i;r), i \nPu, Cpo(r), r \On, i \On, Rcpo(i;r), \\\\
+\Rq, \In \Ps i,  IsCpo(i;r), Cpo(r), i \nPu, r \On, IsCpo(i;r), Cpo(r), i \On, r \On, Rcpo(i;r), \\\\
+\Rq, \In \Ps i,  IsCpo(i;r), Cpo(r), i \nPu, r \On, IsCpo(i;r), i \On, Cpo(r), r \On, Rcpo(i;r), \\\\
+\Rq,  IsCpo(i;r), \In \Ps i, Cpo(r), i \nPu, r \On, i \On, IsCpo(i;r), Cpo(r), r \On, Rcpo(i;r), \\\\
+\Rq,  IsCpo(i;r), Cpo(r), \In \Ps i, i \nPu, r \On, i \On, IsCpo(i;r), Cpo(r), r \On, Rcpo(i;r), \\\\
+\Rq,  IsCpo(i;r), Cpo(r), i \nPu, r \On, i \On, \In \Pn i, IsCpo(i;r), Cpo(r), r \On, Rcpo(i;r), \\\\
+\Rq,  IsCpo(i;r), Cpo(r), i \nPu, r \On, i \On, \In \Pn i, IsCpo(i;r), Rcpo(i;r), Cpo(r), r \On, \\\\
+\Rq, \In \Ps i,  IsCpo(i;r), i \nPu, Cpo(r), r \On, i \On, IsCpo(i;r), Rcpo(i;r), Cpo(r), r \On, \\\\
+\Rq, \In \Ps i,  IsCpo(i;r), i \nPu, Cpo(r), r \On, IsCpo(i;r), i \On, Rcpo(i;r), Cpo(r), r \On, \\\\
+\Rq, \In \Ps i,  IsCpo(i;r), i \nPu, IsCpo(i;r), Cpo(r), r \On, i \On, Rcpo(i;r), Cpo(r), r \On, \\\\
+\Rq, \In \Ps i,  IsCpo(i;r), i \nPu, Cpo(r), r \On, i \On, Rcpo(i;r), Cpo(r), r \On, \\\\
+\Rq, \In \Ps i,  IsCpo(i;r), i \nPu, Rcpo(i;r), Cpo(r), r \On, \\\\
+\Rq, i \nPu, \In \Ps i, IsCpo(i;r), Rcpo(i;r), Cpo(r), r \On,\\\\
+conclusion:\\\\
+, IsCpo(i;r), Cpo(r), r \On, Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), Cpo(r), r \On,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+\[, IsCpo(i;r_1), i \nPc r_2, r_1 \nPc r_2, Cpo(r_2), Rcpo(i;r_1), \Rq \]
+\[, IsCpo(i;r_1), i \nPc r_2, r_1 \nPc r_2, Rcpo(i;r_1), Cpo(r_2), \]
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, i \Pu, IsCpo(i;r_1), i \nPc r_2, r_1 \nPc r_2, Cpo(r_2), Rcpo(i;r_1),\\
+\Rq, IsCpo(i;r_1), r_1 \nPc r_2, i \nPc r_2, i \Pu, Cpo(r_2), Rcpo(i;r_1),\\\\
+\Rq, IsCpo(i;r_1), r_1 \nPc r_2, i \nPc r_2, Cpo(r_2), i \Pu, Rcpo(i;r_1),\\\\
+\Rq, IsCpo(i;r_1), r_1 \nPc r_2, i \nPc r_2, Cpo(r_2), i \Pu,\\\\
+\Rq, IsCpo(i;r_1), r_1 \nPc r_2, i \nPc r_2, i \Pu, Cpo(r_2),\\\\
+\Rq, IsCpo(i;r_1), r_1 \nPc r_2, i \nPc r_2, i \Pu, Rcpo(i;r_1), Cpo(r_2),\\\\
+\Rq, i \Pu, IsCpo(i;r_1), i \nPc r_2, r_1 \nPc r_2, Rcpo(i;r_1), Cpo(r_2),\\\\
+premise \; 2:\\
+, \In \Pn i, IsCpo(i;r_1), i \nPc r_2, r_1 \nPc r_2, Cpo(r_2), Rcpo(i;r_1), \Rq\\\\
+,\In \Pn i, IsCpo(i;r_1), i \nPc r_2, r_1 \nPc r_2, Rcpo(i;r_1), Cpo(r_2), \Ri \\
+\\
+, i \nPu, \In \Ps i, IsCpo(i;r_1), i \nPc r_2, r_1 \nPc r_2, Cpo(r_2), Rcpo(i;r_1),\\\\
+\Rq, \In \Ps i,  IsCpo(i;r_1), r_1 \nPc r_2, i \nPc r_2, i \nPu, Cpo(r_2), Rcpo(i;r_1), \\\\
+\Rq, \In \Ps i,  IsCpo(i;r_1), r_1 \nPc r_2, i \nPc r_2, Cpo(r_2), i \nPu, Rcpo(i;r_1), \\\\
+\Rq, \In \Ps i,  IsCpo(i;r_1), r_1 \nPc r_2, i \nPc r_2, Cpo(r_2), i \nPu, Cpo(r_1), r_1 \On, i \On, Rcpo(i;r_1), \\
+\\
+\Rq, \In \Ps i,  IsCpo(i;r_1), r_1 \nPc r_2, i \nPc r_2, i \nPu, Cpo(r_2), Cpo(r_1), r_1 \On, i \On, Rcpo(i;r_1), \\
+\\
+\Rq, \In \Ps i,  IsCpo(i;r_1), r_1 \nPc r_2, i \nPc r_2, i \nPu, Cpo(r_1), Cpo(r_2), r_1 \On, i \On, Rcpo(i;r_1), \\
+\\
+\Rq, \In \Ps i,  IsCpo(i;r_1), i \nPc r_2, i \nPu, Cpo(r_1), r_1 \nPc r_2, Cpo(r_2), r_1 \On, i \On, Rcpo(i;r_1), \\
+\\
+\Rq, \In \Ps i,  IsCpo(i;r_1), i \nPc r_2, i \nPu, Cpo(r_1), r_1 \nPc r_2, r_1 \On, Cpo(r_2), i \On, Rcpo(i;r_1), \\
+\\
+\Rq, \In \Ps i,  IsCpo(i;r_1), i \nPu, Cpo(r_1), r_1 \On, r_1 \nPc r_2, i \nPc r_2, Cpo(r_2), i \On, Rcpo(i;r_1), \\
+\\
+\Rq, \In \Ps i,  IsCpo(i;r_1), i \nPu, Cpo(r_1), r_1 \On, r_1 \nPc r_2, i \nPc r_2, i \On, Cpo(r_2), Rcpo(i;r_1), \\
+\\
+\Rq, \In \Ps i, r_1 \nPc r_2, i \nPc r_2, i \nPu,  IsCpo(i;r_1), Cpo(r_1), r_1 \On, i \On, Cpo(r_2), Rcpo(i;r_1), \\
+\\
+\Rq, r_1 \nPc r_2, i \nPc r_2, i \nPu,  IsCpo(i;r_1), \In \Ps i, Cpo(r_1), r_1 \On, i \On, Cpo(r_2), Rcpo(i;r_1), \\
+\\
+\Rq, r_1 \nPc r_2, i \nPc r_2, i \nPu,  IsCpo(i;r_1), Cpo(r_1), r_1 \On, i \On, \In \Pn i, Cpo(r_2), Rcpo(i;r_1), \\
+\\
+\Rq, r_1 \nPc r_2, i \nPc r_2, i \nPu, Cpo(r_1), r_1 \On,  IsCpo(i;r_1), i \On, \In \Pn i, Cpo(r_2), Rcpo(i;r_1), \\
+\\
+\Rq, i \nPu, Cpo(r_1), r_1 \On,  i \On, \In \Pn i, IsCpo(i;r_1), i \nPc r_2, r_1 \nPc r_2, Cpo(r_2), Rcpo(i;r_1), \\
+\\
+\Rq, i \nPu, Cpo(r_1), r_1 \On,  i \On, \In \Pn i, IsCpo(i;r_1), i \nPc r_2, r_1 \nPc r_2, Rcpo(i;r_1), Cpo(r_2), \\
+\\
+\Rq, \In \Ps i, IsCpo(i;r_1), i \nPc r_2, r_1 \nPc r_2, i \nPu, Cpo(r_1), r_1 \On,  i \On, Rcpo(i;r_1), Cpo(r_2), \\
+\\
+\Rq, \In \Ps i, IsCpo(i;r_1), i \nPc r_2, r_1 \nPc r_2, i \nPu, Rcpo(i;r_1), Cpo(r_2), \\
+\\
+\Rq, i \nPu, \In \Ps i, IsCpo(i;r_1), i \nPc r_2, r_1 \nPc r_2, Rcpo(i;r_1), Cpo(r_2),\\\\
+conclusion:\\\\
+, IsCpo(i;r_1), i \nPc r_2, r_1 \nPc r_2, Cpo(r_2), Rcpo(i;r_1), \Rq \\\\
+, IsCpo(i;r_1), i \nPc r_2, r_1 \nPc r_2, Rcpo(i;r_1), Cpo(r_2),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+\[, IsCpo(i;r_1), i \nPc r_2, r_1 \nPc r_2, Cpo(r_2), r_2 \On, Rcpo(i;r_1), \Rq \]
+\[, IsCpo(i;r_1), i \nPc r_2, r_1 \nPc r_2, Rcpo(i;r_1), Cpo(r_2), r_2 \On, \]
+
+
+
+
+
+
+\bigskip
+\bigskip
+\subsection{Rcpo}
+\[, IsCpo(i;r), IsCpo(j;r), Rcpo(i;r), Rcpo(j;r), \Rq \]
+\[, IsCpo(i;r), IsCpo(j;r), Rcpo(j;r), Rcpo(i;r),\]
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, i \Pu, IsCpo(i;r), IsCpo(j;r), Rcpo(i;r), Rcpo(j;r),\\
+\Rq, IsCpo(i;r), IsCpo(j;r), i \Pu, Rcpo(i;r), Rcpo(j;r),\\\\
+\Rq, IsCpo(i;r), i \nPc r, IsCpo(j;r), i \Pu, Rcpo(j;r),\\\\
+\Rq, IsCpo(i;r), IsCpo(j;r), i \nPc r, i \Pu, Rcpo(j;r),\\\\
+\Rq, IsCpo(i;r), IsCpo(j;r), i \nPc r, Rcpo(j;r), i \Pu,\\\\
+\Rq, IsCpo(i;r), IsCpo(j;r), i \nPc r, Rcpo(j;r), i \Pu,  Rcpo(i;r),\\\\
+\Rq, IsCpo(i;r), IsCpo(j;r), i \nPc r, i \Pu, Rcpo(j;r),  Rcpo(i;r),\\\\
+\Rq, i \Pu, IsCpo(i;r), i \nPc r, IsCpo(j;r), Rcpo(j;r),  Rcpo(i;r),\\\\
+\Rq, i \Pu, IsCpo(i;r), IsCpo(j;r), Rcpo(j;r), Rcpo(i;r),\\\\
+premise \; 2:\\
+, \In \Pn i, IsCpo(i;r), IsCpo(j;r), Rcpo(i;r), Rcpo(j;r),\\\\
+\Rq ,\In \Pn i, IsCpo(i;r), IsCpo(j;r), Rcpo(j;r), Rcpo(i;r), \Ri \\\\
+, i \nPu, \In \Ps i, IsCpo(i;r), IsCpo(j;r), Rcpo(i;r), Rcpo(j;r),\\\\
+\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \nPu, Rcpo(i;r), Rcpo(j;r), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \nPu, Cpo(r), r \On, i \On, Rcpo(i;r), Rcpo(j;r), \\\\
+\Rq, i \nPu, IsCpo(i;r), \In \Ps i, Cpo(r), r \On, i \On, IsCpo(j;r), Rcpo(i;r), Rcpo(j;r), \\\\
+\Rq, i \nPu, IsCpo(i;r), Cpo(r), r \On, i \On, \In \Pn i, IsCpo(j;r), Rcpo(i;r), Rcpo(j;r), \\\\
+\Rq, i \nPu, Cpo(r), r \On, i \On, \In \Pn i, IsCpo(i;r), IsCpo(j;r), Rcpo(i;r), Rcpo(j;r), \\\\
+\Rq, i \nPu, Cpo(r), r \On, i \On, \In \Pn i, IsCpo(i;r), IsCpo(j;r), Rcpo(j;r), Rcpo(i;r), \\\\
+\Rq, \In \Ps i, i \nPu, IsCpo(i;r), Cpo(r), r \On, IsCpo(j;r), i \On, Rcpo(j;r), Rcpo(i;r), \\\\
+\Rq, \In \Ps i, i \nPu, IsCpo(i;r), i \nPc r,  Cpo(r), r \On,IsCpo(j;r), i \On, Rcpo(j;r), Rcpo(i;r), \\\\
+\Rq, \In \Ps i, i \nPu, IsCpo(i;r), Cpo(r), r \On, IsCpo(j;r), i \nPc r, i \On, Rcpo(j;r), Rcpo(i;r), \\\\
+\Rq, \In \Ps i, i \nPu, IsCpo(i;r), Cpo(r), r \On, IsCpo(j;r), i \nPc r, Rcpo(j;r), i \On, Rcpo(i;r), \\\\
+\Rq, \In \Ps i, i \nPu, IsCpo(i;r), i \nPc r, IsCpo(j;r), Cpo(r), r \On, Rcpo(j;r), i \On, Rcpo(i;r), \\\\
+\Rq, \In \Ps i, i \nPu, IsCpo(i;r), i \nPc r, IsCpo(j;r), Rcpo(j;r), Cpo(r), r \On, i \On, Rcpo(i;r), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \nPc r, i \nPu, Rcpo(j;r), Cpo(r), r \On, i \On, Rcpo(i;r), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \nPc r, Rcpo(j;r), i \nPu, Cpo(r), r \On, i \On, Rcpo(i;r), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \nPc r, Rcpo(j;r), i \nPu, Rcpo(i;r), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \nPc r, i \nPu, Rcpo(j;r), Rcpo(i;r), \\\\
+\Rq, i \nPu, \In \Ps i, IsCpo(i;r), i \nPc r, IsCpo(j;r), Rcpo(j;r), Rcpo(i;r), \\\\
+\Rq, i \nPu, \In \Ps i, IsCpo(i;r), IsCpo(j;r), Rcpo(j;r), Rcpo(i;r),\\\\
+conclusion:\\\\
+, IsCpo(i;r), IsCpo(j;r), Rcpo(i;r), Rcpo(j;r), \\\\
+\Rq , IsCpo(i;r), IsCpo(j;r), Rcpo(j;r), Rcpo(i;r),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+
+\[, IsCpo(i;r_1), IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, Rcpo(i;r_1), Rcpo(j;r_2), \Rq \]
+\[, IsCpo(i;r_1), IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, Rcpo(j;r_2), Rcpo(i;r_1), \]
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, i \Pu, IsCpo(i;r_1), IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, Rcpo(i;r_1), Rcpo(j;r_2),\\
+\Rq, IsCpo(i;r_1), IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, i \Pu, Rcpo(i;r_1), Rcpo(j;r_2),\\\\
+\Rq, IsCpo(i;r_1), IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, i \Pu, Rcpo(j;r_2),\\\\
+\Rq, IsCpo(i;r_1), j \nPc r_1, r_1 \nPc r_2, IsCpo(j;r_2), i \nPc r_2, i \Pu, Rcpo(j;r_2),\\\\
+\Rq, IsCpo(i;r_1), j \nPc r_1, r_1 \nPc r_2, IsCpo(j;r_2), i \nPc r_2, Rcpo(j;r_2), i \Pu,\\\\
+\Rq, IsCpo(i;r_1), j \nPc r_1, r_1 \nPc r_2, IsCpo(j;r_2), i \nPc r_2, Rcpo(j;r_2), i \Pu, Rcpo(i;r_1),\\\\
+\Rq, IsCpo(i;r_1), j \nPc r_1, r_1 \nPc r_2, IsCpo(j;r_2), i \nPc r_2, i \Pu, Rcpo(j;r_2), Rcpo(i;r_1),\\\\
+\Rq, i \Pu, IsCpo(i;r_1), IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, Rcpo(j;r_2), Rcpo(i;r_1),\\\\
+premise \; 2:\\
+, \In \Pn i, IsCpo(i;r_1), IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, Rcpo(i;r_1), Rcpo(j;r_2), \Rq \\\\
+,\In \Pn i, IsCpo(i;r_1), IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, Rcpo(j;r_2), Rcpo(i;r_1), \Ri \\
+\\
+, i \nPu, \In \Ps i, IsCpo(i;r_1), IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, Rcpo(i;r_1), Rcpo(j;r_2),\\\\
+\Rq, \In \Ps i, IsCpo(i;r_1), IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, \\\\
+ i \nPu, Rcpo(i;r_1), Rcpo(j;r_2), \\
+\\\\
+\Rq, \In \Ps i, IsCpo(i;r_1), IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, \\\\
+ i \nPu, Cpo(r_1), r_1 \On, i \On, Rcpo(i;r_1), Rcpo(j;r_2), \\
+\\\\
+\Rq,i \nPu, \In \Ps i, IsCpo(i;r_1), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, IsCpo(j;r_2), \\\\
+  Cpo(r_1), r_1 \On, i \On, Rcpo(i;r_1), Rcpo(j;r_2), \\
+\\\\
+\Rq,i \nPu, \In \Ps i, IsCpo(i;r_1), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, \\\\
+  Cpo(r_1), IsCpo(j;r_2), r_1 \On, i \On, Rcpo(i;r_1), Rcpo(j;r_2), \\
+\\\\
+\Rq,i \nPu, IsCpo(i;r_1), \In \Ps i,   Cpo(r_1), r_1 \On, i \On,\\\\
+ IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, Rcpo(i;r_1), Rcpo(j;r_2), \\
+\\\\
+\Rq,i \nPu, IsCpo(i;r_1),  Cpo(r_1), r_1 \On, i \On, \\\\
+ \In \Pn i, IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, Rcpo(i;r_1), Rcpo(j;r_2), \\
+\\\\
+\Rq,i \nPu, Cpo(r_1), r_1 \On, i \On, \\\\
+ \In \Pn i, IsCpo(i;r_1), IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, Rcpo(i;r_1), Rcpo(j;r_2), \\
+\\\\
+\Rq,i \nPu, Cpo(r_1), r_1 \On, i \On, \\\\
+ \In \Pn i, IsCpo(i;r_1), IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, Rcpo(j;r_2), Rcpo(i;r_1), \\
+\\\\
+\Rq, \In \Ps i, i \nPu, IsCpo(i;r_1), j \nPc r_1, r_1 \nPc r_2, \\\\
+ Cpo(r_1), r_1 \On, i \On, IsCpo(j;r_2), i \nPc r_2, Rcpo(j;r_2), Rcpo(i;r_1), \\
+\\\\
+\Rq, \In \Ps i, i \nPu, IsCpo(i;r_1), j \nPc r_1, r_1 \nPc r_2, \\\\
+ Cpo(r_1), r_1 \On, IsCpo(j;r_2), i \nPc r_2, i \On, Rcpo(j;r_2), Rcpo(i;r_1), \\
+\\\\
+\Rq, \In \Ps i, i \nPu, IsCpo(i;r_1), j \nPc r_1, r_1 \nPc r_2, \\\\
+ Cpo(r_1), r_1 \On, IsCpo(j;r_2), i \nPc r_2, Rcpo(j;r_2), i \On, Rcpo(i;r_1), \\
+\\\\
+\Rq, \In \Ps i, i \nPu, IsCpo(i;r_1), i \nPc r_2, j \nPc r_1, \\\\
+ Cpo(r_1), IsCpo(j;r_2), r_1 \nPc r_2, r_1 \On, Rcpo(j;r_2), i \On, Rcpo(i;r_1), \\
+\\\\
+\Rq, \In \Ps i, i \nPu, IsCpo(i;r_1), i \nPc r_2, j \nPc r_1, \\\\
+ Cpo(r_1), IsCpo(j;r_2), r_1 \nPc r_2, Rcpo(j;r_2), r_1 \On, i \On, Rcpo(i;r_1), \\
+\\\\
+\Rq, \In \Ps i, i \nPu, IsCpo(i;r_1), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, \\\\
+ Cpo(r_1), IsCpo(j;r_2), Rcpo(j;r_2), r_1 \On, i \On, Rcpo(i;r_1), \\
+\\\\
+\Rq, \In \Ps i, i \nPu, IsCpo(i;r_1), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, \\\\
+ IsCpo(j;r_2), Cpo(r_1), Rcpo(j;r_2), r_1 \On, i \On, Rcpo(i;r_1), \\
+\\\\
+\Rq, \In \Ps i, i \nPu, IsCpo(i;r_1), i \nPc r_2, \\\\
+ IsCpo(j;r_2), j \nPc r_1, r_1 \nPc r_2, Cpo(r_1), Rcpo(j;r_2), r_1 \On, i \On, Rcpo(i;r_1), \\
+\\\\
+\Rq, \In \Ps i, i \nPu, IsCpo(i;r_1), i \nPc r_2, \\\\
+ IsCpo(j;r_2), j \nPc r_1, r_1 \nPc r_2, Rcpo(j;r_2), Cpo(r_1), r_1 \On, i \On, Rcpo(i;r_1), \\
+\\\\
+\Rq, \In \Ps i, IsCpo(i;r_1), j \nPc r_1, r_1 \nPc r_2, \\\\
+ IsCpo(j;r_2), i \nPc r_2, i \nPu, Rcpo(j;r_2), Cpo(r_1), r_1 \On, i \On, Rcpo(i;r_1), \\
+\\\\
+\Rq, \In \Ps i, IsCpo(i;r_1), j \nPc r_1, r_1 \nPc r_2, \\\\
+ IsCpo(j;r_2), i \nPc r_2, Rcpo(j;r_2), i \nPu, Cpo(r_1), r_1 \On, i \On, Rcpo(i;r_1), \\
+\\\\
+\Rq, \In \Ps i, IsCpo(i;r_1), j \nPc r_1, r_1 \nPc r_2, \\\\
+ IsCpo(j;r_2), i \nPc r_2, Rcpo(j;r_2), i \nPu, Rcpo(i;r_1), \\
+\\\\
+\Rq, \In \Ps i, IsCpo(i;r_1), j \nPc r_1, r_1 \nPc r_2, \\\\
+ IsCpo(j;r_2), i \nPc r_2, i \nPu, Rcpo(j;r_2), Rcpo(i;r_1), \\
+\\\\
+\Rq, i \nPu, \In \Ps i, IsCpo(i;r_1), IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, Rcpo(j;r_2), Rcpo(i;r_1),\\\\
+conclusion:\\\\
+, IsCpo(i;r_1), IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, Rcpo(i;r_1), Rcpo(j;r_2),\\\\
+\Rq , IsCpo(i;r_1), IsCpo(j;r_2), i \nPc r_2, j \nPc r_1, r_1 \nPc r_2, Rcpo(j;r_2), Rcpo(i;r_1),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+
+
+\bigskip
+\bigskip
+\subsection{R(m)}
+\[, IsCpo(i;r), m \nPc r, R(m), Rcpo(i;r), \Rq ,IsCpo(i;r), m \nPc r, Rcpo(i;r), R(m), \]
+
+
+\bigskip
+\bigskip
+\subsection{Rc(m;n)}
+\[, IsCpo(i;r), m \nPc r, n \nPc r, Rc(m;n), Rcpo(i;r), \Rq , IsCpo(i;r), m \nPc r, n \nPc r, Rcpo(i;r), Rc(m;n), \]
+
+
+\bigskip
+\bigskip
+\subsection{Propositions number comparison}
+\[, IsCpo(i;r), m \nPc r, n \nPc r, m \Pne n, Rcpo(i;r), \Rq , IsCpo(i;r), m \nPc r, n \nPc r, Rcpo(i;r), m \Pne n, \]
+
+\[, IsCpo(i;r), m \nPc r, n \nPc r, m \nPne n, Rcpo(i;r), \Rq , IsCpo(i;r), m \nPc r, n \nPc r, Rcpo(i;r), m \nPne n, \]
+
+\[, IsCpo(i;r), m \nPc r, n \nPc r, m \Pnm n, Rcpo(i;r), \Rq , IsCpo(i;r), m \nPc r, n \nPc r, Rcpo(i;r), m \Pnm n, \]
+
+\[, IsCpo(i;r), m \nPc r, n \nPc r, m \nPnm n, Rcpo(i;r), \Rq , IsCpo(i;r), m \nPc r, n \nPc r, Rcpo(i;r), m \nPnm n, \]
+
+
+\bigskip
+\bigskip
+\subsection{&SHi}
+\[, IsCpo(i;r), m \nPc r, \In \Ps m, Rcpo(i;r), \Rq ,IsCpo(i;r), m \nPc r, Rcpo(i;r), \In \Ps m, \]
+
+
+
+\bigskip
+\bigskip
+\section{Propositions number equal}
+\[, i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), Rcpo(i_0;r_0), \Rq \sim, r \Pne i, \]
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, i \Pu,  i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), Rcpo(i_0;r_0),\\
+\Rq,  i \Ps i_0, i \Pu, r \Ps r_0, IsCpo(i_0;r_0), Rcpo(i_0;r_0),\\\\
+\Rq,  i \Ps i_0, i_0 \Pu, r \Ps r_0, IsCpo(i_0;r_0), Rcpo(i_0;r_0),\\\\
+\Rq,  i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), i_0 \Pu, Rcpo(i_0;r_0),\\\\
+\Rq,  i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), r_0 \Pu, i_0 \Pu,\\\\
+\Rq, IsCpo(i_0;r_0),  i \Ps i_0, r \Ps r_0, r_0 \Pu, i_0 \Pu,\\\\
+\Rq, IsCpo(i_0;r_0),  i \Ps i_0, r \Ps r_0, r \Pu, i \Pu,\\\\
+\Rq, IsCpo(i_0;r_0),  i \Ps i_0, r \Ps r_0, r \Pu, i \Pu,  r \Pne i,\\\\
+\Rq, IsCpo(i_0;r_0),  i \Ps i_0, r \Ps r_0, r_0 \Pu, i_0 \Pu,  r \Pne i,\\\\
+\Rq, IsCpo(i_0;r_0),  i \Ps i_0, r \Ps r_0, r_0 \Pu, i_0 \Pu, Rcpo(i_0;r_0),  r \Pne i,\\\\
+\Rq, i \Ps i_0, i_0 \Pu, r \Ps r_0, IsCpo(i_0;r_0), r_0 \Pu, Rcpo(i_0;r_0),  r \Pne i,\\\\
+\Rq, i \Ps i_0, i \Pu, r \Ps r_0, IsCpo(i_0;r_0), Rcpo(i_0;r_0),  r \Pne i,\\\\
+\Rq, i \Pu, i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), Rcpo(i_0;r_0), r \Pne i,\\\\\\
+premise \; 2:\\
+, \In \Pn i, i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), Rcpo(i_0;r_0), \Rq \\\\
+,\In \Pn i, i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), Rcpo(i_0;r_0), r \Pne i, \Ri \\
+\\
+, i \nPu, \In \Ps i, i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), Rcpo(i_0;r_0),\\\\
+\\\Rq, \In \Ps i, i \Ps i_0, i \nPu, r \Ps r_0, IsCpo(i_0;r_0), Rcpo(i_0;r_0),\\\\
+\\
+\\\Rq, \In \Ps i, i \Ps i_0, i_0 \nPu, r \Ps r_0, IsCpo(i_0;r_0), Rcpo(i_0;r_0),\\\\
+\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), i_0 \nPu, Rcpo(i_0;r_0),\\\\
+\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), i_0 \nPu, Cpo(r_0), r_0 \On, i_0 \On, \\\\
+ Rcpo(i_0;r_0),\\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), i_0 \nPu, Cpo(r_0), r_0 \On, i_0 \On, \\\\
+ Rcpo(i_0;r_0), i \On, i \Op, r \On, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), i_0 \nPu, Cpo(r_0), r_0 \On, i \nPs r_0, i_0 \On, \\\\
+ Rcpo(i_0;r_0), i \On, r \On, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), i_0 \nPu, Cpo(r_0), r_0 \On, i_0 \On, \\\\
+ i \nPs r_0, Rcpo(i_0;r_0), i \On, r \On, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), i \nPs r_0, Rcpo(i_0;r_0), i \On, r \On, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), i \nPs r_0, i \On, Rcpo(i_0;r_0), r \On, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, i \nPs r_0, i \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), Rcpo(i_0;r_0), r \On, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, i \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), Rcpo(i_0;r_0), r \On, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, r \nPs r_0, i \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), Rcpo(i_0;r_0), r \On, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, i \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), r \nPs r_0, Rcpo(i_0;r_0), r \On, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, i \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), r \nPs r_0, r \On, Rcpo(i_0;r_0), i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, r \nPs r_0, i \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), r \On, Rcpo(i_0;r_0), i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, r \On, i \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), Rcpo(i_0;r_0), i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, IsCpo(i_0;r_0), i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, r \On, i \On, i_0 \On, \\\\
+ Rcpo(i_0;r_0), i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, IsCpo(i_0;r_0), i_0 \nPc r_0, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, r \On, i \On, i_0 \On, \\\\
+ Rcpo(i_0;r_0), i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, IsCpo(i_0;r_0), i \nPc r_0, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, r \On, i \On, i_0 \On, \\\\
+ Rcpo(i_0;r_0), i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i_0 \nPu, IsCpo(i_0;r_0), i \nPc r_0, Cpo(r_0), i \Ps i_0, r \Ps r_0, r_0 \On, r \On, i \On, i_0 \On, \\\\
+ Rcpo(i_0;r_0), i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i_0 \nPu, IsCpo(i_0;r_0), i \nPc r_0, Cpo(r_0), r_0 \On, r \On, i \On, i_0 \On, \\\\
+ i \Ps i_0, r \Ps r_0, Rcpo(i_0;r_0), i \Op, r \Op, \\\\
+\\\Rq, i_0 \nPu, IsCpo(i_0;r_0), i \nPc r_0, \In \Ps i, Cpo(r_0), r_0 \On, r \On, i \On, i_0 \On, \\\\
+ i \Ps i_0, r \Ps r_0, Rcpo(i_0;r_0), i \Op, r \Op, \\\\
+\\\Rq, i_0 \nPu, i \nPc r_0, IsCpo(i_0;r_0), Cpo(r_0), r_0 \On, r \On, i \On, i_0 \On, \\\\
+ \In \Pn i, i \Ps i_0, r \Ps r_0, Rcpo(i_0;r_0), i \Op, r \Op, \\\\
+\\\Rq, i_0 \nPu, i \nPc r_0, Cpo(r_0), r_0 \On, r \On, i \On, i_0 \On, \\\\
+ \In \Pn i, i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), Rcpo(i_0;r_0), i \Op, r \Op, \\\\
+\\\Rq, i_0 \nPu, i \nPc r_0, Cpo(r_0), r_0 \On, r \On, i \On, i_0 \On, \\\\
+ \In \Pn i, i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), Rcpo(i_0;r_0), i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, IsCpo(i_0;r_0), i \nPc r_0, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, r \On, i \On, i_0 \On, \\\\
+ Rcpo(i_0;r_0), i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, IsCpo(i_0;r_0), i_0 \nPc r_0, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, r \On, i \On, i_0 \On, \\\\
+ Rcpo(i_0;r_0), i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, IsCpo(i_0;r_0), i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, r \On, i \On, i_0 \On, \\\\
+ Rcpo(i_0;r_0), i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, IsCpo(i_0;r_0), i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On,i \nPs r_0, r \On, i \On, i_0 \On, \\\\
+ Rcpo(i_0;r_0), i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, r \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0),i \nPs r_0, i \On, Rcpo(i_0;r_0), i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On, r \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0),i \nPs r_0, Rcpo(i_0;r_0), i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On,i \nPs r_0, r \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), Rcpo(i_0;r_0), i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i_0 \nPu, Cpo(r_0), r_0 \On,  r \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), Rcpo(i_0;r_0), i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i \nPu, Cpo(r_0), r_0 \On,  r \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), Rcpo(i_0;r_0), i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i \nPu, Cpo(r_0), i \nPu, r_0 \On,  r \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), Rcpo(i_0;r_0), i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i \nPu, Cpo(r_0), r_0 \On,  r \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), i \nPu, Rcpo(i_0;r_0), i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i \nPu, Cpo(r_0), r_0 \On,  r \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), i \nPu, Rcpo(i_0;r_0), i \nPu, i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i \nPu, Cpo(r_0), r_0 \On,r \nPs r_0,  r \On, i_0 \On, i \nPu, \\\\
+ IsCpo(i_0;r_0), Rcpo(i_0;r_0), i \nPu, i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i \nPu, Cpo(r_0), r_0 \On, i_0 \On, i \nPu, \\\\
+ IsCpo(i_0;r_0),r \nPs r_0,  r \On, Rcpo(i_0;r_0), i \nPu, i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i \nPu, Cpo(r_0), r_0 \On, i_0 \On, i \nPu, \\\\
+ IsCpo(i_0;r_0),r \nPs r_0, Rcpo(i_0;r_0),  r \On, i \nPu, i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i \nPu, Cpo(r_0), r_0 \On,r \nPs r_0, i_0 \On, i \nPu, \\\\
+ IsCpo(i_0;r_0), Rcpo(i_0;r_0),  r \On, i \nPu, i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i \nPu, Cpo(r_0), r_0 \On, i_0 \On, i \nPu, \\\\
+ IsCpo(i_0;r_0), Rcpo(i_0;r_0),  r \On, i \nPu, i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i \nPu, Cpo(r_0), r_0 \nPu, r_0 \On, i_0 \On, i \nPu, \\\\
+ IsCpo(i_0;r_0), Rcpo(i_0;r_0),  r \On, i \nPu, i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, i \nPu, Cpo(r_0), r \Ps r_0, r_0 \nPu, r_0 \On, i_0 \On, i \nPu, \\\\
+ IsCpo(i_0;r_0), Rcpo(i_0;r_0),  r \On, i \nPu, i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, i \nPu, Cpo(r_0), r \Ps r_0, r \nPu, r_0 \On, i_0 \On, i \nPu, \\\\
+ IsCpo(i_0;r_0), Rcpo(i_0;r_0),  r \On, i \nPu, i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, i \nPu, Cpo(r_0), r \Ps r_0, r_0 \On, i_0 \On, i \nPu, \\\\
+ IsCpo(i_0;r_0), r \nPu, Rcpo(i_0;r_0),  r \On, i \nPu, i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, i \nPu, Cpo(r_0), r \Ps r_0, r_0 \On, i_0 \On, i \nPu, \\\\
+ IsCpo(i_0;r_0), r \nPu, Rcpo(i_0;r_0), r \nPu,  r \On, i \nPu, i \On, i \Pne r, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, i \nPu, Cpo(r_0), r \Ps r_0, r_0 \On, i_0 \On, i \nPu, \\\\
+ IsCpo(i_0;r_0), r \nPu, Rcpo(i_0;r_0), i \Pne r, r \nPu, i \nPu,  r \On, i \On, i \Op, r \Op, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, i \nPu, Cpo(r_0), r \Ps r_0, r_0 \On, i_0 \On, i \nPu, \\\\
+ IsCpo(i_0;r_0), r \nPu, Rcpo(i_0;r_0), i \Pne r, r \nPu, i \nPu, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, i \nPu, Cpo(r_0), r \Ps r_0, r_0 \On, i_0 \On, i \nPu, \\\\
+ IsCpo(i_0;r_0), r \nPu, Rcpo(i_0;r_0), r \nPu, i \nPu, i \Pne r, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, i \nPu, Cpo(r_0), r \Ps r_0, r_0 \On, i_0 \On, i \nPu, \\\\
+ IsCpo(i_0;r_0), r \nPu, Rcpo(i_0;r_0), i \nPu, i \Pne r, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, i \nPu, Cpo(r_0), r \Ps r_0, r \nPu, r_0 \On, i_0 \On, i \nPu, \\\\
+ IsCpo(i_0;r_0), Rcpo(i_0;r_0), i \nPu, i \Pne r, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, i \nPu, Cpo(r_0), r \Ps r_0, r_0 \nPu, r_0 \On, i_0 \On, i \nPu, \\\\
+ IsCpo(i_0;r_0), Rcpo(i_0;r_0), i \nPu, i \Pne r, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i \nPu, Cpo(r_0), r_0 \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), i \nPu, Rcpo(i_0;r_0), i \nPu, i \Pne r, \\\\
+\\\Rq, \In \Ps i, i \Ps i_0, r \Ps r_0, i \nPu, Cpo(r_0), r_0 \On, i_0 \On, \\\\
+ IsCpo(i_0;r_0), i \nPu, Rcpo(i_0;r_0), i \Pne r, \\\\
+\\\Rq, \In \Ps i, IsCpo(i_0;r_0), r \Ps r_0, i \Ps i_0, i \nPu, Cpo(r_0), r_0 \On, i_0 \On, \\\\
+ Rcpo(i_0;r_0), i \Pne r, \\\\
+\\\Rq, \In \Ps i, IsCpo(i_0;r_0), r \Ps r_0, i \Ps i_0, i_0 \nPu, Cpo(r_0), r_0 \On, i_0 \On, \\\\
+ Rcpo(i_0;r_0), i \Pne r, \\\\
+\\\Rq, \In \Ps i, IsCpo(i_0;r_0), r \Ps r_0, i \Ps i_0, i_0 \nPu, Rcpo(i_0;r_0), i \Pne r, \\\\
+\\\Rq, \In \Ps i, IsCpo(i_0;r_0), r \Ps r_0, i \Ps i_0, i \nPu, Rcpo(i_0;r_0), i \Pne r, \\\\
+\\\Rq, i \nPu, \In \Ps i,  i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), Rcpo(i_0;r_0), r \Pne i,\\\\
+conclusion:\\\\
+, i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), Rcpo(i_0;r_0),\\\\
+\Rq , i \Ps i_0, r \Ps r_0, IsCpo(i_0;r_0), Rcpo(i_0;r_0), r \Pne i,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+
+
+
+
+\[, IsCpo(i;r), IsCpo(j;r), i \Pne j, Rcpo(i;r), R(j), \Rq , IsCpo(i;r), IsCpo(j;r), i \Pne j, Rcpo(j;r), R(i),\]
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, i \Pu, IsCpo(i;r), IsCpo(j;r), i \Pne j, Rcpo(i;r), R(j),\\
+\Rq, IsCpo(i;r), IsCpo(j;r), i \Pne j, i \Pu, Rcpo(i;r), R(j),\\\\
+\Rq, IsCpo(i;r), IsCpo(j;r), i \Pne j, i \Pu, R(j),\\\\
+\Rq, IsCpo(i;r), IsCpo(j;r), i \Pne j, j \Pu, R(j),\\\\
+\Rq, IsCpo(i;r), IsCpo(j;r), i \Pne j, j \Pu,\\\\
+\Rq, IsCpo(i;r), IsCpo(j;r), i \Pne j, i \Pu,\\\\
+\Rq, IsCpo(i;r), IsCpo(j;r), i \Pne j, i \Pu, R(i),\\\\
+\Rq, IsCpo(i;r), IsCpo(j;r), i \Pne j, j \Pu, R(i),\\\\
+\Rq, IsCpo(i;r), IsCpo(j;r), i \Pne j, j \Pu, Rcpo(j;r), R(i),\\\\
+\Rq, IsCpo(i;r), IsCpo(j;r), i \Pne j, i \Pu, Rcpo(j;r), R(i),\\\\
+\Rq, i \Pu,  IsCpo(i;r), IsCpo(j;r), i \Pne j, Rcpo(j;r), R(i),\\\\
+premise \; 2:\\
+, \In \Pn i, IsCpo(i;r), IsCpo(j;r), i \Pne j, Rcpo(i;r), R(j), \\\\
+\Rq ,\In \Pn i, IsCpo(i;r), IsCpo(j;r), i \Pne j, Rcpo(j;r), R(i), Rcpo(i;r), \Ri \\\\
+, i \nPu, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \Pne j, Rcpo(i;r), R(j),\\\\
+\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \Pne j, i \nPu, Rcpo(i;r), R(j), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \Pne j, i \nPu, Cpo(r), r \On, i \On, Rcpo(i;r), R(j), \\\\
+\\\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \Pne j, j \nPu, \\\\
+Cpo(r), r \On, i \On, Rcpo(i;r), R(j), \\\\
+\\\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), j \nPc r, i \Pne j, j \nPu, \\\\
+Cpo(r), r \On, i \On, Rcpo(i;r), R(j), \\\\
+\\\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), j \nPc r, i \Pne j, j \nPu, \\\\
+Cpo(r), j \nPu, r \On, i \On, Rcpo(i;r), R(j), \\\\
+\\\Rq, \In \Ps i, IsCpo(j;r), i \Pne j, j \nPu, \\\\
+Cpo(r), r \On, i \On, IsCpo(i;r), j \nPc r, j \nPu, Rcpo(i;r), R(j), \\\\
+\\\Rq, \In \Ps i, IsCpo(j;r), i \Pne j, j \nPu, \\\\
+Cpo(r), r \On, i \On, IsCpo(i;r), j \nPc r, Rcpo(i;r), j \nPu, R(j), \\\\
+\\\Rq, \In \Ps i, IsCpo(j;r), i \Pne j, j \nPu, \\\\
+Cpo(r), r \On, i \On, IsCpo(i;r), j \nPc r, Rcpo(i;r), j \nPu,j \On, R(j), \\\\
+\\\Rq, \In \Ps i, IsCpo(j;r), i \Pne j, j \nPu, \\\\
+Cpo(r), r \On, i \On, IsCpo(i;r), j \nPc r, j \nPu,j \On, Rcpo(i;r), R(j), \\\\
+\\\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), j \nPc r, i \Pne j, j \nPu, \\\\
+Cpo(r), j \nPu, r \On, i \On,j \On, Rcpo(i;r), R(j), \\\\
+\\\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \Pne j, j \nPu, j \nPu, \\\\
+Cpo(r), r \On, i \On,j \On, Rcpo(i;r), R(j), \\\\
+\\\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \Pne j, i \nPu, j \nPu, \\\\
+Cpo(r), i \nPu, j \nPu, r \On, i \On,j \On, Rcpo(i;r), R(j), \\\\
+\\\Rq, i \nPu, j \nPu, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \Pne j, \\\\
+Cpo(r), r \On, i \nPu, j \nPu, i \On,j \On, Rcpo(i;r), R(j), \\\\
+\\\Rq, i \nPu, j \nPu, \In \Ps i, IsCpo(i;r), IsCpo(j;r), \\\\
+Cpo(r), i \Pne j, r \On, i \nPu, j \nPu, i \On,j \On, Rcpo(i;r), R(j), \\\\
+\\\Rq, i \nPu, j \nPu, IsCpo(i;r), \In \Ps i, \\\\
+Cpo(r), r \On, IsCpo(j;r), i \Pne j, i \nPu, j \nPu, i \On,j \On, Rcpo(i;r), R(j), \\\\
+\\\Rq, i \nPu, j \nPu, IsCpo(i;r), \In \Ps i, Cpo(r), r \On,\\\\
+ IsCpo(j;r), i \nPu, j \nPu, i \On,j \On, i \Pne j, Rcpo(i;r), R(j), \\\\
+\\\Rq, i \nPu, j \nPu, Cpo(r), r \On,\\\\
+ i \nPu, j \nPu, i \On,j \On, \In \Pn i, IsCpo(i;r), IsCpo(j;r), i \Pne j, Rcpo(i;r), R(j), \\\\
+\\\Rq, i \nPu, j \nPu, Cpo(r), r \On,\\\\
+ i \nPu, j \nPu, i \On,j \On, \In \Pn i, IsCpo(i;r), IsCpo(j;r), i \Pne j, Rcpo(j;r), R(i), \\\\
+\\\Rq, \In \Ps i, i \nPu, j \nPu, IsCpo(i;r), IsCpo(j;r), Cpo(r), r \On,\\\\
+ i \nPu, j \nPu, i \On,j \On, i \Pne j, Rcpo(j;r), R(i), \\\\
+\\\Rq, \In \Ps i, i \nPu, j \nPu, IsCpo(i;r), IsCpo(j;r), Cpo(r), i \Pne j, r \On,\\\\
+ i \nPu, j \nPu, i \On,j \On, Rcpo(j;r), R(i), \\\\
+\\\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \Pne j, i \nPu, j \nPu, Cpo(r), r \On,\\\\
+ i \nPu, j \nPu, i \On,j \On, Rcpo(j;r), R(i), \\\\
+\\\Rq, \In \Ps i, IsCpo(i;r), i \nPc r, IsCpo(j;r), i \Pne j, i \nPu, j \nPu, Cpo(r), r \On,\\\\
+ i \nPu, j \nPu, i \On,j \On, Rcpo(j;r), R(i), \\\\
+\\\Rq, \In \Ps i, IsCpo(i;r), i \Pne j, i \nPu, j \nPu, Cpo(r), r \On,\\\\
+ j \nPu,j \On, IsCpo(j;r), i \nPc r, i \nPu, i \On, Rcpo(j;r), R(i), \\\\
+\\\Rq, \In \Ps i, IsCpo(i;r), i \Pne j, i \nPu, j \nPu, Cpo(r), r \On,\\\\
+ j \nPu,j \On, IsCpo(j;r), i \nPc r, Rcpo(j;r), i \nPu, i \On, R(i), \\\\
+\\\Rq, \In \Ps i, IsCpo(i;r), i \Pne j, i \nPu, j \nPu, Cpo(r), r \On,\\\\
+ j \nPu,j \On, IsCpo(j;r), i \nPc r, Rcpo(j;r), i \nPu, R(i), \\\\
+\\\Rq, \In \Ps i, IsCpo(i;r), i \Pne j, i \nPu, j \nPu, Cpo(r), r \On,\\\\
+ j \nPu,j \On, IsCpo(j;r), i \nPc r, i \nPu, Rcpo(j;r), R(i), \\\\
+\\\Rq, \In \Ps i, IsCpo(i;r), i \nPc r, IsCpo(j;r), i \Pne j, i \nPu, j \nPu, Cpo(r),\\\\
+ i \nPu, j \nPu, r \On,j \On, Rcpo(j;r), R(i), \\\\
+\\\Rq, \In \Ps i, IsCpo(i;r), i \nPc r, IsCpo(j;r), i \Pne j, i \nPu, j \nPu, Cpo(r), r \On,j \On, Rcpo(j;r), R(i), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), i \nPc r, IsCpo(j;r), i \Pne j, i \nPu, j \nPu, Rcpo(j;r), R(i), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \Pne j, i \nPu, j \nPu, Rcpo(j;r), R(i), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \Pne j, j \nPu, i \nPu, Rcpo(j;r), R(i), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \Pne j, i \nPu, i \nPu, Rcpo(j;r), R(i), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \Pne j, i \nPu, Rcpo(j;r), R(i), \\\\
+\Rq, i \nPu, \In \Ps i, IsCpo(i;r), IsCpo(j;r), i \Pne j, Rcpo(j;r), R(i),\\\\
+conclusion:\\\\
+, IsCpo(i;r), IsCpo(j;r), i \Pne j, Rcpo(i;r), R(j), \\\\
+\Rq ,  IsCpo(i;r), IsCpo(j;r), i \Pne j, Rcpo(j;r), R(i),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+
+
+% no comma
+\[, IsCpo(i;r), IsCpo(j;r), i \Pne j, Rcpo(i;r), i \Os, j \Os,\]
+\[\Rq , IsCpo(i;r), IsCpo(j;r), i \Pne j, Rcpo(j;r), i \Os, j \Os,\]
+
+
+
+\bigskip
+\bigskip
+\section{Tm(r)}
+\[, IsCpo(i;r), &Fam(r), Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), &Fam(r),\]
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, i \Pu, IsCpo(i;r), &Fam(r), Rcpo(i;r),\\
+\Rq, IsCpo(i;r), &Fam(r), i \Pu, Rcpo(i;r),\\\\
+\Rq, IsCpo(i;r), &Fam(r), i \Pu,\\\\
+\Rq, IsCpo(i;r), i \Pu, &Fam(r),\\\\
+\Rq, IsCpo(i;r), i \Pu, Rcpo(i;r), &Fam(r),\\\\
+\Rq, i \Pu, IsCpo(i;r), Rcpo(i;r), &Fam(r),\\\\
+premise \; 2:\\
+,\In \Pn i, IsCpo(i;r), &Fam(r), Rcpo(i;r), \Rq ,\In \Pn i, IsCpo(i;r), Rcpo(i;r), &Fam(r), \Ri \\\\
+,i \nPu, \In \Ps i, IsCpo(i;r), &Fam(r), Rcpo(i;r),\\\\
+\Rq, \In \Ps i, IsCpo(i;r), &Fam(r),i \nPu, Rcpo(i;r), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), &Fam(r),i \nPu, Cpo(r), r \On, i \On, Rcpo(i;r), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), i \nPu, Cpo(r), r \On, i \On, &Fam(r), Rcpo(i;r), \\\\
+\Rq, i \nPu, IsCpo(i;r), \In \Ps i, Cpo(r), r \On, i \On, &Fam(r), Rcpo(i;r), \\\\
+\Rq, i \nPu, Cpo(r), r \On, i \On, \In \Pn i, IsCpo(i;r), &Fam(r), Rcpo(i;r), \\\\
+\Rq, i \nPu, Cpo(r), r \On, i \On, \In \Pn i, IsCpo(i;r), Rcpo(i;r), &Fam(r), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), i \nPu, Cpo(r), r \On, i \On, Rcpo(i;r), &Fam(r), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), i \nPu, Rcpo(i;r), &Fam(r), \\\\
+\Rq,i \nPu, \In \Ps i, IsCpo(i;r), Rcpo(i;r), &Fam(r),\\\\
+conclusion:\\\\
+, IsCpo(i;r), &Fam(r), Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), &Fam(r),
+\end{math}
+\bigskip
+\bigskip
+
+\[, IsCpo(i;r), &Fam(m), Rcpo(i;r), \Rq , IsCpo(i;r), Rcpo(i;r), &Fam(m),\]
+
+\bigskip
+\bigskip
+
+\[, &Tm(r), \Rq , Cpo(r), &Tm(r), \]
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, &Tm(r),\\\\
+\Rq, r \Od m, m \Os, &Tm(r),\\\\
+\Rq, r \Od m, m \Oa r, m \Os, &Tm(r),\\\\
+\Rq, Cpo(r), &Tm(r),
+\end{math}
+
+
+\[, &Tm(r), \Rq , Cpo(r), r \On, &Tm(r), \]
+
+
+\[, IsCpo(i;r), i \Os, &Tm(r), \Rq , IsCpo(i;r), Rcpo(i;r), i \Os, &Tm(r),\]
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, i \Pu, IsCpo(i;r), i \Os, &Tm(r),\\
+\Rq, IsCpo(i;r), i \Pu, i \Os, &Tm(r),\\\\
+\Rq, IsCpo(i;r), i \Pu, Rcpo(i;r), i \Os, &Tm(r),\\\\
+\Rq, i \Pu,IsCpo(i;r), Rcpo(i;r), i \Os, &Tm(r),\\\\
+premise \; 2:\\
+,\In \Pn i, IsCpo(i;r), i \Os, &Tm(r), \Rq ,\In \Pn i,IsCpo(i;r), Rcpo(i;r), i \Os, &Tm(r), \Ri \\\\
+, i \nPu, \In \Ps i, IsCpo(i;r), i \Os, &Tm(r),\\\\
+\Rq, i \nPu, \In \Ps i,  IsCpo(i;r), i \Os, Cpo(r), r \On, &Tm(r), \\\\
+\Rq, i \nPu, \In \Ps i,  IsCpo(i;r), i \On, i \Os, Cpo(r), r \On, &Tm(r), \\\\
+\Rq, i \nPu, \In \Ps i,  IsCpo(i;r), i \On, Cpo(r), r \On, i \Os, &Tm(r), \\\\
+\Rq, i \nPu, \In \Ps i,  IsCpo(i;r), Cpo(r), i \On, r \On, i \Os, &Tm(r), \\\\
+\Rq, i \nPu, IsCpo(i;r), \In \Ps i,  Cpo(r), r \On, i \On, i \Os, &Tm(r), \\\\
+\Rq, i \nPu,  Cpo(r), r \On, i \On, \In \Pn i, IsCpo(i;r), i \Os, &Tm(r), \\\\
+\Rq, i \nPu,  Cpo(r), r \On, i \On, \In \Pn i, IsCpo(i;r), Rcpo(i;r), i \Os, &Tm(r), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), i \nPu,  Cpo(r), r \On, i \On, Rcpo(i;r), i \Os, &Tm(r), \\\\
+\Rq, \In \Ps i, IsCpo(i;r), i \nPu, Rcpo(i;r), i \Os, &Tm(r), \\\\
+\Rq,i \nPu, \In \Ps i,IsCpo(i;r), Rcpo(i;r), i \Os, &Tm(r),\\\\
+conclusion:\\\\
+, IsCpo(i;r), i \Os, &Tm(r), \Rq ,IsCpo(i;r), Rcpo(i;r), i \Os, &Tm(r),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+
+
+
+\[, IsCpo(i;r), R(i), &Tm(r), \Rq , IsCpo(i;r), Rcpo(i;r), &Tm(r),\]
+
+\[, IsCpo(i;r), IsCpo(j;r), i \Os, j \Os, &Tm(r), \Rq\]
+\[, IsCpo(i;r), IsCpo(j;r), Rcpo(i;r), Rcpo(j;r), i \Os, j \Os, &Tm(r),\]
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, IsCpo(i;r), IsCpo(j;r), i \Os, j \Os, &Tm(r),\\\\
+\Rq , IsCpo(i;r), i \Os, IsCpo(j;r), j \Os, &Tm(r),\\\\
+\Rq , IsCpo(i;r), i \Os, IsCpo(j;r), Rcpo(j;r), j \Os, &Tm(r),\\\\
+\Rq , IsCpo(i;r), IsCpo(j;r), i \Os, Rcpo(j;r), j \Os, &Tm(r),\\\\
+\Rq , IsCpo(i;r), IsCpo(j;r), Rcpo(j;r), i \Os, j \Os, &Tm(r),\\\\
+\Rq , IsCpo(j;r), IsCpo(i;r), Rcpo(j;r), i \Os, j \Os, &Tm(r),\\\\
+\Rq , IsCpo(j;r), Rcpo(j;r), IsCpo(i;r), i \Os, j \Os, &Tm(r),\\\\
+\Rq , IsCpo(j;r), Rcpo(j;r), j \Os, IsCpo(i;r), i \Os, &Tm(r),\\\\
+\Rq , IsCpo(j;r), Rcpo(j;r), j \Os, IsCpo(i;r), Rcpo(i;r), i \Os, &Tm(r),\\\\
+\Rq , IsCpo(j;r), Rcpo(j;r), IsCpo(i;r), j \Os, Rcpo(i;r), i \Os, &Tm(r),\\\\
+\Rq , IsCpo(j;r), Rcpo(j;r), IsCpo(i;r), Rcpo(i;r), j \Os, i \Os, &Tm(r),\\\\
+\Rq , IsCpo(i;r), IsCpo(j;r), Rcpo(j;r), Rcpo(i;r), j \Os, i \Os, &Tm(r),\\\\
+\Rq, IsCpo(i;r), IsCpo(j;r), Rcpo(i;r), Rcpo(j;r), i \Os, j \Os, &Tm(r),
+\end{math}
+
+
+
+
+
+\[, IsCpo(i;r), IsCpo(j;r), R(i), R(j), &Tm(r), \Rq\]
+\[, IsCpo(i;r), IsCpo(j;r), Rcpo(i;r), Rcpo(j;r), &Tm(r),\]
+
+
+\bigskip
+\bigskip
+\[, \Ot r, i \Os, r\Os, \Rq , \Ot r, i \Os, &Tm(r), \]
+
+\[, \Ot r, Rcpo(i;r), i \Os, r\Os, \Rq , \Ot r, Rcpo(i;r), i \Os, &Tm(r), \]
+
+\[, \Ot r, Rcpo(i;r), Rcpo(j;r), i \Os, j \Os, r\Os, \Rq , \Ot r, Rcpo(i;r), Rcpo(j;r), i \Os, j \Os, &Tm(r), \]
+
+
+
+\bigskip
+\bigskip
+\[, \Ot r, r\Os, \Rq , \Ot r, &Tm(r), \]
+
+\[, \Ot r, Rcpo(i;r), r\Os, \Rq , \Ot r, Rcpo(i;r), &Tm(r), \]
+
+\[, \Ot r, Rcpo(i;r), Rcpo(j;r), r\Os, \Rq , \Ot r, Rcpo(i;r), Rcpo(j;r), &Tm(r), \]
+
+
+\bigskip
+\bigskip
+\[, i \Os, \Rq , \Ot r, Rcpo(i;r), i \Os, r \Os, \]
+
+\[, R(i), \Rq , \Ot r, Rcpo(i;r), r \Os, \]
+
+\[, i \Os, j \Os, \Rq , \Ot r, Rcpo(i;r), Rcpo(j;r), i \Os, j \Os, r \Os, \]
+
+\[, R(i), R(j), \Rq , \Ot r, Rcpo(i;r), Rcpo(j;r), r \Os, \]
+
+
+\bigskip
+\bigskip
+\[, \Ot r, r \Oc r_0, i \Os, j \Os, r\Os, r_0 \Os, \]
+\[\Rq , \Ot r, r \Oc r_0, i \Os, j \Os, r\Os, &Tm(r_0), \]
+
+
+\[, \Ot r, r \Oc r_0, Rcpo(i;r_0), Rcpo(j;r_0), i \Os, j \Os, r\Os, r_0 \Os, \]
+\[\Rq , \Ot r, r \Oc r_0, Rcpo(i;r_0), Rcpo(j;r_0), i \Os, j \Os, r\Os, &Tm(r_0), \]
+
+
+\[, \Ot r, r \Oc r_0, i \Os, j \Os, r\Os, r_0 \Os, \]
+\[\Rq , \Ot r, r \Oc r_0, Rcpo(i;r_0), Rcpo(j;r_0), i \Os, j \Os, r\Os, r_0 \Os, \]
+
+
+\bigskip
+\bigskip
+\section{}
+\[, IsCpo(j;r), j \Op, j \nPu, j \Oc j_0, Rcpo(j_0;r), j_0 \Os, \Rq\]
+\[, IsCpo(j;r), Cpo(r), r \On, j \Oc j_1, Rcpo(j_1;r), j_1 \Os, j \Op, j \nPu, \]
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, IsCpo(j;r), j \Op, j \nPu, j \Oc j_0, Rcpo(j_0;r), j_0 \Os,\\\\
+\Rq , IsCpo(j;r), j \Op, j \Oc j_0, j_0 \nPu, Rcpo(j_0;r), j_0 \Os,\\\\
+\Rq , IsCpo(j;r), j \Op, j \Oc j_0, j_0 \nPu, Cpo(r), r \On, j_0 \On, Rcpo(j_0;r), j_0 \Os,\\\\
+\Rq , IsCpo(j;r), j \Op, j \nPu, j \Oc j_0, Cpo(r), r \On, j_0 \On, Rcpo(j_0;r), j_0 \Os,\\\\
+\Rq , IsCpo(j;r), j \Op, j \nPu, Cpo(r), j \Oc j_0, r \On, j_0 \On, Rcpo(j_0;r), j_0 \Os,\\\\
+\Rq , IsCpo(j;r), Cpo(r), j \Op, j \nPu, j \Oc j_0, r \On, j_0 \On, Rcpo(j_0;r), j_0 \Os,\\\\
+\Rq , IsCpo(j;r), Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \nPu, Rcpo(j_0;r), j_0 \Os,\\\\
+\Rq , IsCpo(j;r), Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \Op, j \nPu, Rcpo(j_0;r), j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, IsCpo(j;r), j \Oc j_0, j_0 \On, j \On, j \Op, j \nPu, Rcpo(j_0;r), j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, IsCpo(j;r), j \nPc r, j \Oc j_0, j_0 \On, j \On, j \Op, j \nPu, Rcpo(j_0;r), j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, IsCpo(j_0;r), j_0 \On, j \On, j \nPc r, j \Op, j \nPu, Rcpo(j_0;r), j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, IsCpo(j_0;r), j \nPc r, j \Op, j \nPu, Rcpo(j_0;r), j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, IsCpo(j_0;r), j \nPc r, Rcpo(j_0;r), j \Op, j \nPu, j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \nPc r, j \Oc j_1, IsCpo(j_0;r), j_1 \Os, Rcpo(j_0;r), j \Op, j \nPu, j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \nPc r, j \Oc j_1, IsCpo(j_0;r), Rcpo(j_0;r), j_1 \Os, j \Op, j \nPu, j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j \Ps j_0, j_0 \On, j \On, j \nPc r, j \Oc j_1, IsCpo(j_0;r), Rcpo(j_0;r),\\\\
+j_1 \Os, j \Op, j \nPu, j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \Ps j_0, j \Oc j_1, j_1 \nPc r, IsCpo(j_0;r), Rcpo(j_0;r),\\\\
+j_1 \Os, j \Op, j \nPu, j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \Ps j_0, j \Oc j_1, j_1 \nPc r, IsCpo(j_0;r), r \Pu, \\\\
+ Rcpo(j_0;r),j_1 \Os, j \Op, j \nPu, j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \Ps j_0, j \Oc j_1, IsCpo(j_0;r), j_1 \nPc r, r \Pu, \\\\
+ Rcpo(j_0;r),j_1 \Os, j \Op, j \nPu, j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \Oc j_1, j_1 \Ps j_0, IsCpo(j_0;r), IsCpo(j_1;r), \\\\
+ Rcpo(j_0;r),j_1 \Os, j \Op, j \nPu, j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \Oc j_1, j_1 \Ps j_0, j_1 \Pne j_0, IsCpo(j_0;r), IsCpo(j_1;r), \\\\
+ Rcpo(j_0;r),j_1 \Os, j \Op, j \nPu, j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \Oc j_1, j_1 \Ps j_0, IsCpo(j_0;r), IsCpo(j_1;r), j_1 \Pne j_0, \\\\
+ Rcpo(j_0;r),j_1 \Os, j \Op, j \nPu, j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \Oc j_1, j_1 \Ps j_0, IsCpo(j_0;r), IsCpo(j_1;r), j_1 \Pne j_0, \\\\
+ Rcpo(j_0;r), R(j_1), j_1 \Os, j \Op, j \nPu, j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \Oc j_1, j_1 \Ps j_0, IsCpo(j_0;r), IsCpo(j_1;r), j_1 \Pne j_0, \\\\
+ Rcpo(j_1;r), R(j_0), j_1 \Os, j \Op, j \nPu, j_0 \Os,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \Oc j_1, j_1 \Ps j_0, j_1 \Pne j_0, IsCpo(j_0;r), IsCpo(j_1;r), \\\\
+ Rcpo(j_1;r), R(j_0), j_0 \Os, j_1 \Os, j \Op, j \nPu,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \Oc j_1, j_1 \Ps j_0, IsCpo(j_0;r), IsCpo(j_1;r), \\\\
+ Rcpo(j_1;r), j_0 \Os, j_1 \Os, j \Op, j \nPu,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \Oc j_1, j_1 \Ps j_0, IsCpo(j_0;r), IsCpo(j_1;r), j_0 \Os, \\\\
+ Rcpo(j_1;r), j_1 \Os, j \Op, j \nPu,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \Oc j_1, j_1 \Ps j_0, IsCpo(j_1;r), IsCpo(j_1;r), j_0 \Os, \\\\
+ Rcpo(j_1;r), j_1 \Os, j \Op, j \nPu,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \Oc j_1, j_1 \Ps j_0, IsCpo(j_1;r), j_0 \Os, \\\\
+ Rcpo(j_1;r), j_1 \Os, j \Op, j \nPu,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \Ps j_0, j \Oc j_1, IsCpo(j_1;r), j_0 \Os, \\\\
+ Rcpo(j_1;r), j_1 \Os, j \Op, j \nPu,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, j \Oc j_1, IsCpo(j_1;r), j_0 \Os, \\\\
+ Rcpo(j_1;r), j_1 \Os, j \Op, j \nPu,\\\\
+\Rq , Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j \On, IsCpo(j;r), j \Oc j_1, j_0 \Os, \\\\
+ Rcpo(j_1;r), j_1 \Os, j \Op, j \nPu,\\\\
+\Rq , IsCpo(j;r), Cpo(r), r \On, j \Op, j \Oc j_0, j_0 \On, j_0 \Os, j \On, j \Oc j_1, \\\\
+ Rcpo(j_1;r), j_1 \Os, j \Op, j \nPu,\\\\
+\Rq , IsCpo(j;r), Cpo(r), r \On, j \Op, j \On, j \Oc j_1, Rcpo(j_1;r), j_1 \Os, j \Op, j \nPu,\\\\
+\Rq , IsCpo(j;r), Cpo(r), r \On, j \Oc j_1, Rcpo(j_1;r), j_1 \Os, j \Op, j \nPu,
+\end{math}
+
+
+
+
+
+
+\bigskip
+\bigskip
+\section{}
+\[, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On, \Rq \]
+\[, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r),  \]
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, r_1 \Pu, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, IsCpo(r_1;r), Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\\\
+\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu,r_1 \Ps r_{10}, IsCpo(r_1;r), Cpo(r),\\\\
+r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu,r_1 \Ps r_{10}, IsCpo(r_1;r), r_1 \Pu, Cpo(r),\\\\
+r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu,r_1 \Ps r_{10}, IsCpo(r_1;r), Cpo(r), r_1 \Pu,\\\\
+r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu,r_1 \Ps r_{10}, IsCpo(r_1;r), Cpo(r),\\\\
+r \On, r_1 \Pu, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu,r_1 \Ps r_{10}, IsCpo(r_1;r), Cpo(r),\\\\
+r \On, r_1 \Pu, Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, IsCpo(r_1;r), Cpo(r),\\\\
+r \On,r_1 \Ps r_{10}, r_1 \Pu, Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, IsCpo(r_1;r), Cpo(r),\\\\
+r \On,r_1 \Ps r_{10}, r_{10} \Pu, Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, IsCpo(r_1;r), Cpo(r),\\\\
+r \On,r_1 \Ps r_{10}, Cpo(r_{10}), r_{10} \On, r_{10} \Pu, r_1 \On,\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, IsCpo(r_1;r), Cpo(r),\\\\
+r \On,r_1 \Ps r_{10}, Cpo(r_{10}), r_{10} \On, r_1 \On, r_{10} \Pu,\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, IsCpo(r_1;r), Cpo(r),\\\\
+r \On, Cpo(r_{10}),r_1 \Ps r_{10}, r_{10} \On, r_1 \On, r_{10} \Pu,\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, IsCpo(r_1;r), Cpo(r),\\\\
+r \On, Cpo(r_{10}), r_{10} \On, r_1 \On,r_1 \Ps r_{10}, r_{10} \Pu,\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, IsCpo(r_1;r), Cpo(r),\\\\
+r \On, Cpo(r_{10}), r_{10} \On, r_1 \On,r_1 \Ps r_{10}, r_1 \Pu,\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, IsCpo(r_1;r), Cpo(r),\\\\
+r \On, Cpo(r_{10}), r_{10} \On, r_1 \On,r_1 \Ps r_{10}, r_1 \Pu, Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, IsCpo(r_1;r), Cpo(r),\\\\
+r \On, Cpo(r_{10}), r_{10} \On, r_1 \On,r_1 \Ps r_{10}, r_{10} \Pu, Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, IsCpo(r_1;r), Cpo(r),\\\\
+r \On, Cpo(r_{10}), r_{10} \nPu, r_{10} \On, r_1 \On,r_1 \Ps r_{10}, r_{10} \Pu, Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, IsCpo(r_1;r), Cpo(r),\\\\
+r \On, Cpo(r_{10}),r_1 \Ps r_{10}, r_{10} \nPu, r_{10} \On, r_1 \On, r_{10} \Pu, Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, IsCpo(r_1;r), Cpo(r),\\\\
+r \On, Cpo(r_{10}),r_1 \Ps r_{10}, r_1 \nPu, r_{10} \On, r_1 \On, r_{10} \Pu, Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, IsCpo(r_1;r), Cpo(r),\\\\
+r \On,r_1 \Ps r_{10}, Cpo(r_{10}), r_{10} \On, r_{10} \Pu, r_1 \nPu, r_1 \On,Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, IsCpo(r_1;r), Cpo(r),\\\\
+r \On,r_1 \Ps r_{10}, r_{10} \Pu, Cpo(r_{10}), r_{10} \On, r_1 \nPu, r_1 \On,Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, IsCpo(r_1;r), Cpo(r),\\\\
+r \On,r_1 \Ps r_{10}, r_1 \Pu, Cpo(r_{10}), r_{10} \On, r_1 \nPu, r_1 \On,Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, r_1 \Ps r_{10}, IsCpo(r_1;r), Cpo(r), r_1 \Pu,\\\\
+r \On, Cpo(r_{10}), r_{10} \On, r_1 \nPu, r_1 \On,Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_{10} \Pu, r_1 \Ps r_{10}, IsCpo(r_1;r), r_1 \Pu, Cpo(r),\\\\
+r \On, Cpo(r_{10}), r_{10} \On, r_1 \nPu, r_1 \On,Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, IsCpo(r_1;r), Cpo(r),\\\\
+r \On, Cpo(r_{10}), r_{10} \On, r_1 \nPu, r_1 \On,Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, IsCpo(r_1;r), r_1 \nPc r, Cpo(r),\\\\
+r \On, Cpo(r_{10}), r_{10} \On, r_1 \nPu, r_1 \On,Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, IsCpo(r_1;r), r_{10} \nPc r, Cpo(r),\\\\
+r \On, Cpo(r_{10}), r_{10} \On, r_1 \nPu, r_1 \On,Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, IsCpo(r_1;r), r_{10} \nPc r, Cpo(r_{10}), r_{10} \On,\\\\
+ Cpo(r),r \On, r_1 \nPu, r_1 \On,Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, r_{10} \nPc r, IsCpo(r_1;r), Cpo(r_{10}), r_{10} \On,\\\\
+ Cpo(r),r \On, r_1 \nPu, r_1 \On,Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, r_{10} \nPc r, r_1 \nPc r, r \Pu, Cpo(r_{10}), r_{10} \On,\\\\
+ Cpo(r),r \On, r_1 \nPu, r_1 \On,Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, r_{10} \nPc r, r \Pu, Cpo(r_{10}), r_{10} \On,\\\\
+ r_1 \nPc r, Cpo(r),r \On, r_1 \nPu, r_1 \On,Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, r_{10} \nPc r, Cpo(r_{10}), r \Pu, r_{10} \On,\\\\
+ r_1 \nPc r, Cpo(r),r \On, r_1 \nPu, r_1 \On,Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, r_{10} \nPc r, Cpo(r_{10}), r_{10} \On,\\\\
+ r_1 \nPc r, r \Pu, Cpo(r),r \On, r_1 \nPu, r_1 \On,Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, r_{10} \nPc r, Cpo(r_{10}), r_{10} \On,\\\\
+  IsCpo(r_1;r), Cpo(r),r \On, r_1 \nPu, r_1 \On,Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, r_{10} \nPc r, Cpo(r_{10}), r_{10} \On,\\\\
+  IsCpo(r_1;r), Cpo(r), r_1 \nPu, r \On, r_1 \On,Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, r_{10} \nPc r, Cpo(r_{10}), r_{10} \On,\\\\
+  IsCpo(r_1;r), r_1 \nPu, Cpo(r), r \On, r_1 \On, Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, r_{10} \nPc r, Cpo(r_{10}), r_{10} \On,\\\\
+  IsCpo(r_1;r), r_1 \nPu, Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, r_{10} \nPc r, IsCpo(r_1;r),\\\\
+  Cpo(r_{10}), r_{10} \On, r_1 \nPu, Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_{10} \nPc r, IsCpo(r_1;r),\\\\
+  Cpo(r_{10}), r_1 \Ps r_{10}, r_1 \nPu, r_{10} \On, Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_{10} \nPc r, IsCpo(r_1;r),\\\\
+  Cpo(r_{10}), r_1 \Ps r_{10}, r_{10} \nPu, r_{10} \On, Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, r_{10} \nPc r, IsCpo(r_1;r),\\\\
+  Cpo(r_{10}), r_{10} \nPu, r_{10} \On, Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, r_{10} \nPc r, IsCpo(r_1;r),\\\\
+  Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, r_1 \nPc r, IsCpo(r_1;r),\\\\
+  Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, r_1 \Ps r_{10}, IsCpo(r_1;r), Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pc r_{10}, r_1 \Pu, r_{10} \Pu, IsCpo(r_1;r), Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r),\\
+\\
+\\\Rq, r_1 \Pu, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r),\\
+\\
+\\
+premise \; 2:\\
+,\In \Pn r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On, \Rq \\
+\\
+,\In \Pn r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r), \Ri \\
+\\
+\\
+, r_1 \nPu, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\\\
+\Rq,  r_1 \nPu, \In \Ps r_1, IsCpo(r_1;r), r_1 \nPc r, r_1 \Pc r_{10}, r_{10} \Pu, Cpo(r), r \On,\\
+Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, r_1 \nPc r, r_1 \nPu, Cpo(r), r \On,\\
+Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, r_1 \nPc r, Cpo(r), r_1 \nPu, r \On,\\
+Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, r_1 \nPc r, Cpo(r), r \On,\\
+ r_1 \nPu, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, r_1 \nPc r, Cpo(r), r \On,\\
+ r_1 \nPu, Cpo(r), r \On, r_1 \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, Cpo(r), r \On,\\
+ r_1 \nPu, r_1 \nPc r, Cpo(r), r_1 \On, r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, Cpo(r), r \On,\\
+ r_1 \nPu, r_1 \nPc r, r_1 \On, Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, r_1 \nPc r, Cpo(r), r_1 \nPu, r \On, r_1 \On,\\
+ Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, r_1 \nPc r, r_1 \nPu, Cpo(r), r \On, r_1 \On,\\
+ Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, r_1 \nPu, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_1 \nPc r, r_{10} \Pu, Cpo(r), r \On, r_1 \On,\\
+ Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, r_1 \nPu, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \nPc r, r_{10} \Pu, Cpo(r), r \On, r_1 \On,\\
+ Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, r_1 \nPu, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \nPc r, Cpo(r), r_{10} \Pu, r \On, r_1 \On,\\
+ Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, r_1 \nPu, \In \Ps r_1, r_1 \Pc r_{10}, r_{10} \nPc r, IsCpo(r_1;r), Cpo(r), r \On, r_1 \On,\\
+ r_{10} \Pu, Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, r_1 \nPu, \In \Ps r_1, r_1 \Pc r_{10}, r_{10} \nPc r, Cpo(r), r \On, r_1 \On,\\
+ IsCpo(r_1;r), r_{10} \Pu, Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, r_1 \nPu, \In \Ps r_1, r_1 \Pc r_{10}, r_1 \nPc r, Cpo(r), r \On, r_1 \On,\\
+ IsCpo(r_1;r), r_{10} \Pu, Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, r_1 \nPu, r_1 \Pc r_{10}, r_1 \nPc r, \In \Ps r_1, Cpo(r), r \On, r_1 \On,\\
+ IsCpo(r_1;r), r_{10} \Pu, Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, r_1 \nPu, r_1 \Pc r_{10}, r_1 \nPc r, Cpo(r), \In \Ps r_1, r \On, r_1 \On,\\
+ IsCpo(r_1;r), r_{10} \Pu, Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, r_1 \nPu, r_1 \Pc r_{10}, r_1 \nPc r, Cpo(r), r \On, r_1 \On, \In \Pn r_1,\\
+ IsCpo(r_1;r), r_{10} \Pu, Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, r_1 \nPu, r_1 \nPc r, Cpo(r), r \On, r_1 \On, \In \Pn r_1, IsCpo(r_1;r),\\
+ r_1 \Pc r_{10}, r_{10} \Pu, Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On,\\
+\\
+\Rq, r_1 \nPu, r_1 \nPc r, Cpo(r), r \On, r_1 \On, \In \Pn r_1, IsCpo(r_1;r),\\
+ r_1 \Pc r_{10}, r_{10} \Pu, Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r),\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_1 \nPc r, r_1 \nPu, Cpo(r), r_{10} \Pu, r \On, r_1 \On,\\
+ Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r),\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_1 \nPc r, Cpo(r), r_1 \nPu, r_{10} \Pu, r \On, r_1 \On,\\
+ Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r),\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_1 \nPc r, Cpo(r), r \On, r_1 \nPu, r_{10} \Pu,\\
+ r_1 \On, Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r),\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_1 \nPc r, Cpo(r), r \On, r_1 \nPu, r_{10} \Pu, r_1 \nPs r_{10},\\
+ r_1 \On, Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r),\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_1 \nPc r, Cpo(r), r \On, r_1 \nPu, r_{10} \Pu, r_1 \nPs r_{10},\\
+ Cpo(r_{10}), r_1 \On, r_{10} \On, Rcpo(r_1;r),\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_1 \nPc r, Cpo(r), r \On, r_1 \nPu, r_{10} \Pu, r_1 \nPs r_{10},\\
+ Cpo(r_{10}), r_{10} \On, r_1 \On, Rcpo(r_1;r),\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_1 \nPc r, Cpo(r), r \On, r_1 \nPu, r_{10} \Pu,\\
+ Cpo(r_{10}), r_{10} \On, r_1 \On, Rcpo(r_1;r),\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_1 \nPc r, Cpo(r), r_1 \nPu, r_{10} \Pu, r \On,\\
+ Cpo(r_{10}), r_{10} \On, r_1 \On, Rcpo(r_1;r),\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_1 \nPc r, r_1 \nPu, Cpo(r), r_{10} \Pu, r \On,\\
+ Cpo(r_{10}), r_{10} \On, r_1 \On, Rcpo(r_1;r),\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \nPc r, r_1 \nPu, Cpo(r), r_{10} \Pu, r \On,\\
+ Cpo(r_{10}), r_{10} \On, r_1 \On, Rcpo(r_1;r),\\
+\\
+\Rq, r_1 \nPu, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \nPc r, Cpo(r), r_{10} \Pu, r \On,\\
+ Cpo(r_{10}), r_{10} \On, r_1 \On, Rcpo(r_1;r),\\
+\\
+\Rq, r_1 \nPu, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \nPc r, r_{10} \Pu, Cpo(r), r \On,\\
+ Cpo(r_{10}), r_{10} \On, r_1 \On, Rcpo(r_1;r),\\
+\\
+\Rq, r_1 \nPu, \In \Ps r_1, IsCpo(r_1;r), r_{10} \Pu, r_1 \Pc r_{10}, r_{10} \nPc r, Cpo(r), r \On,\\
+ Cpo(r_{10}), r_{10} \On, r_1 \On, Rcpo(r_1;r),\\
+\\
+\Rq, r_1 \nPu, \In \Ps r_1, IsCpo(r_1;r), r_{10} \Pu, r_1 \Pc r_{10}, r_{10} \nPc r,\\
+ Cpo(r_{10}), r_{10} \On, Cpo(r), r \On, r_1 \On, Rcpo(r_1;r),\\
+\\
+\Rq, r_1 \nPu, \In \Ps r_1, IsCpo(r_1;r), r_{10} \Pu, r_1 \Pc r_{10}, r_1 \nPc r,\\
+ Cpo(r_{10}), r_{10} \On, Cpo(r), r \On, r_1 \On, Rcpo(r_1;r),\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \nPc r, r_1 \Pc r_{10},\\
+ r_{10} \Pu, r_1 \nPu, Cpo(r_{10}), r_{10} \On, Cpo(r), r \On, r_1 \On, Rcpo(r_1;r),\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu,\\
+ r_1 \nPu, Cpo(r_{10}), r_{10} \On, Cpo(r), r \On, r_1 \On, Rcpo(r_1;r),\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu,\\
+ r_1 \nPu, Cpo(r_{10}), r_1 \nPu, r_{10} \On, Cpo(r), r \On, r_1 \On, Rcpo(r_1;r),\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu,\\
+ r_1 \nPu, Cpo(r_{10}), r_{10} \On, r_1 \nPu, Cpo(r), r \On, r_1 \On, Rcpo(r_1;r),\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu,r_1 \nPu, Cpo(r_{10}), r_{10} \On, r_1 \nPu, Rcpo(r_1;r),\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu,r_1 \nPu, Cpo(r_{10}), r_1 \nPu, r_{10} \On, Rcpo(r_1;r),\\
+\\
+\Rq, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu,r_1 \nPu, Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r),\\
+\\
+\Rq,r_1 \nPu, \In \Ps r_1, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r), \\\\
+conclusion:\\\\
+, IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, Cpo(r), r \On, Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On, \\\\
+\Rq , IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \Pu, Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+
+
+
+
+
+\bigskip
+\bigskip
+
+\[,  IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Ps r_{10},\]
+\[Rcpo(i;r), r_1 \Os, &Tm(r_{10}), \Rq \]
+\[,  IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Ps r_{10},\]
+\[Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \]
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+,  IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Ps r_{10}, \\\\
+Rcpo(i;r),  r_1 \Os, &Tm(r_{10}),\\\\
+\\\Rq , IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Ps r_{10}, \\\\
+i \Oc i_0, i_0 \Os, Rcpo(i;r), r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10}, \\\\
+i \Oc i_0, IsCpo(i;r), i_0 \Os, Rcpo(i;r), r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \nPc r, r_1 \Ps r_{10}, \\\\
+i \Oc i_0, IsCpo(i;r), Rcpo(i;r), i_0 \Os, r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10}, r_1 \nPc r, \\\\
+i \Oc i_0, IsCpo(i;r), Rcpo(i;r), i_0 \Os, r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10}, r_{10} \nPc r, \\\\
+i \Oc i_0, IsCpo(i;r), Rcpo(i;r), i_0 \Os, r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), r_{10} \Pu, IsCpo(r_1;r), r_1 \Ps r_{10}, r_{10} \nPc r, \\\\
+i \Oc i_0, IsCpo(i;r), Rcpo(i;r), i_0 \Os, r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10},\\\\
+i \Oc i_0, IsCpo(i;r), r_{10} \nPc r, r_{10} \Pu,  Rcpo(i;r), i_0 \Os, r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10},\\\\
+i \Oc i_0, IsCpo(i;r), r_{10} \nPc r,  Rcpo(i;r), r_{10} \Pu, i_0 \Os, r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), i \nPc r_{10}, IsCpo(r_1;r), r_1 \Ps r_{10},\\\\
+i \Oc i_0, IsCpo(i;r), r_{10} \nPc r,  Rcpo(i;r), r_{10} \Pu, i_0 \Os, r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10}, r_{10} \nPc r,\\\\
+ i \nPc r_{10},i \Oc i_0, IsCpo(i;r),  Rcpo(i;r), r_{10} \Pu, i_0 \Os, r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10}, r_{10} \nPc r,\\\\
+i \Oc i_0, i_0 \nPc r_{10}, IsCpo(i;r),  Rcpo(i;r), r_{10} \Pu, i_0 \Os, r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10}, r_{10} \nPc r,\\\\
+i \Oc i_0, IsCpo(i;r), i_0 \nPc r_{10},  Rcpo(i;r), r_{10} \Pu, i_0 \Os, r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10}, r_{10} \nPc r,\\\\
+i \Oc i_0, IsCpo(i;r),  Rcpo(i;r), i_0 \nPc r_{10}, r_{10} \Pu, i_0 \Os, r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10}, r_{10} \nPc r,\\\\
+i \Oc i_0, IsCpo(i;r),  Rcpo(i;r), r_1 \Os, IsCpo(i_0;r_{10}), i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10}, r_{10} \nPc r,\\\\
+i \Oc i_0, IsCpo(i;r),  Rcpo(i;r), r_1 \Os, IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}), i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10}, r_{10} \nPc r,\\\\
+i \Oc i_0, IsCpo(i;r),  Rcpo(i;r), IsCpo(i_0;r_{10}), r_1 \Os, Rcpo(i_0;r_{10}), i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10}, r_{10} \nPc r,\\\\
+i \Oc i_0, IsCpo(i;r),  Rcpo(i;r), IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}), r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), i \nPc r_{10}, IsCpo(r_1;r), r_1 \Ps r_{10}, r_{10} \nPc r,\\\\
+i \Oc i_0, IsCpo(i;r),i \nPc r, IsCpo(i_0;r_{10}),  Rcpo(i;r), Rcpo(i_0;r_{10}), r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), i \nPc r_{10}, IsCpo(r_1;r), r_1 \Ps r_{10}, r_{10} \nPc r,\\\\
+i \Oc i_0, IsCpo(i;r),i_0 \nPc r, IsCpo(i_0;r_{10}),  Rcpo(i;r), Rcpo(i_0;r_{10}), r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10}, i \Oc i_0,\\\\
+ IsCpo(i;r), IsCpo(i_0;r_{10}), i \nPc r_{10},i_0 \nPc r, r_{10} \nPc r, Rcpo(i;r), Rcpo(i_0;r_{10}),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10}, i \Oc i_0,\\\\
+ IsCpo(i;r), IsCpo(i_0;r_{10}), i \nPc r_{10},i_0 \nPc r, r_{10} \nPc r, Rcpo(i_0;r_{10}), Rcpo(i;r),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10}, r_{10} \nPc r, i \Oc i_0,\\\\
+ IsCpo(i;r), IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}), Rcpo(i;r),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Ps r_{10}, r_{10} \nPc r, i \Oc i_0, i \Ps i_0,\\\\
+ IsCpo(i;r), IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}), Rcpo(i;r),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_{10} \nPc r, i \Oc i_0,\\\\
+ IsCpo(i;r),  r_1 \Ps r_{10}, i \Ps i_0, IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}), Rcpo(i;r),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_{10} \nPc r, i \Oc i_0,\\\\
+ IsCpo(i;r),  r_1 \Ps r_{10}, i \Ps i_0, IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}), i \Pne r_1, Rcpo(i;r),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r_{10} \nPc r, i \Oc i_0,\\\\
+ i \nPc r, r \Pu,  r_1 \Ps r_{10}, i \Ps i_0, IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}), i \Pne r_1, Rcpo(i;r),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), i \Oc i_0, i \nPc r,  r_1 \Ps r_{10}, i \Ps i_0,\\\\
+ IsCpo(i_0;r_{10}), r_{10} \nPc r, r \Pu, Rcpo(i_0;r_{10}), i \Pne r_1, Rcpo(i;r),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), i \Oc i_0, i \nPc r,  r_1 \Ps r_{10}, i \Ps i_0,\\\\
+ IsCpo(i_0;r_{10}), r_{10} \nPc r, Rcpo(i_0;r_{10}), r \Pu, i \Pne r_1, Rcpo(i;r),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), i \Oc i_0,  r_1 \Ps r_{10}, i \Ps i_0, r_{10} \nPc r,\\\\
+ IsCpo(i_0;r_{10}), i \nPc r, Rcpo(i_0;r_{10}), r \Pu, i \Pne r_1, Rcpo(i;r),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), i \Oc i_0,  r_1 \Ps r_{10}, i \Ps i_0, r_{10} \nPc r,\\\\
+ IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}), i \nPc r, r \Pu, i \Pne r_1, Rcpo(i;r),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), i \Oc i_0,  r_1 \Ps r_{10}, i \Ps i_0, r_{10} \nPc r,\\\\
+ IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}),  IsCpo(i;r), i \Pne r_1, Rcpo(i;r),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r \nPc r_1, i \Oc i_0,  r_1 \Ps r_{10}, i \Ps i_0, r_{10} \nPc r,\\\\
+ IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}),  IsCpo(i;r), i \Pne r_1, Rcpo(i;r),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), i \Oc i_0,  r_1 \Ps r_{10}, i \Ps i_0, r_{10} \nPc r,\\\\
+ IsCpo(i_0;r_{10}), r \nPc r_1, Rcpo(i_0;r_{10}),  IsCpo(i;r), i \Pne r_1, Rcpo(i;r),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), i \Oc i_0,  r_1 \Ps r_{10}, i \Ps i_0, r_{10} \nPc r,\\\\
+ IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}), r \nPc r_1,  IsCpo(i;r), i \Pne r_1, Rcpo(i;r),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), i \Oc i_0,  r_1 \Ps r_{10}, i \Ps i_0, r_{10} \nPc r,\\\\
+ IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}),  IsCpo(r_1;r),  IsCpo(i;r), i \Pne r_1, Rcpo(i;r),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), i \Oc i_0,  r_1 \Ps r_{10}, i \Ps i_0, r_{10} \nPc r,\\\\
+ IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}),  IsCpo(r_1;r),   IsCpo(i;r), i \Pne r_1, Rcpo(i;r), R(r_1),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), i \Oc i_0,  r_1 \Ps r_{10}, i \Ps i_0, r_{10} \nPc r,\\\\
+ IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}),  IsCpo(r_1;r),   IsCpo(i;r), i \Pne r_1, Rcpo(r_1;r), R(i),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), i \Oc i_0,  r_1 \Ps r_{10}, i \Ps i_0, r_{10} \nPc r,\\\\
+ IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}), r \nPc r_1,  IsCpo(i;r), i \Pne r_1, Rcpo(r_1;r), R(i),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), i \Oc i_0,  r_1 \Ps r_{10}, i \Ps i_0, r_{10} \nPc r,\\\\
+ IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}), r \nPc r_1,  IsCpo(i;r), i \Pne r_1, R(i), Rcpo(r_1;r),\\\\
+ r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(i;r_{10}), IsCpo(r_1;r), r \nPc r_1, i \Oc i_0,  r_{10} \nPc r,\\\\
+  IsCpo(i;r),  r_1 \Ps r_{10}, i \Ps i_0, IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}), i \Pne r_1, R(i),\\\\
+ Rcpo(r_1;r), r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1, i \Oc i_0,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  i \Ps i_0, IsCpo(i;r_{10}), IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}), R(i),\\\\
+ Rcpo(r_1;r), r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1, i \Oc i_0,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  i \Ps i_0, i \Pne i_0, IsCpo(i;r_{10}), IsCpo(i_0;r_{10}), Rcpo(i_0;r_{10}), R(i),\\\\
+ Rcpo(r_1;r), r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1, i \Oc i_0,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  i \Ps i_0, IsCpo(i;r_{10}), IsCpo(i_0;r_{10}), i \Pne i_0, Rcpo(i_0;r_{10}), R(i),\\\\
+ Rcpo(r_1;r), r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1, i \Oc i_0,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  i \Ps i_0, IsCpo(i;r_{10}), IsCpo(i_0;r_{10}), i \Pne i_0, Rcpo(i;r_{10}), R(i_0),\\\\
+ Rcpo(r_1;r), r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1, i \Oc i_0,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  i \Ps i_0, i \Pne i_0, IsCpo(i;r_{10}), IsCpo(i_0;r_{10}), Rcpo(i;r_{10}), R(i_0),\\\\
+ Rcpo(r_1;r), r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1, i \Oc i_0,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  i \Ps i_0, IsCpo(i;r_{10}), IsCpo(i_0;r_{10}), Rcpo(i;r_{10}), R(i_0),\\\\
+ Rcpo(r_1;r), r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq ,  IsCpo(r_1;r), r \Pu, r \nPc r_1, i \Oc i_0,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  i \Ps i_0, IsCpo(i;r_{10}), IsCpo(i_0;r_{10}), Rcpo(i;r_{10}), R(i_0),\\\\
+ Rcpo(r_1;r), r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq ,  IsCpo(r_1;r), r \nPc r_1, i \Oc i_0,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  i \Ps i_0, IsCpo(i;r_{10}), IsCpo(i_0;r_{10}), r \Pu, Rcpo(i;r_{10}), R(i_0),\\\\
+ Rcpo(r_1;r), r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq ,  IsCpo(r_1;r), r \nPc r_1, i \Oc i_0, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  i \Ps i_0, IsCpo(i_0;r_{10}), IsCpo(i;r_{10}),  r_{10} \nPc r, r \Pu, Rcpo(i;r_{10}), R(i_0),\\\\
+ Rcpo(r_1;r), r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq ,  IsCpo(r_1;r), r \nPc r_1, i \Oc i_0, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  i \Ps i_0, IsCpo(i_0;r_{10}), IsCpo(i;r_{10}),  r_{10} \nPc r, Rcpo(i;r_{10}), r \Pu, R(i_0),\\\\
+ Rcpo(r_1;r), r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq ,  IsCpo(r_1;r), i \Oc i_0, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  i \Ps i_0, IsCpo(i_0;r_{10}), IsCpo(i;r_{10}),  r_{10} \nPc r, Rcpo(i;r_{10}), r \nPc r_1, r \Pu, R(i_0),\\\\
+ Rcpo(r_1;r), r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq ,  IsCpo(r_1;r), i \Oc i_0, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+ i \Ps i_0, IsCpo(i_0;r_{10}), IsCpo(i;r_{10}),  r_{10} \nPc r, Rcpo(i;r_{10}), R(i_0), r \nPc r_1, r \Pu, \\\\
+ Rcpo(r_1;r), r_1 \Os, i_0 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq ,  IsCpo(r_1;r), i \Oc i_0, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+ i \Ps i_0, IsCpo(i_0;r_{10}), IsCpo(i;r_{10}),  r_{10} \nPc r, Rcpo(i;r_{10}), R(i_0), IsCpo(r_1;r), \\\\
+ Rcpo(r_1;r), i_0 \Os, r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq ,  IsCpo(r_1;r), i \Oc i_0, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+ i \Ps i_0, IsCpo(i_0;r_{10}), IsCpo(i;r_{10}),  r_{10} \nPc r, Rcpo(i;r_{10}), R(i_0), IsCpo(r_1;r), \\\\
+  i_0 \Os, Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1, i \Oc i_0,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  IsCpo(i;r_{10}), i \Ps i_0, IsCpo(i_0;r_{10}), Rcpo(i;r_{10}), R(i_0), i_0 \Os,\\\\
+ Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1, i \Oc i_0,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  IsCpo(i;r_{10}), IsCpo(i;r_{10}), i \Ps i_0, Rcpo(i;r_{10}), R(i_0), i_0 \Os,\\\\
+ Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1, i \Oc i_0,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  IsCpo(i;r_{10}), i \Ps i_0, Rcpo(i;r_{10}), R(i_0), i_0 \Os,\\\\
+ Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  IsCpo(i;r_{10}), i \Oc i_0, i \Ps i_0, Rcpo(i;r_{10}), R(i_0), i_0 \Os,\\\\
+ Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  IsCpo(i;r_{10}), i \Oc i_0, Rcpo(i;r_{10}), i_0 \Os,\\\\
+ Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  i \Oc i_0, IsCpo(i;r_{10}), Rcpo(i;r_{10}), i_0 \Os,\\\\
+ Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+ i \Oc i_0,  IsCpo(i;r_{10}), i_0 \Os, Rcpo(i;r_{10}),\\\\
+ Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  IsCpo(i;r_{10}), i \Oc i_0,  i_0 \Os, Rcpo(i;r_{10}),\\\\
+ Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1,  r_{10} \nPc r, IsCpo(i;r),  r_1 \Ps r_{10},\\\\
+  IsCpo(i;r_{10}), Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1,  r_{10} \nPc r, r_1 \Ps r_{10}, IsCpo(i;r), \\\\
+  IsCpo(i;r_{10}), Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r \nPc r_1,  r_1 \nPc r, r_1 \Ps r_{10}, IsCpo(i;r), \\\\
+  IsCpo(i;r_{10}), Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq , IsCpo(r_1;r), r_1 \Ps r_{10}, IsCpo(i;r), \\\\
+  IsCpo(i;r_{10}), Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+\\
+\\\Rq, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Ps r_{10},\\\\
+Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),
+\end{math}
+
+\bigskip
+\bigskip
+
+
+\[,  IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Ps r_{10},\]
+\[Rcpo(i;r), i \Os, r_1 \Os, &Tm(r_{10}), \Rq \]
+\[,  IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Ps r_{10},\]
+\[Rcpo(i;r_{10}), Rcpo(r_1;r), i \Os, r_1 \Os, &Tm(r_{10}), \]
+
+
+
+
+
+
+\bigskip
+\bigskip
+
+\[, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10},\]
+\[Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \Rq \]
+\[, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10},\]
+\[Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \]
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, i \Pu, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10}, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+\Rq, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10}, i \Pu, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\\\
+\\\Rq, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10}, i \Pu,\\\\
+Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\\\
+\\\Rq, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10}, i \Pu,\\\\
+Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\\\
+\\\Rq, i \Pu, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10}, \\\\
+Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+\\
+\\
+premise \; 2:\\
+, \In \Pn i, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10}, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\\\
+\Rq ,\In \Pn i, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10},\\\\
+Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \Ri \\
+\\
+, i \nPu, \In \Ps i,  IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10}, \\\\
+Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\\\
+\\\Rq, \In \Ps i, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10},\\\\
+ i \nPu, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10},\\\\
+ i \nPu, Cpo(r), r \On, i \On, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, i \nPu, \In \Ps i, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \nPc r, r_1 \Pc r_{10},\\\\
+ Cpo(r), r \On, i \On, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, i \nPu, \In \Ps i, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10}, r_1 \nPc r,\\\\
+ Cpo(r), r \On, i \On, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, i \nPu, \In \Ps i, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \nPc r,\\\\
+ Cpo(r), r \On, i \On, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, i \nPu, \In \Ps i, IsCpo(i;r),IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \nPc r,IsCpo(i;r_{10}), Cpo(r),\\\\
+ r \On, i \On, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, i \nPu, \In \Ps i, IsCpo(i;r),IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \nPc r, Cpo(r),\\\\
+IsCpo(i;r_{10}), r \On, i \On, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, i \nPu,IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \nPc r, IsCpo(i;r), \In \Ps i, Cpo(r),\\\\
+IsCpo(i;r_{10}), r \On, i \On, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, i \nPu,IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \nPc r, IsCpo(i;r), Cpo(r),\\\\
+ \In \Ps i, IsCpo(i;r_{10}), r \On, i \On, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, i \nPu,IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \nPc r, IsCpo(i;r), Cpo(r),\\\\
+ r \On, i \On, \In \Pn i, IsCpo(i;r_{10}), Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, i \nPu, r_{10} \nPc r, Cpo(r), r \On, i \On,\\\\
+ \In \Pn i, IsCpo(i;r), IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Pc r_{10}, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, i \nPu, r_{10} \nPc r, Cpo(r), r \On, i \On,\\\\
+ \In \Pn i, IsCpo(i;r), IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Pc r_{10}, Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(i;r), IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \nPc r,\\\\
+ Cpo(r), r \On, i \On, Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \nPc r, IsCpo(i;r),\\\\
+ Cpo(r), i \On, r \On, Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(i;r_{10}), IsCpo(r_1;r), r_1 \Pc r_{10}, r_{10} \nPc r, IsCpo(i;r),\\\\
+ i \On, Cpo(r), r \On, Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(r_1;r), r_1 \Pc r_{10}, IsCpo(i;r), i \On,\\\\
+ IsCpo(i;r_{10}), r_{10} \nPc r, Cpo(r), r \On, Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(r_1;r), r_1 \Pc r_{10}, IsCpo(i;r),i \nPc r, i \On,\\\\
+ IsCpo(i;r_{10}), r_{10} \nPc r, Cpo(r), r \On, Rcpo(i;r_{10}), \\\\
+ Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(r_1;r), r_1 \Pc r_{10}, IsCpo(i;r), i \On,\\\\
+ IsCpo(i;r_{10}), i \nPc r, r_{10} \nPc r, Cpo(r), r \On, Rcpo(i;r_{10}), \\\\
+ Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(r_1;r), r_1 \Pc r_{10}, IsCpo(i;r), i \On,\\\\
+ IsCpo(i;r_{10}), i \nPc r, r_{10} \nPc r, Rcpo(i;r_{10}), Cpo(r), r \On, \\\\
+ Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(r_1;r), r_1 \Pc r_{10}, IsCpo(i;r), i \On,\\\\
+ IsCpo(i;r_{10}), i \nPc r, r_{10} \nPc r, Rcpo(i;r_{10}), Cpo(r), r \On, \\\\
+ Rcpo(r_1;r), r_1 \Os, Cpo(r_{10}), &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(r_1;r), r_1 \Pc r_{10}, IsCpo(i;r), i \On,\\\\
+ IsCpo(i;r_{10}), i \nPc r, r_{10} \nPc r, Rcpo(i;r_{10}), Cpo(r), r \On, \\\\
+ Rcpo(r_1;r), r_1 \Os, Cpo(r_{10}), r_{10} \On, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(r_1;r), r_1 \Pc r_{10}, IsCpo(i;r), i \On,\\\\
+ IsCpo(i;r_{10}), i \nPc r, r_{10} \nPc r, Rcpo(i;r_{10}), Cpo(r), r \On, \\\\
+ Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, r_1 \Pc r_{10}, IsCpo(i;r), i \nPc r, i \On,\\\\
+ IsCpo(i;r_{10}), r_{10} \nPc r, IsCpo(r_1;r), Rcpo(i;r_{10}), Cpo(r), r \On, \\\\
+ Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, r_1 \Pc r_{10}, IsCpo(i;r), i \nPc r, i \On,\\\\
+ IsCpo(i;r_{10}), r_{10} \nPc r, Rcpo(i;r_{10}), IsCpo(r_1;r), Cpo(r), r \On, \\\\
+ Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, r_1 \Pc r_{10}, IsCpo(i;r), i \On,\\\\
+ IsCpo(i;r_{10}), r_{10} \nPc r, Rcpo(i;r_{10}), IsCpo(r_1;r), Cpo(r), r \On, \\\\
+ Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(i;r), i \On, r_{10} \nPc r,\\\\
+ IsCpo(i;r_{10}), r_1 \Pc r_{10}, Rcpo(i;r_{10}), IsCpo(r_1;r), Cpo(r), r \On, \\\\
+ Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On, r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(i;r), i \On, r_{10} \nPc r,\\\\
+ IsCpo(i;r_{10}), Rcpo(i;r_{10}), r_1 \Pc r_{10}, IsCpo(r_1;r), Cpo(r), r \On, \\\\
+ Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On, r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(i;r), i \On, r_{10} \nPc r,\\\\
+ IsCpo(i;r_{10}), Rcpo(i;r_{10}), r_{10} \Pu, r_1 \Pc r_{10}, IsCpo(r_1;r), Cpo(r), r \On, \\\\
+ Rcpo(r_1;r), Cpo(r_{10}), r_{10} \On, r_1 \On, r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(i;r), i \On, r_{10} \nPc r,\\\\
+ IsCpo(i;r_{10}), Rcpo(i;r_{10}), r_{10} \Pu, r_1 \Pc r_{10}, IsCpo(r_1;r), \\\\
+ Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(i;r), i \On, r_{10} \nPc r, r_1 \Pc r_{10}, IsCpo(r_1;r),\\\\
+ IsCpo(i;r_{10}), Rcpo(i;r_{10}), \\\\
+ Cpo(r_{10}), r_{10} \On, Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(i;r), i \On, r_{10} \nPc r, r_1 \Pc r_{10}, IsCpo(r_1;r),\\\\
+ IsCpo(i;r_{10}), Cpo(r_{10}), r_{10} \On, Rcpo(i;r_{10}), \\\\
+ Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(i;r), r_{10} \nPc r, r_1 \Pc r_{10}, IsCpo(r_1;r),\\\\
+ IsCpo(i;r_{10}), i \On, Cpo(r_{10}), r_{10} \On, Rcpo(i;r_{10}), \\\\
+ Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, i \nPu, IsCpo(i;r), r_{10} \nPc r, r_1 \Pc r_{10}, IsCpo(r_1;r),\\\\
+ IsCpo(i;r_{10}), Cpo(r_{10}), r_{10} \On, i \On, Rcpo(i;r_{10}), \\\\
+ Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, IsCpo(i;r), r_{10} \nPc r, r_1 \Pc r_{10}, IsCpo(r_1;r),\\\\
+ IsCpo(i;r_{10}), i \nPu, Cpo(r_{10}), r_{10} \On, i \On, Rcpo(i;r_{10}), \\\\
+ Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, IsCpo(i;r), r_{10} \nPc r, r_1 \Pc r_{10}, IsCpo(r_1;r),\\\\
+ IsCpo(i;r_{10}), i \nPu, Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, IsCpo(i;r), r_1 \Pc r_{10}, r_{10} \nPc r, IsCpo(r_1;r),\\\\
+ IsCpo(i;r_{10}), i \nPu, Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, IsCpo(i;r), r_1 \Pc r_{10}, r_1 \nPc r, IsCpo(r_1;r),\\\\
+ IsCpo(i;r_{10}), i \nPu, Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\\Rq, \In \Ps i, IsCpo(i;r), r_1 \Pc r_{10}, IsCpo(r_1;r),\\\\
+ IsCpo(i;r_{10}), i \nPu, Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}), \\
+\\
+\\
+\\\Rq, i \nPu, \In \Ps i, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10}, \\\\
+Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\\\
+conclusion:\\\\
+, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10}, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\\\
+\Rq , IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10}, \\\\
+Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+\[, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10},\]
+\[ Rcpo(i;r), Rcpo(r_1;r), i \Os, r_1 \Os, &Tm(r_{10}), \Rq \]
+\[, IsCpo(i;r),IsCpo(i;r_{10}),IsCpo(r_1;r), r_1 \Pc r_{10},\]
+\[ Rcpo(i;r_{10}), Rcpo(r_1;r), i \Os, r_1 \Os, &Tm(r_{10}), \]
+
+
+
+
+
+\[, IsCpo(i;r), IsCpo(j;r), IsCpo(k;r), IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k;r_{10}), IsCpo(r_1;r),\]
+\[, r_1 \Ps r_{10}, Rcpo(i;r_{10}), Rcpo(j;r_{10}), Rcpo(r_1;r), Rcpo(k;r), r_1 \Os, &Tm(r_{10}),\Rq\]
+\[, IsCpo(i;r), IsCpo(j;r), IsCpo(k;r), IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k;r_{10}), IsCpo(r_1;r),\]
+\[, r_1 \Ps r_{10}, Rcpo(i;r), Rcpo(j;r), Rcpo(k;r), r_1 \Os, &Tm(r_{10}), \]
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, IsCpo(i;r), IsCpo(j;r), IsCpo(k;r), IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k;r_{10}), IsCpo(r_1;r),\\\\
+ r_1 \Ps r_{10}, Rcpo(i;r_{10}), Rcpo(j;r_{10}), Rcpo(r_1;r), Rcpo(k;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq, IsCpo(k;r_{10}), IsCpo(i;r), IsCpo(j;r), IsCpo(k;r),\\\\
+ IsCpo(r_1;r), r_1 \Ps r_{10},\\\\
+  IsCpo(i;r_{10}), IsCpo(j;r_{10}), Rcpo(i;r_{10}), Rcpo(j;r_{10}), \\\\
+  Rcpo(r_1;r), Rcpo(k;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\
+\\\Rq,IsCpo(k;r_{10}), IsCpo(i;r), IsCpo(j;r), IsCpo(k;r),\\\\
+ IsCpo(r_1;r), r_1 \Ps r_{10},\\\\
+  IsCpo(i;r_{10}), Rcpo(i;r_{10}),\\\\
+  IsCpo(j;r_{10}), Rcpo(j;r_{10}), \\\\
+   Rcpo(r_1;r), Rcpo(k;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq, IsCpo(k;r_{10}), IsCpo(i;r), IsCpo(j;r), IsCpo(k;r),\\\\
+ IsCpo(r_1;r), r_1 \nPc r, r_1 \Ps r_{10}, r_1 \Pc r_{10}, \\\\
+  IsCpo(i;r_{10}), Rcpo(i;r_{10}),\\\\
+  IsCpo(j;r_{10}), Rcpo(j;r_{10}), \\\\
+  Rcpo(r_1;r), Rcpo(k;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq, IsCpo(k;r_{10}), IsCpo(i;r), IsCpo(j;r), IsCpo(k;r),\\\\
+ IsCpo(r_1;r), r_1 \Ps r_{10}, r_1 \Pc r_{10}, r_1 \nPc r, \\\\
+  IsCpo(i;r_{10}), Rcpo(i;r_{10}),\\\\
+  IsCpo(j;r_{10}), Rcpo(j;r_{10}), \\\\
+  Rcpo(r_1;r), Rcpo(k;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq, IsCpo(k;r_{10}), IsCpo(i;r), IsCpo(j;r), IsCpo(k;r),\\\\
+ IsCpo(r_1;r), r_1 \Ps r_{10}, r_1 \Pc r_{10}, r_{10} \nPc r, \\\\
+  IsCpo(i;r_{10}), Rcpo(i;r_{10}),\\\\
+  IsCpo(j;r_{10}), Rcpo(j;r_{10}), \\\\
+  Rcpo(r_1;r), Rcpo(k;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq, IsCpo(k;r_{10}), IsCpo(i;r), IsCpo(j;r), IsCpo(k;r),\\\\
+ IsCpo(r_1;r), r_1 \Ps r_{10}, r_1 \Pc r_{10}, \\\\
+  IsCpo(i;r_{10}), r_{10} \nPc r, Rcpo(i;r_{10}),\\\\
+  IsCpo(j;r_{10}), r_{10} \nPc r, Rcpo(j;r_{10}), \\\\
+  Rcpo(r_1;r), Rcpo(k;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq, IsCpo(k;r_{10}), IsCpo(i;r), IsCpo(j;r),\\\\
+ r_1 \Ps r_{10}, r_1 \Pc r_{10}, \\\\
+  IsCpo(i;r_{10}), r_{10} \nPc r, Rcpo(i;r_{10}),\\\\
+  IsCpo(j;r_{10}), r_{10} \nPc r, Rcpo(j;r_{10}), \\\\
+  IsCpo(r_1;r), IsCpo(k;r), Rcpo(r_1;r), Rcpo(k;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq, IsCpo(k;r_{10}), IsCpo(i;r), IsCpo(j;r),\\\\
+ r_1 \Ps r_{10}, r_1 \Pc r_{10}, \\\\
+  IsCpo(i;r_{10}), r_{10} \nPc r, Rcpo(i;r_{10}),\\\\
+  IsCpo(j;r_{10}), r_{10} \nPc r, Rcpo(j;r_{10}), \\\\
+  IsCpo(r_1;r), IsCpo(k;r), Rcpo(k;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq, IsCpo(k;r_{10}), IsCpo(i;r), IsCpo(j;r),\\\\
+ IsCpo(r_1;r),  r_1 \Ps r_{10}, r_1 \Pc r_{10}, \\\\
+  IsCpo(i;r_{10}), r_{10} \nPc r, Rcpo(i;r_{10}),\\\\
+  IsCpo(j;r_{10}), r_{10} \nPc r, IsCpo(k;r), Rcpo(j;r_{10}), Rcpo(k;r), \\\\
+ Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq, IsCpo(i;r),\\\\
+ IsCpo(r_1;r),  r_1 \Ps r_{10}, r_1 \Pc r_{10}, \\\\
+  IsCpo(i;r_{10}), r_{10} \nPc r, Rcpo(i;r_{10}),\\\\
+  IsCpo(j;r_{10}), IsCpo(k;r_{10}), r_{10} \nPc r, IsCpo(k;r), IsCpo(j;r), \\\\
+ Rcpo(j;r_{10}), Rcpo(k;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq, IsCpo(i;r),\\\\
+ IsCpo(r_1;r),  r_1 \Ps r_{10}, r_1 \Pc r_{10}, \\\\
+  IsCpo(i;r_{10}), r_{10} \nPc r, Rcpo(i;r_{10}),\\\\
+  IsCpo(j;r_{10}), IsCpo(k;r_{10}), r_{10} \nPc r, IsCpo(k;r), IsCpo(j;r), \\\\
+ Rcpo(k;r), Rcpo(j;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq, IsCpo(i;r),\\\\
+  r_1 \Ps r_{10}, \\\\
+  IsCpo(i;r_{10}), r_{10} \nPc r, Rcpo(i;r_{10}),\\\\
+  IsCpo(k;r_{10}), r_{10} \nPc r, IsCpo(k;r), Rcpo(k;r), \\\\
+  IsCpo(j;r_{10}), IsCpo(j;r), IsCpo(r_1;r), r_1 \Pc r_{10}, \\\\
+  Rcpo(j;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq, IsCpo(i;r),\\\\
+  r_1 \Ps r_{10}, \\\\
+  IsCpo(i;r_{10}), r_{10} \nPc r, Rcpo(i;r_{10}),\\\\
+  IsCpo(k;r_{10}), r_{10} \nPc r, IsCpo(k;r), Rcpo(k;r), \\\\
+  IsCpo(j;r_{10}), IsCpo(j;r), IsCpo(r_1;r), r_1 \Pc r_{10}, \\\\
+  Rcpo(j;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq, IsCpo(i;r),IsCpo(j;r_{10}),\\\\
+   IsCpo(j;r), IsCpo(r_1;r), r_1 \Ps r_{10}, r_1 \Pc r_{10}, \\\\
+  IsCpo(i;r_{10}), r_{10} \nPc r, Rcpo(i;r_{10}),\\\\
+  IsCpo(k;r_{10}), r_{10} \nPc r, IsCpo(k;r), Rcpo(k;r), \\\\
+  Rcpo(j;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq,IsCpo(j;r_{10}),\\\\
+   IsCpo(j;r), IsCpo(r_1;r), r_1 \Ps r_{10}, r_1 \Pc r_{10}, \\\\
+  IsCpo(i;r_{10}), IsCpo(i;r), r_{10} \nPc r,IsCpo(k;r_{10}), IsCpo(k;r),\\\\
+   Rcpo(i;r_{10}), Rcpo(k;r), \\\\
+  Rcpo(j;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq,IsCpo(j;r_{10}),\\\\
+   IsCpo(j;r), IsCpo(r_1;r), r_1 \Ps r_{10}, r_1 \Pc r_{10}, \\\\
+  IsCpo(i;r_{10}), IsCpo(i;r), r_{10} \nPc r,IsCpo(k;r_{10}), IsCpo(k;r),\\\\
+   Rcpo(k;r), Rcpo(i;r_{10}), \\\\
+  Rcpo(j;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq,IsCpo(k;r_{10}), IsCpo(j;r_{10}),\\\\
+   IsCpo(j;r), IsCpo(r_1;r), r_1 \Ps r_{10}, r_1 \Pc r_{10}, \\\\
+  IsCpo(i;r_{10}), IsCpo(i;r),\\\\
+   IsCpo(k;r), r_{10} \nPc r, Rcpo(k;r),\\\\
+   Rcpo(i;r_{10}), \\\\
+  Rcpo(j;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq,IsCpo(k;r_{10}),\\\\
+  IsCpo(r_1;r), r_1 \Ps r_{10}, r_1 \Pc r_{10}, \\\\
+  IsCpo(k;r), r_{10} \nPc r, Rcpo(k;r),\\\\
+  IsCpo(i;r_{10}), IsCpo(i;r), r_{10} \nPc r, IsCpo(j;r), IsCpo(j;r_{10}), \\\\
+  Rcpo(i;r_{10}), Rcpo(j;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq,IsCpo(k;r_{10}),\\\\
+  IsCpo(r_1;r), r_1 \Ps r_{10}, r_1 \Pc r_{10}, \\\\
+  IsCpo(k;r), r_{10} \nPc r, Rcpo(k;r),\\\\
+  IsCpo(i;r_{10}), IsCpo(i;r), r_{10} \nPc r, IsCpo(j;r), IsCpo(j;r_{10}), \\\\
+   Rcpo(j;r), Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}),\\\\
+  IsCpo(r_1;r), r_1 \Ps r_{10}, r_1 \Pc r_{10}, \\\\
+  IsCpo(k;r), r_{10} \nPc r, Rcpo(k;r),\\\\
+   IsCpo(i;r), IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(j;r), r_{10} \nPc r, Rcpo(j;r), \\\\
+  Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}),\\\\
+  r_1 \Ps r_{10}, r_1 \Pc r_{10}, \\\\
+  IsCpo(k;r), r_{10} \nPc r, Rcpo(k;r),\\\\
+   IsCpo(j;r_{10}), IsCpo(j;r), r_{10} \nPc r, Rcpo(j;r), \\\\
+  IsCpo(i;r), IsCpo(i;r_{10}),  r_1 \Pc r_{10}, IsCpo(r_1;r), Rcpo(i;r_{10}), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}),\\\\
+  r_1 \Ps r_{10}, \\\\
+  IsCpo(k;r), r_{10} \nPc r, Rcpo(k;r),\\\\
+   IsCpo(j;r_{10}), IsCpo(j;r), r_{10} \nPc r, Rcpo(j;r), \\\\
+  IsCpo(i;r), IsCpo(i;r_{10}),  r_1 \Pc r_{10}, IsCpo(r_1;r), Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}),\\\\
+  r_1 \Ps r_{10}, r_1 \Pc r_{10}, \\\\
+  IsCpo(k;r), r_{10} \nPc r, Rcpo(k;r),\\\\
+   IsCpo(j;r_{10}), IsCpo(j;r), r_{10} \nPc r, Rcpo(j;r), \\\\
+  IsCpo(i;r), IsCpo(i;r_{10}),  IsCpo(r_1;r), Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), r_1 \Ps r_{10}, \\\\
+  IsCpo(k;r), r_{10} \nPc r, Rcpo(k;r),\\\\
+   IsCpo(j;r_{10}), IsCpo(j;r), r_{10} \nPc r, Rcpo(j;r), \\\\
+  IsCpo(i;r), IsCpo(i;r_{10}),  IsCpo(r_1;r), Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10}, \\\\
+  IsCpo(k;r), r_{10} \nPc r, Rcpo(k;r),\\\\
+   IsCpo(j;r), r_{10} \nPc r, Rcpo(j;r), \\\\
+  IsCpo(i;r),  IsCpo(r_1;r), Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+\\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10}, r_{10} \nPc r, \\\\
+  IsCpo(k;r),  Rcpo(k;r),\\\\
+   IsCpo(j;r), Rcpo(j;r), \\\\
+  IsCpo(i;r),  IsCpo(r_1;r), Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10}, r_1 \nPc r, \\\\
+  IsCpo(k;r),  Rcpo(k;r),\\\\
+   IsCpo(j;r), Rcpo(j;r), \\\\
+  IsCpo(i;r),  IsCpo(r_1;r), Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10}, r_1 \nPc r, \\\\
+  IsCpo(r_1;r), IsCpo(k;r),  Rcpo(k;r),\\\\
+   IsCpo(j;r), Rcpo(j;r), \\\\
+  IsCpo(i;r),  Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10},IsCpo(r_1;r), \\\\
+   IsCpo(k;r), r_1 \nPc r,  Rcpo(k;r),\\\\
+   IsCpo(j;r), r_1 \nPc r, Rcpo(j;r), \\\\
+  IsCpo(i;r),  r_1 \nPc r, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_{10} \Pu, r_1 \Ps r_{10},IsCpo(r_1;r), \\\\
+   IsCpo(k;r), r_1 \nPc r,  Rcpo(k;r),\\\\
+   IsCpo(j;r), r_1 \nPc r, Rcpo(j;r), \\\\
+  IsCpo(i;r),  r_1 \nPc r, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Pu, r_1 \Ps r_{10},IsCpo(r_1;r), \\\\
+   IsCpo(k;r), r_1 \nPc r,  Rcpo(k;r),\\\\
+   IsCpo(j;r), r_1 \nPc r, Rcpo(j;r), \\\\
+  IsCpo(i;r),  r_1 \nPc r, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10},IsCpo(r_1;r), \\\\
+   IsCpo(k;r), r_1 \nPc r, r_1 \Pu,  Rcpo(k;r),\\\\
+   IsCpo(j;r), r_1 \nPc r, Rcpo(j;r), \\\\
+  IsCpo(i;r),  r_1 \nPc r, Rcpo(i;r), Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10},IsCpo(r_1;r), \\\\
+   IsCpo(k;r), r_1 \nPc r,  Rcpo(k;r),\\\\
+   IsCpo(j;r), r_1 \nPc r, Rcpo(j;r), \\\\
+  IsCpo(i;r),  r_1 \nPc r, Rcpo(i;r), r_1 \Pu, Rcpo(r_1;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10},IsCpo(r_1;r), \\\\
+   IsCpo(k;r), r_1 \nPc r,  Rcpo(k;r),\\\\
+   IsCpo(j;r), r_1 \nPc r, Rcpo(j;r), \\\\
+  IsCpo(i;r),  r_1 \nPc r, Rcpo(i;r), r_1 \Pu, r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Pu, r_1 \Ps r_{10},IsCpo(r_1;r), \\\\
+   IsCpo(k;r), r_1 \nPc r,  Rcpo(k;r),\\\\
+   IsCpo(j;r), r_1 \nPc r, Rcpo(j;r), \\\\
+  IsCpo(i;r),  r_1 \nPc r, Rcpo(i;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10},IsCpo(r_1;r), \\\\
+   IsCpo(k;r), r_1 \nPc r,  Rcpo(k;r),\\\\
+   IsCpo(j;r), r_1 \nPc r, Rcpo(j;r), \\\\
+  IsCpo(i;r),  r_1 \nPc r, Rcpo(i;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10},IsCpo(r_1;r), r_1 \nPc r, \\\\
+   IsCpo(k;r), Rcpo(k;r),\\\\
+   IsCpo(j;r), Rcpo(j;r), \\\\
+   IsCpo(i;r),  Rcpo(i;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10},IsCpo(r_1;r),\\\\
+   IsCpo(k;r), Rcpo(k;r),\\\\
+   IsCpo(j;r), Rcpo(j;r), \\\\
+   IsCpo(i;r),  Rcpo(i;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10},IsCpo(r_1;r),\\\\
+   IsCpo(k;r), IsCpo(j;r), Rcpo(k;r), Rcpo(j;r), \\\\
+   IsCpo(i;r),  Rcpo(i;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10},IsCpo(r_1;r),\\\\
+   IsCpo(k;r), IsCpo(j;r), Rcpo(j;r), Rcpo(k;r), \\\\
+   IsCpo(i;r),  Rcpo(i;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10},IsCpo(r_1;r),\\\\
+    IsCpo(j;r), Rcpo(j;r),IsCpo(k;r), Rcpo(k;r), \\\\
+   IsCpo(i;r),  Rcpo(i;r), r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10},IsCpo(r_1;r),\\\\
+ IsCpo(j;r), Rcpo(j;r),IsCpo(k;r), IsCpo(i;r), Rcpo(k;r), Rcpo(i;r),\\\\
+ r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10},IsCpo(r_1;r),\\\\
+ IsCpo(k;r), IsCpo(i;r), IsCpo(j;r), Rcpo(j;r), Rcpo(i;r), Rcpo(k;r),\\\\\
+ r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\\Rq,IsCpo(k;r_{10}), IsCpo(i;r_{10}), IsCpo(j;r_{10}), r_1 \Ps r_{10},IsCpo(r_1;r),\\\\
+ IsCpo(k;r), IsCpo(i;r), IsCpo(j;r), Rcpo(i;r), Rcpo(j;r), Rcpo(k;r),\\\\\
+ r_1 \Os, &Tm(r_{10}),\\
+ \\
+ \\
+\\\Rq, IsCpo(i;r), IsCpo(j;r), IsCpo(k;r), IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k;r_{10}), IsCpo(r_1;r),\\\\
+ r_1 \Ps r_{10}, Rcpo(i;r), Rcpo(j;r), Rcpo(k;r), r_1 \Os, &Tm(r_{10}),
+\end{math}
+
+
+
+
+
+
+
+
+\bigskip
+\bigskip
+\section{}
+\[, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_1 \Pc r_{10}, r_2 \Pc r_{20}, r_{10} \nPc r_{20},\]
+\[, i_1 \Pne i_2, r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}), \Rq \sim, r_1 \Pne r_2,\]
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, i_1 \Pu, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, i_1 \Pu, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, i_1 \Pu, Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, i_1 \Pu, r_1 \Pne r_2, Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, i_2 \Pu, r_1 \Pne r_2, Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, i_2 \Pu, Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, i_2 \Pu,\\
+\\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, r_1 \Pne r_2, i_2 \Pu,\\
+\\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, i_2 \Pu, r_1 \Pne r_2,\\
+\\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, i_2 \Pu, Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, i_2 \Pu, r_1 \Pne r_2, Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, i_1 \Pu, r_1 \Pne r_2, Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, i_1 \Pu, Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, i_1 \Pu, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, i_1 \Pu, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\
+premise \; 2:\\
+,\In \Pn i_1, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq ,\In \Pn i_1,  IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}), \Ri \\
+\\
+,i_1 \nPu, \In \Ps i,  IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), \\\\
+i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, \\\\
+i_1 \nPu, Rcpo(i_1;r_{10}),\\\\
+Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), \\\\
+i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, \\\\
+i_1 \nPu, Cpo( r_{10}), r_{10} \On, i_1 \On, Rcpo(i_1;r_{10}),\\\\
+Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), \\\\
+i_1 \nPc r_{20}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2,i_1 \nPu, r_1 \Pne r_2, \\\\
+ i_2 \nPc r_{10}, Cpo( r_{10}), r_{10} \On, i_1 \On,\\\\
+ IsCpo(i_1;r_{10}), Rcpo(i_1;r_{10}),\\\\
+Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), \\\\
+i_1 \nPc r_{20}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2,i_2 \nPu, r_1 \Pne r_2, \\\\
+ i_2 \nPc r_{10}, Cpo( r_{10}), r_{10} \On, i_1 \On,\\\\
+ IsCpo(i_1;r_{10}), Rcpo(i_1;r_{10}),\\\\
+Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), \\\\
+i_1 \nPc r_{20}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, \\\\
+ i_2 \nPc r_{10}, Cpo( r_{10}), r_{10} \On, i_1 \On,\\\\
+ IsCpo(i_1;r_{10}), i_2 \nPu, Rcpo(i_1;r_{10}),\\\\
+Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), \\\\
+i_1 \nPc r_{20}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, \\\\
+ i_2 \nPc r_{10}, Cpo( r_{10}), r_{10} \On, i_1 \On,\\\\
+ IsCpo(i_1;r_{10}), i_2 \nPu, Rcpo(i_1;r_{10}),\\\\
+ i_2 \nPu, Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), \\\\
+i_1 \nPc r_{20}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, \\\\
+ i_2 \nPc r_{10}, Cpo( r_{10}), r_{10} \On, i_1 \On,\\\\
+ IsCpo(i_1;r_{10}), i_2 \nPu, Rcpo(i_1;r_{10}),\\\\
+ i_2 \nPu, Cpo(r_{20}), r_{20} \On, i _2 \On, Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), \\\\
+i_1 \nPc r_{20}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, i_2 \nPu, r_1 \Pne r_2, \\\\
+ i_2 \nPc r_{10}, Cpo( r_{10}), r_{10} \On, i_1 \On,\\\\
+ IsCpo(i_1;r_{10}), Rcpo(i_1;r_{10}),\\\\
+, Cpo(r_{20}), r_{20} \On, i _2 \On, Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), \\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, i_2 \nPu, r_1 \Pne r_2, \\\\
+ i_2 \nPc r_{10}, r_{10} \nPc r_{20}, Cpo( r_{10}), r_{10} \On, i_1 \On,\\\\
+ IsCpo(i_1;r_{10}),i_1 \nPc r_{20}, r_{10} \nPc r_{20}, Rcpo(i_1;r_{10}),\\\\
+, Cpo(r_{20}), r_{20} \On, i _2 \On, Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), \\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, i_2 \nPu, r_1 \Pne r_2, \\\\
+ i_2 \nPc r_{10}, r_{10} \nPc r_{20}, Cpo( r_{10}), r_{10} \On, i_1 \On,\\\\
+ IsCpo(i_1;r_{10}),i_1 \nPc r_{20}, r_{10} \nPc r_{20}, Cpo(r_{20}), r_{20} \On,\\\\
+ Rcpo(i_1;r_{10}), i _2 \On, Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), \\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, i_2 \nPu, r_1 \Pne r_2, \\\\
+ r_{10} \nPc r_{20}, Cpo( r_{10}), r_{10} \On, i_1 \On,\\\\
+ i_1 \nPc r_{20}, r_{10} \nPc r_{20}, IsCpo(i_1;r_{10}), Cpo(r_{20}), r_{20} \On,\\\\
+ i_2 \nPc r_{10}, Rcpo(i_1;r_{10}), i _2 \On, Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), \\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, i_2 \nPu, r_1 \Pne r_2, \\\\
+ r_{10} \nPc r_{20}, Cpo( r_{10}), r_{10} \On, i_1 \On,\\\\
+ i_1 \nPc r_{20}, r_{10} \nPc r_{20}, Cpo(r_{20}), r_{20} \On,\\\\
+ IsCpo(i_1;r_{10}), i_2 \nPc r_{10}, Rcpo(i_1;r_{10}), i _2 \On, Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), \\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, i_2 \nPu, r_1 \Pne r_2, \\\\
+ r_{10} \nPc r_{20}, Cpo( r_{10}), r_{10} \On, i_1 \On,\\\\
+ i_1 \nPc r_{20}, r_{10} \nPc r_{20}, Cpo(r_{20}), r_{20} \On,\\\\
+ IsCpo(i_1;r_{10}), i_2 \nPc r_{10}, i _2 \On, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), \\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, i_2 \nPu, r_1 \Pne r_2, \\\\
+ r_{10} \nPc r_{20}, Cpo( r_{10}), r_{10} \On,\\\\
+ i_1 \nPc r_{20}, r_{10} \nPc r_{20}, i_1 \On, Cpo(r_{20}), r_{20} \On, i _2 \On,\\\\
+ IsCpo(i_1;r_{10}), i_2 \nPc r_{10}, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), \\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, i_2 \nPu, r_1 \Pne r_2, \\\\
+ r_{10} \nPc r_{20}, Cpo( r_{10}), r_{10} \On,\\\\
+ i_1 \nPc r_{20}, r_{10} \nPc r_{20}, Cpo(r_{20}), r_{20} \On, i_1 \On, i _2 \On,\\\\
+ IsCpo(i_1;r_{10}), i_2 \nPc r_{10}, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), i_2 \nPc r_{10}, \\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, i_2 \nPu, r_1 \Pne r_2, \\\\
+ IsCpo(i_1;r_{10}), r_{10} \nPc r_{20}, Cpo( r_{10}),\\\\
+ i_1 \nPc r_{20}, r_{10} \nPc r_{20}, r_{10} \On, Cpo(r_{20}), r_{20} \On,\\\\
+ i_1 \On, i _2 \On, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), i_2 \nPc r_{10}, \\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, i_2 \nPu, r_1 \Pne r_2, \\\\
+ IsCpo(i_1;r_{10}), r_{10} \nPc r_{20}, Cpo( r_{10}),\\\\
+ i_1 \nPc r_{20}, r_{10} \nPc r_{20}, Cpo(r_{20}),\\\\
+  r_{10} \On, r_{20} \On, i_1 \On, i _2 \On, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), i_2 \nPc r_{10}, \\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, i_2 \nPu, r_1 \Pne r_2, \\\\
+ IsCpo(i_1;r_{10}), r_{10} \nPc r_{20}, i_1 \nPc r_{20}, r_{10} \nPc r_{20},\\\\
+ Cpo( r_{10}), Cpo(r_{20}),\\\\
+  r_{10} \On, r_{20} \On, i_1 \On, i _2 \On, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), i_2 \nPc r_{10}, \\\\
+ i_1 \Pne i_2, i_2 \nPu, IsCpo(i_1;r_{10}), r_{10} \nPc r_{20}, i_1 \nPc r_{20}, \\\\
+ r_1 \Pne r_2,r_1 \Pc r_{10}, r_2 \Pc r_{20}, r_{10} \nPc r_{20}, r_{10} \Pu, r_{20} \Pu, \\\\
+ Cpo( r_{10}), Cpo(r_{20}),\\\\
+  r_{10} \On, r_{20} \On, i_1 \On, i _2 \On, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), i_2 \nPc r_{10}, \\\\
+ i_1 \Pne i_2, i_2 \nPu, IsCpo(i_1;r_{10}), r_{10} \nPc r_{20}, i_1 \nPc r_{20}, \\\\
+ r_1 \Pne r_2,r_1 \Pc r_{10}, r_2 \Pc r_{20}, r_{10} \nPc r_{20}, r_{10} \Pu, r_{20} \Pu, \\\\
+ Cpo( r_{10}), Cpo(r_{20}), r_1 \Pne r_2,\\\\
+  r_{10} \On, r_{20} \On, i_1 \On, i _2 \On, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+1\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), i_2 \nPc r_{10}, \\\\
+ i_1 \Pne i_2, i_2 \nPu, IsCpo(i_1;r_{10}), r_{10} \nPc r_{20}, i_1 \nPc r_{20}, \\\\
+ r_1 \Pne r_2,r_1 \Pc r_{10}, r_2 \Pc r_{20}, r_{10} \nPc r_{20}, \\\\
+ Cpo( r_{10}), Cpo(r_{20}),\\\\
+  r_{10} \On, r_{20} \On, i_1 \On, i _2 \On,\\\\
+  r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, IsCpo(i_2;r_{20}), \\\\
+ i_1 \Pne i_2, i_2 \nPu, i_1 \nPc r_{20}, \\\\
+ r_1 \Pne r_2,r_1 \Pc r_{10}, r_2 \Pc r_{20}, \\\\
+  IsCpo(i_1;r_{10}), i_2 \nPc r_{10},r_{10} \nPc r_{20}, Cpo( r_{10}),\\\\
+ r_{10} \nPc r_{20}, Cpo(r_{20}),\\\\
+  r_{10} \On, r_{20} \On, i_1 \On, i _2 \On,\\\\
+  r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, \\\\
+ i_1 \Pne i_2, i_2 \nPu, \\\\
+ r_1 \Pne r_2,r_1 \Pc r_{10}, r_2 \Pc r_{20}, \\\\
+  IsCpo(i_1;r_{10}), i_2 \nPc r_{10},r_{10} \nPc r_{20}, Cpo( r_{10}),\\\\
+  IsCpo(i_2;r_{20}), i_1 \nPc r_{20},r_{10} \nPc r_{20}, Cpo(r_{20}),\\\\
+  r_{10} \On, r_{20} \On, i_1 \On, i _2 \On,\\\\
+  r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, \\\\
+ r_1 \Pne r_2,r_1 \Pc r_{10}, r_2 \Pc r_{20}, \\\\
+  IsCpo(i_1;r_{10}), i_2 \nPc r_{10},r_{10} \nPc r_{20}, Cpo( r_{10}),\\\\
+  IsCpo(i_2;r_{20}), i_1 \nPc r_{20},r_{10} \nPc r_{20}, Cpo(r_{20}),\\\\
+ i_1 \Pne i_2, i_2 \nPu, r_{10} \On, r_{20} \On, i_1 \On, i _2 \On,\\\\
+  r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, \In \Ps i_1, \\\\
+ r_1 \Pne r_2,r_1 \Pc r_{10}, r_2 \Pc r_{20}, \\\\
+  IsCpo(i_1;r_{10}), i_2 \nPc r_{10},r_{10} \nPc r_{20}, Cpo( r_{10}),\\\\
+  IsCpo(i_2;r_{20}), i_1 \nPc r_{20},r_{10} \nPc r_{20}, Cpo(r_{20}),\\\\
+ r_{10} \On, r_{20} \On, i_1 \nPu, i_2 \nPu, i_1 \On, i _2 \On,i_1 \Pne i_2,\\\\
+  r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, r_1 \Pne r_2,r_1 \Pc r_{10}, r_2 \Pc r_{20}, \\\\
+  IsCpo(i_1;r_{10}), i_2 \nPc r_{10},r_{10} \nPc r_{20}, Cpo( r_{10}),\\\\
+  IsCpo(i_2;r_{20}), i_1 \nPc r_{20},r_{10} \nPc r_{20}, Cpo(r_{20}), \In \Ps i_1,\\\\
+  r_{10} \On, r_{20} \On, i_1 \nPu, i_2 \nPu, i_1 \On, i _2 \On,\\\\
+ i_1 \Pne i_2, r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, r_1 \Pne r_2,r_1 \Pc r_{10}, r_2 \Pc r_{20}, \\\\
+  IsCpo(i_1;r_{10}), i_2 \nPc r_{10},r_{10} \nPc r_{20}, Cpo( r_{10}),\\\\
+  IsCpo(i_2;r_{20}), i_1 \nPc r_{20},r_{10} \nPc r_{20}, Cpo(r_{20}),\\\\
+  r_{10} \On, r_{20} \On, i_1 \nPu, i_2 \nPu, i_1 \On, i _2 \On,\\\\
+   \In \Pn i_1,\\\\
+ i_1 \Pne i_2, r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, r_1 \Pne r_2,r_1 \Pc r_{10}, r_2 \Pc r_{20}, \\\\
+  IsCpo(i_1;r_{10}), i_2 \nPc r_{10},r_{10} \nPc r_{20}, Cpo( r_{10}), r_{10} \On,\\\\
+  IsCpo(i_2;r_{20}), i_1 \nPc r_{20},r_{10} \nPc r_{20}, Cpo(r_{20}),\\\\
+  r_{20} \On, i_1 \nPu, i_2 \nPu, i_1 \On, i _2 \On,\\\\
+   \In \Pn i_1,\\\\
+ i_1 \Pne i_2, r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, r_1 \Pne r_2, \\\\
+  IsCpo(i_1;r_{10}), i_2 \nPc r_{10},r_{10} \nPc r_{20}, Cpo( r_{10}),r_{10} \On,\\\\
+  IsCpo(i_2;r_{20}), i_1 \nPc r_{20},r_{10} \nPc r_{20}, Cpo(r_{20}),\\\\
+   r_{20} \On, i_1 \nPu, i_2 \nPu, i_1 \On, i _2 \On,\\\\
+   \In \Pn i_1, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}),\\\\
+   i_1 \nPc r_{20}, i_2 \nPc r_{10},r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\
+\\
+\\\Rq, r_1 \Pne r_2, \\\\
+  IsCpo(i_1;r_{10}), i_2 \nPc r_{10},r_{10} \nPc r_{20}, Cpo( r_{10}), r_{10} \On,\\\\
+  IsCpo(i_2;r_{20}), i_1 \nPc r_{20},r_{10} \nPc r_{20}, Cpo(r_{20}),\\\\
+  r_{20} \On, i_1 \nPu, i_2 \nPu, i_1 \On, i _2 \On,\\\\
+ \In \Pn i_1, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}),\\\\
+ i_1 \nPc r_{20}, i_2 \nPc r_{10},r_{10} \nPc r_{20},\\\\
+ r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2,\\\\
+ Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, r_1 \Pne r_2,r_1 \Pc r_{10}, r_2 \Pc r_{20}, \\\\
+  IsCpo(i_1;r_{10}), i_2 \nPc r_{10},r_{10} \nPc r_{20}, Cpo( r_{10}),r_{10} \On,\\\\
+  IsCpo(i_2;r_{20}), i_1 \nPc r_{20},r_{10} \nPc r_{20}, Cpo(r_{20}),\\\\
+   r_{20} \On, i_1 \nPu, i_2 \nPu, i_1 \On, i _2 \On,\\\\
+ \In \Pn i_1, i_1 \Pne i_2, r_1 \Pne r_2,\\\\
+ Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, r_1 \Pne r_2,r_1 \Pc r_{10}, r_2 \Pc r_{20}, \\\\
+  IsCpo(i_1;r_{10}), i_2 \nPc r_{10},r_{10} \nPc r_{20}, Cpo( r_{10}),\\\\
+  IsCpo(i_2;r_{20}), i_1 \nPc r_{20},r_{10} \nPc r_{20}, Cpo(r_{20}),\\\\
+  r_{10} \On, r_{20} \On, i_1 \nPu, i_2 \nPu, i_1 \On, i _2 \On,\\\\
+ \In \Pn i_1, i_1 \Pne i_2, r_1 \Pne r_2,\\\\
+ Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, \In \Ps i_1,r_1 \Pc r_{10}, r_2 \Pc r_{20}, \\\\
+   r_1 \Pne r_2,i_1 \Pne i_2, i_1 \nPu, i_2 \nPu,\\\\
+  r_{10} \nPc r_{20}, Cpo( r_{10}),r_{10} \On, i_1 \On,\\\\
+  IsCpo(i_2;r_{20}), i_1 \nPc r_{20},r_{10} \nPc r_{20}, Cpo(r_{20}),r_{20} \On,\\\\
+ IsCpo(i_1;r_{10}), i_2 \nPc r_{10}, i _2 \On,\\\\
+ Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, \In \Ps i_1,r_1 \Pc r_{10}, r_2 \Pc r_{20}, \\\\
+   r_1 \Pne r_2,i_1 \Pne i_2, i_1 \nPu, i_2 \nPu,\\\\
+  r_{10} \nPc r_{20}, Cpo( r_{10}),r_{10} \On, i_1 \On,\\\\
+  IsCpo(i_2;r_{20}), i_1 \nPc r_{20},r_{10} \nPc r_{20}, Cpo(r_{20}),r_{20} \On,\\\\
+ IsCpo(i_1;r_{10}), i_2 \nPc r_{10},\\\\
+ Rcpo(i_1;r_{10}), i _2 \On, Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, \In \Ps i_1,r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_2 \nPc r_{10}, \\\\
+   IsCpo(i_2;r_{20}),r_1 \Pne r_2,i_1 \Pne i_2, i_1 \nPu, i_2 \nPu,\\\\
+  r_{10} \nPc r_{20}, Cpo( r_{10}),r_{10} \On, i_1 \On,\\\\
+ IsCpo(i_1;r_{10}), i_1 \nPc r_{20}, r_{10} \nPc r_{20}, Cpo(r_{20}),r_{20} \On, \\\\
+ Rcpo(i_1;r_{10}), i _2 \On, Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, \In \Ps i_1,r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_2 \nPc r_{10}, \\\\
+   IsCpo(i_2;r_{20}),r_1 \Pne r_2,i_1 \Pne i_2, i_1 \nPu, i_2 \nPu,\\\\
+  r_{10} \nPc r_{20}, Cpo( r_{10}),r_{10} \On, i_1 \On,\\\\
+ IsCpo(i_1;r_{10}), i_1 \nPc r_{20}, r_{10} \nPc r_{20}, \\\\
+ Rcpo(i_1;r_{10}), Cpo(r_{20}),r_{20} \On, i _2 \On, Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, \In \Ps i_1,r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_2 \nPc r_{10}, \\\\
+   IsCpo(i_2;r_{20}),r_1 \Pne r_2,i_1 \Pne i_2, i_2 \nPu,\\\\
+ IsCpo(i_1;r_{10}), i_1 \nPc r_{20}, r_{10} \nPc r_{20}, \\\\
+  i_1 \nPu, Cpo( r_{10}),r_{10} \On, i_1 \On,\\\\
+ Rcpo(i_1;r_{10}), Cpo(r_{20}),r_{20} \On, i _2 \On, Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, \In \Ps i_1,r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_2 \nPc r_{10}, \\\\
+   IsCpo(i_2;r_{20}),r_1 \Pne r_2,i_1 \Pne i_2, i_2 \nPu,\\\\
+ IsCpo(i_1;r_{10}), i_1 \nPc r_{20}, r_{10} \nPc r_{20}, i_1 \nPu, \\\\
+ Rcpo(i_1;r_{10}), Cpo(r_{20}),r_{20} \On, i _2 \On, Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, \In \Ps i_1,r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_2 \nPc r_{10}, \\\\
+   IsCpo(i_2;r_{20}),r_1 \Pne r_2,i_1 \Pne i_2, i_1 \nPu,\\\\
+  i_1 \nPc r_{20}, r_{10} \nPc r_{20},IsCpo(i_1;r_{10}), i_2 \nPu, \\\\
+ Rcpo(i_1;r_{10}), Cpo(r_{20}),r_{20} \On, i _2 \On, Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, \In \Ps i_1,r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_2 \nPc r_{10}, \\\\
+   IsCpo(i_2;r_{20}),r_1 \Pne r_2,i_1 \Pne i_2, i_1 \nPu,\\\\
+  i_1 \nPc r_{20}, r_{10} \nPc r_{20},IsCpo(i_1;r_{10}), i_2 \nPu, \\\\
+ Rcpo(i_1;r_{10}), i_2 \nPu, Cpo(r_{20}),r_{20} \On, i _2 \On, Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, \In \Ps i_1,r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_2 \nPc r_{10}, \\\\
+   IsCpo(i_2;r_{20}),r_1 \Pne r_2,i_1 \Pne i_2, i_1 \nPu,\\\\
+  i_1 \nPc r_{20}, r_{10} \nPc r_{20},IsCpo(i_1;r_{10}), i_2 \nPu, \\\\
+ Rcpo(i_1;r_{10}), i_2 \nPu, Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, \In \Ps i_1,r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_2 \nPc r_{10}, \\\\
+   IsCpo(i_2;r_{20}),r_1 \Pne r_2,i_1 \Pne i_2, i_2 \nPu, i_1 \nPu,\\\\
+  i_1 \nPc r_{20}, r_{10} \nPc r_{20},IsCpo(i_1;r_{10}), \\\\
+ Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+\\\Rq, i_1 \nPu, \In \Ps i_1, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), \\\\
+  i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20}, r_1 \Pc r_{10}, r_2 \Pc r_{20},\\\\
+r_1 \Pne r_2,i_1 \Pne i_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\
+\\
+conclusion:\\\\
+, IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\\\
+\Rq , IsCpo(i_1;r_{10}), IsCpo(i_2;r_{20}), i_1 \nPc r_{20}, i_2 \nPc r_{10}, r_{10} \nPc r_{20},\\\\
+r_1 \Pc r_{10}, r_2 \Pc r_{20}, i_1 \Pne i_2, r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}), r_1 \Pne r_2,
+\end{math}
+\bigskip
+\bigskip
+
+
+
+
+
+
+
+
+
+\[, IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(j_1;r_{20}),\]
+\[r_{10} \nPc r_{20}, i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20},\]
+\[Rcpo(i_1;r_{10}),Rcpo(j_1;r_{10}), Rcpo(i_2;r_{20}),Rcpo(j_2;r_{20}), \Rq \sim, r_1 \Pne r_2, \]
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+,  IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(j_1;r_{20}),\\\\
+  r_{10} \nPc r_{20}, i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20},\\\\
+  Rcpo(i_1;r_{10}),Rcpo(j_1;r_{10}), Rcpo(i_2;r_{20}),Rcpo(j_2;r_{20}),\\
+  \\
+\\\Rq,  IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(j_1;r_{20}),\\\\
+ i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20},\\\\
+ IsCpo(i_2;r_{10}), IsCpo(j_2;r_{10}), IsCpo(i_2;r_{20}), IsCpo(j_2;r_{20}),\\\\ 
+ r_{10} \nPc r_{20}, Rcpo(i_1;r_{10}),\\\\
+ Rcpo(j_1;r_{10}), Rcpo(i_2;r_{20}),Rcpo(j_2;r_{20}),\\
+ \\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(j_1;r_{20}),\\\\
+ IsCpo(i_2;r_{10}), IsCpo(j_2;r_{10}), IsCpo(i_2;r_{20}), IsCpo(j_2;r_{20}),\\\\ 
+ i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20},\\\\
+ IsCpo(i_1;r_{10}), r_{10} \nPc r_{20}, Rcpo(i_1;r_{10}),\\\\
+ Rcpo(j_1;r_{10}), Rcpo(i_2;r_{20}),Rcpo(j_2;r_{20}),\\
+ \\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(j_1;r_{20}),\\\\
+ IsCpo(i_2;r_{10}), IsCpo(j_2;r_{10}), IsCpo(i_2;r_{20}), IsCpo(j_2;r_{20}),\\\\ 
+ i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20},\\\\
+ IsCpo(i_1;r_{10}), r_{10} \nPc r_{20}, Rcpo(i_1;r_{10}),\\\\
+ IsCpo(j_1;r_{10}), IsCpo(i_2;r_{20}), r_{10} \nPc r_{20}, IsCpo(j_1;r_{20}),IsCpo(i_2;r_{10}),\\\\
+ Rcpo(j_1;r_{10}), Rcpo(i_2;r_{20}),Rcpo(j_2;r_{20}),\\
+ \\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(j_1;r_{20}),\\\\
+ IsCpo(i_2;r_{10}), IsCpo(j_2;r_{10}), IsCpo(i_2;r_{20}), IsCpo(j_2;r_{20}),\\\\ 
+ i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20},\\\\
+ IsCpo(i_1;r_{10}), r_{10} \nPc r_{20}, Rcpo(i_1;r_{10}),\\\\
+ IsCpo(j_1;r_{10}), IsCpo(i_2;r_{20}), r_{10} \nPc r_{20}, IsCpo(j_1;r_{20}),IsCpo(i_2;r_{10}),\\\\
+ Rcpo(i_2;r_{20}), Rcpo(j_1;r_{10}),Rcpo(j_2;r_{20}),\\
+ \\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(j_1;r_{20}),\\\\
+ IsCpo(i_2;r_{10}), IsCpo(j_2;r_{10}), IsCpo(i_2;r_{20}), IsCpo(j_2;r_{20}),\\\\ 
+ i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20}, r_{10} \nPc r_{20},\\\\
+ i_1 \Pne i_2, j_1 \Pne j_2, r_1 \Pu, r_2 \Pu, r_1 \Pne r_2, r_1 \Pc r_{10}, r_2 \Pc r_{20},\\\\
+ IsCpo(i_1;r_{10}), r_{10} \nPc r_{20},\\\\
+ Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\\\
+  Rcpo(j_1;r_{10}),Rcpo(j_2;r_{20}),\\
+ \\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(j_1;r_{20}),\\\\
+ IsCpo(i_2;r_{10}), IsCpo(j_2;r_{10}), IsCpo(i_2;r_{20}), IsCpo(j_2;r_{20}),\\\\ 
+ i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20}, r_{10} \nPc r_{20},\\\\
+ i_1 \Pne i_2, j_1 \Pne j_2, r_1 \Pne r_2, r_1 \Pc r_{10}, r_2 \Pc r_{20},\\\\
+ IsCpo(i_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(i_2;r_{10}), IsCpo(i_2;r_{20}), r_{10} \nPc r_{20}, r_1 \Pc r_{10}, r_2 \Pc r_{20},\\\\
+ i_1 \Pne i_2, r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}),\\\\
+  Rcpo(j_1;r_{10}),Rcpo(j_2;r_{20}),\\
+ \\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(j_1;r_{20}),\\\\
+ IsCpo(i_2;r_{10}), IsCpo(j_2;r_{10}), IsCpo(i_2;r_{20}), IsCpo(j_2;r_{20}),\\\\ 
+ i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20}, r_{10} \nPc r_{20},\\\\
+ i_1 \Pne i_2, j_1 \Pne j_2, r_1 \Pne r_2, r_1 \Pc r_{10}, r_2 \Pc r_{20},\\\\
+ IsCpo(i_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(i_2;r_{10}), IsCpo(i_2;r_{20}), r_{10} \nPc r_{20}, r_1 \Pc r_{10}, r_2 \Pc r_{20},\\\\
+ i_1 \Pne i_2, r_1 \Pne r_2, Rcpo(i_1;r_{10}), Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\\\
+  Rcpo(j_1;r_{10}),Rcpo(j_2;r_{20}),\\
+ \\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(j_1;r_{20}),\\\\
+ IsCpo(i_2;r_{10}), IsCpo(j_2;r_{10}), IsCpo(i_2;r_{20}), IsCpo(j_2;r_{20}),\\\\ 
+ i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20}, r_{10} \nPc r_{20},\\\\
+ i_1 \Pne i_2, j_1 \Pne j_2, r_1 \Pne r_2, r_1 \Pc r_{10}, r_2 \Pc r_{20},\\\\
+ IsCpo(i_1;r_{10}), r_{10} \nPc r_{20}, Rcpo(i_1;r_{10}),\\\\
+ Rcpo(i_2;r_{20}), r_1 \Pne r_2,\\\\
+  Rcpo(j_1;r_{10}),Rcpo(j_2;r_{20}),\\
+ \\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(j_1;r_{20}),\\\\
+ IsCpo(i_2;r_{10}), IsCpo(j_2;r_{10}), IsCpo(i_2;r_{20}), IsCpo(j_2;r_{20}),\\\\ 
+ i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20}, r_{10} \nPc r_{20},\\\\
+ i_1 \Pne i_2, j_1 \Pne j_2, r_1 \Pne r_2, r_1 \Pc r_{10}, r_2 \Pc r_{20},\\\\
+ IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(j_2;r_{10}), r_{10} \nPc r_{20}, Rcpo(i_1;r_{10}),\\\\
+ IsCpo(i_2;r_{20}), IsCpo(j_1;r_{20}), IsCpo(j_2;r_{20}), r_{10} \nPc r_{20}, Rcpo(i_2;r_{20}),\\\\
+ r_1 \Pne r_2, Rcpo(j_1;r_{10}),Rcpo(j_2;r_{20}),\\
+ \\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(j_1;r_{20}),\\\\
+ IsCpo(i_2;r_{10}), IsCpo(j_2;r_{10}), IsCpo(i_2;r_{20}), IsCpo(j_2;r_{20}),\\\\ 
+ i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20}, r_{10} \nPc r_{20},\\\\
+ i_1 \Pne i_2, j_1 \Pne j_2, r_1 \Pne r_2, r_1 \Pc r_{10}, r_2 \Pc r_{20},\\\\
+ IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(j_2;r_{10}), r_{10} \nPc r_{20}, Rcpo(i_1;r_{10}),\\\\
+ IsCpo(i_2;r_{20}), IsCpo(j_1;r_{20}), IsCpo(j_2;r_{20}), r_{10} \nPc r_{20}, Rcpo(i_2;r_{20}),\\\\
+ j_1 \Pne j_2, r_1 \Pne r_2, Rcpo(j_1;r_{10}),Rcpo(j_2;r_{20}),\\
+ \\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(j_1;r_{20}),\\\\
+ IsCpo(i_2;r_{10}), IsCpo(j_2;r_{10}), IsCpo(i_2;r_{20}), IsCpo(j_2;r_{20}),\\\\ 
+ i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20}, r_{10} \nPc r_{20},\\\\
+ i_1 \Pne i_2, j_1 \Pne j_2, r_1 \Pne r_2, r_1 \Pc r_{10}, r_2 \Pc r_{20},\\\\
+ IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(j_2;r_{10}), r_{10} \nPc r_{20}, Rcpo(i_1;r_{10}),\\\\
+ IsCpo(i_2;r_{20}), IsCpo(j_1;r_{20}), IsCpo(j_2;r_{20}), r_{10} \nPc r_{20}, Rcpo(i_2;r_{20}),\\\\
+ IsCpo(j_1;r_{10}), IsCpo(j_1;r_{20}), IsCpo(j_2;r_{10}), IsCpo(j_2;r_{20}), r_{10} \nPc r_{20}, \\\\
+ r_1 \Pc r_{10}, r_2 \Pc r_{20},j_1 \Pne j_2, r_1 \Pne r_2, Rcpo(j_1;r_{10}),Rcpo(j_2;r_{20}),\\
+ \\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(j_1;r_{20}),\\\\
+ IsCpo(i_2;r_{10}), IsCpo(j_2;r_{10}), IsCpo(i_2;r_{20}), IsCpo(j_2;r_{20}),\\\\ 
+ i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20}, r_{10} \nPc r_{20},\\\\
+ i_1 \Pne i_2, j_1 \Pne j_2, r_1 \Pne r_2, r_1 \Pc r_{10}, r_2 \Pc r_{20},\\\\
+ IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(j_2;r_{10}), r_{10} \nPc r_{20}, Rcpo(i_1;r_{10}),\\\\
+ IsCpo(i_2;r_{20}), IsCpo(j_1;r_{20}), IsCpo(j_2;r_{20}), r_{10} \nPc r_{20}, Rcpo(i_2;r_{20}),\\\\
+ IsCpo(j_1;r_{10}), IsCpo(j_1;r_{20}), IsCpo(j_2;r_{10}), IsCpo(j_2;r_{20}), r_{10} \nPc r_{20}, \\\\
+ r_1 \Pc r_{10}, r_2 \Pc r_{20},j_1 \Pne j_2, r_1 \Pne r_2,\\\\
+ Rcpo(j_1;r_{10}),Rcpo(j_2;r_{20}), r_1 \Pne r_2,\\
+ \\
+\\\Rq, IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(j_1;r_{20}),\\\\
+ IsCpo(i_2;r_{10}), IsCpo(j_2;r_{10}), IsCpo(i_2;r_{20}), IsCpo(j_2;r_{20}),\\\\ 
+ i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20}, r_{10} \nPc r_{20},\\\\
+ i_1 \Pne i_2, j_1 \Pne j_2, r_1 \Pne r_2, r_1 \Pc r_{10}, r_2 \Pc r_{20},\\\\
+ IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(j_2;r_{10}), r_{10} \nPc r_{20}, Rcpo(i_1;r_{10}),\\\\
+ IsCpo(i_2;r_{20}), IsCpo(j_1;r_{20}), IsCpo(j_2;r_{20}), r_{10} \nPc r_{20}, Rcpo(i_2;r_{20}),\\\\
+ Rcpo(j_1;r_{10}),Rcpo(j_2;r_{20}), r_1 \Pne r_2,\\
+ \\
+\\\Rq,  IsCpo(i_1;r_{10}), IsCpo(j_1;r_{10}), IsCpo(i_1;r_{20}), IsCpo(j_1;r_{20}),\\\\
+  r_{10} \nPc r_{20}, i_1 \Ps i_2, j_1 \Ps j_2, r_1 \Ps r_{10}, r_2 \Ps r_{20},\\\\
+  Rcpo(i_1;r_{10}),Rcpo(j_1;r_{10}), Rcpo(i_2;r_{20}),Rcpo(j_2;r_{20}), r_1 \Pne r_2,
+\end{math}
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+
+
+
+
+\[, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\]
+\[, r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\]
+\[, Rcpo(k_1;r_{10}),Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}), \Rq \sim, r_1 \Pnm r_2, \]
+induction \; proof:\\
+\begin{math} 
+premise \; 1:\\
+, k_1 \Pu, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+ r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+ Rcpo(k_1;r_{10}),Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\
+\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    k_1 \Pu, Rcpo(k_1;r_{10}),Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    k_1 \Pu, Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, k_1 \Pu, i \Pnm j,\\\\
+     IsCpo(i;r_{10}), k_2 \nPc r_{10}, k_2 \Pu, Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, k_1 \Pu, i \Pnm j,\\\\
+     IsCpo(i;r_{10}), k_2 \nPc r_{10}, Rcpo(i;r_{10}), k_2 \Pu, Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, k_1 \Pu, i \Pnm j,\\\\
+     IsCpo(i;r_{10}), k_2 \nPc r_{10}, Rcpo(i;r_{10}), k_2 \Pu, Rcpo(j;r_{20}),\\\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, k_1 \Pu, i \Pnm j,\\\\
+    i \Oc i_0, j \Oc j_0, i_0 \Pnm j_0, i_0 \Os, j_0 \Os, \\\\
+     IsCpo(i;r_{10}), Rcpo(i;r_{10}),\\\\
+     Rcpo(j;r_{20}),\\\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, k_1 \Pu, i \Pnm j,\\\\
+    i \Oc i_0, j \Oc j_0, i_0 \Pnm j_0, \\\\
+    IsCpo(i;r_{10}),i \Ps i_0,  r_1 \Ps r_{10},Rcpo(i;r_{10}),\\\\ 
+    i_0 \Os, j_0 \Os,  Rcpo(j;r_{20}),\\\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, k_1 \Pu, i \Pnm j,\\\\
+    i \Oc i_0, j \Oc j_0, i_0 \Pnm j_0, \\\\
+    IsCpo(i;r_{10}),i \Ps i_0,  r_1 \Ps r_{10}, Rcpo(i;r_{10}), i_0 \Pne r_1,\\\\ 
+    i_0 \Os, j_0 \Os,  Rcpo(j;r_{20}),\\\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, k_1 \Pu, i \Pnm j,\\\\
+    i \Oc i_0, j \Oc j_0, i_0 \Pnm j_0, \\\\
+    IsCpo(i;r_{10}),   r_{10} \nPc r_{20}, Rcpo(i;r_{10}),\\\\ 
+    i_0 \Pne r_1, IsCpo(j;r_{20}), i_0 \Os, j_0 \Os,  Rcpo(j;r_{20}),\\\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, k_1 \Pu, i \Pnm j,\\\\
+    i \Oc i_0, j \Oc j_0, i_0 \Pnm j_0, \\\\
+    IsCpo(i;r_{10}),   r_{10} \nPc r_{20}, Rcpo(i;r_{10}),\\\\ 
+     IsCpo(j;r_{20}), i_0 \nPc r_{20}, r_1 \nPc r_{20}, i_0 \Pne r_1,  Rcpo(j;r_{20}), i_0 \Os, j_0 \Os,\\\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, k_1 \Pu, i \Pnm j,\\\\
+    i \Oc i_0, j \Oc j_0, i_0 \Pnm j_0, \\\\
+    IsCpo(i;r_{10}),   r_{10} \nPc r_{20}, Rcpo(i;r_{10}),\\\\ 
+     IsCpo(j;r_{20}), i_0 \nPc r_{20}, r_1 \nPc r_{20},  Rcpo(j;r_{20}),\\\\
+     i_0 \Pne r_1, i_0 \Os, j_0 \Os,\\\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10}, r_2 \Ps r_{20}, k_1 \Ps k_2, k_1 \Pu, i \Pnm j,\\\\
+    i \Oc i_0, j \Oc j_0, i_0 \Pnm j_0, \\\\
+    IsCpo(i;r_{10}),   r_{10} \nPc r_{20}, Rcpo(i;r_{10}),\\\\ 
+     IsCpo(j;r_{20}), j \Ps j_0,  r_2 \Ps r_{20},  Rcpo(j;r_{20}), \\\\
+    i_0 \Pne r_1, i_0 \Os, j_0 \Os,\\\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10}, r_2 \Ps r_{20}, k_1 \Ps k_2, k_1 \Pu, i \Pnm j,\\\\
+    i \Oc i_0, j \Oc j_0, i_0 \Pnm j_0, \\\\
+    IsCpo(i;r_{10}),   r_{10} \nPc r_{20}, Rcpo(i;r_{10}),\\\\ 
+     IsCpo(j;r_{20}), j \Ps j_0,  r_2 \Ps r_{20},  Rcpo(j;r_{20}), \\\\
+    j_0 \Pne r_2, i_0 \Pne r_1, i_0 \Os, j_0 \Os,\\\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10}, r_2 \Ps r_{20}, k_1 \Ps k_2, k_1 \Pu, i \Pnm j,\\\\
+    i \Oc i_0, j \Oc j_0, i_0 \Pnm j_0, \\\\
+    IsCpo(i;r_{10}),  i_0 \nPc r_{10}, j_0 \nPc r_{10},  i_0 \Pnm j_0, Rcpo(i;r_{10}),\\\\ 
+     IsCpo(j;r_{20}),  i_0 \nPc r_{20}, j_0 \nPc r_{20},  Rcpo(j;r_{20}), \\\\
+    j_0 \Pne r_2, i_0 \Pne r_1, i_0 \Os, j_0 \Os,\\\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10}, r_2 \Ps r_{20}, k_1 \Ps k_2, k_1 \Pu, i \Pnm j,\\\\
+    i \Oc i_0, j \Oc j_0, i_0 \Pnm j_0, \\\\
+    IsCpo(i;r_{10}),  i_0 \nPc r_{10}, j_0 \nPc r_{10},  Rcpo(i;r_{10}),\\\\ 
+     IsCpo(j;r_{20}),  i_0 \nPc r_{20}, j_0 \nPc r_{20},  Rcpo(j;r_{20}), \\\\
+    j_0 \Pne r_2, i_0 \Pne r_1, i_0 \Pnm j_0, i_0 \Os, j_0 \Os,\\\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10}, r_2 \Ps r_{20}, k_1 \Ps k_2, k_1 \Pu, i \Pnm j,\\\\
+    i \Oc i_0, j \Oc j_0, i_0 \Pnm j_0, \\\\
+    IsCpo(i;r_{10}),  i_0 \nPc r_{10}, j_0 \nPc r_{10},  Rcpo(i;r_{10}),\\\\ 
+     IsCpo(j;r_{20}),  i_0 \nPc r_{20}, j_0 \nPc r_{20},  Rcpo(j;r_{20}), \\\\
+    j_0 \Pne r_2, i_0 \Pne r_1, r_1 \Pnm r_2, i_0 \Os, j_0 \Os,\\\\
+\\\Rq, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10}, r_2 \Ps r_{20}, k_1 \Ps k_2, k_1 \Pu, i \Pnm j,\\\\
+     IsCpo(i;r_{10}),  Rcpo(i;r_{10}),  Rcpo(j;r_{20}), \\\\
+    r_1 \Pnm r_2,\\\\
+\\\Rq, k_1 \Pu, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10}, r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    Rcpo(k_1;r_{10}),Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}), \\\\
+    r_1 \Pnm r_2,\\\\
+\\
+premise \; 2:\\
+,\In \Pn k_1, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    Rcpo(k_1;r_{10}),Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\\\
+    \Rq ,\In \Pn k_1, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    Rcpo(k_1;r_{10}),Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}), i \Pnm j, \Ri \\
+    \\
+, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    Rcpo(k_1;r_{10}),Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    k_1 \nPu, Cpo(r_{10}), r_{10} \On, k_1 \On, Rcpo(k_1;r_{10}), \\\\
+    Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, Cpo(r_{10}), r_{10} \On, k_1 \On, \\\\
+    Rcpo(k_1;r_{10}), \\\\
+    Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, Cpo(r_{10}), r_{10} \On, k_1 \On, \\\\
+    IsCpo(k_1;r_{10}), k_2 \nPu, Rcpo(k_1;r_{10}), \\\\
+     IsCpo(i;r_{10}), Rcpo(i;r_{10}), \\\\
+    Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, Cpo(r_{10}), r_{10} \On, k_1 \On, \\\\
+    IsCpo(k_1;r_{10}), k_2 \nPu, Rcpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{10}), k_2 \nPu, Rcpo(i;r_{10}), \\\\
+    k_2 \nPu, Cpo(r_{20}), r_{20} \On, k_2 \On, Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, Cpo(r_{10}), r_{10} \On, k_1 \On, \\\\
+    IsCpo(k_1;r_{10}), k_1 \nPc r_{20}, r_{10} \nPc r_{20}, Rcpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{10}), i \nPc r_{20}, r_{10} \nPc r_{20},  Rcpo(i;r_{10}), \\\\
+    Cpo(r_{20}), r_{20} \On, k_2 \On, Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    IsCpo(k_1;r_{10}), r_{10} \nPc r_{20}, Cpo(r_{10}), r_{10} \On, k_1 \On, \\\\
+    IsCpo(k_1;r_{10}), k_1 \nPc r_{20}, r_{10} \nPc r_{20},Cpo(r_{20}), r_{20} \On, Rcpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{10}), i \nPc r_{20}, r_{10} \nPc r_{20},  Rcpo(i;r_{10}), \\\\
+     k_2 \On, Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, Cpo(r_{10}), r_{10} \On, k_1 \On, \\\\
+    r_{10} \nPc r_{20}, Cpo(r_{20}), r_{20} \On,\\\\
+    IsCpo(k_1;r_{10}), k_2 \nPc r_{10}, Rcpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{10}), k_2 \nPc r_{10}, Rcpo(i;r_{10}), \\\\
+     k_2 \On, Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, Cpo(r_{10}), r_{10} \On, k_1 \On, \\\\
+    r_{10} \nPc r_{20}, Cpo(r_{20}), r_{20} \On, k_2 \On,\\\\
+    IsCpo(k_1;r_{10}), k_2 \nPc r_{10}, Rcpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{10}), k_2 \nPc r_{10}, Rcpo(i;r_{10}), \\\\
+     Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, k_1 \nPc r_{10}, Cpo(r_{10}), r_{10} \On, \\\\
+    r_{10} \nPc r_{20}, k_1 \nPc r_{20}, k_1 \On, Cpo(r_{20}), r_{20} \On, k_2 \On,\\\\
+    Rcpo(k_1;r_{10}), Rcpo(i;r_{10}),Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, k_1 \nPc r_{10}, Cpo(r_{10}), r_{10} \On, r_1 \nPs r_{10},\\\\
+    r_{10} \nPc r_{20}, k_1 \nPc r_{20}, Cpo(r_{20}), r_{20} \On, r_2 \nPs r_{20},\\\\
+    k_1 \On, k_2 \On,\\\\
+    IsCpo(k_1;r_{10}), r_1 \nPs r_{10}, Rcpo(k_1;r_{10}),\\\\
+    IsCpo(i;r_{10}), r_1 \nPs r_{10}, Rcpo(i;r_{10}),\\\\
+    IsCpo(k_2;r_{20}),r_1 \nPc r_{20}, Rcpo(k_2;r_{20}),\\\\
+    IsCpo(j;r_{20}),r_1 \nPc r_{20},Rcpo(j;r_{20}), r_1 \On, r_2 \On, r_1 \Op, r_2 \Op, \\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, k_1 \nPc r_{10}, Cpo(r_{10}), r_{10} \On, r_1 \nPs r_{10},\\\\
+    r_{10} \nPc r_{20}, k_1 \nPc r_{20}, Cpo(r_{20}), r_{20} \On, r_2 \nPs r_{20},\\\\
+    k_1 \On, k_2 \On, r_1 \On,\\\\
+    IsCpo(k_1;r_{10}), r_1 \nPs r_{10}, Rcpo(k_1;r_{10}),\\\\
+    IsCpo(i;r_{10}), r_1 \nPs r_{10}, Rcpo(i;r_{10}),\\\\
+    IsCpo(k_2;r_{20}),r_1 \nPc r_{20}, Rcpo(k_2;r_{20}),\\\\
+    IsCpo(j;r_{20}),r_1 \nPc r_{20},Rcpo(j;r_{20}), r_2 \On, r_1 \Op, r_2 \Op, \\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, k_1 \nPc r_{10}, Cpo(r_{10}), r_{10} \On, r_1 \nPs r_{10},\\\\
+    r_{10} \nPc r_{20}, k_1 \nPc r_{20}, Cpo(r_{20}), r_{20} \On, r_2 \nPs r_{20},\\\\
+    k_1 \On, k_2 \On, r_1 \On,\\\\
+    IsCpo(k_1;r_{10}), r_2 \nPc r_{10}, Rcpo(k_1;r_{10}),\\\\
+    IsCpo(i;r_{10}), r_2 \nPc r_{10}, Rcpo(i;r_{10}),\\\\
+    IsCpo(k_2;r_{20}),r_2 \nPs r_{20}, Rcpo(k_2;r_{20}),\\\\
+    IsCpo(j;r_{20}),r_2 \nPs r_{20},Rcpo(j;r_{20}), r_2 \On, r_1 \Op, r_2 \Op, \\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, k_1 \nPc r_{10}, Cpo(r_{10}), r_{10} \On, r_1 \nPs r_{10},\\\\
+    r_{10} \nPc r_{20}, k_1 \nPc r_{20}, Cpo(r_{20}), r_{20} \On, r_2 \nPs r_{20},\\\\
+    k_1 \On, k_2 \On, r_1 \On, r_2 \On,\\\\
+    IsCpo(k_1;r_{10}), r_2 \nPc r_{10}, Rcpo(k_1;r_{10}),\\\\
+    IsCpo(i;r_{10}), r_2 \nPc r_{10}, Rcpo(i;r_{10}),\\\\
+    IsCpo(k_2;r_{20}),r_2 \nPs r_{20}, Rcpo(k_2;r_{20}),\\\\
+    IsCpo(j;r_{20}),r_2 \nPs r_{20},Rcpo(j;r_{20}), r_1 \Op, r_2 \Op, \\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, Cpo(r_{10}), r_{10} \On,\\\\
+    r_{10} \nPc r_{20}, r_1 \nPc r_{20}, Cpo(r_{20}), r_1 \On, r_{20} \On, r_2 \On,\\\\
+    k_1 \On, k_2 \On,\\\\
+    Rcpo(k_1;r_{10}), Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}), r_1 \Op, r_2 \Op, \\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, Cpo(r_{10}), r_{10} \On, r_1 \On,\\\\
+    r_{10} \nPc r_{20}, r_1 \nPc r_{20}, Cpo(r_{20}), r_{20} \On, r_2 \On,\\\\
+    k_1 \On, k_2 \On,\\\\
+    Rcpo(k_1;r_{10}), Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}), r_1 \Op, r_2 \Op, \\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+   r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, Cpo(r_{10}), r_{10} \On, r_1 \On,\\\\
+    r_{10} \nPc r_{20}, Cpo(r_{20}), r_{20} \On, r_2 \On, k_1 \On, k_2 \On,\\\\
+    r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2,\\\\
+    Rcpo(k_1;r_{10}), Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}), r_1 \Op, r_2 \Op, \\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+   r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+     i \nPc r_{10}, j \nPc r_{10}, i \Pnm j, Cpo(r_{10}), r_{10} \On, r_1 \On,\\\\
+    i \nPc r_{20}, j \nPc r_{20}, Cpo(r_{20}), r_{20} \On, r_2 \On, k_1 \On, k_2 \On,\\\\
+    r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2,\\\\
+    Rcpo(k_1;r_{10}), Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}), r_1 \Op, r_2 \Op, \\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+   r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+     i \nPc r_{10}, j \nPc r_{10}, Cpo(r_{10}), r_{10} \On, r_1 \On,\\\\
+    i \nPc r_{20}, j \nPc r_{20}, Cpo(r_{20}), r_{20} \On, r_2 \On, k_1 \On, k_2 \On,\\\\
+    r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    Rcpo(k_1;r_{10}), Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}), r_1 \Op, r_2 \Op, \\\\
+\\\Rq, k_1 \nPu, \In \Ps k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+   r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, k_1 \nPc r_{10}, Cpo(r_{10}), r_{10} \On, r_1 \On,\\\\
+    r_{10} \nPc r_{20}, k_1 \nPc r_{20}, Cpo(r_{20}), r_{20} \On, r_2 \On, k_1 \On, k_2 \On,\\\\
+    r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    Rcpo(k_1;r_{10}), Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}), r_1 \Op, r_2 \Op, \\\\
+\\\Rq, k_1 \nPu, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+   r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, k_1 \nPc r_{10}, Cpo(r_{10}), r_{10} \On, r_1 \On,\\\\
+    r_{10} \nPc r_{20}, k_1 \nPc r_{20}, Cpo(r_{20}), r_{20} \On, r_2 \On, k_1 \On, k_2 \On,\\\\
+     \In \Pn k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+   r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    Rcpo(k_1;r_{10}), Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}), r_1 \Op, r_2 \Op, \\\\
+\\
+\\\Rq, k_1 \nPu, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+   r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_{10} \nPc r_{20}, k_1 \nPc r_{10}, Cpo(r_{10}), r_{10} \On, r_1 \On,\\\\
+    r_{10} \nPc r_{20}, k_1 \nPc r_{20}, Cpo(r_{20}), r_{20} \On, r_2 \On, k_1 \On, k_2 \On,\\\\
+     \In \Pn k_1,  IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+   r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    Rcpo(k_1;r_{10}), Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}), i \Pnm j, r_1 \Op, r_2 \Op, \\\\
+    \\
+\\\Rq, k_1 \nPu, \In \Ps k_1, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_1 \Ps r_{10}, Cpo(r_{10}), r_1 \nPu, r_{10} \On,\\\\
+    r_1 \nPc r_{20},r_2 \Ps r_{20}, Cpo(r_{20}), r_2 \nPu, r_{20} \On, k_1 \On, k_2 \On,\\\\
+    Rcpo(k_1;r_{10}), Rcpo(i;r_{10}), Rcpo(k_2;r_{20}),Rcpo(j;r_{20}),\\\\
+    r_1 \On, r_2 \On, i \Pnm j, r_1 \Op, r_2 \Op, \\
+    \\
+\\\Rq, k_1 \nPu, \In \Ps k_1, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_1 \Ps r_{10}, Cpo(r_{10}), r_{10} \On,\\\\
+    r_1 \nPc r_{20},r_2 \Ps r_{20}, Cpo(r_{20}), r_{20} \On, k_1 \On, k_2 \On,\\\\
+    IsCpo(k_1;r_{10}), r_1 \nPu, r_2 \nPu, Rcpo(k_1;r_{10}),\\\\
+    IsCpo(i;r_{10}), Rcpo(i;r_{10}),\\\\
+    IsCpo(k_2;r_{20}), Rcpo(k_2;r_{20}),\\\\
+    IsCpo(j;r_{20}), Rcpo(j;r_{20}), \\\\
+    r_1 \On, r_2 \On, i \Pnm j, r_1 \Op, r_2 \Op, \\
+    \\
+\\\Rq, k_1 \nPu, \In \Ps k_1, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_1 \Ps r_{10}, Cpo(r_{10}), r_{10} \On,\\\\
+    r_1 \nPc r_{20},r_2 \Ps r_{20}, Cpo(r_{20}), r_{20} \On, k_1 \On, k_2 \On,\\\\
+    IsCpo(k_1;r_{10}), r_1 \nPu, r_2 \nPu, Rcpo(k_1;r_{10}),\\\\
+    IsCpo(i;r_{10}), r_1 \nPu, r_2 \nPu, Rcpo(i;r_{10}),\\\\
+    IsCpo(k_2;r_{20}), r_1 \nPu, r_2 \nPu, Rcpo(k_2;r_{20}),\\\\
+    IsCpo(j;r_{20}), r_1 \nPu, r_2 \nPu, Rcpo(j;r_{20}), \\\\
+     r_1 \nPu, r_2 \nPu, r_1 \On, r_2 \On, i \Pnm j, r_1 \Op, r_2 \Op, \\
+     \\
+\\\Rq, k_1 \nPu, \In \Ps k_1, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_1 \Ps r_{10}, Cpo(r_{10}), r_{10} \On,\\\\
+    r_1 \nPc r_{20},r_2 \Ps r_{20}, Cpo(r_{20}), r_{20} \On, k_1 \On, k_2 \On,\\\\
+    IsCpo(k_1;r_{10}), r_1 \nPu, r_2 \nPu, Rcpo(k_1;r_{10}),\\\\
+    IsCpo(i;r_{10}), r_1 \nPu, r_2 \nPu, Rcpo(i;r_{10}),\\\\
+    IsCpo(k_2;r_{20}), r_1 \nPu, r_2 \nPu, Rcpo(k_2;r_{20}),\\\\
+    IsCpo(j;r_{20}), r_1 \nPu, r_2 \nPu, Rcpo(j;r_{20}), \\\\
+     i \Pnm j, r_1 \nPu, r_2 \nPu, r_1 \On, r_2 \On, r_1 \Op, r_2 \Op, \\
+     \\
+\\\Rq, k_1 \nPu, \In \Ps k_1, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    r_1 \Ps r_{10}, Cpo(r_{10}), r_{10} \On,\\\\
+    r_1 \nPc r_{20},r_2 \Ps r_{20}, Cpo(r_{20}), r_{20} \On, k_1 \On, k_2 \On,\\\\
+    IsCpo(k_1;r_{10}), Rcpo(k_1;r_{10}),\\\\
+    IsCpo(i;r_{10}), Rcpo(i;r_{10}),\\\\
+    IsCpo(k_2;r_{20}), Rcpo(k_2;r_{20}),\\\\
+    IsCpo(j;r_{20}), Rcpo(j;r_{20}), \\\\
+     i \Pnm j, \\
+     \\
+\\\Rq, k_1 \nPu, \In \Ps k_1, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    Rcpo(k_1;r_{10}),Rcpo(i;r_{10}),Rcpo(k_2;r_{20}),Rcpo(j;r_{20}), i \Pnm j, \\
+\\
+conclusion:\\
+, IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    Rcpo(k_1;r_{10}),Rcpo(i;r_{10}),Rcpo(k_2;r_{20}),Rcpo(j;r_{20}), \Rq ,\\\\
+    IsCpo(i;r_{10}), IsCpo(j;r_{10}), IsCpo(k_1;r_{10}), \\\\
+    IsCpo(i;r_{20}), IsCpo(j;r_{20}), IsCpo(k_1;r_{20}),\\\\
+    r_{10} \nPc r_{20}, r_1 \Ps r_{10},r_2 \Ps r_{20}, k_1 \Ps k_2, i \Pnm j,\\\\
+    Rcpo(k_1;r_{10}),Rcpo(i;r_{10}),Rcpo(k_2;r_{20}),Rcpo(j;r_{20}), i \Pnm j,  
+\end{math}
+\bigskip
+\bigskip  
+
+
+
+
+
+
+
+\newpage

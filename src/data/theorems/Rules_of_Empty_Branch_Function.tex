@@ -1,0 +1,53 @@
+\chapter{Rules of Empty Branch Function}
+
+\section{Definition of Empty Branch Function}
+\[,\Blb{}{, i \Pe j,}{, i \nPe j,} \Rq , \Blb{if(i \Pe j)}{,}{,}\]
+
+\bigskip
+\bigskip
+
+\section{Axiom of Empty Branch Function}
+\[, \Tc c, \Blb{}{,}{,} \Rq , \Blb{}{, \Tc c,}{, \Tc c,}\]
+
+
+
+\bigskip
+\bigskip
+
+\section{Theorems of Empty Branch Function}
+\[, \Blb{if(i \Pu)}{,}{,} \Rq , \Blb{}{, i \Pu,}{, i \nPu,}\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, \Blb{if(i \Pu)}{,}{,}\\\\
+\Rq, \Ot m, \Blb{if(i \Pe m)}{, m \Os,}{, m \Os,}\\\\\\
+\Rq, \Ot m, \Blb{}{, i \Pe m, m \Os,}{, i \nPe m, m \Os,}\\\\\\
+\Rq, \Blb{}{, \Ot m, i \Pe m, m \Os,}{, \Ot m, i \nPe m, m \Os,}\\\\\\
+\Rq, \Blb{}{, i \Pu,}{, i \nPu,}
+\end{math}
+
+\bigskip
+\bigskip
+\[, \Blb{if(i \Ps j)}{,}{,} \Rq , \Blb{}{, i \Ps j,}{, i \nPs j,}\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+, \Blb{if(i \Ps j)}{,}{,}\\\\
+\Rq, i \Od m, j \Od n, \Blb{if(m \Pe n)}{, m \Os, n \Os,}{, m \Os, n \Os,}\\\\\\
+\Rq, i \Od m, j \Od n, \Blb{}{, m \Pe n, m \Os, n \Os,}{, m \nPe n, m \Os, n \Os,}\\\\\\
+\Rq, \Blb{}{, i \Od m, j \Od n, m \Pe n, m \Os, n \Os,}{, i \Od m, j \Od n, m \nPe n, m \Os, n \Os,}\\\\\\
+\Rq,  \Blb{}{, i \Ps j,}{, i \nPs j,}
+\end{math}
+
+
+
+\newpage
+
