@@ -1,0 +1,307 @@
+\chapter{Previous Order Induction}
+\section{Definition of flag object SHj with identical node}
+
+
+\subsection{Swap definition:}
+\[,\Ip \Ps i, \Ot m, \Rq , \Ot m, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, \Og m, \Rq , \Og m, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, j \Od n, \Rq , j \Od n, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, j \Oc n, \Rq , j \Oc n, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, j \Ob n, \Rq , j \Ob n, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, j \Os, \Rq , j \Os, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, j \On, \Rq , j \On, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, \Or, \Rq , \Or, \Ip \Ps i,\]
+\bigskip
+\[,\Ip \Ps i, \Bls{m \Oe n}{,}{,} \Rq , \Bls{m \Oe n}{,\Ip \Ps i,}{,\Ip \Ps i,}\]
+\bigskip
+\[,\Ip \Ps i, \Bls{}{,}{,} \Rq , \Bls{}{,\Ip \Ps i,}{,\Ip \Ps i,}\]
+\bigskip
+\[ \Brs{,}{,},\Ip \Ps i, \Rq \Brs{,\Ip \Ps i,}{,\Ip \Ps i,},\]
+
+
+
+
+\bigskip
+\bigskip
+\subsection{Substitution definition:}
+\[,i \Ps j, \Ip \Ps i, \Rq , i\Ps j, \Ip \Ps j,\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\section{Definition of flag object SHj with next node.}
+\[, \Ip \Pn i, \Rq , i \Oc i_0, i_0 \Op, \Ip \Ps i_0, i_0 \Os,\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\section{Definition of flag object SHj with previous node.}
+\[, \Ip \Pp i, \Rq , i \Oc i_0, i_0 \On, \Ip \Ps i_0, i_0 \Os,\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\section{Theorems of flag object SHj with identical node.}
+\subsection{Swap with previous node operator:}
+\[,\Ip \Ps i, j \Op, \Rq ,j \Op, \Ip \Ps i,\]
+
+\bigskip
+\bigskip
+\subsection{Swap with branch function:}
+\[,\Ip \Ps i, \Bb{if(m \Pe n)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Pe n)}{,\Ip \Ps i, \Tc c_1,}{,\Ip \Ps i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\Ip \Ps i, \Bb{if(m \Pu)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Pu)}{,\Ip \Ps i, \Tc c_1,}{,\Ip \Ps i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\Ip \Ps i, \Bb{if(m \Ps n)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Ps n)}{,\Ip \Ps i, \Tc c_1,}{,\Ip \Ps i, \Tc c_2,},\]
+
+
+\bigskip
+\bigskip
+\subsection{Swap with propositions:}
+\[,\Ip \Ps i, m \Pe n, \Rq , m \Pe n, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, m \Pu, \Rq , m \Pu, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, m \Ps n, \Rq , m \Ps n, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, m \nPe n, \Rq , m \nPe n, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, m \nPu, \Rq , m \nPu, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, m \nPs n, \Rq , m \nPs n, \Ip \Ps i,\]
+
+
+\bigskip
+\bigskip
+\subsection{Swap with the same operand's operator:}
+\[,\Ip \Ps i, i \Oc n, \Rq , i \Oc n, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, i \Od n, \Rq , i \Od n, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, i \Ob n, \Rq , i \Ob n, \Ip \Ps i,\]
+
+
+\bigskip
+\bigskip
+\subsection{Swap with the same operand's  branch function:}
+\[,\Ip \Ps i, \Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pe j)}{,\Ip \Ps i, \Tc c_1,}{,\Ip \Ps i, \Tc c_2,},\]
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+,\Ip \Ps i, \Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,},\\\\\\
+\Rq, i \Oc i_0, i_0 \Os, \Ip \Ps i, \Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0, \Ip \Ps i, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0, i \Ps i_0, \Ip \Ps i, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0, i \Ps i_0, \Ip \Ps i_0, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0, i \Ps i_0, \Bb{if(i \Pe j)}{, \Ip \Ps i_0, i_0 \Os,\Tc c_1,}{, \Ip \Ps i_0, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0,  \Bb{if(i \Pe j)}{,i \Ps i_0, \Ip \Ps i_0, i_0 \Os,\Tc c_1,}{,i \Ps i_0, \Ip \Ps i_0, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0,  \Bb{if(i \Pe j)}{,i \Ps i_0, \Ip \Ps i, i_0 \Os,\Tc c_1,}{,i \Ps i_0, \Ip \Ps i, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0, i \Ps i_0, \Bb{if(i \Pe j)}{, \Ip \Ps i, i_0 \Os,\Tc c_1,}{, \Ip \Ps i, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0, \Bb{if(i \Pe j)}{, \Ip \Ps i, i_0 \Os,\Tc c_1,}{, \Ip \Ps i, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0,  i_0 \Os,\Bb{if(i \Pe j)}{, \Ip \Ps i,\Tc c_1,}{, \Ip \Ps i,\Tc c_2,},\\\\\\\\
+\Rq,\Bb{if(i \Pe j)}{, \Ip \Ps i,\Tc c_1,}{, \Ip \Ps i,\Tc c_2,},
+\end{math}
+\bigskip
+\bigskip
+
+\bigskip
+\bigskip
+\[,\Ip \Ps i, \Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pu)}{,\Ip \Ps i, \Tc c_1,}{,\Ip \Ps i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\Ip \Ps i, \Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{,\Ip \Ps i, \Tc c_1,}{,\Ip \Ps i, \Tc c_2,},\]
+
+
+\bigskip
+\bigskip
+\subsection{Swap with the same operand's propositions:}
+\[,\Ip \Ps i, i \Pe j, \Rq , i \Pe j, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, i \Pu, \Rq , i \Pu, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, i \Ps j, \Rq , i \Ps j, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, i \nPe j, \Rq , i \nPe j, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, i \nPu, \Rq , i \nPu, \Ip \Ps i,\]
+
+\[,\Ip \Ps i, i \nPs j, \Rq , i \nPs j, \Ip \Ps i,\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\section{Theorems of flag object SHj with previous node.}
+\subsection{Swap with the same operand's next node operator:}
+\[,\Ip \Ps i, i \Op, \Rq , i \Op, \Ip \Pp i,\]
+\bigskip
+\bigskip
+proof:\\
+\begin{math} 
+,\Ip \Ps i, i \Op,\\\\
+\Rq, i \On, i \Op, \Ip \Ps i, i \Op,\\\\\\
+\Rq, i \Op, i \On, \Ip \Ps i, i \Op,\\\\\\
+\Rq, i \Op, i \Oc i_0, i_0 \Os, i \On, \Ip \Ps i, i \Op,\\\\\\
+\Rq, i \Op, i \Oc i_0, i_0 \On, i_0 \Os, i \On, \Ip \Ps i, i \Op,\\\\\\
+\Rq, i \Op, i \Oc i_0, i \On, i_0 \On, i_0 \Os, \Ip \Ps i, i \Op,\\\\\\
+\Rq, i \Op, i \Oc i_0, i \On, i_0 \On, \Ip \Ps i, i_0 \Os, i \Op,\\\\\\
+\Rq, i \Op, i \Oc i_0, i \Ps i_0, i \On, i_0 \On, \Ip \Ps i, i_0 \Os, i \Op,\\\\\\
+\Rq, i \Op, i \Oc i_0, i \On, i_0 \On, i \Ps i_0, \Ip \Ps i, i_0 \Os, i \Op,\\\\\\
+\Rq, i \Op, i \Oc i_0, i \On, i_0 \On, i \Ps i_0, \Ip \Ps i_0, i_0 \Os, i \Op,\\\\\\
+\Rq, i \Op, i \Oc i_0, i \On, i_0 \On, \Ip \Ps i_0, i_0 \Os, i \Op,\\\\\\
+\Rq, i \Op, i \Oc i_0, i_0 \On, \Ip \Ps i_0, i_0 \Os, i \On, i \Op,\\\\\\
+\Rq, i \Op, \Ip \Pp i, i \On, i \Op,\\\\\\
+\Rq, i \Op, \Ip \Pp i,
+\end{math}
+\bigskip
+\bigskip
+
+
+\bigskip
+\bigskip
+\subsection{Swap with  operator:}
+\[,\Ip \Pp i, \Ot m, \Rq , \Ot m, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, \Og m, \Rq , \Og m, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, j \Od n, \Rq , j \Od n, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, j \Oc n, \Rq , j \Oc n, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, j \Ob n, \Rq , j \Ob n, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, j \Os, \Rq , j \Os, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, j \On, \Rq , j \On, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, j \Op, \Rq , j \Op, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, \Or, \Rq , \Or, \Ip \Pp i,\]
+\bigskip
+\[,\Ip \Pp i, \Bls{m \Oe n}{,}{,} \Rq , \Bls{m \Oe n}{,\Ip \Pp i,}{,\Ip \Pp i,}\]
+\bigskip
+\[,\Ip \Pp i, \Bls{}{,}{,} \Rq , \Bls{}{,\Ip \Pp i,}{,\Ip \Pp i,}\]
+\bigskip
+\[ \Brs{,}{,},\Ip \Pp i, \Rq \Brs{,\Ip \Pp i,}{,\Ip \Pp i,},\]
+
+
+
+\bigskip
+\bigskip
+\subsection{Swap with branch function:}
+\[,\Ip \Pp i, \Bb{if(m \Pe n)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Pe n)}{,\Ip \Pp i, \Tc c_1,}{,\Ip \Pp i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\Ip \Pp i, \Bb{if(m \Pu)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Pu)}{,\Ip \Pp i, \Tc c_1,}{,\Ip \Pp i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\Ip \Pp i, \Bb{if(m \Ps n)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(m \Ps n)}{,\Ip \Pp i, \Tc c_1,}{,\Ip \Pp i, \Tc c_2,},\]
+
+
+\bigskip
+\bigskip
+\subsection{Swap with propositions:}
+\[,\Ip \Pp i, m \Pe n, \Rq , m \Pe n, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, m \Pu, \Rq , m \Pu, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, m \Ps n, \Rq , m \Ps n, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, m \nPe n, \Rq , m \nPe n, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, m \nPu, \Rq , m \nPu, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, m \nPs n, \Rq , m \nPs n, \Ip \Pp i,\]
+
+
+\bigskip
+\bigskip
+\subsection{Swap with the same operand's operator:}
+\[,\Ip \Pp i, i \Oc n, \Rq , i \Oc n, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, i \Od n, \Rq , i \Od n, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, i \Ob n, \Rq , i \Ob n, \Ip \Pp i,\]
+
+
+\bigskip
+\bigskip
+\subsection{Swap with the same operand's  branch function:}
+\[,\Ip \Pp i, \Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pe j)}{,\Ip \Pp i, \Tc c_1,}{,\Ip \Pp i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\Ip \Pp i, \Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Pu)}{,\Ip \Pp i, \Tc c_1,}{,\Ip \Pp i, \Tc c_2,},\]
+\bigskip
+\bigskip
+\[,\Ip \Pp i, \Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,}, \Rq , \Bb{if(i \Ps j)}{,\Ip \Pp i, \Tc c_1,}{,\Ip \Pp i, \Tc c_2,},\]
+
+
+\bigskip
+\bigskip
+\subsection{Swap with the same operand's propositions:}
+\[,\Ip \Pp i, i \Pe j, \Rq , i \Pe j, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, i \Pu, \Rq , i \Pu, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, i \Ps j, \Rq , i \Ps j, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, i \nPe j, \Rq , i \nPe j, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, i \nPu, \Rq , i \nPu, \Ip \Pp i,\]
+
+\[,\Ip \Pp i, i \nPs j, \Rq , i \nPs j, \Ip \Pp i,\]
+
+
+
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\section{Axiom of previous order induction}
+\subsection{axiom of inference:}
+\begin{math}
+\Bigl\{ ^{<premise \; 1>}_{<premise \;  2>}\Bigl\} \Ri <conclusion>
+\end{math}
+\bigskip
+\bigskip
+\subsection{premise 1:}
+\begin{math}
+, i \Pu, \Tt c_1, \Rq , i \Pu, \Tt c_2,
+\end{math}
+\bigskip
+\bigskip
+\subsection{premise 2:}
+\begin{math}
+, \Ip \Pp i, \Tt c_1 , \Rq , \Ip \Pp i, \Tt c_2 , \Ri \\\\
+,i \nPu, \Ip \Ps i, \Tt c_1, \Rq , i \nPu, \Ip \Ps i, \Tt c_2,
+\end{math}
+\bigskip
+\bigskip
+\subsection{conclusion:}
+\begin{math}
+, \Tt c_1, \Rq , \Tt c_2,
+\end{math}
+
+
+
+\newpage
