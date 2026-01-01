@@ -303,9 +303,6 @@ const ProofVerifierSection: React.FC = () => {
                   ? 'bg-primary/10 border-2 border-dashed border-primary' 
                   : 'border-2 border-transparent'
               }`}
-              onDragOver={(e) => handleDragOver(e, 'left')}
-              onDragLeave={(e) => handleDragLeave(e, 'left')}
-              onDrop={(e) => handleDrop(e, 'left')}
             >
               <label className="text-sm text-muted-foreground mb-2 block font-mono">
                 Left Side (A)
@@ -318,6 +315,9 @@ const ProofVerifierSection: React.FC = () => {
                 onChange={setLeftInput}
                 onFocus={() => setActiveField('left')}
                 onKeyDown={(e) => handleKeyDown(e, 'left')}
+                onDragOver={(e) => handleDragOver(e, 'left')}
+                onDragLeave={(e) => handleDragLeave(e, 'left')}
+                onDrop={(e) => handleDrop(e, 'left')}
                 isActive={activeField === 'left'}
               />
               {/* Rendered Expression */}
@@ -338,9 +338,6 @@ const ProofVerifierSection: React.FC = () => {
                   ? 'bg-primary/10 border-2 border-dashed border-primary' 
                   : 'border-2 border-transparent'
               }`}
-              onDragOver={(e) => handleDragOver(e, 'right')}
-              onDragLeave={(e) => handleDragLeave(e, 'right')}
-              onDrop={(e) => handleDrop(e, 'right')}
             >
               <label className="text-sm text-muted-foreground mb-2 block font-mono">
                 Right Side (B)
@@ -353,6 +350,9 @@ const ProofVerifierSection: React.FC = () => {
                 onChange={setRightInput}
                 onFocus={() => setActiveField('right')}
                 onKeyDown={(e) => handleKeyDown(e, 'right')}
+                onDragOver={(e) => handleDragOver(e, 'right')}
+                onDragLeave={(e) => handleDragLeave(e, 'right')}
+                onDrop={(e) => handleDrop(e, 'right')}
                 isActive={activeField === 'right'}
               />
               {/* Rendered Expression */}

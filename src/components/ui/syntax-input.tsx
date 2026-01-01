@@ -69,6 +69,9 @@ interface SyntaxInputProps {
   onChange: (value: string) => void;
   onFocus?: () => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  onDrop?: (e: React.DragEvent<HTMLTextAreaElement>) => void;
+  onDragOver?: (e: React.DragEvent<HTMLTextAreaElement>) => void;
+  onDragLeave?: (e: React.DragEvent<HTMLTextAreaElement>) => void;
   placeholder?: string;
   className?: string;
   isActive?: boolean;
@@ -130,6 +133,9 @@ export const SyntaxInput: React.FC<SyntaxInputProps> = ({
   onChange,
   onFocus,
   onKeyDown,
+  onDrop,
+  onDragOver,
+  onDragLeave,
   placeholder,
   className,
   isActive,
@@ -177,8 +183,15 @@ export const SyntaxInput: React.FC<SyntaxInputProps> = ({
         onFocus={onFocus}
         onKeyDown={onKeyDown}
         onScroll={handleScroll}
-        onDrop={(e) => e.preventDefault()}
-        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          onDrop?.(e);
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          onDragOver?.(e);
+        }}
+        onDragLeave={onDragLeave}
         placeholder=""
         className={cn(
           "relative w-full min-h-[80px] resize-none",
