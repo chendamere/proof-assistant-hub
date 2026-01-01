@@ -180,28 +180,48 @@ const ProofVerifierSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Input Area */}
-        <div className="bg-card border border-border rounded-lg p-6 mb-8">
+        {/* Hint */}
+        <p className="text-center text-sm text-muted-foreground mb-4">
+          Tip: Open the <span className="text-primary font-medium">Rules Panel</span> to drag and drop existing rules into the inputs below.
+        </p>
+
+        {/* Input Area - Entire box is drop zone */}
+        <div 
+          className={`bg-card border rounded-lg p-6 mb-8 transition-all duration-200 ${
+            leftDragOver || rightDragOver
+              ? 'border-primary border-2 border-dashed bg-primary/5'
+              : 'border-border'
+          }`}
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+            setLeftDragOver(true);
+          }}
+          onDragLeave={(e) => {
+            // Only trigger if leaving the container entirely
+            if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+              setLeftDragOver(false);
+              setRightDragOver(false);
+            }
+          }}
+          onDrop={(e) => handleDrop(e, 'left')}
+        >
+          {(leftDragOver || rightDragOver) && (
+            <div className="text-center text-primary text-sm font-medium mb-4 animate-pulse">
+              Drop rule to fill both sides
+            </div>
+          )}
+          
           <div className="grid md:grid-cols-[1fr,auto,1fr] gap-4 items-start">
             {/* Left Side */}
-            <div 
-              className={`space-y-3 p-3 -m-3 rounded-lg transition-all duration-200 ${
-                leftDragOver 
-                  ? 'bg-primary/10 border-2 border-dashed border-primary' 
-                  : 'border-2 border-transparent'
-              }`}
-            >
+            <div className="space-y-3">
               <label className="text-sm text-muted-foreground mb-2 block font-mono">
                 Left Side (A)
-                {leftDragOver && <span className="text-primary ml-2">Drop rule here</span>}
               </label>
               <SyntaxInput
                 placeholder=", i \Pu j,"
                 value={leftInput}
                 onChange={setLeftInput}
-                onDragOver={(e) => handleDragOver(e, 'left')}
-                onDragLeave={(e) => handleDragLeave(e, 'left')}
-                onDrop={(e) => handleDrop(e, 'left')}
               />
               {/* Rendered Expression */}
               <div className="p-3 bg-muted/30 rounded-lg border border-border/50 min-h-[48px] flex items-center">
@@ -215,24 +235,14 @@ const ProofVerifierSection: React.FC = () => {
             </div>
 
             {/* Right Side */}
-            <div 
-              className={`space-y-3 p-3 -m-3 rounded-lg transition-all duration-200 ${
-                rightDragOver 
-                  ? 'bg-primary/10 border-2 border-dashed border-primary' 
-                  : 'border-2 border-transparent'
-              }`}
-            >
+            <div className="space-y-3">
               <label className="text-sm text-muted-foreground mb-2 block font-mono">
                 Right Side (B)
-                {rightDragOver && <span className="text-primary ml-2">Drop rule here</span>}
               </label>
               <SyntaxInput
                 placeholder=", j \Pu i,"
                 value={rightInput}
                 onChange={setRightInput}
-                onDragOver={(e) => handleDragOver(e, 'right')}
-                onDragLeave={(e) => handleDragLeave(e, 'right')}
-                onDrop={(e) => handleDrop(e, 'right')}
               />
               {/* Rendered Expression */}
               <div className="p-3 bg-muted/30 rounded-lg border border-border/50 min-h-[48px] flex items-center">
