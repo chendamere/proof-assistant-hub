@@ -171,12 +171,12 @@ export const ExpressionRenderer: React.FC<ExpressionRendererProps> = ({ expressi
               alt={token.value}
               title={token.value}
               style={{ width: size, height: size }}
-              className="inline-block opacity-90 dark:invert dark:brightness-[0.85]"
+              className="inline-block invert brightness-0 invert"
             />
           );
         } else {
           return (
-            <span key={index} className="font-mono text-foreground">
+            <span key={index} className="font-mono text-foreground text-sm">
               {token.value}
             </span>
           );
