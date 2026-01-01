@@ -11,7 +11,8 @@ import {
   Upload, 
   FileText, 
   Trash2,
-  Briefcase 
+  Briefcase,
+  PanelRightOpen
 } from 'lucide-react';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 
@@ -23,7 +24,7 @@ interface ImportedRule {
 }
 
 const UserWorkbench: React.FC = () => {
-  const { isRulesPanelOpen, isWorkbenchExpanded, setWorkbenchExpanded } = usePanelContext();
+  const { isRulesPanelOpen, setRulesPanelOpen, isWorkbenchExpanded, setWorkbenchExpanded } = usePanelContext();
   const [contextRules, setContextRules] = useState<Rule[]>([]);
   const [importedRules, setImportedRules] = useState<ImportedRule[]>([]);
   const [delimiter, setDelimiter] = useState('---');
@@ -158,8 +159,21 @@ const UserWorkbench: React.FC = () => {
         onClick={() => setWorkbenchExpanded(!isWorkbenchExpanded)}
       >
         <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 gap-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              setRulesPanelOpen(!isRulesPanelOpen);
+            }}
+          >
+            <PanelRightOpen className="w-4 h-4" />
+            Rules
+          </Button>
+          <div className="h-6 w-px bg-border" />
           <Briefcase className="w-4 h-4 text-primary" />
-          <span className="font-medium text-sm">User Workbench</span>
+          <span className="font-medium text-sm">Workbench</span>
           {totalRules > 0 && (
             <span className="bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-full font-mono">
               {totalRules} rules
