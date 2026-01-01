@@ -222,10 +222,10 @@ export const RulesSidePanel: React.FC = () => {
         {/* Rules List */}
         <ScrollArea className="h-[calc(100vh-280px)]">
           <div className="p-4 space-y-2">
-            {filteredRules.map(rule => (
+            {filteredRules.map((rule) => (
               <DraggableRuleCard key={rule.id} rule={rule} />
             ))}
-            
+
             {filteredRules.length === 0 && (
               <div className="text-center py-8 text-muted-foreground text-sm">
                 No rules match your search
@@ -234,14 +234,6 @@ export const RulesSidePanel: React.FC = () => {
           </div>
         </ScrollArea>
       </div>
-
-      {/* Backdrop for closing */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 z-30 bg-black/20"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
     </>
   );
 };
