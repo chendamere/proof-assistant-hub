@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { axioms, getTypeBadgeClass, Rule, RuleType } from '@/data/axioms';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { Input } from '@/components/ui/input';
-import { Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, ArrowUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 // Constants for dimension calculation
 const OPERATOR_SVG_WIDTH = 14;
@@ -203,6 +204,20 @@ const GlossarySection: React.FC = () => {
             <p>No rules match your search criteria.</p>
           </div>
         )}
+
+        {/* Back to Top Button */}
+        <div className="flex justify-center mt-8">
+          <Button
+            variant="outline"
+            onClick={() => {
+              document.getElementById('glossary')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="gap-2 hover:bg-primary/10 transition-colors"
+          >
+            <ArrowUp className="w-4 h-4" />
+            Back to Top
+          </Button>
+        </div>
       </div>
     </section>
   );
