@@ -1,101 +1,139 @@
 import React from 'react';
 
 export const TreeStructureDiagram: React.FC = () => {
+  const nodeRadius = 18;
+  const nodeSpacing = 55;
+  const arrowColor = "hsl(var(--operator-next))";
+  const primaryColor = "hsl(var(--primary))";
+  const mutedColor = "hsl(var(--muted-foreground))";
+
+  // Node component helper
+  const Node = ({ x, y, isNull = false }: { x: number; y: number; isNull?: boolean }) => (
+    <circle
+      cx={x}
+      cy={y}
+      r={nodeRadius}
+      fill="none"
+      stroke={isNull ? mutedColor : primaryColor}
+      strokeWidth={isNull ? 1.5 : 2}
+      strokeDasharray={isNull ? "4 3" : "none"}
+    />
+  );
+
+  // Null symbol inside node
+  const NullSymbol = ({ x, y }: { x: number; y: number }) => (
+    <text x={x} y={y + 4} textAnchor="middle" className="text-[12px] fill-muted-foreground font-mono">ø</text>
+  );
+
+  // Bidirectional arrow between two nodes (vertical)
+  const VerticalArrows = ({ x, y1, y2 }: { x: number; y1: number; y2: number }) => {
+    const startY = y1 + nodeRadius;
+    const endY = y2 - nodeRadius;
+    const midY = (startY + endY) / 2;
+    
+    return (
+      <g stroke={arrowColor} strokeWidth="1.5" fill={arrowColor}>
+        {/* Down arrow */}
+        <line x1={x - 4} y1={startY} x2={x - 4} y2={endY} />
+        <polygon points={`${x - 4},${endY} ${x - 7},${endY - 6} ${x - 1},${endY - 6}`} />
+        
+        {/* Up arrow */}
+        <line x1={x + 4} y1={endY} x2={x + 4} y2={startY} />
+        <polygon points={`${x + 4},${startY} ${x + 1},${startY + 6} ${x + 7},${startY + 6}`} />
+      </g>
+    );
+  };
+
+  // Child arrow (dashed, horizontal)
+  const ChildArrow = ({ x1, y, x2 }: { x1: number; y: number; x2: number }) => (
+    <g stroke={arrowColor} strokeWidth="1.5" fill={arrowColor}>
+      <line x1={x1 + nodeRadius} y1={y} x2={x2 - nodeRadius} y2={y} strokeDasharray="4 3" />
+      <polygon points={`${x2 - nodeRadius},${y} ${x2 - nodeRadius - 6},${y - 4} ${x2 - nodeRadius - 6},${y + 4}`} />
+    </g>
+  );
+
+  // Left chain positions
+  const leftX = 60;
+  const chain1 = [40, 40 + nodeSpacing, 40 + nodeSpacing * 2]; // y positions for 3 nodes
+
+  // Right chain positions (child of bottom-left node)
+  const rightX = 180;
+  const chain2 = [chain1[1], chain1[1] + nodeSpacing]; // 2 nodes
+
+  // Far right single node (child of right chain)
+  const farRightX = 280;
+
   return (
     <div className="flex flex-col items-center">
-      <svg width="380" height="280" viewBox="0 0 380 280" className="max-w-full">
-        {/* Definitions for markers */}
-        <defs>
-          <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-            <polygon points="0 0, 6 3, 0 6" fill="hsl(var(--foreground))" opacity="0.7" />
-          </marker>
-          <marker id="arrowhead-dashed" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-            <polygon points="0 0, 6 3, 0 6" fill="hsl(var(--muted-foreground))" opacity="0.5" />
-          </marker>
-        </defs>
+      <svg width="340" height="220" viewBox="0 0 340 220" className="max-w-full">
+        {/* LEFT CHAIN - 3 nodes with top one being null */}
+        <Node x={leftX} y={chain1[0]} isNull />
+        <NullSymbol x={leftX} y={chain1[0]} />
+        
+        <Node x={leftX} y={chain1[1]} />
+        <Node x={leftX} y={chain1[2]} />
 
-        {/* Left vertical chain bracket */}
-        <path 
-          d="M 45 35 C 30 35 30 165 45 165" 
-          fill="none" 
-          stroke="hsl(var(--primary))" 
+        {/* Arrows between left chain nodes */}
+        <VerticalArrows x={leftX} y1={chain1[0]} y2={chain1[1]} />
+        <VerticalArrows x={leftX} y1={chain1[1]} y2={chain1[2]} />
+        
+        {/* Closing arrow from bottom to top (curved) */}
+        <path
+          d={`M ${leftX - nodeRadius} ${chain1[2]} 
+              C ${leftX - 45} ${chain1[2]} ${leftX - 45} ${chain1[0]} ${leftX - nodeRadius} ${chain1[0]}`}
+          fill="none"
+          stroke={arrowColor}
           strokeWidth="1.5"
-          opacity="0.6"
+        />
+        {/* Arrow heads for the curve */}
+        <polygon 
+          points={`${leftX - nodeRadius},${chain1[0]} ${leftX - nodeRadius - 6},${chain1[0] + 4} ${leftX - nodeRadius - 6},${chain1[0] - 4}`} 
+          fill={arrowColor}
         />
 
-        {/* Top node (empty/null - dashed) */}
-        <g className="text-muted-foreground">
-          <circle cx="65" cy="40" r="18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 3" />
-          <text x="65" y="44" textAnchor="middle" className="text-[10px] fill-muted-foreground font-mono">ø</text>
-          {/* Self-reference arrow */}
-          <path d="M 83 35 C 100 20 100 55 83 45" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="3 2" markerEnd="url(#arrowhead-dashed)" />
-        </g>
+        {/* Child arrow from middle-left to right chain */}
+        <ChildArrow x1={leftX} y={chain1[1]} x2={rightX} />
 
-        {/* Vertical arrows between nodes */}
-        <line x1="65" y1="58" x2="65" y2="82" stroke="hsl(var(--foreground))" strokeWidth="1.5" markerEnd="url(#arrowhead)" opacity="0.7" />
-        <line x1="65" y1="118" x2="65" y2="82" stroke="hsl(var(--foreground))" strokeWidth="1.5" markerEnd="url(#arrowhead)" opacity="0.7" />
+        {/* RIGHT CHAIN - 2 nodes with bottom one being null */}
+        <Node x={rightX} y={chain2[0]} />
+        <Node x={rightX} y={chain2[1]} isNull />
+        <NullSymbol x={rightX} y={chain2[1]} />
 
-        {/* Middle node (solid) */}
-        <circle cx="65" cy="100" r="18" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" />
-        
-        {/* Child arrow from middle node */}
-        <line x1="83" y1="100" x2="140" y2="100" stroke="hsl(var(--muted-foreground))" strokeWidth="1" strokeDasharray="4 3" markerEnd="url(#arrowhead-dashed)" />
+        {/* Arrows between right chain nodes */}
+        <VerticalArrows x={rightX} y1={chain2[0]} y2={chain2[1]} />
 
-        {/* Empty child node with self-reference */}
-        <g className="text-muted-foreground">
-          <circle cx="165" cy="100" r="16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 3" />
-          <text x="165" y="104" textAnchor="middle" className="text-[10px] fill-muted-foreground font-mono">ø</text>
-          <path d="M 181 95 C 205 80 205 120 181 105" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="3 2" markerEnd="url(#arrowhead-dashed)" />
-        </g>
-
-        {/* Vertical arrows to bottom node */}
-        <line x1="65" y1="118" x2="65" y2="142" stroke="hsl(var(--foreground))" strokeWidth="1.5" markerEnd="url(#arrowhead)" opacity="0.7" />
-        <line x1="65" y1="178" x2="65" y2="142" stroke="hsl(var(--foreground))" strokeWidth="1.5" markerEnd="url(#arrowhead)" opacity="0.7" />
-
-        {/* Bottom node (solid) */}
-        <circle cx="65" cy="160" r="18" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" />
-
-        {/* Child arrow to nested structure */}
-        <line x1="83" y1="160" x2="140" y2="160" stroke="hsl(var(--muted-foreground))" strokeWidth="1" strokeDasharray="4 3" markerEnd="url(#arrowhead-dashed)" />
-
-        {/* Right nested structure bracket */}
-        <path 
-          d="M 155 135 C 140 135 140 225 155 225" 
-          fill="none" 
-          stroke="hsl(var(--primary))" 
+        {/* Closing curve for right chain */}
+        <path
+          d={`M ${rightX - nodeRadius} ${chain2[1]} 
+              C ${rightX - 35} ${chain2[1]} ${rightX - 35} ${chain2[0]} ${rightX - nodeRadius} ${chain2[0]}`}
+          fill="none"
+          stroke={arrowColor}
           strokeWidth="1.5"
-          opacity="0.6"
+        />
+        <polygon 
+          points={`${rightX - nodeRadius},${chain2[0]} ${rightX - nodeRadius - 6},${chain2[0] + 4} ${rightX - nodeRadius - 6},${chain2[0] - 4}`} 
+          fill={arrowColor}
         />
 
-        {/* Nested top node (empty) */}
-        <g className="text-muted-foreground">
-          <circle cx="175" cy="140" r="14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 3" />
-          <text x="175" y="144" textAnchor="middle" className="text-[9px] fill-muted-foreground font-mono">ø</text>
-          <path d="M 189 136 C 205 125 205 155 189 144" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="3 2" markerEnd="url(#arrowhead-dashed)" />
-        </g>
+        {/* Child arrow from right chain top node to far right */}
+        <ChildArrow x1={rightX} y={chain2[0]} x2={farRightX} />
 
-        {/* Vertical arrows in nested */}
-        <line x1="175" y1="154" x2="175" y2="168" stroke="hsl(var(--foreground))" strokeWidth="1.5" markerEnd="url(#arrowhead)" opacity="0.7" />
-        <line x1="175" y1="198" x2="175" y2="168" stroke="hsl(var(--foreground))" strokeWidth="1.5" markerEnd="url(#arrowhead)" opacity="0.7" />
+        {/* FAR RIGHT - single null node with self-loop */}
+        <Node x={farRightX} y={chain2[0]} isNull />
+        <NullSymbol x={farRightX} y={chain2[0]} />
 
-        {/* Nested middle node (solid) */}
-        <circle cx="175" cy="180" r="14" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" />
-
-        {/* Child from nested node */}
-        <line x1="189" y1="180" x2="240" y2="180" stroke="hsl(var(--muted-foreground))" strokeWidth="1" strokeDasharray="4 3" markerEnd="url(#arrowhead-dashed)" />
-
-        {/* Final empty child with self-ref */}
-        <g className="text-muted-foreground">
-          <circle cx="265" cy="180" r="14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 3" />
-          <text x="265" y="184" textAnchor="middle" className="text-[9px] fill-muted-foreground font-mono">ø</text>
-          <path d="M 279 176 C 300 162 300 198 279 184" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="3 2" markerEnd="url(#arrowhead-dashed)" />
-        </g>
-
-        {/* Nested bottom connection back up */}
-        <line x1="175" y1="198" x2="175" y2="212" stroke="hsl(var(--foreground))" strokeWidth="1.5" markerEnd="url(#arrowhead)" opacity="0.7" />
-        
-        {/* Nested bottom node connecting to top */}
-        <circle cx="175" cy="220" r="14" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.4" strokeDasharray="3 3" />
+        {/* Self-referencing loop */}
+        <path
+          d={`M ${farRightX + nodeRadius * 0.7} ${chain2[0] - nodeRadius * 0.7}
+              C ${farRightX + 40} ${chain2[0] - 35} ${farRightX + 40} ${chain2[0] + 35} ${farRightX + nodeRadius * 0.7} ${chain2[0] + nodeRadius * 0.7}`}
+          fill="none"
+          stroke={arrowColor}
+          strokeWidth="1.5"
+        />
+        <polygon 
+          points={`${farRightX + nodeRadius * 0.7},${chain2[0] + nodeRadius * 0.7} ${farRightX + nodeRadius * 0.7 + 2},${chain2[0] + nodeRadius * 0.7 - 8} ${farRightX + nodeRadius * 0.7 + 8},${chain2[0] + nodeRadius * 0.7 - 2}`} 
+          fill={arrowColor}
+        />
       </svg>
       <p className="text-sm text-muted-foreground italic mt-2">Data structure</p>
     </div>
