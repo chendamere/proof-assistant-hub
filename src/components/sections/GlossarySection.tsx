@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { axioms, getTypeBadgeClass, Rule, RuleType } from '@/data/axioms';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { Input } from '@/components/ui/input';
@@ -71,6 +71,32 @@ const GlossarySection: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<RuleType | 'all'>('all');
   const [expandedRule, setExpandedRule] = useState<string | null>(null);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+      
+      const rect = sectionRef.current.getBoundingClientRect();
+      const sectionTop = rect.top;
+      const sectionBottom = rect.bottom;
+      const viewportHeight = window.innerHeight;
+      
+      // Show button when:
+      // - User has scrolled past the top of the glossary (sectionTop < 100)
+      // - AND the glossary is still visible (sectionBottom > viewportHeight)
+      const isScrolledIntoGlossary = sectionTop < 100;
+      const isBeforeEndOfGlossary = sectionBottom > viewportHeight;
+      
+      setShowBackToTop(isScrolledIntoGlossary && isBeforeEndOfGlossary);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Check initial state
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const filteredRules = useMemo(() => {
     return axioms.filter(rule => {
@@ -93,7 +119,7 @@ const GlossarySection: React.FC = () => {
   }), []);
 
   return (
-    <section id="glossary" className="py-20 px-6 bg-muted/20">
+    <section id="glossary" ref={sectionRef} className="py-20 px-6 bg-muted/20 relative">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
@@ -205,19 +231,19 @@ const GlossarySection: React.FC = () => {
           </div>
         )}
 
-        {/* Back to Top Button */}
-        <div className="flex justify-center mt-8">
+        {/* Fixed Back to Top Button */}
+        {showBackToTop && (
           <Button
-            variant="outline"
+            variant="default"
             onClick={() => {
               document.getElementById('glossary')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="gap-2 hover:bg-primary/10 transition-colors"
+            className="fixed bottom-6 right-6 z-50 gap-2 shadow-lg animate-fade-in"
           >
             <ArrowUp className="w-4 h-4" />
             Back to Top
           </Button>
-        </div>
+        )}
       </div>
     </section>
   );
