@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { SyntaxInput } from '@/components/ui/syntax-input';
 import { axioms, Rule, getTypeBadgeClass } from '@/data/axioms';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
@@ -255,20 +255,18 @@ const ProofVerifierSection: React.FC = () => {
           <div className="grid md:grid-cols-[1fr,auto,1fr] gap-4 items-start">
             {/* Left Side */}
             <div className="space-y-3">
-              <div>
-                <label className="text-sm text-muted-foreground mb-2 block font-mono">
-                  Left Side (A)
-                </label>
-                <Textarea
-                  ref={leftTextareaRef}
-                  placeholder=", i \Pu j,"
-                  value={leftInput}
-                  onChange={(e) => setLeftInput(e.target.value)}
-                  onFocus={() => setActiveField('left')}
-                  onKeyDown={(e) => handleKeyDown(e, 'left')}
-                  className={`font-mono bg-muted/50 border-border min-h-[80px] resize-none ${activeField === 'left' ? 'ring-2 ring-primary/50' : ''}`}
-                />
-              </div>
+              <label className="text-sm text-muted-foreground mb-2 block font-mono">
+                Left Side (A)
+              </label>
+              <SyntaxInput
+                textareaRef={leftTextareaRef}
+                placeholder=", i \Pu j,"
+                value={leftInput}
+                onChange={setLeftInput}
+                onFocus={() => setActiveField('left')}
+                onKeyDown={(e) => handleKeyDown(e, 'left')}
+                isActive={activeField === 'left'}
+              />
               {/* Rendered Expression */}
               <div className="p-3 bg-muted/30 rounded-lg border border-border/50 min-h-[48px] flex items-center">
                 <ExpressionRenderer expression={leftInput} size={20} />
@@ -282,20 +280,18 @@ const ProofVerifierSection: React.FC = () => {
 
             {/* Right Side */}
             <div className="space-y-3">
-              <div>
-                <label className="text-sm text-muted-foreground mb-2 block font-mono">
-                  Right Side (B)
-                </label>
-                <Textarea
-                  ref={rightTextareaRef}
-                  placeholder=", j \Pu i,"
-                  value={rightInput}
-                  onChange={(e) => setRightInput(e.target.value)}
-                  onFocus={() => setActiveField('right')}
-                  onKeyDown={(e) => handleKeyDown(e, 'right')}
-                  className={`font-mono bg-muted/50 border-border min-h-[80px] resize-none ${activeField === 'right' ? 'ring-2 ring-primary/50' : ''}`}
-                />
-              </div>
+              <label className="text-sm text-muted-foreground mb-2 block font-mono">
+                Right Side (B)
+              </label>
+              <SyntaxInput
+                textareaRef={rightTextareaRef}
+                placeholder=", j \Pu i,"
+                value={rightInput}
+                onChange={setRightInput}
+                onFocus={() => setActiveField('right')}
+                onKeyDown={(e) => handleKeyDown(e, 'right')}
+                isActive={activeField === 'right'}
+              />
               {/* Rendered Expression */}
               <div className="p-3 bg-muted/30 rounded-lg border border-border/50 min-h-[48px] flex items-center">
                 <ExpressionRenderer expression={rightInput} size={20} />
