@@ -159,10 +159,30 @@ export const RulesSidePanel: React.FC = () => {
         {/* Filters */}
         <div className="p-4 space-y-3 border-b border-border">
           {/* Search */}
-          <div className="relative">
+          <div 
+            className="relative"
+            onDragOver={(e) => {
+              e.preventDefault();
+              e.dataTransfer.dropEffect = 'copy';
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              try {
+                const jsonData = e.dataTransfer.getData('application/json');
+                if (jsonData) {
+                  const data = JSON.parse(jsonData);
+                  if (data.name) {
+                    setSearchQuery(data.name);
+                  }
+                }
+              } catch (err) {
+                console.error('Failed to parse dropped data:', err);
+              }
+            }}
+          >
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search rules..."
+              placeholder="Search rules... (or drop a rule)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 bg-muted/50 border-border h-9"
