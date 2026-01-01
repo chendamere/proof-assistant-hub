@@ -1,14 +1,8 @@
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import IntroductionSection from '@/components/sections/IntroductionSection';
-import ProofVerifierSection from '@/components/sections/ProofVerifierSection';
-import RulesSidePanel from '@/components/rules/RulesSidePanel';
-import UserWorkbench from '@/components/workbench/UserWorkbench';
-import { usePanelContext } from '@/contexts/PanelContext';
 
 const Index = () => {
-  const { isWorkbenchExpanded } = usePanelContext();
-
   return (
     <div className="min-h-screen gradient-bg">
       <Navigation />
@@ -16,19 +10,11 @@ const Index = () => {
       {/* Spacer for fixed nav */}
       <div className="h-16" />
       
-      {/* Rules Side Panel (rendered but button moved to workbench) */}
-      <RulesSidePanel />
-      
-      <main className={`transition-all duration-300 ${isWorkbenchExpanded ? 'pb-80' : 'pb-12'}`}>
+      <main>
         <IntroductionSection />
-        <div className="section-divider" />
-        <ProofVerifierSection />
       </main>
       
       <Footer />
-      
-      {/* User Workbench */}
-      <UserWorkbench />
     </div>
   );
 };
