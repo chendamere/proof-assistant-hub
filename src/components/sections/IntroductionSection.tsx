@@ -2,6 +2,8 @@ import React from 'react';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import NodeDiagram from '@/components/visuals/NodeDiagram';
 import TreeStructureDiagram from '@/components/visuals/TreeStructureDiagram';
+import { BookOpen, ExternalLink } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const IntroductionSection: React.FC = () => {
   return (
@@ -135,6 +137,62 @@ const IntroductionSection: React.FC = () => {
                 </span>
                 <span className="text-muted-foreground text-sm">Proven conclusions from inference</span>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Book Section */}
+        <div className="bg-card border border-border rounded-lg p-6 md:p-8 card-glow animate-fade-in delay-500 mb-8">
+          <div className="flex items-start gap-4 mb-4">
+            <BookOpen className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+            <div>
+              <h3 className="text-xl font-semibold text-primary mb-1">The Book</h3>
+              <p className="text-sm text-muted-foreground font-mono">Volume 1: Rules of Universal Language and Fundamental Math</p>
+            </div>
+          </div>
+          
+          <div className="space-y-4 text-muted-foreground text-sm leading-relaxed">
+            <p>
+              In order to allow the machine to think in its own way, I designed this universal machine language. 
+              This language is not just a programming language, but also a calculus language as conceived by Leibniz. 
+              The calculus of language is the thinking process of machines.
+            </p>
+            <p>
+              This language is very small, only 11 operators, but it is very complex and powerful. 
+              It can understand its own structure and operation, and use this as a starting point to define 
+              mathematical concepts and derive basic mathematical laws.
+            </p>
+            <p>
+              In order to be able to perform calculations, first establish a logical system based on the principle 
+              of equivalence, and then construct a propositional system based on selected operators. 
+              All propositional properties can thus be deduced.
+            </p>
+            <p>
+              Contradiction is clearly defined by which compatibility can be demonstrated. 
+              The paradox can also be clearly defined. It can be shown that a paradox cannot lead to a contradiction.
+            </p>
+            <p>
+              Except for the introduction of the first chapter, the book is written in universal language. 
+              If you like proofs, you will really enjoy this book because it consists of explicit proofs. 
+              Proof is also a thought process.
+            </p>
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-center gap-4">
+            <a 
+              href="https://www.amazon.com/Way-Machine-Thinking-Universal-Fundamental/dp/B0CHL7WS7B" 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              <Button className="gap-2">
+                <span>Get the Book on Amazon</span>
+                <ExternalLink className="w-4 h-4" />
+              </Button>
+            </a>
+            <div className="text-sm text-muted-foreground">
+              <span className="font-mono">801 pages</span>
+              <span className="mx-2">·</span>
+              <span>by Weili Chen</span>
             </div>
           </div>
         </div>
