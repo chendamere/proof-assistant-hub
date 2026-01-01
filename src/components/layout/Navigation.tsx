@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, List, CheckSquare } from 'lucide-react';
+import { BookOpen, CheckSquare } from 'lucide-react';
 
 interface NavItem {
   id: string;
@@ -10,7 +10,6 @@ interface NavItem {
 const Navigation: React.FC = () => {
   const navItems: NavItem[] = [
     { id: 'introduction', label: 'Introduction', icon: <BookOpen className="w-4 h-4" /> },
-    { id: 'glossary', label: 'Glossary', icon: <List className="w-4 h-4" /> },
     { id: 'verifier', label: 'Verifier', icon: <CheckSquare className="w-4 h-4" /> },
   ];
 
