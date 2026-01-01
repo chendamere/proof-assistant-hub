@@ -1,5 +1,5 @@
 import React from 'react';
-import { OperatorLegend, EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
+import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 
 const IntroductionSection: React.FC = () => {
   return (
@@ -123,15 +123,6 @@ const IntroductionSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Operators Section */}
-        <div className="animate-fade-in delay-500">
-          <h2 className="text-2xl font-semibold text-center mb-6">
-            Operators
-          </h2>
-          <div className="bg-card border border-border rounded-lg overflow-hidden">
-            <OperatorLegend />
-          </div>
-        </div>
 
 
         {/* Navigation hint */}
