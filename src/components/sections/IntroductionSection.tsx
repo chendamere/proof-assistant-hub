@@ -1,5 +1,7 @@
 import React from 'react';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
+import NodeDiagram from '@/components/visuals/NodeDiagram';
+import TreeStructureDiagram from '@/components/visuals/TreeStructureDiagram';
 
 const IntroductionSection: React.FC = () => {
   return (
@@ -123,7 +125,15 @@ const IntroductionSection: React.FC = () => {
           </div>
         </div>
 
-
+        {/* Visual Diagrams */}
+        <div className="grid md:grid-cols-2 gap-8 mb-16 animate-fade-in delay-500">
+          <div className="bg-card border border-border rounded-lg p-6 flex items-center justify-center">
+            <NodeDiagram />
+          </div>
+          <div className="bg-card border border-border rounded-lg p-6 flex items-center justify-center">
+            <TreeStructureDiagram />
+          </div>
+        </div>
 
         {/* Navigation hint */}
         <div className="mt-16 text-center">
