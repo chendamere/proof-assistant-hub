@@ -123,16 +123,6 @@ export const RulesSidePanel: React.FC = () => {
 
   return (
     <>
-      {/* Toggle Button */}
-      <Button 
-        variant="outline" 
-        size="sm" 
-        onClick={() => setIsOpen(!isOpen)}
-        className="gap-2"
-      >
-        <PanelRightOpen className="w-4 h-4" />
-        Rules Panel
-      </Button>
 
       {/* Side Panel - Non-modal, always accessible for drag */}
       <div 

@@ -16,10 +16,8 @@ const Index = () => {
       {/* Spacer for fixed nav */}
       <div className="h-16" />
       
-      {/* Fixed Rules Panel Button */}
-      <div className="fixed bottom-6 left-6 z-50">
-        <RulesSidePanel />
-      </div>
+      {/* Rules Side Panel (rendered but button moved to workbench) */}
+      <RulesSidePanel />
       
       <main className={`transition-all duration-300 ${isWorkbenchExpanded ? 'pb-80' : 'pb-12'}`}>
         <IntroductionSection />
