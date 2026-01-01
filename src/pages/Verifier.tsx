@@ -1,28 +1,31 @@
 import Navigation from '@/components/layout/Navigation';
-import Footer from '@/components/layout/Footer';
 import ProofVerifierSection from '@/components/sections/ProofVerifierSection';
 import RulesSidePanel from '@/components/rules/RulesSidePanel';
 import UserWorkbench from '@/components/workbench/UserWorkbench';
 import { usePanelContext } from '@/contexts/PanelContext';
 
 const Verifier = () => {
-  const { isWorkbenchExpanded } = usePanelContext();
+  const { isWorkbenchExpanded, isRulesPanelOpen } = usePanelContext();
 
   return (
-    <div className="min-h-screen gradient-bg">
+    <div className="h-screen flex flex-col overflow-hidden gradient-bg">
       <Navigation />
       
       {/* Spacer for fixed nav */}
-      <div className="h-16" />
+      <div className="h-16 flex-shrink-0" />
       
       {/* Rules Side Panel */}
       <RulesSidePanel />
       
-      <main className={`transition-all duration-300 ${isWorkbenchExpanded ? 'pb-80' : 'pb-12'}`}>
+      <main 
+        className="flex-1 overflow-hidden transition-all duration-300"
+        style={{
+          marginRight: isRulesPanelOpen ? '380px' : '0',
+          marginBottom: isWorkbenchExpanded ? '320px' : '48px',
+        }}
+      >
         <ProofVerifierSection />
       </main>
-      
-      <Footer />
       
       {/* User Workbench */}
       <UserWorkbench />
