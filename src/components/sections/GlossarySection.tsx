@@ -1,33 +1,8 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { axioms, getTypeBadgeClass, Rule, RuleType } from '@/data/axioms';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { Input } from '@/components/ui/input';
 import { Search, ChevronDown, ChevronUp } from 'lucide-react';
-
-// Operation metadata for position tracking
-interface OperationMetadata {
-  id: string;
-  operator: string;
-  operandBefore?: string;
-  operandAfter?: string;
-  startX: number;
-  startY: number;
-  width: number;
-  height: number;
-  type: 'binary' | 'unary' | 'nullary' | 'branch';
-}
-
-// Rule expression metadata - stores all operation positions for a rule side
-interface RuleExpressionMetadata {
-  ruleId: string;
-  side: 'left' | 'right';
-  operations: OperationMetadata[];
-  totalWidth: number;
-  totalHeight: number;
-}
-
-// Store for all rule metadata
-const ruleMetadataStore = new Map<string, { left: RuleExpressionMetadata; right: RuleExpressionMetadata }>();
 
 // Constants for dimension calculation
 const OPERATOR_SVG_WIDTH = 14;
@@ -336,214 +311,11 @@ const parseBranchOperator = (
   return { operation, topBranch, bottomBranch, endIndex: i - 1 };
 };
 
-// Function to track operation positions in an expression (including branches)
-const trackOperationPositions = (
-  expr: string,
-  ruleId: string,
-  side: 'left' | 'right',
-  startX: number = 0,
-  startY: number = 0
-): OperationMetadata[] => {
-  const operations: OperationMetadata[] = [];
-  let currentX = startX;
-  const processed: Set<number> = new Set();
-  
-  // First, check for branch operators and handle them
-  const branchPattern = /(\\Blb|\\Brs|\\Br|\\Bb|\\Bs)/g;
-  const branchIndices: Array<{ operator: string; index: number }> = [];
-  let branchMatch;
-  
-  while ((branchMatch = branchPattern.exec(expr)) !== null) {
-    branchIndices.push({
-      operator: branchMatch[0],
-      index: branchMatch.index
-    });
-  }
-  
-  // Process branches first
-  branchIndices.reverse();
-  const processedRanges: Array<{ start: number; end: number }> = [];
-  
-  for (const { operator, index } of branchIndices) {
-    if (processedRanges.some(range => index >= range.start && index < range.end)) {
-      continue;
-    }
-    
-    const branchResult = parseBranchOperator(operator, expr, index);
-    if (branchResult) {
-      processedRanges.push({ start: index, end: branchResult.endIndex + 1 });
-      
-      // Track branch operation
-      const isBb = operator === '\\Bb' || operator === '\\Bs';
-      const isBr = operator === '\\Br' || operator === '\\Brs';
-      const branchDims = calculateOperationDimensions(operator, undefined, undefined, true);
-      
-      // For branches, we need to account for the operation width if present
-      let branchWidth = branchDims.width;
-      if (branchResult.operation) {
-        branchWidth += calculateTextWidth(branchResult.operation) + GAP_BETWEEN_ELEMENTS;
-      }
-      
-      const opMetadata: OperationMetadata = {
-        id: `${ruleId}-${side}-branch-${operations.length}`,
-        operator: operator,
-        operandBefore: branchResult.operation,
-        operandAfter: undefined,
-        startX: currentX,
-        startY: startY,
-        width: branchWidth,
-        height: branchDims.height,
-        type: 'branch'
-      };
-      operations.push(opMetadata);
-      
-      currentX += branchWidth + GAP_BETWEEN_ELEMENTS;
-    }
-  }
-  
-  // Now track non-branch operations
-  const pattern = /(\\Blb|\\Brs|\\Br|\\Bb|\\Bs|\\[A-Za-z]+|[,{}]|\w+(?:_\d+)?|R\([^)]*\)|Rc\([^;)]*;[^)]*\)|Rcpo\([^;)]*;[^)]*\)|Rcpm\([^;)]*;[^)]*\)|IsCpo\([^;)]*;[^)]*\)|Cpo\([^)]*\)|Del\([^)]*\)|Ins\([^,)]*;[^)]*\)|if\([^)]*\)|\\Ri|\\Tc\s+\w+|\\In|\\Pn|\d+\+\d+:\w+|\d+×\d+:\w+|⊢|:)/g;
-  const tokens: string[] = [];
-  const indices: number[] = [];
-  let match;
-  
-  while ((match = pattern.exec(expr)) !== null) {
-    tokens.push(match[0]);
-    indices.push(match.index);
-  }
-  
-  // First pass: pre-mark operands for non-branch operators
-  for (let i = 0; i < tokens.length; i++) {
-    const token = tokens[i];
-    // Skip if this is part of a branch operator range
-    if (processedRanges.some(range => indices[i] >= range.start && indices[i] < range.end)) {
-      continue;
-    }
-    
-    if (operatorSvgMap[token] && !['\\Blb', '\\Br', '\\Bb', '\\Brs', '\\Bs'].includes(token)) {
-      const isUnary = ['\\Og', '\\Ot', '\\On', '\\Op', '\\Os'].includes(token);
-      const isNullary = token === '\\Or';
-      const isBinary = !isUnary && !isNullary;
-      
-      if (isBinary) {
-        let j = i - 1;
-        while (j >= 0 && (tokens[j] === ',' || tokens[j] === '{' || tokens[j].startsWith('\\') || processed.has(j))) {
-          j--;
-        }
-        if (j >= 0) {
-          processed.add(j);
-        }
-        
-        let k = i + 1;
-        while (k < tokens.length && (tokens[k] === ',' || tokens[k] === '}' || tokens[k].startsWith('\\'))) {
-          k++;
-        }
-        if (k < tokens.length) {
-          processed.add(k);
-        }
-      } else if (isUnary) {
-        let k = i + 1;
-        while (k < tokens.length && (tokens[k] === ',' || tokens[k] === '}' || tokens[k].startsWith('\\'))) {
-          k++;
-        }
-        if (k < tokens.length) {
-          processed.add(k);
-        }
-      }
-    }
-  }
-  
-  // Second pass: track non-branch operations
-  for (let i = 0; i < tokens.length; i++) {
-    // Skip if this is part of a branch operator range
-    if (processedRanges.some(range => indices[i] >= range.start && indices[i] < range.end)) {
-      continue;
-    }
-    
-    if (processed.has(i)) continue;
-    
-    const token = tokens[i];
-    
-    // Skip branch operators (already tracked)
-    if (['\\Blb', '\\Br', '\\Bb', '\\Brs', '\\Bs'].includes(token)) {
-      continue;
-    }
-    
-    if (token === ',') {
-      currentX += calculateTextWidth(',') * 0.3; // 30% width for comma
-    } else if (token === '{' || token === '}') {
-      currentX += calculateTextWidth(token);
-    } else if (operatorSvgMap[token]) {
-      const isUnary = ['\\Og', '\\Ot', '\\On', '\\Op', '\\Os'].includes(token);
-      const isNullary = token === '\\Or';
-      const isBinary = !isUnary && !isNullary;
-      
-      let operandBefore: string | undefined;
-      let operandAfter: string | undefined;
-      
-      if (isBinary) {
-        let j = i - 1;
-        while (j >= 0 && (tokens[j] === ',' || tokens[j] === '{' || tokens[j].startsWith('\\'))) {
-          j--;
-        }
-        if (j >= 0) {
-          operandBefore = tokens[j];
-        }
-        
-        let k = i + 1;
-        while (k < tokens.length && (tokens[k] === ',' || tokens[k] === '}' || tokens[k].startsWith('\\'))) {
-          k++;
-        }
-        if (k < tokens.length) {
-          operandAfter = tokens[k];
-        }
-      } else if (isUnary) {
-        let k = i + 1;
-        while (k < tokens.length && (tokens[k] === ',' || tokens[k] === '}' || tokens[k].startsWith('\\'))) {
-          k++;
-        }
-        if (k < tokens.length) {
-          operandAfter = tokens[k];
-        }
-      }
-      
-      const dims = calculateOperationDimensions(token, operandBefore, operandAfter, false);
-      const opMetadata: OperationMetadata = {
-        id: `${ruleId}-${side}-${operations.length}`,
-        operator: token,
-        operandBefore,
-        operandAfter,
-        startX: currentX,
-        startY: startY,
-        width: dims.width,
-        height: dims.height,
-        type: isBinary ? 'binary' : isUnary ? 'unary' : 'nullary'
-      };
-      operations.push(opMetadata);
-      
-      currentX += dims.width + GAP_BETWEEN_ELEMENTS;
-    } else if (!token.startsWith('\\')) {
-      // Variables, functions, etc.
-      currentX += calculateTextWidth(token) + GAP_BETWEEN_ELEMENTS;
-    }
-  }
-  
-  return operations;
-};
-
-// Parse non-branch expression with metadata positioning
+// Parse non-branch expression with relative positioning
 const parseNonBranchExpression = (
   expr: string, 
-  keyPrefix: string, 
-  ruleId?: string, 
-  side?: 'left' | 'right',
-  operationIndexRef?: { current: number }
+  keyPrefix: string
 ): React.ReactNode[] => {
-  const metadata = ruleId && side ? getRuleMetadata(ruleId)?.[side] : undefined;
-  // Use shared index ref if provided, otherwise create local one
-  if (!operationIndexRef) {
-    operationIndexRef = { current: 0 };
-  }
   const parts: React.ReactNode[] = [];
   const processed: Set<number> = new Set();
   
@@ -652,61 +424,19 @@ const parseNonBranchExpression = (
         }
       }
       
-      // Get metadata for this operation by index (operations are tracked in order)
-      // Skip branch operations in metadata (they're handled separately)
-      let opMetadata: OperationMetadata | undefined;
-      if (metadata && operationIndexRef.current < metadata.operations.length) {
-        // Find next non-branch operation
-        while (operationIndexRef.current < metadata.operations.length) {
-          const candidate = metadata.operations[operationIndexRef.current];
-          if (candidate.type !== 'branch') {
-            opMetadata = candidate;
-            operationIndexRef.current++;
-            break;
-          }
-          operationIndexRef.current++;
-        }
-      }
-      
-      // Use absolute positioning if metadata is available
-      if (opMetadata && ruleId && side) {
-        parts.push(
-          <span
-            key={`${keyPrefix}op-${i}`}
-            className="absolute inline-flex items-center gap-0.5"
-            style={{
-              left: `${opMetadata.startX}px`,
-              top: `${opMetadata.startY}px`,
-              width: `${opMetadata.width}px`,
-              height: `${opMetadata.height}px`,
-              zIndex: 10
-            }}
-          >
-            {operandBefore && <span className="font-mono text-xs">{operandBefore}</span>}
-            <img 
-              src={svgSrc} 
-              alt={token}
-              className="inline-block opacity-90"
-              style={{ width: '14px', height: '14px', verticalAlign: 'middle', filter: 'brightness(0) invert(1)' }}
-            />
-            {operandAfter && <span className="font-mono text-xs">{operandAfter}</span>}
-          </span>
-        );
-      } else {
-        // Fallback to inline rendering if no metadata
-        parts.push(
-          <span key={`${keyPrefix}op-${i}`} className="inline-flex items-center gap-0.5 mx-0.5">
-            {operandBefore && <span className="font-mono text-xs">{operandBefore}</span>}
-            <img 
-              src={svgSrc} 
-              alt={token}
-              className="inline-block opacity-90"
-              style={{ width: '14px', height: '14px', verticalAlign: 'middle', filter: 'brightness(0) invert(1)' }}
-            />
-            {operandAfter && <span className="font-mono text-xs">{operandAfter}</span>}
-          </span>
-        );
-      }
+      // Render with relative positioning
+      parts.push(
+        <span key={`${keyPrefix}op-${i}`} className="inline-flex items-center gap-0.5 mx-0.5">
+          {operandBefore && <span className="font-mono text-xs">{operandBefore}</span>}
+          <img 
+            src={svgSrc} 
+            alt={token}
+            className="inline-block opacity-90"
+            style={{ width: '14px', height: '14px', verticalAlign: 'middle', filter: 'brightness(0) invert(1)' }}
+          />
+          {operandAfter && <span className="font-mono text-xs">{operandAfter}</span>}
+        </span>
+      );
     } else if (token.startsWith('\\')) {
       // Unknown operator - render as text
       parts.push(<span key={`${keyPrefix}unknown-${i}`} className="font-mono text-xs mx-0.5">{token}</span>);
@@ -726,26 +456,7 @@ const BranchComponent: React.FC<{
   topBranch: string;
   bottomBranch: string;
   keyPrefix: string;
-  ruleId?: string;
-  side?: 'left' | 'right';
-  operationIndexRef?: { current: number };
-}> = ({ operator, operation, topBranch, bottomBranch, keyPrefix, ruleId, side, operationIndexRef }) => {
-  const metadata = ruleId && side ? getRuleMetadata(ruleId)?.[side] : undefined;
-  
-  // Get branch operation metadata by current index
-  let branchOpMetadata: OperationMetadata | undefined;
-  if (metadata && operationIndexRef && operationIndexRef.current < metadata.operations.length) {
-    // Find next branch operation
-    while (operationIndexRef.current < metadata.operations.length) {
-      const candidate = metadata.operations[operationIndexRef.current];
-      if (candidate.type === 'branch' && candidate.operator === operator) {
-        branchOpMetadata = candidate;
-        operationIndexRef.current++;
-        break;
-      }
-      operationIndexRef.current++;
-    }
-  }
+}> = ({ operator, operation, topBranch, bottomBranch, keyPrefix }) => {
   // For \Bb and \Bs, use Blb SVG instead
   const isBb = operator === '\\Bb' || operator === '\\Bs';
   const mainSvgSrc = isBb ? BlbSvg : operatorSvgMap[operator];
@@ -759,25 +470,18 @@ const BranchComponent: React.FC<{
   return (
     <span 
       key={keyPrefix} 
-      className={branchOpMetadata ? "absolute inline-flex items-center align-middle" : "inline-flex items-center align-middle"}
-      style={branchOpMetadata ? {
-        left: `${branchOpMetadata.startX}px`,
-        top: `${branchOpMetadata.startY}px`,
-        width: `${branchOpMetadata.width}px`,
-        height: `${branchOpMetadata.height}px`,
-        zIndex: 10
-      } : {}}
+      className="inline-flex items-center align-middle"
     >
       {/* Operation (if present - for Blb and Bb, not Br/Brs) - inline with previous operations - recursively parse to handle nested branches */}
       {operation && operation.trim() && (
         <>
-          {parseExpression(operation, ruleId, side, operationIndexRef)}
+          {parseExpression(operation)}
         </>
       )}
       
       {/* Branch operator symbol with positioned branches */}
       <span className="mx-0">
-        <div className="relative inline-flex items-center justify-center" style={{ minWidth: '50px', minHeight: '80px' }}>
+        <div className="relative inline-flex items-center justify-center" style={{ minWidth: '66px', minHeight: '80px' }}>
         {/* Main branch operator symbol (Blb for Bb, or operator's SVG for others) - same border width as normal operators (14px) but taller (64px) */}
         <img 
           src={mainSvgSrc} 
@@ -805,7 +509,6 @@ const BranchComponent: React.FC<{
               height: '64px', 
               filter: 'brightness(0) invert(1)', 
               left: '100%',
-
               transform: 'translate(0%, -0%)',
               objectFit: 'fill'
             }}
@@ -814,12 +517,12 @@ const BranchComponent: React.FC<{
         
         {/* Top branch - positioned at top right - recursively parse to handle nested branches */}
         <div className="absolute top-0 right-0 px-0 py-1 max-w-[120px]">
-          {parseExpression(topBranch, ruleId, side, operationIndexRef)}
+          {parseExpression(topBranch)}
         </div>
         
         {/* Bottom branch - positioned at bottom right - recursively parse to handle nested branches */}
         <div className="absolute bottom-0 right-0 px-0 py-1 max-w-[120px]">
-          {parseExpression(bottomBranch, ruleId, side, operationIndexRef)}
+          {parseExpression(bottomBranch)}
         </div>
       </div>
       </span>
@@ -827,12 +530,9 @@ const BranchComponent: React.FC<{
   );
 };
 
-// Parse expression and convert to SVG components with metadata positioning
+// Parse expression and convert to SVG components with relative positioning
 const parseExpression = (
-  expr: string, 
-  ruleId?: string, 
-  side?: 'left' | 'right',
-  operationIndexRef?: { current: number }
+  expr: string
 ): React.ReactNode[] => {
   const parts: React.ReactNode[] = [];
   
@@ -880,50 +580,47 @@ const parseExpression = (
       continue;
     }
     
-      // Add content before this branch
-      if (index > lastIndex) {
-        const beforeExpr = expr.substring(lastIndex, index);
-        if (beforeExpr.trim()) {
-          parts.push(...parseNonBranchExpression(beforeExpr, `before-${partIndex}-`, ruleId, side, operationIndexRef));
-        }
-      }
-      
-      // Parse and add branch
-      const branchResult = parseBranchOperator(operator, expr, index);
-      if (branchResult) {
-        parts.push(
-          <BranchComponent
-            key={`branch-${partIndex}`}
-            operator={operator}
-            operation={branchResult.operation}
-            topBranch={branchResult.topBranch}
-            bottomBranch={branchResult.bottomBranch}
-            keyPrefix={`branch-${partIndex}`}
-            ruleId={ruleId}
-            side={side}
-            operationIndexRef={operationIndexRef}
-          />
-        );
-        lastIndex = branchResult.endIndex + 1;
-      } else {
-        lastIndex = index + operator.length;
-      }
-      
-      partIndex++;
-    }
-    
-    // Add remaining content
-    if (lastIndex < expr.length) {
-      const remainingExpr = expr.substring(lastIndex);
-      if (remainingExpr.trim()) {
-        parts.push(...parseNonBranchExpression(remainingExpr, `after-${partIndex}-`, ruleId, side, operationIndexRef));
+    // Add content before this branch
+    if (index > lastIndex) {
+      const beforeExpr = expr.substring(lastIndex, index);
+      if (beforeExpr.trim()) {
+        parts.push(...parseNonBranchExpression(beforeExpr, `before-${partIndex}-`));
       }
     }
     
-    // If no branches found, parse normally
-    if (branchIndices.length === 0) {
-      return parseNonBranchExpression(expr, 'expr-', ruleId, side, operationIndexRef);
+    // Parse and add branch
+    const branchResult = parseBranchOperator(operator, expr, index);
+    if (branchResult) {
+      parts.push(
+        <BranchComponent
+          key={`branch-${partIndex}`}
+          operator={operator}
+          operation={branchResult.operation}
+          topBranch={branchResult.topBranch}
+          bottomBranch={branchResult.bottomBranch}
+          keyPrefix={`branch-${partIndex}`}
+        />
+      );
+      lastIndex = branchResult.endIndex + 1;
+    } else {
+      lastIndex = index + operator.length;
     }
+    
+    partIndex++;
+  }
+  
+  // Add remaining content
+  if (lastIndex < expr.length) {
+    const remainingExpr = expr.substring(lastIndex);
+    if (remainingExpr.trim()) {
+      parts.push(...parseNonBranchExpression(remainingExpr, `after-${partIndex}-`));
+    }
+  }
+  
+  // If no branches found, parse normally
+  if (branchIndices.length === 0) {
+    return parseNonBranchExpression(expr, 'expr-');
+  }
   
   return parts.length > 0 ? parts : [<span key="empty" className="font-mono text-xs">{expr}</span>];
 };
@@ -934,44 +631,7 @@ interface RuleCardProps {
   onToggle: () => void;
 }
 
-// Helper function to get rule metadata
-const getRuleMetadata = (ruleId: string): { left: RuleExpressionMetadata; right: RuleExpressionMetadata } | undefined => {
-  return ruleMetadataStore.get(ruleId);
-};
-
 const RuleCard: React.FC<RuleCardProps> = ({ rule, isExpanded, onToggle }) => {
-  const leftRef = useRef<HTMLDivElement>(null);
-  const rightRef = useRef<HTMLDivElement>(null);
-  
-  // Track operation positions when rule is expanded
-  useEffect(() => {
-    if (isExpanded) {
-      const leftOps = trackOperationPositions(rule.leftSide, rule.id, 'left');
-      const rightOps = trackOperationPositions(rule.rightSide, rule.id, 'right');
-      
-      const leftTotalWidth = Math.max(...leftOps.map(op => op.startX + op.width), 0);
-      const rightTotalWidth = Math.max(...rightOps.map(op => op.startX + op.width), 0);
-      const leftTotalHeight = Math.max(...leftOps.map(op => op.height), OPERATOR_SVG_HEIGHT);
-      const rightTotalHeight = Math.max(...rightOps.map(op => op.height), OPERATOR_SVG_HEIGHT);
-      
-      ruleMetadataStore.set(rule.id, {
-        left: {
-          ruleId: rule.id,
-          side: 'left',
-          operations: leftOps,
-          totalWidth: leftTotalWidth,
-          totalHeight: leftTotalHeight
-        },
-        right: {
-          ruleId: rule.id,
-          side: 'right',
-          operations: rightOps,
-          totalWidth: rightTotalWidth,
-          totalHeight: rightTotalHeight
-        }
-      });
-    }
-  }, [rule.id, rule.leftSide, rule.rightSide, isExpanded]);
   return (
     <div className="bg-card border border-border rounded-lg overflow-hidden card-glow">
       <button 
@@ -1019,63 +679,26 @@ const RuleCard: React.FC<RuleCardProps> = ({ rule, isExpanded, onToggle }) => {
             <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">SVG Rendered</p>
             <div className="flex flex-wrap items-center justify-center gap-3 min-h-[40px] py-2">
               <div 
-                ref={leftRef}
                 className="relative bg-muted px-3 py-1.5 rounded border border-border"
                 style={{ 
                   position: 'relative',
-                  width: getRuleMetadata(rule.id)?.left.totalWidth ? `${getRuleMetadata(rule.id)!.left.totalWidth}px` : 'auto',
-                  height: getRuleMetadata(rule.id)?.left.totalHeight ? `${getRuleMetadata(rule.id)!.left.totalHeight}px` : 'auto',
                   minHeight: '40px'
                 }}
               >
-                {parseExpression(rule.leftSide, rule.id, 'left', { current: 0 })}
+                {parseExpression(rule.leftSide)}
               </div>
               <EquivalenceSymbol size={28} />
               <div 
-                ref={rightRef}
                 className="relative bg-muted px-3 py-1.5 rounded border border-border"
                 style={{ 
                   position: 'relative',
-                  width: getRuleMetadata(rule.id)?.right.totalWidth ? `${getRuleMetadata(rule.id)!.right.totalWidth}px` : 'auto',
-                  height: getRuleMetadata(rule.id)?.right.totalHeight ? `${getRuleMetadata(rule.id)!.right.totalHeight}px` : 'auto',
                   minHeight: '40px'
                 }}
               >
-                {parseExpression(rule.rightSide, rule.id, 'right', { current: 0 })}
+                {parseExpression(rule.rightSide)}
               </div>
             </div>
           </div>
-          
-          {/* Debug: Show operation metadata */}
-          {isExpanded && getRuleMetadata(rule.id) && (
-            <div className="mt-4 text-xs text-muted-foreground">
-              <details>
-                <summary>Operation Positions (Debug)</summary>
-                <div className="mt-2 space-y-2">
-                  <div>
-                    <strong>Left Side:</strong>
-                    <ul className="ml-4 list-disc">
-                      {getRuleMetadata(rule.id)?.left.operations.map(op => (
-                        <li key={op.id}>
-                          {op.operator}: x={op.startX.toFixed(1)}, y={op.startY.toFixed(1)}, w={op.width.toFixed(1)}, h={op.height.toFixed(1)}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <strong>Right Side:</strong>
-                    <ul className="ml-4 list-disc">
-                      {getRuleMetadata(rule.id)?.right.operations.map(op => (
-                        <li key={op.id}>
-                          {op.operator}: x={op.startX.toFixed(1)}, y={op.startY.toFixed(1)}, w={op.width.toFixed(1)}, h={op.height.toFixed(1)}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </details>
-            </div>
-          )}
         </div>
       )}
     </div>
@@ -1083,3 +706,4 @@ const RuleCard: React.FC<RuleCardProps> = ({ rule, isExpanded, onToggle }) => {
 };
 
 export default GlossarySection;
+
