@@ -1,10 +1,10 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { SyntaxInput } from '@/components/ui/syntax-input';
 import { axioms, Rule, getTypeBadgeClass } from '@/data/axioms';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
-import { CheckCircle2, XCircle, AlertCircle, Sparkles, ArrowRight, RotateCcw, Keyboard } from 'lucide-react';
+import { CheckCircle2, XCircle, Sparkles, ArrowRight, RotateCcw } from 'lucide-react';
 
 interface VerificationResult {
   isValid: boolean;
@@ -13,33 +13,13 @@ interface VerificationResult {
   similarity?: number;
 }
 
-// Keyboard shortcuts for operators
-const operatorShortcuts = [
-  { key: 'a', syntax: '\\Oa', label: 'Assign', description: 'Ctrl+A' },
-  { key: 'b', syntax: '\\Ob', label: 'Subnode', description: 'Ctrl+B' },
-  { key: 'c', syntax: '\\Oc', label: 'Copy', description: 'Ctrl+C' },
-  { key: 'd', syntax: '\\Od', label: 'ID', description: 'Ctrl+D' },
-  { key: 'e', syntax: '\\Oe', label: 'Equiv', description: 'Ctrl+E' },
-  { key: 'g', syntax: '\\Og', label: 'Global', description: 'Ctrl+G' },
-  { key: 't', syntax: '\\Ot', label: 'Temp', description: 'Ctrl+T' },
-  { key: 'n', syntax: '\\On', label: 'Next', description: 'Ctrl+N' },
-  { key: 'p', syntax: '\\Op', label: 'Prev', description: 'Ctrl+P' },
-  { key: 's', syntax: '\\Os', label: 'Release', description: 'Ctrl+S' },
-  { key: 'r', syntax: '\\Or', label: 'Error', description: 'Ctrl+R' },
-];
-
 const ProofVerifierSection: React.FC = () => {
   const [leftInput, setLeftInput] = useState('');
   const [rightInput, setRightInput] = useState('');
   const [result, setResult] = useState<VerificationResult | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [activeField, setActiveField] = useState<'left' | 'right'>('left');
-  const [showShortcuts, setShowShortcuts] = useState(false);
   const [leftDragOver, setLeftDragOver] = useState(false);
   const [rightDragOver, setRightDragOver] = useState(false);
-  
-  const leftTextareaRef = useRef<HTMLTextAreaElement>(null);
-  const rightTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleDragOver = useCallback((e: React.DragEvent, side: 'left' | 'right') => {
     e.preventDefault();
@@ -82,49 +62,6 @@ const ProofVerifierSection: React.FC = () => {
     }
   }, []);
 
-  const insertAtCursor = useCallback((syntax: string) => {
-    const textarea = activeField === 'left' ? leftTextareaRef.current : rightTextareaRef.current;
-    const setInput = activeField === 'left' ? setLeftInput : setRightInput;
-    const currentValue = activeField === 'left' ? leftInput : rightInput;
-    
-    if (textarea) {
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const newValue = currentValue.substring(0, start) + syntax + currentValue.substring(end);
-      setInput(newValue);
-      
-      // Set cursor position after inserted text
-      setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(start + syntax.length, start + syntax.length);
-      }, 0);
-    }
-  }, [activeField, leftInput, rightInput]);
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>, field: 'left' | 'right') => {
-    if (e.ctrlKey || e.metaKey) {
-      const shortcut = operatorShortcuts.find(s => s.key === e.key.toLowerCase());
-      if (shortcut) {
-        e.preventDefault();
-        const textarea = field === 'left' ? leftTextareaRef.current : rightTextareaRef.current;
-        const setInput = field === 'left' ? setLeftInput : setRightInput;
-        const currentValue = field === 'left' ? leftInput : rightInput;
-        
-        if (textarea) {
-          const start = textarea.selectionStart;
-          const end = textarea.selectionEnd;
-          const newValue = currentValue.substring(0, start) + shortcut.syntax + currentValue.substring(end);
-          setInput(newValue);
-          
-          setTimeout(() => {
-            textarea.focus();
-            textarea.setSelectionRange(start + shortcut.syntax.length, start + shortcut.syntax.length);
-          }, 0);
-        }
-      }
-    }
-  }, [leftInput, rightInput]);
-
   const normalizeExpression = (expr: string): string => {
     return expr
       .toLowerCase()
@@ -140,7 +77,6 @@ const ProofVerifierSection: React.FC = () => {
     
     if (normA === normB) return 1;
     
-    // Simple character-based similarity
     const longer = normA.length > normB.length ? normA : normB;
     const shorter = normA.length > normB.length ? normB : normA;
     
@@ -157,12 +93,10 @@ const ProofVerifierSection: React.FC = () => {
   const verifyStatement = () => {
     setIsVerifying(true);
     
-    // Simulate verification delay
     setTimeout(() => {
       const normLeft = normalizeExpression(leftInput);
       const normRight = normalizeExpression(rightInput);
       
-      // Check if this matches any known rule
       let bestMatch: Rule | null = null;
       let bestSimilarity = 0;
       
@@ -170,7 +104,6 @@ const ProofVerifierSection: React.FC = () => {
         const ruleNormLeft = normalizeExpression(rule.leftSide);
         const ruleNormRight = normalizeExpression(rule.rightSide);
         
-        // Check exact match
         if (
           (normLeft === ruleNormLeft && normRight === ruleNormRight) ||
           (normLeft === ruleNormRight && normRight === ruleNormLeft)
@@ -185,7 +118,6 @@ const ProofVerifierSection: React.FC = () => {
           return;
         }
         
-        // Check partial similarity
         const leftSim = Math.max(
           calculateSimilarity(normLeft, ruleNormLeft),
           calculateSimilarity(normLeft, ruleNormRight)
@@ -235,15 +167,6 @@ const ProofVerifierSection: React.FC = () => {
     setResult(null);
   };
 
-  const exampleRules: { left: string; right: string }[] = [
-    { left: ', i \\Pu, R(i),', right: ', i \\Pu,' },
-    { left: ', i \\Ps j,', right: ', j \\Ps i,' },
-    { left: ', i \\Pe j, j \\Pe k,', right: ', i \\Pe j, j \\Pe k, i \\Pe k,' },
-    { left: ', R(i), i \\Os,', right: ', i \\Os,' },
-    { left: ', i+j:r, m \\Oc n,', right: ', m \\Oc n, i+j:r,' },
-    { left: ', i \\Pc j, j \\Pc k,', right: ', i \\Pc j, j \\Pc k, i \\Pc k,' },
-  ];
-
   return (
     <section id="verifier" className="py-20 px-6">
       <div className="max-w-4xl mx-auto">
@@ -256,42 +179,6 @@ const ProofVerifierSection: React.FC = () => {
             Enter an equivalence relation to verify it against the formal system's axioms and theorems.
           </p>
         </div>
-
-        {/* Keyboard Shortcuts Toggle */}
-        <div className="mb-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowShortcuts(!showShortcuts)}
-            className="gap-2"
-          >
-            <Keyboard className="w-4 h-4" />
-            {showShortcuts ? 'Hide' : 'Show'} Keyboard Shortcuts
-          </Button>
-        </div>
-
-        {/* Keyboard Shortcuts Panel */}
-        {showShortcuts && (
-          <div className="bg-card border border-border rounded-lg p-4 mb-6 animate-fade-in">
-            <h4 className="text-sm font-semibold text-primary mb-3">Quick Insert Shortcuts</h4>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
-              {operatorShortcuts.map((shortcut) => (
-                <button
-                  key={shortcut.key}
-                  onClick={() => insertAtCursor(shortcut.syntax)}
-                  className="flex flex-col items-center p-2 rounded-md bg-muted/30 hover:bg-muted/50 transition-colors border border-border/50"
-                >
-                  <code className="text-xs font-mono text-foreground">{shortcut.syntax}</code>
-                  <span className="text-[10px] text-muted-foreground mt-1">{shortcut.description}</span>
-                  <span className="text-[10px] text-primary">{shortcut.label}</span>
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground mt-3">
-              Click a button or use keyboard shortcuts while typing. Active field: <span className="text-primary font-mono">{activeField === 'left' ? 'Left (A)' : 'Right (B)'}</span>
-            </p>
-          </div>
-        )}
 
         {/* Input Area */}
         <div className="bg-card border border-border rounded-lg p-6 mb-8">
@@ -309,16 +196,12 @@ const ProofVerifierSection: React.FC = () => {
                 {leftDragOver && <span className="text-primary ml-2">Drop rule here</span>}
               </label>
               <SyntaxInput
-                textareaRef={leftTextareaRef}
                 placeholder=", i \Pu j,"
                 value={leftInput}
                 onChange={setLeftInput}
-                onFocus={() => setActiveField('left')}
-                onKeyDown={(e) => handleKeyDown(e, 'left')}
                 onDragOver={(e) => handleDragOver(e, 'left')}
                 onDragLeave={(e) => handleDragLeave(e, 'left')}
                 onDrop={(e) => handleDrop(e, 'left')}
-                isActive={activeField === 'left'}
               />
               {/* Rendered Expression */}
               <div className="p-3 bg-muted/30 rounded-lg border border-border/50 min-h-[48px] flex items-center">
@@ -344,16 +227,12 @@ const ProofVerifierSection: React.FC = () => {
                 {rightDragOver && <span className="text-primary ml-2">Drop rule here</span>}
               </label>
               <SyntaxInput
-                textareaRef={rightTextareaRef}
                 placeholder=", j \Pu i,"
                 value={rightInput}
                 onChange={setRightInput}
-                onFocus={() => setActiveField('right')}
-                onKeyDown={(e) => handleKeyDown(e, 'right')}
                 onDragOver={(e) => handleDragOver(e, 'right')}
                 onDragLeave={(e) => handleDragLeave(e, 'right')}
                 onDrop={(e) => handleDrop(e, 'right')}
-                isActive={activeField === 'right'}
               />
               {/* Rendered Expression */}
               <div className="p-3 bg-muted/30 rounded-lg border border-border/50 min-h-[48px] flex items-center">
@@ -395,7 +274,7 @@ const ProofVerifierSection: React.FC = () => {
         {/* Result */}
         {result && (
           <div 
-            className={`rounded-lg p-6 mb-8 animate-fade-in ${
+            className={`rounded-lg p-6 animate-fade-in ${
               result.isValid 
                 ? 'bg-operator-next/10 border border-operator-next/30' 
                 : 'bg-destructive/10 border border-destructive/30'
@@ -445,38 +324,6 @@ const ProofVerifierSection: React.FC = () => {
             </div>
           </div>
         )}
-
-        {/* Examples */}
-        <div className="bg-card border border-border rounded-lg p-6">
-          <h3 className="font-semibold mb-4 flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-primary" />
-            Try These Examples
-          </h3>
-          <div className="grid sm:grid-cols-2 gap-3">
-            {exampleRules.map((example, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  setLeftInput(example.left);
-                  setRightInput(example.right);
-                  setResult(null);
-                }}
-                className="p-3 bg-muted/30 rounded-md hover:bg-muted/50 transition-colors text-left font-mono text-sm"
-              >
-                <span className="text-foreground">{example.left}</span>
-                <span className="text-primary mx-2">⟺</span>
-                <span className="text-foreground">{example.right}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Syntax Guide */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-muted-foreground">
-            <span className="text-primary">Tip:</span> Use keyboard shortcuts (Ctrl+A, Ctrl+B, etc.) to quickly insert operators, or click the buttons above.
-          </p>
-        </div>
       </div>
     </section>
   );
