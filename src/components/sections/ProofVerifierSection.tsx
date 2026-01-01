@@ -35,9 +35,47 @@ const ProofVerifierSection: React.FC = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [activeField, setActiveField] = useState<'left' | 'right'>('left');
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [leftDragOver, setLeftDragOver] = useState(false);
+  const [rightDragOver, setRightDragOver] = useState(false);
   
   const leftTextareaRef = useRef<HTMLTextAreaElement>(null);
   const rightTextareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleDragOver = useCallback((e: React.DragEvent, side: 'left' | 'right') => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    if (side === 'left') {
+      setLeftDragOver(true);
+    } else {
+      setRightDragOver(true);
+    }
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent, side: 'left' | 'right') => {
+    e.preventDefault();
+    if (side === 'left') {
+      setLeftDragOver(false);
+    } else {
+      setRightDragOver(false);
+    }
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent, side: 'left' | 'right') => {
+    e.preventDefault();
+    setLeftDragOver(false);
+    setRightDragOver(false);
+    
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('application/json'));
+      if (data.leftSide && data.rightSide) {
+        setLeftInput(data.leftSide);
+        setRightInput(data.rightSide);
+        setResult(null);
+      }
+    } catch (err) {
+      console.error('Failed to parse dropped data:', err);
+    }
+  }, []);
 
   const insertAtCursor = useCallback((syntax: string) => {
     const textarea = activeField === 'left' ? leftTextareaRef.current : rightTextareaRef.current;
@@ -254,9 +292,19 @@ const ProofVerifierSection: React.FC = () => {
         <div className="bg-card border border-border rounded-lg p-6 mb-8">
           <div className="grid md:grid-cols-[1fr,auto,1fr] gap-4 items-start">
             {/* Left Side */}
-            <div className="space-y-3">
+            <div 
+              className={`space-y-3 p-3 -m-3 rounded-lg transition-all duration-200 ${
+                leftDragOver 
+                  ? 'bg-primary/10 border-2 border-dashed border-primary' 
+                  : 'border-2 border-transparent'
+              }`}
+              onDragOver={(e) => handleDragOver(e, 'left')}
+              onDragLeave={(e) => handleDragLeave(e, 'left')}
+              onDrop={(e) => handleDrop(e, 'left')}
+            >
               <label className="text-sm text-muted-foreground mb-2 block font-mono">
                 Left Side (A)
+                {leftDragOver && <span className="text-primary ml-2">Drop rule here</span>}
               </label>
               <SyntaxInput
                 textareaRef={leftTextareaRef}
@@ -279,9 +327,19 @@ const ProofVerifierSection: React.FC = () => {
             </div>
 
             {/* Right Side */}
-            <div className="space-y-3">
+            <div 
+              className={`space-y-3 p-3 -m-3 rounded-lg transition-all duration-200 ${
+                rightDragOver 
+                  ? 'bg-primary/10 border-2 border-dashed border-primary' 
+                  : 'border-2 border-transparent'
+              }`}
+              onDragOver={(e) => handleDragOver(e, 'right')}
+              onDragLeave={(e) => handleDragLeave(e, 'right')}
+              onDrop={(e) => handleDrop(e, 'right')}
+            >
               <label className="text-sm text-muted-foreground mb-2 block font-mono">
                 Right Side (B)
+                {rightDragOver && <span className="text-primary ml-2">Drop rule here</span>}
               </label>
               <SyntaxInput
                 textareaRef={rightTextareaRef}
