@@ -152,9 +152,12 @@ export const RulesSidePanel: React.FC = () => {
           </Button>
         </div>
 
-        <p className="text-sm text-muted-foreground px-4 pt-2">
-          Drag rules to the proof verifier inputs
-        </p>
+        <div className="px-4 pt-3 pb-2 space-y-1">
+          <p className="text-sm text-muted-foreground">
+            <GripVertical className="w-3.5 h-3.5 inline-block mr-1 text-primary" />
+            <span className="text-foreground font-medium">Drag & drop</span> any rule card below onto the Proof Verifier to auto-fill both sides.
+          </p>
+        </div>
 
         {/* Filters */}
         <div className="p-4 space-y-3 border-b border-border">
