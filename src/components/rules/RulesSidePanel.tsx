@@ -126,7 +126,7 @@ export const RulesSidePanel: React.FC = () => {
 
       {/* Side Panel - Non-modal, always accessible for drag */}
       <div 
-        className={`fixed top-0 right-0 h-full w-[380px] bg-background border-l border-border shadow-xl z-40 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 h-full w-[380px] bg-background border-l border-border shadow-xl z-50 transform transition-all duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -246,7 +246,7 @@ export const RulesSidePanel: React.FC = () => {
         </div>
 
         {/* Rules List */}
-        <ScrollArea className={`${isWorkbenchExpanded ? 'h-[calc(100vh-280px-20rem)]' : 'h-[calc(100vh-280px)]'}`}>
+        <ScrollArea className="h-[calc(100vh-280px)]">
           <div className="p-4 space-y-2">
             {filteredRules.map((rule) => (
               <DraggableRuleCard key={rule.id} rule={rule} />
