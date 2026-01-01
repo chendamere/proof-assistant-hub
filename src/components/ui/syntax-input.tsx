@@ -177,6 +177,8 @@ export const SyntaxInput: React.FC<SyntaxInputProps> = ({
         onFocus={onFocus}
         onKeyDown={onKeyDown}
         onScroll={handleScroll}
+        onDrop={(e) => e.preventDefault()}
+        onDragOver={(e) => e.preventDefault()}
         placeholder=""
         className={cn(
           "relative w-full min-h-[80px] resize-none",

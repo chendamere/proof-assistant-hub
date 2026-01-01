@@ -21,7 +21,6 @@ const DraggableRuleCard: React.FC<DraggableRuleCardProps> = ({ rule }) => {
       leftSide: rule.leftSide,
       rightSide: rule.rightSide,
     });
-    e.dataTransfer.setData('text/plain', data);
     e.dataTransfer.setData('application/json', data);
     e.dataTransfer.effectAllowed = 'copy';
     
