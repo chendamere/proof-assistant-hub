@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { axioms, Rule, RuleType, getTypeBadgeClass } from '@/data/axioms';
-import { BookOpen, Search, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
+import { BookOpen, Search, ChevronDown, ChevronUp, GripVertical, X, PanelRightOpen } from 'lucide-react';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -15,24 +14,34 @@ interface DraggableRuleCardProps {
 const DraggableRuleCard: React.FC<DraggableRuleCardProps> = ({ rule }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   
-  const handleDragStart = (e: React.DragEvent) => {
-    e.dataTransfer.setData('application/json', JSON.stringify({
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    const data = JSON.stringify({
       id: rule.id,
       name: rule.name,
       leftSide: rule.leftSide,
       rightSide: rule.rightSide,
-    }));
+    });
+    e.dataTransfer.setData('text/plain', data);
+    e.dataTransfer.setData('application/json', data);
     e.dataTransfer.effectAllowed = 'copy';
+    
+    // Create a custom drag image
+    const dragImage = document.createElement('div');
+    dragImage.textContent = rule.name;
+    dragImage.style.cssText = 'position: absolute; top: -1000px; padding: 8px 12px; background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); border-radius: 6px; font-size: 12px; font-weight: 500;';
+    document.body.appendChild(dragImage);
+    e.dataTransfer.setDragImage(dragImage, 0, 0);
+    setTimeout(() => document.body.removeChild(dragImage), 0);
   };
 
   return (
     <div
-      draggable
+      draggable="true"
       onDragStart={handleDragStart}
-      className="group bg-card border border-border rounded-lg p-3 cursor-grab active:cursor-grabbing hover:border-primary/50 transition-colors"
+      className="group bg-card border border-border rounded-lg p-3 cursor-grab active:cursor-grabbing hover:border-primary/50 transition-colors select-none"
     >
       <div className="flex items-start gap-2">
-        <GripVertical className="w-4 h-4 text-muted-foreground mt-1 opacity-50 group-hover:opacity-100 transition-opacity" />
+        <GripVertical className="w-4 h-4 text-muted-foreground mt-1 opacity-50 group-hover:opacity-100 transition-opacity flex-shrink-0" />
         
         <div className="flex-1 min-w-0">
           {/* Rule header */}
@@ -44,7 +53,7 @@ const DraggableRuleCard: React.FC<DraggableRuleCardProps> = ({ rule }) => {
           </div>
           
           {/* Rendered expression */}
-          <div className="flex items-center gap-2 text-sm overflow-x-auto pb-1">
+          <div className="flex items-center gap-2 text-sm overflow-x-auto pb-1 pointer-events-none">
             <ExpressionRenderer expression={rule.leftSide} size={12} />
             <span className="text-primary font-mono text-xs">≡</span>
             <ExpressionRenderer expression={rule.rightSide} size={12} />
@@ -57,6 +66,8 @@ const DraggableRuleCard: React.FC<DraggableRuleCardProps> = ({ rule }) => {
                 variant="ghost" 
                 size="sm" 
                 className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground mt-1"
+                onClick={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
               >
                 {isExpanded ? (
                   <>
@@ -90,11 +101,7 @@ const DraggableRuleCard: React.FC<DraggableRuleCardProps> = ({ rule }) => {
   );
 };
 
-interface RulesSidePanelProps {
-  onRuleDrop?: (rule: { id: string; name: string; leftSide: string; rightSide: string }) => void;
-}
-
-export const RulesSidePanel: React.FC<RulesSidePanelProps> = ({ onRuleDrop }) => {
+export const RulesSidePanel: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<RuleType | 'all'>('all');
   const [isOpen, setIsOpen] = useState(false);
@@ -112,27 +119,43 @@ export const RulesSidePanel: React.FC<RulesSidePanelProps> = ({ onRuleDrop }) =>
   });
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="gap-2"
-        >
-          <BookOpen className="w-4 h-4" />
-          Rules Panel
-        </Button>
-      </SheetTrigger>
-      <SheetContent side="right" className="w-[400px] sm:w-[450px] p-0 flex flex-col">
-        <SheetHeader className="p-4 pb-0">
-          <SheetTitle className="flex items-center gap-2">
+    <>
+      {/* Toggle Button */}
+      <Button 
+        variant="outline" 
+        size="sm" 
+        onClick={() => setIsOpen(!isOpen)}
+        className="gap-2"
+      >
+        <PanelRightOpen className="w-4 h-4" />
+        Rules Panel
+      </Button>
+
+      {/* Side Panel - Non-modal, always accessible for drag */}
+      <div 
+        className={`fixed top-0 right-0 h-full w-[380px] bg-background border-l border-border shadow-xl z-40 transform transition-transform duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        {/* Header */}
+        <div className="p-4 border-b border-border flex items-center justify-between">
+          <div className="flex items-center gap-2">
             <BookOpen className="w-5 h-5 text-primary" />
-            Drag & Drop Rules
-          </SheetTitle>
-          <p className="text-sm text-muted-foreground">
-            Drag rules into the proof verifier input fields
-          </p>
-        </SheetHeader>
+            <span className="font-semibold">Drag & Drop Rules</span>
+          </div>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setIsOpen(false)}
+            className="h-8 w-8"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
+
+        <p className="text-sm text-muted-foreground px-4 pt-2">
+          Drag rules to the proof verifier inputs
+        </p>
 
         {/* Filters */}
         <div className="p-4 space-y-3 border-b border-border">
@@ -198,7 +221,7 @@ export const RulesSidePanel: React.FC<RulesSidePanelProps> = ({ onRuleDrop }) =>
         </div>
 
         {/* Rules List */}
-        <ScrollArea className="flex-1">
+        <ScrollArea className="h-[calc(100vh-280px)]">
           <div className="p-4 space-y-2">
             {filteredRules.map(rule => (
               <DraggableRuleCard key={rule.id} rule={rule} />
@@ -211,8 +234,16 @@ export const RulesSidePanel: React.FC<RulesSidePanelProps> = ({ onRuleDrop }) =>
             )}
           </div>
         </ScrollArea>
-      </SheetContent>
-    </Sheet>
+      </div>
+
+      {/* Backdrop for closing */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 z-30 bg-black/20"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+    </>
   );
 };
 
