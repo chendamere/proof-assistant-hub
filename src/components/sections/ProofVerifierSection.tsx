@@ -62,15 +62,24 @@ const ProofVerifierSection: React.FC = () => {
 
   const handleDrop = useCallback((e: React.DragEvent, side: 'left' | 'right') => {
     e.preventDefault();
+    e.stopPropagation();
     setLeftDragOver(false);
     setRightDragOver(false);
     
     try {
-      const data = JSON.parse(e.dataTransfer.getData('application/json'));
-      if (data.leftSide && data.rightSide) {
-        setLeftInput(data.leftSide);
-        setRightInput(data.rightSide);
-        setResult(null);
+      // Try application/json first, then text/plain
+      let jsonData = e.dataTransfer.getData('application/json');
+      if (!jsonData) {
+        jsonData = e.dataTransfer.getData('text/plain');
+      }
+      
+      if (jsonData) {
+        const data = JSON.parse(jsonData);
+        if (data.leftSide && data.rightSide) {
+          setLeftInput(data.leftSide);
+          setRightInput(data.rightSide);
+          setResult(null);
+        }
       }
     } catch (err) {
       console.error('Failed to parse dropped data:', err);
