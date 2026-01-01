@@ -1,8 +1,6 @@
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import IntroductionSection from '@/components/sections/IntroductionSection';
-import ProofVerifierSection from '@/components/sections/ProofVerifierSection';
-import RulesSidePanel from '@/components/rules/RulesSidePanel';
 
 const Index = () => {
   return (
@@ -12,15 +10,8 @@ const Index = () => {
       {/* Spacer for fixed nav */}
       <div className="h-16" />
       
-      {/* Fixed Rules Panel Button */}
-      <div className="fixed bottom-6 left-6 z-50">
-        <RulesSidePanel />
-      </div>
-      
       <main>
         <IntroductionSection />
-        <div className="section-divider" />
-        <ProofVerifierSection />
       </main>
       
       <Footer />

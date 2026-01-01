@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { axioms, Rule, RuleType, getTypeBadgeClass } from '@/data/axioms';
@@ -6,6 +6,7 @@ import { BookOpen, Search, ChevronDown, ChevronUp, GripVertical, X, PanelRightOp
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { usePanelContext } from '@/contexts/PanelContext';
 
 interface DraggableRuleCardProps {
   rule: Rule;
@@ -103,7 +104,10 @@ const DraggableRuleCard: React.FC<DraggableRuleCardProps> = ({ rule }) => {
 export const RulesSidePanel: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<RuleType | 'all'>('all');
-  const [isOpen, setIsOpen] = useState(false);
+  const { isRulesPanelOpen, setRulesPanelOpen, isWorkbenchExpanded } = usePanelContext();
+
+  const isOpen = isRulesPanelOpen;
+  const setIsOpen = setRulesPanelOpen;
 
   const filteredRules = axioms.filter(rule => {
     const matchesSearch = 
@@ -119,16 +123,6 @@ export const RulesSidePanel: React.FC = () => {
 
   return (
     <>
-      {/* Toggle Button */}
-      <Button 
-        variant="outline" 
-        size="sm" 
-        onClick={() => setIsOpen(!isOpen)}
-        className="gap-2"
-      >
-        <PanelRightOpen className="w-4 h-4" />
-        Rules Panel
-      </Button>
 
       {/* Side Panel - Non-modal, always accessible for drag */}
       <div 
@@ -252,7 +246,7 @@ export const RulesSidePanel: React.FC = () => {
         </div>
 
         {/* Rules List */}
-        <ScrollArea className="h-[calc(100vh-280px)]">
+        <ScrollArea className={`${isWorkbenchExpanded ? 'h-[calc(100vh-280px-20rem)]' : 'h-[calc(100vh-280px)]'}`}>
           <div className="p-4 space-y-2">
             {filteredRules.map((rule) => (
               <DraggableRuleCard key={rule.id} rule={rule} />
