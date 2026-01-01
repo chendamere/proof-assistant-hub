@@ -1,7 +1,6 @@
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import IntroductionSection from '@/components/sections/IntroductionSection';
-import GlossarySection from '@/components/sections/GlossarySection';
 import ProofVerifierSection from '@/components/sections/ProofVerifierSection';
 import RulesSidePanel from '@/components/rules/RulesSidePanel';
 
@@ -20,8 +19,6 @@ const Index = () => {
       
       <main>
         <IntroductionSection />
-        <div className="section-divider" />
-        <GlossarySection />
         <div className="section-divider" />
         <ProofVerifierSection />
       </main>
