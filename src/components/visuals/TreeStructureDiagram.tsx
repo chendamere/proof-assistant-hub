@@ -77,17 +77,30 @@ export const TreeStructureDiagram: React.FC = () => {
         <VerticalArrows x={leftX} y1={chain1[0]} y2={chain1[1]} />
         <VerticalArrows x={leftX} y1={chain1[1]} y2={chain1[2]} />
         
-        {/* Closing arrow from bottom to top (curved) */}
+        {/* Closing arrows from bottom to top (curved) - bidirectional */}
+        {/* Up arrow (outer curve) */}
         <path
           d={`M ${leftX - nodeRadius} ${chain1[2]} 
-              C ${leftX - 45} ${chain1[2]} ${leftX - 45} ${chain1[0]} ${leftX - nodeRadius} ${chain1[0]}`}
+              C ${leftX - 50} ${chain1[2]} ${leftX - 50} ${chain1[0]} ${leftX - nodeRadius} ${chain1[0]}`}
           fill="none"
           stroke={arrowColor}
           strokeWidth="1.5"
         />
-        {/* Arrow heads for the curve */}
         <polygon 
           points={`${leftX - nodeRadius},${chain1[0]} ${leftX - nodeRadius - 6},${chain1[0] + 4} ${leftX - nodeRadius - 6},${chain1[0] - 4}`} 
+          fill={arrowColor}
+        />
+        
+        {/* Down arrow (inner curve) */}
+        <path
+          d={`M ${leftX - nodeRadius} ${chain1[0]} 
+              C ${leftX - 38} ${chain1[0]} ${leftX - 38} ${chain1[2]} ${leftX - nodeRadius} ${chain1[2]}`}
+          fill="none"
+          stroke={arrowColor}
+          strokeWidth="1.5"
+        />
+        <polygon 
+          points={`${leftX - nodeRadius},${chain1[2]} ${leftX - nodeRadius - 6},${chain1[2] - 4} ${leftX - nodeRadius - 6},${chain1[2] + 4}`} 
           fill={arrowColor}
         />
 
@@ -102,16 +115,30 @@ export const TreeStructureDiagram: React.FC = () => {
         {/* Arrows between right chain nodes */}
         <VerticalArrows x={rightX} y1={chain2[0]} y2={chain2[1]} />
 
-        {/* Closing curve for right chain */}
+        {/* Closing curve for right chain - bidirectional */}
+        {/* Up arrow (outer curve) */}
         <path
           d={`M ${rightX - nodeRadius} ${chain2[1]} 
-              C ${rightX - 35} ${chain2[1]} ${rightX - 35} ${chain2[0]} ${rightX - nodeRadius} ${chain2[0]}`}
+              C ${rightX - 40} ${chain2[1]} ${rightX - 40} ${chain2[0]} ${rightX - nodeRadius} ${chain2[0]}`}
           fill="none"
           stroke={arrowColor}
           strokeWidth="1.5"
         />
         <polygon 
           points={`${rightX - nodeRadius},${chain2[0]} ${rightX - nodeRadius - 6},${chain2[0] + 4} ${rightX - nodeRadius - 6},${chain2[0] - 4}`} 
+          fill={arrowColor}
+        />
+        
+        {/* Down arrow (inner curve) */}
+        <path
+          d={`M ${rightX - nodeRadius} ${chain2[0]} 
+              C ${rightX - 28} ${chain2[0]} ${rightX - 28} ${chain2[1]} ${rightX - nodeRadius} ${chain2[1]}`}
+          fill="none"
+          stroke={arrowColor}
+          strokeWidth="1.5"
+        />
+        <polygon 
+          points={`${rightX - nodeRadius},${chain2[1]} ${rightX - nodeRadius - 6},${chain2[1] - 4} ${rightX - nodeRadius - 6},${chain2[1] + 4}`} 
           fill={arrowColor}
         />
 
