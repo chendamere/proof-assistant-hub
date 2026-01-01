@@ -3,6 +3,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { axioms, Rule, getTypeBadgeClass } from '@/data/axioms';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
+import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { CheckCircle2, XCircle, AlertCircle, Sparkles, ArrowRight, RotateCcw, Keyboard } from 'lucide-react';
 
 interface VerificationResult {
@@ -251,42 +252,54 @@ const ProofVerifierSection: React.FC = () => {
 
         {/* Input Area */}
         <div className="bg-card border border-border rounded-lg p-6 mb-8">
-          <div className="grid md:grid-cols-[1fr,auto,1fr] gap-4 items-center">
+          <div className="grid md:grid-cols-[1fr,auto,1fr] gap-4 items-start">
             {/* Left Side */}
-            <div>
-              <label className="text-sm text-muted-foreground mb-2 block font-mono">
-                Left Side (A)
-              </label>
-              <Textarea
-                ref={leftTextareaRef}
-                placeholder=", i = j,"
-                value={leftInput}
-                onChange={(e) => setLeftInput(e.target.value)}
-                onFocus={() => setActiveField('left')}
-                onKeyDown={(e) => handleKeyDown(e, 'left')}
-                className={`font-mono bg-muted/50 border-border min-h-[100px] resize-none ${activeField === 'left' ? 'ring-2 ring-primary/50' : ''}`}
-              />
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm text-muted-foreground mb-2 block font-mono">
+                  Left Side (A)
+                </label>
+                <Textarea
+                  ref={leftTextareaRef}
+                  placeholder=", i \Pu j,"
+                  value={leftInput}
+                  onChange={(e) => setLeftInput(e.target.value)}
+                  onFocus={() => setActiveField('left')}
+                  onKeyDown={(e) => handleKeyDown(e, 'left')}
+                  className={`font-mono bg-muted/50 border-border min-h-[80px] resize-none ${activeField === 'left' ? 'ring-2 ring-primary/50' : ''}`}
+                />
+              </div>
+              {/* Rendered Expression */}
+              <div className="p-3 bg-muted/30 rounded-lg border border-border/50 min-h-[48px] flex items-center">
+                <ExpressionRenderer expression={leftInput} size={20} />
+              </div>
             </div>
 
             {/* Equivalence Symbol */}
-            <div className="flex justify-center">
+            <div className="flex justify-center pt-8">
               <EquivalenceSymbol size={40} />
             </div>
 
             {/* Right Side */}
-            <div>
-              <label className="text-sm text-muted-foreground mb-2 block font-mono">
-                Right Side (B)
-              </label>
-              <Textarea
-                ref={rightTextareaRef}
-                placeholder=", j = i,"
-                value={rightInput}
-                onChange={(e) => setRightInput(e.target.value)}
-                onFocus={() => setActiveField('right')}
-                onKeyDown={(e) => handleKeyDown(e, 'right')}
-                className={`font-mono bg-muted/50 border-border min-h-[100px] resize-none ${activeField === 'right' ? 'ring-2 ring-primary/50' : ''}`}
-              />
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm text-muted-foreground mb-2 block font-mono">
+                  Right Side (B)
+                </label>
+                <Textarea
+                  ref={rightTextareaRef}
+                  placeholder=", j \Pu i,"
+                  value={rightInput}
+                  onChange={(e) => setRightInput(e.target.value)}
+                  onFocus={() => setActiveField('right')}
+                  onKeyDown={(e) => handleKeyDown(e, 'right')}
+                  className={`font-mono bg-muted/50 border-border min-h-[80px] resize-none ${activeField === 'right' ? 'ring-2 ring-primary/50' : ''}`}
+                />
+              </div>
+              {/* Rendered Expression */}
+              <div className="p-3 bg-muted/30 rounded-lg border border-border/50 min-h-[48px] flex items-center">
+                <ExpressionRenderer expression={rightInput} size={20} />
+              </div>
             </div>
           </div>
 
