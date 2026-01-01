@@ -6,6 +6,7 @@ interface OperatorProps {
   size?: number;
   operand?: string;
   operand2?: string;
+  branchValue?: string;
 }
 
 // ⊙ Global Space Operator
@@ -210,17 +211,17 @@ const SvgOperator: React.FC<SvgOperatorProps> = ({ src, label, description, synt
 
 // Operator data for search functionality
 const operatorData = [
-  { category: 'binary', src: OaSvg, label: 'Assign', description: 'i ← j (assign value)', syntax: 'iOaj', operandBefore: 'i', operandAfter: 'j' },
-  { category: 'binary', src: ObSvg, label: 'Subnode', description: 'Get/set child node', syntax: 'iObj', operandBefore: 'i', operandAfter: 'j' },
-  { category: 'binary', src: OcSvg, label: 'Copy', description: 'Copy node reference', syntax: 'iOcj', operandBefore: 'i', operandAfter: 'j' },
-  { category: 'binary', src: OdSvg, label: 'ID', description: 'Get node identifier', syntax: 'iOdj', operandBefore: 'i', operandAfter: 'j' },
-  { category: 'binary', src: OeSvg, label: 'Equivalence', description: 'Value comparison branch', syntax: 'iOej', operandBefore: 'i', operandAfter: 'j' },
-  { category: 'unary', src: OgSvg, label: 'Global Space', description: 'Allocate global node', syntax: 'Ogi', operandAfter: 'i' },
-  { category: 'unary', src: OtSvg, label: 'Temp Space', description: 'Allocate temporary node', syntax: 'Oti', operandAfter: 'i' },
-  { category: 'unary', src: OnSvg, label: 'Next Node', description: 'Move to next node', syntax: 'iOn', operandBefore: 'i' },
-  { category: 'unary', src: OpSvg, label: 'Prev Node', description: 'Move to previous node', syntax: 'iOp', operandBefore: 'i' },
-  { category: 'unary', src: OsSvg, label: 'Release', description: 'Release node reference', syntax: 'iOs', operandBefore: 'i' },
-  { category: 'nullary', src: OrSvg, label: 'Error', description: 'Logic error state', syntax: 'Or' },
+  { category: 'binary', src: OaSvg, label: 'Assign', description: 'i ← j (assign value)', syntax: '\\Oa', operandBefore: 'i', operandAfter: 'j' },
+  { category: 'binary', src: ObSvg, label: 'Subnode', description: 'Get/set child node', syntax: '\\Ob', operandBefore: 'i', operandAfter: 'j' },
+  { category: 'binary', src: OcSvg, label: 'Copy', description: 'Copy node reference', syntax: '\\Oc', operandBefore: 'i', operandAfter: 'j' },
+  { category: 'binary', src: OdSvg, label: 'ID', description: 'Get node identifier', syntax: '\\Od', operandBefore: 'i', operandAfter: 'j' },
+  { category: 'binary', src: OeSvg, label: 'Equivalence', description: 'Value comparison branch', syntax: '\\Oe', operandBefore: 'i', operandAfter: 'j' },
+  { category: 'unary', src: OgSvg, label: 'Global Space', description: 'Allocate global node', syntax: '\\Og', operandAfter: 'i' },
+  { category: 'unary', src: OtSvg, label: 'Temp Space', description: 'Allocate temporary node', syntax: '\\Ot', operandAfter: 'i' },
+  { category: 'unary', src: OnSvg, label: 'Next Node', description: 'Move to next node', syntax: '\\On', operandBefore: 'i' },
+  { category: 'unary', src: OpSvg, label: 'Prev Node', description: 'Move to previous node', syntax: '\\Op', operandBefore: 'i' },
+  { category: 'unary', src: OsSvg, label: 'Release', description: 'Release node reference', syntax: '\\Os', operandBefore: 'i' },
+  { category: 'nullary', src: OrSvg, label: 'Error', description: 'Logic error state', syntax: '\\Or' },
 ];
 
 // Operator legend component with search and actual SVGs
@@ -255,6 +256,7 @@ export const OperatorLegend: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
             {binaryOps.map(op => (
               <SvgOperator key={op.syntax} {...op} />
+                
             ))}
           </div>
         </div>
