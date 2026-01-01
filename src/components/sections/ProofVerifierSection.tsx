@@ -67,11 +67,7 @@ const ProofVerifierSection: React.FC = () => {
     setRightDragOver(false);
     
     try {
-      // Try application/json first, then text/plain
-      let jsonData = e.dataTransfer.getData('application/json');
-      if (!jsonData) {
-        jsonData = e.dataTransfer.getData('text/plain');
-      }
+      const jsonData = e.dataTransfer.getData('application/json');
       
       if (jsonData) {
         const data = JSON.parse(jsonData);
