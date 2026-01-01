@@ -67,7 +67,7 @@ export const NodeDiagram: React.FC = () => {
         
         {/* Data value text - centered in circle */}
         <text x={cx} y={cy - 5} textAnchor="middle" className="text-[11px] fill-muted-foreground font-mono">data</text>
-        <text x={cx} y={cy + 10} textAnchor="middle" className="text-[11px] fill-foreground font-medium font-mono">value</text>
+        <text x={cx} y={cy + 10} textAnchor="middle" className="text-[11px] fill-muted-foreground font-mono">value</text>
       </svg>
       <p className="text-sm text-muted-foreground italic mt-2">Node</p>
     </div>
