@@ -22,39 +22,53 @@ const IntroductionSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Core Concepts Grid */}
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
-          {/* Data Structure */}
-          <div className="bg-card border border-border rounded-lg p-6 card-glow animate-fade-in delay-100">
-            <h3 className="text-xl font-semibold text-primary mb-4">Data Structure</h3>
-            <p className="text-muted-foreground mb-4">
-              The foundation is a tree-like multidimensional structure with doubly-linked circular nodes. 
-              Each node contains:
-            </p>
+        {/* Data Structure Section with Diagrams */}
+        <div className="bg-card border border-border rounded-lg p-6 md:p-8 card-glow animate-fade-in delay-100 mb-8">
+          <h3 className="text-xl font-semibold text-primary mb-4">Data Structure</h3>
+          <p className="text-muted-foreground mb-6">
+            The foundation is a tree-like multidimensional structure with doubly-linked circular nodes. 
+            Each node contains:
+          </p>
+          
+          <div className="grid md:grid-cols-[1fr,auto,auto] gap-6 items-start">
+            {/* Text list */}
             <ul className="space-y-2 text-sm font-mono">
               <li className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-primary/50" />
                 <span>Data value</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-operator-next/50" />
+                <span className="w-2 h-2 rounded-full bg-operator-next" />
                 <span>Link → next node</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-operator-prev/50" />
+                <span className="w-2 h-2 rounded-full bg-operator-next" />
                 <span>Link → previous node</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-operator-subnode/50" />
+                <span className="w-2 h-2 rounded-full bg-operator-next" />
                 <span>Link → child node</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-operator-id/50" />
+                <span className="w-2 h-2 rounded-full bg-operator-id" />
                 <span>Unique node ID</span>
               </li>
             </ul>
+            
+            {/* Node Diagram */}
+            <div className="flex items-center justify-center">
+              <NodeDiagram />
+            </div>
+            
+            {/* Tree Structure Diagram */}
+            <div className="flex items-center justify-center">
+              <TreeStructureDiagram />
+            </div>
           </div>
+        </div>
 
+        {/* Core Concepts Grid */}
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
           {/* Logic System */}
           <div className="bg-card border border-border rounded-lg p-6 card-glow animate-fade-in delay-200">
             <h3 className="text-xl font-semibold text-primary mb-4">Logic System</h3>
@@ -100,9 +114,9 @@ const IntroductionSection: React.FC = () => {
           </div>
 
           {/* Types of Rules */}
-          <div className="bg-card border border-border rounded-lg p-6 card-glow animate-fade-in delay-400">
+          <div className="bg-card border border-border rounded-lg p-6 card-glow animate-fade-in delay-400 md:col-span-2">
             <h3 className="text-xl font-semibold text-primary mb-4">Types of Rules</h3>
-            <div className="space-y-3">
+            <div className="flex flex-wrap gap-6">
               <div className="flex items-center gap-3">
                 <span className="px-2 py-1 rounded text-xs font-mono bg-primary/20 text-primary border border-primary/30">
                   AXIOM
@@ -122,16 +136,6 @@ const IntroductionSection: React.FC = () => {
                 <span className="text-muted-foreground text-sm">Proven conclusions from inference</span>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Visual Diagrams */}
-        <div className="grid md:grid-cols-2 gap-8 mb-16 animate-fade-in delay-500">
-          <div className="bg-card border border-border rounded-lg p-6 flex items-center justify-center">
-            <NodeDiagram />
-          </div>
-          <div className="bg-card border border-border rounded-lg p-6 flex items-center justify-center">
-            <TreeStructureDiagram />
           </div>
         </div>
 
