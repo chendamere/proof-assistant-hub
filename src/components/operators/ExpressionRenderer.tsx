@@ -255,7 +255,7 @@ const BranchRenderer: React.FC<{
       
       {/* Left bracket */}
       {showLeftBracket && (
-        <span className={`${leftBracketClass} self-stretch`} style={{ width: '5px' }} />
+        <span className={`${leftBracketClass} self-stretch`} style={{ width: '3px' }} />
       )}
       
       {/* Branch content - stacked vertically with proportional spacing */}
@@ -280,7 +280,7 @@ const BranchRenderer: React.FC<{
       
       {/* Right bracket */}
       {showRightBracket && (
-        <span className={`${rightBracketClass} self-stretch`} style={{ width: '5px' }} />
+        <span className={`${rightBracketClass} self-stretch`} style={{ width: '3px' }} />
       )}
     </span>
   );
