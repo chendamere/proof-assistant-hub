@@ -73,6 +73,9 @@ const IntroductionSection: React.FC = () => {
                 <ExternalLink className="w-4 h-4" />
               </Button>
             </a>
+            <div className="font-bold text-sm text-amber-600 dark:text-amber-500">
+              ⚠ Warning: The book consists primarily of proofs in UL
+            </div>
             <div className="text-sm text-muted-foreground">
               <span className="font-mono">801 pages</span>
               <span className="mx-2">·</span>

@@ -70,9 +70,10 @@ function extractOperands(expression: string): Array<{ value: string; index: numb
   const variablePattern = /\b([a-z])\b/g;
   subscriptPattern.lastIndex = 0;
   while ((match = variablePattern.exec(expression)) !== null) {
-    // Skip if it's part of an operator (\Oa, \Ob, \Og, etc.) or branch operator (\Blb, \Br, etc.)
-    const beforeContext = expression.substring(Math.max(0, match.index - 3), match.index);
-    const isOperator = /\\O[a-z]|\\B[a-z]+/.test(beforeContext + match[1]);
+    // Skip if it's part of an operator (\Oa, \Ob, \Og, etc.), branch operator (\Blb, \Br, etc.), 
+    // or unary relationship operators (\Pu, \nPu)
+    const beforeContext = expression.substring(Math.max(0, match.index - 4), match.index);
+    const isOperator = /\\O[a-z]|\\B[a-z]+|\\Pu|\\nPu/.test(beforeContext + match[1]);
     
     // Skip if it's part of a function call or already matched
     const isInFunction = matches.some(m => 

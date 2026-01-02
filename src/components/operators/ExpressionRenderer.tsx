@@ -23,7 +23,6 @@ import PnlSvg from '@/assets/operators/binary/Pnl.svg';
 import PnmSvg from '@/assets/operators/binary/Pnm.svg';
 import PpSvg from '@/assets/operators/binary/Pp.svg';
 import PsSvg from '@/assets/operators/binary/Ps.svg';
-import PuSvg from '@/assets/operators/binary/Pu.svg';
 
 // Negated relationship operators
 import nPbSvg from '@/assets/operators/binary/nPb.svg';
@@ -35,7 +34,6 @@ import nPnlSvg from '@/assets/operators/binary/nPnl.svg';
 import nPnmSvg from '@/assets/operators/binary/nPnm.svg';
 import nPpSvg from '@/assets/operators/binary/nPp.svg';
 import nPsSvg from '@/assets/operators/binary/nPs.svg';
-import nPuSvg from '@/assets/operators/binary/nPu.svg';
 
 // Branch operators
 import BbSvg from '@/assets/operators/branch/Bb.svg';
@@ -45,6 +43,8 @@ import BrSvg from '@/assets/operators/branch/Br.svg';
 // Additional unary operators
 import TcSvg from '@/assets/operators/unary/Tc.svg';
 import TtSvg from '@/assets/operators/unary/Tt.svg';
+import PuSvg from '@/assets/operators/unary/Pu.svg';
+import nPuSvg from '@/assets/operators/unary/nPu.svg';
 
 // Operator mapping
 const operatorMap: Record<string, string> = {
@@ -64,6 +64,8 @@ const operatorMap: Record<string, string> = {
   '\\Or': OrSvg,
   '\\Tc': TcSvg,
   '\\Tt': TtSvg,
+  '\\Pu': PuSvg,
+  '\\nPu': nPuSvg,
   
   // Relationship operators (P)
   '\\Pb': PbSvg,
@@ -75,7 +77,6 @@ const operatorMap: Record<string, string> = {
   '\\Pnm': PnmSvg,
   '\\Pp': PpSvg,
   '\\Ps': PsSvg,
-  '\\Pu': PuSvg,
   
   // Negated relationship operators (nP)
   '\\nPb': nPbSvg,
@@ -87,7 +88,6 @@ const operatorMap: Record<string, string> = {
   '\\nPnm': nPnmSvg,
   '\\nPp': nPpSvg,
   '\\nPs': nPsSvg,
-  '\\nPu': nPuSvg,
   
   // Branch operators
   '\\Bb': BbSvg,

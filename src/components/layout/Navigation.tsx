@@ -66,14 +66,6 @@ const Navigation: React.FC = () => {
               );
             })}
           </div>
-
-          {/* CTA */}
-          <Link
-            to="/verifier"
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors hidden md:block"
-          >
-            Start Proving
-          </Link>
         </div>
       </div>
     </nav>
