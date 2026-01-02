@@ -247,8 +247,8 @@ const Glossary: React.FC = () => {
 // Memoized rule card component
 const RuleCard: React.FC<{ rule: Rule }> = ({ rule }) => {
   return (
-    <Card className="hover:border-primary/50 transition-colors">
-      <CardContent className="p-4">
+    <Card className="hover:border-primary/50 transition-colors h-auto">
+      <CardContent className="p-4 min-h-0 overflow-visible">
         {/* Rule header */}
         <div className="flex items-center gap-2 mb-3">
           <span className={`text-xs px-2 py-1 rounded border font-mono ${getTypeBadgeClass(rule.type as RuleType)}`}>

@@ -235,54 +235,92 @@ const BranchRenderer: React.FC<{
     return baseHeight * depthMultiplier;
   });
   
-  // Ref to measure branch content container
-  const branchContentRef = React.useRef<HTMLSpanElement>(null);
+  // Track heights for each branch separately
+  const [branch1Height, setBranch1Height] = React.useState<number>(0);
+  const [branch2Height, setBranch2Height] = React.useState<number>(0);
+  
+  // Refs to measure each branch content
+  const branch1Ref = React.useRef<HTMLSpanElement>(null);
+  const branch2Ref = React.useRef<HTMLSpanElement>(null);
   
   if (!branchData) return null;
   
   const { type, condition, branch1, branch2 } = branchData;
   
-  // Callback for when child branches need more height
-  const handleChildHeightChange = React.useCallback((childHeight: number) => {
-    // Increase parent bracket height to accommodate child
-    // Add some padding to ensure proper coverage
-    const requiredHeight = childHeight + (size * 0.5);
-    setBracketHeight(prevHeight => Math.max(prevHeight*0.5, requiredHeight*0.5));
-    
-    // Bubble up to parent if callback exists
-    if (onChildHeightChange) {
-      onChildHeightChange(requiredHeight);
-    }
-  }, [size, onChildHeightChange]);
+  // Helper function to check if content contains nested branches
+  const hasNestedBranches = React.useCallback((content: string): boolean => {
+    const branchPatterns = ['\\Bb', '\\Blb', '\\Br', '\\Bls', '\\Brs'];
+    return branchPatterns.some(pattern => content.includes(pattern));
+  }, []);
   
-  // Measure content height and trigger callback on mount/update
-  React.useEffect(() => {
-    if (branchContentRef.current) {
-      const contentHeight = branchContentRef.current.offsetHeight;
-      // Trigger callback to inform parent of our height needs
-      if (contentHeight > bracketHeight) {
-        handleChildHeightChange(contentHeight);
+  const branch1HasNested = hasNestedBranches(branch1);
+  const branch2HasNested = hasNestedBranches(branch2);
+  
+  // Calculate minimum bracket height for non-nested branches
+  const minBracketHeight = size ; // Minimum height for alignment
+  
+  // Callback for when branch1 child branches need more height
+  const handleBranch1HeightChange = React.useCallback((childHeight: number) => {
+    setBranch1Height(childHeight);
+    // Increase overall bracket height if needed
+    setBracketHeight(prevHeight => {
+      const newHeight = Math.max(prevHeight, childHeight, branch2Height || minBracketHeight)*0.5;
+      if (onChildHeightChange) {
+        onChildHeightChange(newHeight);
       }
-    }
-  }, [branch1, branch2, bracketHeight, handleChildHeightChange]);
+      return newHeight;
+    });
+  }, [size, branch2Height, minBracketHeight, onChildHeightChange]);
+  
+  // Callback for when branch2 child branches need more height
+  const handleBranch2HeightChange = React.useCallback((childHeight: number) => {
+    setBranch2Height(childHeight);
+    // Increase overall bracket height if needed
+    setBracketHeight(prevHeight => {
+      const newHeight = Math.max(prevHeight, branch1Height || minBracketHeight, childHeight)*0.5;
+      if (onChildHeightChange) {
+        onChildHeightChange(newHeight);
+      }
+      return newHeight;
+    });
+  }, [size, branch1Height, minBracketHeight, onChildHeightChange]);
   
   // Render content inside branches recursively, incrementing depth
-  const renderBranchContent = (content: string): React.ReactNode => {
+  const renderBranchContent = (content: string, isBranch1: boolean): React.ReactNode => {
     if (!content.trim()) return <span className="opacity-0">.</span>;
     // Increment depth for nested branches
     const childDepth = depth + 1;
+    const heightCallback = isBranch1 ? handleBranch1HeightChange : handleBranch2HeightChange;
     return (
       <ExpressionRenderer 
         expression={content} 
         size={size} 
         branchDepth={childDepth}
-        onBranchHeightChange={handleChildHeightChange}
+        onBranchHeightChange={heightCallback}
       />
     );
   };
   
-  const content1 = renderBranchContent(branch1);
-  const content2 = renderBranchContent(branch2);
+  const content1 = renderBranchContent(branch1, true);
+  const content2 = renderBranchContent(branch2, false);
+  
+  // Update bracket height when branch heights change
+  React.useEffect(() => {
+    // If a branch has nested content, use its height; otherwise use minimum
+    const branch1FinalHeight = branch1HasNested ? branch1Height : minBracketHeight *  (branch2HasNested ? 1: 1.2);
+    const branch2FinalHeight = branch2HasNested ? branch2Height : minBracketHeight *  (branch1HasNested ? 1: 1.2);
+    
+    // Overall bracket height should accommodate both branches
+    const totalHeight = Math.max(
+      branch1FinalHeight + branch2FinalHeight + (size * 2.5), // gap between branches
+      bracketHeight
+    );
+    
+    setBracketHeight(totalHeight);
+    if (onChildHeightChange && totalHeight > bracketHeight) {
+      onChildHeightChange(totalHeight);
+    }
+  }, [branch1Height, branch2Height, branch1HasNested, branch2HasNested, minBracketHeight, size]);
   
   // Determine which brackets to show based on type
   const showLeftBracket = type === 'Bb' || type === 'Blb' || type === 'Bls';
@@ -294,8 +332,9 @@ const BranchRenderer: React.FC<{
   
   // Calculate font size offset: text-sm is 0.875rem (14px at default 16px base)
   // Half of font size for upward offset
-  const fontSizeOffset = '0.4375rem'; // Half of 0.875rem (text-sm)
-  
+  const transformOffset = 0.3+((!branch1HasNested&&branch2HasNested) ? -1 : 0)+((branch1HasNested&&!branch2HasNested) ? 1 : 0);
+  const yoffset = transformOffset.toString() + 'rem';
+
   return (
     <span className="inline-flex items-center align-middle">
       {/* Condition before brackets */}
@@ -319,22 +358,37 @@ const BranchRenderer: React.FC<{
       
       {/* Branch content - stacked vertically with proportional spacing */}
       <span 
-        ref={branchContentRef}
         className="inline-flex flex-col justify-between" 
         style={{ 
           minWidth: '12px', 
           gap: `${size * 2.5}px`, 
           padding: `${size * 0.5}px 0`,
-          transform: `translateY(-${fontSizeOffset})`
+          transform: `translateY(-${yoffset})`
         }}
       >
         {/* Top branch content - aligned with top bracket line */}
-        <span className="inline-flex items-center px-1 whitespace-nowrap">
+        <span 
+          ref={branch1Ref}
+          className="inline-flex items-center px-1 whitespace-nowrap"
+          style={{
+            minHeight: branch1HasNested ? 'auto' : `${minBracketHeight}px`,
+            display: 'inline-flex',
+            alignItems: 'center'
+          }}
+        >
           {content1}
         </span>
         
         {/* Bottom branch content - aligned with bottom bracket line */}
-        <span className="inline-flex items-center px-1 whitespace-nowrap">
+        <span 
+          ref={branch2Ref}
+          className="inline-flex items-center px-1 whitespace-nowrap"
+          style={{
+            minHeight: branch2HasNested ? 'auto' : `${minBracketHeight}px`,
+            display: 'inline-flex',
+            alignItems: 'center'
+          }}
+        >
           {content2}
         </span>
       </span>

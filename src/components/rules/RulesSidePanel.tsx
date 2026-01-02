@@ -43,7 +43,7 @@ const DraggableRuleCard: React.FC<DraggableRuleCardProps> = React.memo(({ rule }
     <div
       draggable="true"
       onDragStart={handleDragStart}
-      className="group bg-card border border-border rounded-lg p-3 cursor-grab active:cursor-grabbing hover:border-primary/50 transition-colors select-none"
+      className="group bg-card border border-border rounded-lg p-3 cursor-grab active:cursor-grabbing hover:border-primary/50 transition-colors select-none min-h-0 overflow-visible h-auto"
     >
       <div className="flex items-start gap-2">
         <GripVertical className="w-4 h-4 text-muted-foreground mt-1 opacity-50 group-hover:opacity-100 transition-opacity flex-shrink-0" />
