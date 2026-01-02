@@ -255,7 +255,10 @@ const BranchRenderer: React.FC<{
       
       {/* Left bracket */}
       {showLeftBracket && (
-        <span className={`${leftBracketClass} self-stretch`} style={{ width: '3px' }} />
+        <span 
+          className={`${leftBracketClass} flex-shrink-0`} 
+          style={{ width: '3px', height: `${size * 2.8}px`, alignSelf: 'center' }} 
+        />
       )}
       
       {/* Branch content - stacked vertically with proportional spacing */}
@@ -263,8 +266,8 @@ const BranchRenderer: React.FC<{
         className="inline-flex flex-col justify-between" 
         style={{ 
           minWidth: '12px', 
-          gap: `${size * 1.2}px`, 
-          padding: `${size * 0.2}px 0` 
+          gap: `${size * 2.5}px`, 
+          padding: `${size * 0.5}px 0` 
         }}
       >
         {/* Top branch content - aligned with top bracket line */}
@@ -280,7 +283,10 @@ const BranchRenderer: React.FC<{
       
       {/* Right bracket */}
       {showRightBracket && (
-        <span className={`${rightBracketClass} self-stretch`} style={{ width: '3px' }} />
+        <span 
+          className={`${rightBracketClass} flex-shrink-0`} 
+          style={{ width: '3px', height: `${size * 2.8}px`, alignSelf: 'center' }} 
+        />
       )}
     </span>
   );
