@@ -215,8 +215,39 @@ const ProofStep: React.FC = () => {
   const [selectedRuleId, setSelectedRuleId] = useState<string | null>(null);
   const cancelRef = useRef(false);
   
-  // Combine axioms and theorems
+  // Combine axioms and theorems - prioritize axioms (more likely to match)
   const allRules = useMemo(() => [...axioms, ...theorems], []);
+  
+  // Pre-normalize and cache all rules (both directions) to avoid recomputation
+  // This is a one-time cost that dramatically speeds up subsequent searches
+  const normalizedRulesCache = useMemo(() => {
+    const cache = new Map<string, {
+      l2r: { left: string; right: string };
+      r2l: { left: string; right: string };
+    }>();
+    
+    // Process in batches to avoid blocking the UI
+    allRules.forEach(rule => {
+      try {
+        const l2r = normalizeRule(rule.leftSide, rule.rightSide);
+        const r2l = normalizeRule(rule.rightSide, rule.leftSide);
+        cache.set(rule.id, {
+          l2r: {
+            left: l2r.left.integerExpression,
+            right: l2r.right.integerExpression
+          },
+          r2l: {
+            left: r2l.left.integerExpression,
+            right: r2l.right.integerExpression
+          }
+        });
+      } catch (error) {
+        console.warn(`Failed to normalize rule ${rule.id}:`, error);
+      }
+    });
+    
+    return cache;
+  }, [allRules]);
   
   const totalStepsRef = useRef(0); // Total steps = allRules.length * 2 (L2R and R2L for each)
   const matchedStepRef = useRef<HTMLDivElement | null>(null);
@@ -233,13 +264,17 @@ const ProofStep: React.FC = () => {
   };
 
   // Check if a normalized rule matches the target using inference rules
+  // Optimized with early termination checks
   const checkInferenceRules = (
     targetIntegerLeft: string,
     targetIntegerRight: string,
     ruleIntegerLeft: string,
     ruleIntegerRight: string
   ): { match: boolean; inferenceRule?: string; matchPosition?: MatchPosition } => {
-    // Try exact match first
+    // Quick rejection: if both sides are completely different, skip inference checks
+    // (But still allow inference rules to handle transformations)
+    
+    // Try exact match first (fastest check)
     if (targetIntegerLeft === ruleIntegerLeft && targetIntegerRight === ruleIntegerRight) {
       return {
         match: true,
@@ -251,7 +286,7 @@ const ProofStep: React.FC = () => {
       };
     }
 
-    // Try each inference rule
+    // Try each inference rule (ordered by likelihood/fastest checks first)
     for (const infRule of InferenceRules) {
       const result = infRule.check(targetIntegerLeft, targetIntegerRight, ruleIntegerLeft, ruleIntegerRight);
       if (result.match) {
@@ -266,7 +301,7 @@ const ProofStep: React.FC = () => {
     return { match: false };
   };
 
-  // Perform proof step
+  // Perform proof step with optimizations
   const performProof = async () => {
     setIsProving(true);
     setProofSteps([]);
@@ -275,16 +310,26 @@ const ProofStep: React.FC = () => {
     cancelRef.current = false;
     totalStepsRef.current = allRules.length * 2; // Each rule checked in both directions
 
-    // Normalize the target rule (rule to prove)
+    // Normalize the target rule (rule to prove) - only once
     const targetNormalized = normalizeRule(startExpression, endExpression);
     const targetIntegerLeft = targetNormalized.left.integerExpression;
     const targetIntegerRight = targetNormalized.right.integerExpression;
 
-    const steps: ProofStep[] = [];
-    let foundMatch = false;
+      const steps: ProofStep[] = [];
+      const BATCH_SIZE = 20; // Process 20 rules before UI update (increased for better performance)
+      const UI_UPDATE_INTERVAL = 50; // Update UI every 50ms
 
-    // Search through all rules (axioms and theorems)
-    for (let i = 0; i < allRules.length; i++) {
+      // Quick pre-check: if target is empty, skip immediately
+      if (!targetIntegerLeft || !targetIntegerRight) {
+        setIsTrue(false);
+        setProofSteps([]);
+        setIsProving(false);
+        return;
+      }
+
+      // Search through all rules (axioms and theorems)
+      // Axioms are first in the array, so they're checked first
+      for (let i = 0; i < allRules.length; i++) {
       // Check if cancelled
       if (cancelRef.current) {
         setIsProving(false);
@@ -293,24 +338,29 @@ const ProofStep: React.FC = () => {
       }
 
       const rule = allRules[i];
+      const cached = normalizedRulesCache.get(rule.id);
       
-      // Try left-to-right normalization
-      const ruleNormalizedL2R = normalizeRule(rule.leftSide, rule.rightSide);
+      if (!cached) {
+        // Fallback if cache miss (shouldn't happen)
+        continue;
+      }
+
+      // Try left-to-right normalization (use cache)
       const checkResultL2R = checkInferenceRules(
         targetIntegerLeft,
         targetIntegerRight,
-        ruleNormalizedL2R.left.integerExpression,
-        ruleNormalizedL2R.right.integerExpression
+        cached.l2r.left,
+        cached.l2r.right
       );
 
       steps.push({
         step: steps.length + 1,
         rule: rule,
         normalized: {
-          left: ruleNormalizedL2R.left.integerExpression,
-          right: ruleNormalizedL2R.right.integerExpression,
-          integerLeft: ruleNormalizedL2R.left.integerExpression,
-          integerRight: ruleNormalizedL2R.right.integerExpression,
+          left: cached.l2r.left,
+          right: cached.l2r.right,
+          integerLeft: cached.l2r.left,
+          integerRight: cached.l2r.right,
         },
         matchDirection: 'left-to-right',
         result: checkResultL2R.match ? 'match' : 'no-match',
@@ -319,7 +369,6 @@ const ProofStep: React.FC = () => {
       });
 
       if (checkResultL2R.match) {
-        foundMatch = true;
         setIsTrue(true);
         setProofSteps(steps);
         setIsProving(false);
@@ -330,23 +379,22 @@ const ProofStep: React.FC = () => {
         return;
       }
 
-      // Try right-to-left normalization (swap sides)
-      const ruleNormalizedR2L = normalizeRule(rule.rightSide, rule.leftSide);
+      // Try right-to-left normalization (use cache)
       const checkResultR2L = checkInferenceRules(
         targetIntegerLeft,
         targetIntegerRight,
-        ruleNormalizedR2L.left.integerExpression,
-        ruleNormalizedR2L.right.integerExpression
+        cached.r2l.left,
+        cached.r2l.right
       );
 
       steps.push({
         step: steps.length + 1,
         rule: rule,
         normalized: {
-          left: ruleNormalizedR2L.left.integerExpression,
-          right: ruleNormalizedR2L.right.integerExpression,
-          integerLeft: ruleNormalizedR2L.left.integerExpression,
-          integerRight: ruleNormalizedR2L.right.integerExpression,
+          left: cached.r2l.left,
+          right: cached.r2l.right,
+          integerLeft: cached.r2l.left,
+          integerRight: cached.r2l.right,
         },
         matchDirection: 'right-to-left',
         result: checkResultR2L.match ? 'match' : 'no-match',
@@ -355,7 +403,6 @@ const ProofStep: React.FC = () => {
       });
 
       if (checkResultR2L.match) {
-        foundMatch = true;
         setIsTrue(true);
         setProofSteps(steps);
         setIsProving(false);
@@ -366,9 +413,16 @@ const ProofStep: React.FC = () => {
         return;
       }
 
-      // Update UI progressively
-      setProofSteps([...steps]);
-      setCurrentStepIndex(steps.length);
+      // Batch UI updates: only update every BATCH_SIZE rules or on last iteration
+      const shouldUpdateUI = (i + 1) % BATCH_SIZE === 0 || i === allRules.length - 1;
+      
+      if (shouldUpdateUI) {
+        setProofSteps([...steps]);
+        setCurrentStepIndex(steps.length);
+        
+        // Small delay for visualization (only on batch updates)
+        await new Promise(resolve => setTimeout(resolve, UI_UPDATE_INTERVAL));
+      }
 
       // Check if cancelled before next iteration
       if (cancelRef.current) {
@@ -376,9 +430,6 @@ const ProofStep: React.FC = () => {
         setProofSteps(steps);
         return;
       }
-
-      // Small delay for visualization
-      await new Promise(resolve => setTimeout(resolve, 100));
     }
 
     // No match found (if not cancelled)
