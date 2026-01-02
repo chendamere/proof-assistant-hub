@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PanelProvider } from "@/contexts/PanelContext";
 import Index from "./pages/Index";
 import Verifier from "./pages/Verifier";
+import OperandNormalizer from "./pages/OperandNormalizer";
+import ProofStep from "./pages/ProofStep";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +22,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/verifier" element={<Verifier />} />
+            <Route path="/normalizer" element={<OperandNormalizer />} />
+            <Route path="/proof-step" element={<ProofStep />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

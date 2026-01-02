@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
-import { axioms, Rule } from '@/data/axioms';
+import { axioms, Rule, RuleType, RuleCategory } from '@/data/axioms';
 import { usePanelContext } from '@/contexts/PanelContext';
 import { 
   ChevronUp, 
@@ -12,7 +12,9 @@ import {
   FileText, 
   Trash2,
   Briefcase,
-  PanelRightOpen
+  PanelRightOpen,
+  Search,
+  ArrowRight
 } from 'lucide-react';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 
@@ -29,6 +31,8 @@ const UserWorkbench: React.FC = () => {
   const [importedRules, setImportedRules] = useState<ImportedRule[]>([]);
   const [delimiter, setDelimiter] = useState('---');
   const [isDragOver, setIsDragOver] = useState(false);
+  const [contextRulesSearch, setContextRulesSearch] = useState('');
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   // Parse rules from text content
   const parseRulesFromText = (content: string, filename: string): ImportedRule[] => {
@@ -59,14 +63,12 @@ const UserWorkbench: React.FC = () => {
     return rules;
   };
 
-  // Handle file drop
-  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragOver(false);
+  // Handle file selection from file input
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
 
-    const files = Array.from(e.dataTransfer.files);
-    
-    files.forEach(file => {
+    Array.from(files).forEach(file => {
       if (file.name.endsWith('.txt') || file.name.endsWith('.tex') || file.name.endsWith('.latex')) {
         const reader = new FileReader();
         reader.onload = (event) => {
@@ -77,20 +79,42 @@ const UserWorkbench: React.FC = () => {
         reader.readAsText(file);
       }
     });
+
+    // Reset the input so the same file can be selected again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   }, []);
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragOver(true);
+  // Open file picker
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
   };
 
-  const handleDragLeave = () => {
-    setIsDragOver(false);
-  };
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = 'copy';
+    setIsDragOver(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Check if we're actually leaving the target area (not just moving to a child)
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+    
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      setIsDragOver(false);
+    }
+  }, []);
 
   // Handle rule drop from RulesSidePanel
   const handleRuleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragOver(false);
 
     try {
@@ -99,15 +123,22 @@ const UserWorkbench: React.FC = () => {
         const data = JSON.parse(jsonData);
         if (data.id && data.leftSide && data.rightSide) {
           const existingRule = axioms.find(r => r.id === data.id);
-          if (existingRule && !contextRules.find(r => r.id === existingRule.id)) {
-            setContextRules(prev => [...prev, existingRule]);
+          if (existingRule) {
+            setContextRules(prev => {
+              // Check if rule already exists to avoid duplicates
+              if (prev.find(r => r.id === existingRule.id)) {
+                return prev;
+              }
+              return [...prev, existingRule];
+            });
           }
         }
       }
     } catch (err) {
       // Not a rule drop, might be a file
+      console.error('Failed to parse dropped data:', err);
     }
-  }, [contextRules]);
+  }, []);
 
   // Download rules as txt
   const downloadRules = () => {
@@ -136,6 +167,36 @@ const UserWorkbench: React.FC = () => {
     setImportedRules(prev => prev.filter(r => r.id !== id));
   };
 
+  // Add all imported rules to context rules and clear imported rules
+  const addAllImportedToContext = useCallback(() => {
+    const newContextRules: Rule[] = importedRules.map((importedRule) => {
+      // Convert ImportedRule to Rule format
+      return {
+        id: `imported-context-${importedRule.id}`,
+        name: `Imported: ${importedRule.leftSide} ≡ ${importedRule.rightSide}`,
+        type: 'definition' as RuleType,
+        category: 'logic' as RuleCategory,
+        description: `Imported rule from ${importedRule.source}`,
+        leftSide: importedRule.leftSide,
+        rightSide: importedRule.rightSide,
+      };
+    });
+
+    // Add to context rules, avoiding duplicates based on leftSide and rightSide
+    setContextRules(prev => {
+      const existingPairs = new Set(
+        prev.map(r => `${r.leftSide}≡${r.rightSide}`)
+      );
+      const uniqueNewRules = newContextRules.filter(
+        r => !existingPairs.has(`${r.leftSide}≡${r.rightSide}`)
+      );
+      return [...prev, ...uniqueNewRules];
+    });
+
+    // Clear imported rules
+    setImportedRules([]);
+  }, [importedRules]);
+
   // Clear all rules
   const clearAll = () => {
     setContextRules([]);
@@ -143,6 +204,21 @@ const UserWorkbench: React.FC = () => {
   };
 
   const totalRules = contextRules.length + importedRules.length;
+
+  // Filter context rules based on search query
+  const filteredContextRules = React.useMemo(() => {
+    if (!contextRulesSearch.trim()) {
+      return contextRules;
+    }
+    const searchLower = contextRulesSearch.toLowerCase();
+    return contextRules.filter(rule => 
+      rule.name.toLowerCase().includes(searchLower) ||
+      rule.leftSide.toLowerCase().includes(searchLower) ||
+      rule.rightSide.toLowerCase().includes(searchLower) ||
+      rule.description?.toLowerCase().includes(searchLower) ||
+      rule.type.toLowerCase().includes(searchLower)
+    );
+  }, [contextRules, contextRulesSearch]);
 
   return (
     <div 
@@ -209,8 +285,17 @@ const UserWorkbench: React.FC = () => {
       {isWorkbenchExpanded && (
         <div className="h-[calc(100%-3rem)] flex">
           {/* Context Rules Section */}
-          <div className="flex-1 border-r border-border flex flex-col">
-            <div className="px-4 py-2 border-b border-border flex items-center justify-between bg-muted/30">
+          <div 
+            className={`flex-1 border-r border-border flex flex-col transition-colors ${
+              isDragOver ? 'bg-primary/10 border-primary border-2' : ''
+            }`}
+            onDrop={handleRuleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+          >
+            <div className={`px-4 py-2 border-b border-border flex items-center justify-between bg-muted/30 ${
+              isDragOver ? 'border-primary' : ''
+            }`}>
               <span className="text-xs font-medium text-muted-foreground">
                 Context Rules ({contextRules.length})
               </span>
@@ -219,25 +304,47 @@ const UserWorkbench: React.FC = () => {
                   variant="ghost" 
                   size="sm" 
                   className="h-6 text-xs text-muted-foreground hover:text-destructive"
-                  onClick={() => setContextRules([])}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setContextRules([]);
+                  }}
                 >
                   Clear
                 </Button>
               )}
             </div>
+            {/* Search Input */}
+            {contextRules.length > 0 && (
+              <div className="px-3 py-2 border-b border-border">
+                <div className="relative">
+                  <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-3 h-3 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder="Search context rules..."
+                    value={contextRulesSearch}
+                    onChange={(e) => setContextRulesSearch(e.target.value)}
+                    className="h-7 pl-7 text-xs"
+                  />
+                </div>
+              </div>
+            )}
             <ScrollArea className="flex-1">
-              <div 
-                className="p-3 space-y-2 min-h-full"
-                onDrop={handleRuleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-              >
+              <div className="p-3 space-y-2 min-h-full">
                 {contextRules.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground text-xs">
+                  <div className={`text-center py-8 text-muted-foreground text-xs border-2 border-dashed rounded-lg transition-colors ${
+                    isDragOver ? 'border-primary bg-primary/5' : 'border-transparent'
+                  }`}>
                     <p>Drag rules here from the Rules Panel</p>
                   </div>
+                ) : filteredContextRules.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground text-xs">
+                    <p>No rules match your search</p>
+                    <p className="text-xs text-muted-foreground/60 mt-1">
+                      Try a different search term
+                    </p>
+                  </div>
                 ) : (
-                  contextRules.map((rule) => (
+                  filteredContextRules.map((rule) => (
                     <div 
                       key={rule.id}
                       className="bg-card border border-border rounded p-2 flex items-center justify-between gap-2 group"
@@ -262,48 +369,96 @@ const UserWorkbench: React.FC = () => {
             </ScrollArea>
           </div>
 
-          {/* Imported Rules / File Drop Section */}
+          {/* Imported Rules / File Selection Section */}
           <div className="flex-1 border-r border-border flex flex-col">
             <div className="px-4 py-2 border-b border-border flex items-center justify-between bg-muted/30">
               <span className="text-xs font-medium text-muted-foreground">
                 Imported Rules ({importedRules.length})
               </span>
-              {importedRules.length > 0 && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="h-6 text-xs text-muted-foreground hover:text-destructive"
-                  onClick={() => setImportedRules([])}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 text-xs gap-1"
+                  onClick={handleImportClick}
                 >
-                  Clear
+                  <Upload className="w-3 h-3" />
+                  Import
                 </Button>
-              )}
+                {importedRules.length > 0 && (
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 text-xs gap-1 text-primary hover:text-primary"
+                      onClick={addAllImportedToContext}
+                    >
+                      <ArrowRight className="w-3 h-3" />
+                      Add All
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-6 text-xs text-muted-foreground hover:text-destructive"
+                      onClick={() => setImportedRules([])}
+                    >
+                      Clear
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
             <ScrollArea className="flex-1">
-              <div 
-                className={`p-3 space-y-2 min-h-full transition-colors ${
-                  isDragOver ? 'bg-primary/10' : ''
-                }`}
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-              >
+              <div className="p-3 space-y-2 min-h-full">
                 {importedRules.length === 0 ? (
-                  <div 
-                    className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                      isDragOver ? 'border-primary bg-primary/5' : 'border-border'
-                    }`}
-                  >
-                    <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-xs text-muted-foreground mb-1">
-                      Drop .txt or .tex files here
+                  <div className="border-2 border-dashed rounded-lg p-6 text-center">
+                    <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Import rules from files
                     </p>
-                    <p className="text-xs text-muted-foreground/60">
-                      Rules will be extracted automatically
+                    <p className="text-xs text-muted-foreground/60 mb-4">
+                      Select .txt or .tex files to extract rules
                     </p>
+                    <Button
+                      onClick={handleImportClick}
+                      size="sm"
+                      variant="outline"
+                      className="gap-2"
+                    >
+                      <Upload className="w-4 h-4" />
+                      Select Files
+                    </Button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".txt,.tex,.latex"
+                      multiple
+                      onChange={handleFileSelect}
+                      className="hidden"
+                    />
                   </div>
                 ) : (
-                  importedRules.map((rule) => (
+                  <>
+                    <div className="mb-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full gap-2 text-xs"
+                        onClick={handleImportClick}
+                      >
+                        <Upload className="w-3 h-3" />
+                        Import More Files
+                      </Button>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".txt,.tex,.latex"
+                        multiple
+                        onChange={handleFileSelect}
+                        className="hidden"
+                      />
+                    </div>
+                    {importedRules.map((rule) => (
                     <div 
                       key={rule.id}
                       className="bg-card border border-border rounded p-2 group"
@@ -326,7 +481,8 @@ const UserWorkbench: React.FC = () => {
                         {rule.leftSide} ≡ {rule.rightSide}
                       </div>
                     </div>
-                  ))
+                  ))}
+                  </>
                 )}
               </div>
             </ScrollArea>

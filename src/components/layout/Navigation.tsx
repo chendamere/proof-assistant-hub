@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, CheckSquare } from 'lucide-react';
+import { BookOpen, CheckSquare, Hash, GitBranch } from 'lucide-react';
 
 interface NavItem {
   path: string;
@@ -14,6 +14,8 @@ const Navigation: React.FC = () => {
   const navItems: NavItem[] = [
     { path: '/', label: 'Introduction', icon: <BookOpen className="w-4 h-4" /> },
     { path: '/verifier', label: 'Verifier', icon: <CheckSquare className="w-4 h-4" /> },
+    { path: '/normalizer', label: 'Normalizer', icon: <Hash className="w-4 h-4" /> },
+    { path: '/proof-step', label: 'Proof Step', icon: <GitBranch className="w-4 h-4" /> },
   ];
 
   return (

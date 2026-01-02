@@ -138,7 +138,7 @@ const IntroductionSection: React.FC = () => {
               <span className="text-foreground">B</span>
             </div>
             <p className="text-muted-foreground mt-4 text-sm">
-              Where A and B are equivalent rule texts that can replace each other in any context.
+              Where A and B are equivalent rule texts that can replace each other in any context after normalization.
             </p>
           </div>
 
