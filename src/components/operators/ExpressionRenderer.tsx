@@ -259,7 +259,7 @@ const BranchRenderer: React.FC<{
       )}
       
       {/* Branch content - stacked vertically with proper spacing */}
-      <span className="inline-flex flex-col justify-between py-0.5" style={{ minWidth: '12px', minHeight: '48px' }}>
+      <span className="inline-flex flex-col justify-between" style={{ minWidth: '12px', gap: '16px', padding: '4px 0' }}>
         {/* Top branch content - aligned with top bracket line */}
         <span className="inline-flex items-center px-1 whitespace-nowrap">
           {content1}
