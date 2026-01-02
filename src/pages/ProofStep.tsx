@@ -13,6 +13,14 @@ import { Play, RotateCcw, CheckCircle2, XCircle, Loader2, AlertCircle } from 'lu
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
+interface MatchPosition {
+  side: 'left' | 'right' | 'both';
+  position?: number; // Character position or pattern position
+  description: string;
+  prefix?: string; // Text before the substituted rule (M in M·A·N)
+  suffix?: string; // Text after the substituted rule (N in M·A·N)
+}
+
 interface ProofStep {
   step: number;
   rule: Rule;
@@ -25,6 +33,7 @@ interface ProofStep {
   matchDirection: 'left-to-right' | 'right-to-left';
   result: 'match' | 'no-match' | 'pending';
   inferenceRule?: string;
+  matchPosition?: MatchPosition;
 }
 
 interface InferenceRule {
@@ -35,7 +44,7 @@ interface InferenceRule {
     targetRight: string,
     ruleLeft: string,
     ruleRight: string
-  ) => boolean;
+  ) => { match: boolean; position?: MatchPosition };
 }
 
 const InferenceRules: InferenceRule[] = [
@@ -44,16 +53,71 @@ const InferenceRules: InferenceRule[] = [
     description: 'A ⟺ B implies B ⟺ A - Exact match (reversed)',
     check: (targetLeft, targetRight, ruleLeft, ruleRight) => {
       // Check if target matches rule in reverse
-      return targetLeft === ruleRight && targetRight === ruleLeft;
+      if (targetLeft === ruleRight && targetRight === ruleLeft) {
+        return {
+          match: true,
+          position: {
+            side: 'both',
+            description: 'Both sides match in reverse order'
+          }
+        };
+      }
+      return { match: false };
     },
   },
   {
     name: 'Equivalent Transitivity',
     description: 'A ⟺ B and B ⟺ C implies A ⟺ C - Chain through common side',
     check: (targetLeft, targetRight, ruleLeft, ruleRight) => {
-      // Check if one side of target matches one side of rule
-      return targetLeft === ruleLeft || targetLeft === ruleRight ||
-             targetRight === ruleLeft || targetRight === ruleRight;
+      // If target left matches rule left, check if target right matches rule right exactly
+      if (targetLeft === ruleLeft) {
+        if (targetRight === ruleRight) {
+          return {
+            match: true,
+            position: {
+              side: 'both',
+              description: 'Left sides match, right sides match exactly'
+            }
+          };
+        }
+      }
+      // If target left matches rule right, check if target right matches rule left exactly
+      if (targetLeft === ruleRight) {
+        if (targetRight === ruleLeft) {
+          return {
+            match: true,
+            position: {
+              side: 'both',
+              description: 'Target left matches rule right, target right matches rule left exactly'
+            }
+          };
+        }
+      }
+      // If target right matches rule left, check if target left matches rule right exactly
+      if (targetRight === ruleLeft) {
+        if (targetLeft === ruleRight) {
+          return {
+            match: true,
+            position: {
+              side: 'both',
+              description: 'Target right matches rule left, target left matches rule right exactly'
+            }
+          };
+        }
+      }
+      // If target right matches rule right, check if target left matches rule left exactly
+      if (targetRight === ruleRight) {
+        if (targetLeft === ruleLeft) {
+          return {
+            match: true,
+            position: {
+              side: 'both',
+              description: 'Right sides match, left sides match exactly'
+            }
+          };
+        }
+      }
+      return { match: false };
     },
   },
   {
@@ -61,12 +125,81 @@ const InferenceRules: InferenceRule[] = [
     description: 'A ⟺ B allows replacing A with B in any context M·A·N → M·B·N',
     check: (targetLeft, targetRight, ruleLeft, ruleRight) => {
       // Check if rule can be substituted into target
-      // This is more complex - for now, check if rule sides appear in target
-      const canSubstitute = (target: string, ruleSide: string) => {
-        return target.includes(ruleSide) || ruleSide.includes(target);
+      const findSubstitution = (target: string, ruleSide: string, side: 'left' | 'right') => {
+        if (target.includes(ruleSide)) {
+          const position = target.indexOf(ruleSide);
+          const prefix = target.substring(0, position);
+          const suffix = target.substring(position + ruleSide.length);
+          return {
+            match: true,
+            position: {
+              side: side,
+              position: position,
+              description: `Rule found at position ${position} in ${side} side`,
+              prefix: prefix || undefined,
+              suffix: suffix || undefined,
+            }
+          };
+        }
+        if (ruleSide.includes(target)) {
+          const position = ruleSide.indexOf(target);
+          const prefix = ruleSide.substring(0, position);
+          const suffix = ruleSide.substring(position + target.length);
+          return {
+            match: true,
+            position: {
+              side: side,
+              description: `${side} side is contained in rule`,
+              prefix: prefix || undefined,
+              suffix: suffix || undefined,
+            }
+          };
+        }
+        return { match: false };
       };
-      return canSubstitute(targetLeft, ruleLeft) || canSubstitute(targetLeft, ruleRight) ||
-             canSubstitute(targetRight, ruleLeft) || canSubstitute(targetRight, ruleRight);
+
+      // Check both sides for substitution
+      // For substitution to work, we need to check if applying the rule to one side
+      // results in the other side matching
+      
+      // Try: targetLeft contains ruleLeft, then check if replacing it with ruleRight gives targetRight
+      let result = findSubstitution(targetLeft, ruleLeft, 'left');
+      if (result.match && result.position) {
+        // Check if applying substitution (replacing ruleLeft with ruleRight in targetLeft) matches targetRight
+        const substituted = (result.position.prefix || '') + ruleRight + (result.position.suffix || '');
+        if (substituted === targetRight) {
+          return result;
+        }
+      }
+      
+      // Try: targetLeft contains ruleRight, then check if replacing it with ruleLeft gives targetRight
+      result = findSubstitution(targetLeft, ruleRight, 'left');
+      if (result.match && result.position) {
+        const substituted = (result.position.prefix || '') + ruleLeft + (result.position.suffix || '');
+        if (substituted === targetRight) {
+          return result;
+        }
+      }
+      
+      // Try: targetRight contains ruleLeft, then check if replacing it with ruleRight gives targetLeft
+      result = findSubstitution(targetRight, ruleLeft, 'right');
+      if (result.match && result.position) {
+        const substituted = (result.position.prefix || '') + ruleRight + (result.position.suffix || '');
+        if (substituted === targetLeft) {
+          return result;
+        }
+      }
+      
+      // Try: targetRight contains ruleRight, then check if replacing it with ruleLeft gives targetLeft
+      result = findSubstitution(targetRight, ruleRight, 'right');
+      if (result.match && result.position) {
+        const substituted = (result.position.prefix || '') + ruleLeft + (result.position.suffix || '');
+        if (substituted === targetLeft) {
+          return result;
+        }
+      }
+
+      return { match: false };
     },
   },
 ];
@@ -96,16 +229,28 @@ const ProofStep: React.FC = () => {
     targetIntegerRight: string,
     ruleIntegerLeft: string,
     ruleIntegerRight: string
-  ): { match: boolean; inferenceRule?: string } => {
+  ): { match: boolean; inferenceRule?: string; matchPosition?: MatchPosition } => {
     // Try exact match first
     if (targetIntegerLeft === ruleIntegerLeft && targetIntegerRight === ruleIntegerRight) {
-      return { match: true, inferenceRule: 'Exact Match' };
+      return {
+        match: true,
+        inferenceRule: 'Exact Match',
+        matchPosition: {
+          side: 'both',
+          description: 'Both sides match exactly'
+        }
+      };
     }
 
     // Try each inference rule
     for (const infRule of InferenceRules) {
-      if (infRule.check(targetIntegerLeft, targetIntegerRight, ruleIntegerLeft, ruleIntegerRight)) {
-        return { match: true, inferenceRule: infRule.name };
+      const result = infRule.check(targetIntegerLeft, targetIntegerRight, ruleIntegerLeft, ruleIntegerRight);
+      if (result.match) {
+        return {
+          match: true,
+          inferenceRule: infRule.name,
+          matchPosition: result.position
+        };
       }
     }
 
@@ -152,6 +297,7 @@ const ProofStep: React.FC = () => {
         matchDirection: 'left-to-right',
         result: checkResultL2R.match ? 'match' : 'no-match',
         inferenceRule: checkResultL2R.inferenceRule,
+        matchPosition: checkResultL2R.matchPosition,
       });
 
       if (checkResultL2R.match) {
@@ -183,6 +329,7 @@ const ProofStep: React.FC = () => {
         matchDirection: 'right-to-left',
         result: checkResultR2L.match ? 'match' : 'no-match',
         inferenceRule: checkResultR2L.inferenceRule,
+        matchPosition: checkResultR2L.matchPosition,
       });
 
       if (checkResultR2L.match) {
@@ -327,7 +474,8 @@ const ProofStep: React.FC = () => {
               <CardHeader>
                 <CardTitle className="text-lg">Rule to Prove</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
+                {/* Original Expression */}
                 <div className="flex items-center justify-center gap-4 p-4 bg-muted/30 rounded-lg border border-border">
                   <div className="flex-1 text-center">
                     <div className="mb-2">
@@ -343,6 +491,35 @@ const ProofStep: React.FC = () => {
                     <code className="text-xs text-muted-foreground font-mono">{endExpression}</code>
                   </div>
                 </div>
+                {/* Normalized Expression */}
+                {(() => {
+                  try {
+                    const normalized = normalizeRule(startExpression, endExpression);
+                    return (
+                      <div className="flex items-center justify-center gap-4 p-4 bg-primary/5 rounded-lg border border-primary/20">
+                        <div className="flex-1 text-center">
+                          <div className="mb-2">
+                            <ExpressionRenderer expression={normalized.left.originalExpression} size={20} />
+                          </div>
+                          <code className="text-xs text-primary font-mono">
+                            {normalized.left.integerExpression}
+                          </code>
+                        </div>
+                        <EquivalenceSymbol size={32} />
+                        <div className="flex-1 text-center">
+                          <div className="mb-2">
+                            <ExpressionRenderer expression={normalized.right.originalExpression} size={20} />
+                          </div>
+                          <code className="text-xs text-primary font-mono">
+                            {normalized.right.integerExpression}
+                          </code>
+                        </div>
+                      </div>
+                    );
+                  } catch (error) {
+                    return null;
+                  }
+                })()}
               </CardContent>
             </Card>
 
@@ -387,7 +564,7 @@ const ProofStep: React.FC = () => {
                           }`}
                         >
                           <div className="flex items-start justify-between mb-2">
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-wrap">
                               <Badge variant="outline" className="text-xs">
                                 Step {step.step}
                               </Badge>
@@ -401,9 +578,16 @@ const ProofStep: React.FC = () => {
                               )}
                             </div>
                             {step.inferenceRule && (
-                              <Badge variant="outline" className="text-xs">
-                                {step.inferenceRule}
-                              </Badge>
+                              <div className="flex flex-col items-end gap-1">
+                                <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/30">
+                                  {step.inferenceRule}
+                                </Badge>
+                                {step.matchPosition && (
+                                  <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                                    {step.matchPosition.description}
+                                  </Badge>
+                                )}
+                              </div>
                             )}
                           </div>
                           <div className="text-xs font-medium text-muted-foreground mb-1">
@@ -420,6 +604,30 @@ const ProofStep: React.FC = () => {
                             <span className="text-primary">≡</span>
                             <span className="text-primary">{step.normalized.right}</span>
                           </div>
+                          {/* Show substitution context if Equivalent Substitution is used */}
+                          {step.inferenceRule === 'Equivalent Substitution' && step.matchPosition && 
+                           (step.matchPosition.prefix || step.matchPosition.suffix) && (
+                            <div className="mt-2 p-2 bg-primary/5 rounded border border-primary/20">
+                              <div className="text-xs text-muted-foreground mb-1 font-semibold">Substitution Context (M·A·N):</div>
+                              <div className="flex items-center gap-2 text-xs font-mono">
+                                {step.matchPosition.prefix && (
+                                  <>
+                                    <span className="text-muted-foreground">M =</span>
+                                    <code className="text-foreground bg-muted/30 px-1.5 py-0.5 rounded">{step.matchPosition.prefix}</code>
+                                  </>
+                                )}
+                                {step.matchPosition.prefix && step.matchPosition.suffix && (
+                                  <span className="text-primary">·</span>
+                                )}
+                                {step.matchPosition.suffix && (
+                                  <>
+                                    <span className="text-muted-foreground">N =</span>
+                                    <code className="text-foreground bg-muted/30 px-1.5 py-0.5 rounded">{step.matchPosition.suffix}</code>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>

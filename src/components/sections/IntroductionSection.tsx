@@ -2,8 +2,9 @@ import React from 'react';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import NodeDiagram from '@/components/visuals/NodeDiagram';
 import TreeStructureDiagram from '@/components/visuals/TreeStructureDiagram';
-import { BookOpen, ExternalLink } from 'lucide-react';
+import { BookOpen, ExternalLink, Hash, GitBranch } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const IntroductionSection: React.FC = () => {
   return (
@@ -203,10 +204,24 @@ const IntroductionSection: React.FC = () => {
           <p className="text-muted-foreground mb-4">
             Explore the complete system below
           </p>
-          <div className="flex items-center justify-center gap-2 text-primary animate-bounce">
+          <div className="flex items-center justify-center gap-2 text-primary animate-bounce mb-6">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 5v14M5 12l7 7 7-7" />
             </svg>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link to="/normalizer">
+              <Button variant="outline" className="gap-2">
+                <Hash className="w-4 h-4" />
+                Operand Normalizer
+              </Button>
+            </Link>
+            <Link to="/proof-step">
+              <Button variant="outline" className="gap-2">
+                <GitBranch className="w-4 h-4" />
+                Proof Step Demo
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
