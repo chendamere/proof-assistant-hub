@@ -258,8 +258,15 @@ const BranchRenderer: React.FC<{
         <span className={`${leftBracketClass} self-stretch`} style={{ width: '5px' }} />
       )}
       
-      {/* Branch content - stacked vertically with proper spacing */}
-      <span className="inline-flex flex-col justify-between" style={{ minWidth: '12px', gap: '16px', padding: '4px 0' }}>
+      {/* Branch content - stacked vertically with proportional spacing */}
+      <span 
+        className="inline-flex flex-col justify-between" 
+        style={{ 
+          minWidth: '12px', 
+          gap: `${size * 0.8}px`, 
+          padding: `${size * 0.25}px 0` 
+        }}
+      >
         {/* Top branch content - aligned with top bracket line */}
         <span className="inline-flex items-center px-1 whitespace-nowrap">
           {content1}
