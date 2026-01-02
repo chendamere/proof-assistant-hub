@@ -257,7 +257,7 @@ const BranchRenderer: React.FC<{
       {showLeftBracket && (
         <span 
           className={`${leftBracketClass} flex-shrink-0`} 
-          style={{ width: '3px', height: `${size * 2.8}px`, alignSelf: 'center' }} 
+          style={{ width: '3px', height: `${size * 3.2}px`, alignSelf: 'center' }} 
         />
       )}
       
@@ -285,7 +285,7 @@ const BranchRenderer: React.FC<{
       {showRightBracket && (
         <span 
           className={`${rightBracketClass} flex-shrink-0`} 
-          style={{ width: '3px', height: `${size * 2.8}px`, alignSelf: 'center' }} 
+          style={{ width: '3px', height: `${size * 3.2}px`, alignSelf: 'center' }} 
         />
       )}
     </span>
