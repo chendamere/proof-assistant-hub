@@ -229,39 +229,9 @@ const BranchRenderer: React.FC<{
   
   // Render content inside branches recursively
   const renderBranchContent = (content: string) => {
-    if (!content.trim()) return null;
+    if (!content.trim()) return <span className="opacity-0">.</span>;
     return <ExpressionRenderer expression={content} size={size} />;
   };
-  
-  const bracketStyle = {
-    strokeWidth: 1.5,
-    stroke: 'currentColor',
-    fill: 'none',
-  };
-  
-  // Left bracket SVG
-  const LeftBracket = () => (
-    <svg 
-      viewBox="0 0 8 40" 
-      className="h-full text-foreground"
-      style={{ width: '6px', minHeight: '32px' }}
-      preserveAspectRatio="none"
-    >
-      <path d="M7 1 L2 1 L2 39 L7 39" {...bracketStyle} />
-    </svg>
-  );
-  
-  // Right bracket SVG
-  const RightBracket = () => (
-    <svg 
-      viewBox="0 0 8 40" 
-      className="h-full text-foreground"
-      style={{ width: '6px', minHeight: '32px' }}
-      preserveAspectRatio="none"
-    >
-      <path d="M1 1 L6 1 L6 39 L1 39" {...bracketStyle} />
-    </svg>
-  );
   
   const content1 = renderBranchContent(branch1);
   const content2 = renderBranchContent(branch2);
@@ -270,33 +240,41 @@ const BranchRenderer: React.FC<{
   const showLeftBracket = type === 'Bb' || type === 'Blb' || type === 'Bls';
   const showRightBracket = type === 'Bb' || type === 'Br' || type === 'Brs';
   
+  // Border styles for brackets using CSS
+  const leftBracketClass = "border-l border-t border-b border-foreground";
+  const rightBracketClass = "border-r border-t border-b border-foreground";
+  
   return (
-    <span className="inline-flex items-center">
+    <span className="inline-flex items-center align-middle">
       {/* Condition before brackets */}
       {condition && (
-        <span className="inline-flex items-center mr-0.5">
+        <span className="inline-flex items-center">
           <ExpressionRenderer expression={condition} size={size} />
         </span>
       )}
       
-      {/* Branch structure */}
-      <span className="inline-flex items-stretch">
-        {showLeftBracket && <LeftBracket />}
-        
-        <span className="inline-flex flex-col justify-center px-0.5 min-w-[8px]">
-          {/* Top branch content */}
-          <span className="inline-flex items-center justify-start leading-tight py-0.5">
-            {content1 || <span className="w-1" />}
-          </span>
-          
-          {/* Bottom branch content */}
-          <span className="inline-flex items-center justify-start leading-tight py-0.5">
-            {content2 || <span className="w-1" />}
-          </span>
+      {/* Left bracket */}
+      {showLeftBracket && (
+        <span className={`${leftBracketClass} self-stretch`} style={{ width: '4px', minHeight: '24px' }} />
+      )}
+      
+      {/* Branch content - stacked vertically */}
+      <span className="inline-flex flex-col justify-center" style={{ minWidth: '12px' }}>
+        {/* Top branch content */}
+        <span className="inline-flex items-center px-1 py-0.5 whitespace-nowrap">
+          {content1}
         </span>
         
-        {showRightBracket && <RightBracket />}
+        {/* Bottom branch content */}
+        <span className="inline-flex items-center px-1 py-0.5 whitespace-nowrap">
+          {content2}
+        </span>
       </span>
+      
+      {/* Right bracket */}
+      {showRightBracket && (
+        <span className={`${rightBracketClass} self-stretch`} style={{ width: '4px', minHeight: '24px' }} />
+      )}
     </span>
   );
 };
