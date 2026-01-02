@@ -88,6 +88,8 @@ const operatorMap: Record<string, string> = {
 interface ExpressionRendererProps {
   expression: string;
   size?: number;
+  branchDepth?: number;
+  onBranchHeightChange?: (height: number) => void;
 }
 
 interface Token {
@@ -222,15 +224,61 @@ const parseExpression = (expr: string): Token[] => {
 const BranchRenderer: React.FC<{
   branchData: Token['branchData'];
   size: number;
-}> = ({ branchData, size }) => {
+  depth?: number;
+  onChildHeightChange?: (height: number) => void;
+}> = ({ branchData, size, depth = 0, onChildHeightChange }) => {
+  const [bracketHeight, setBracketHeight] = React.useState<number>(() => {
+    // Calculate initial bracket height based on depth
+    const baseHeight = size * 3.6;
+    const depthReduction = depth * 0.8;
+    const depthMultiplier = Math.max(0, 1 - depthReduction);
+    return baseHeight * depthMultiplier;
+  });
+  
+  // Ref to measure branch content container
+  const branchContentRef = React.useRef<HTMLSpanElement>(null);
+  
   if (!branchData) return null;
   
   const { type, condition, branch1, branch2 } = branchData;
   
-  // Render content inside branches recursively
-  const renderBranchContent = (content: string) => {
+  // Callback for when child branches need more height
+  const handleChildHeightChange = React.useCallback((childHeight: number) => {
+    // Increase parent bracket height to accommodate child
+    // Add some padding to ensure proper coverage
+    const requiredHeight = childHeight + (size * 0.5);
+    setBracketHeight(prevHeight => Math.max(prevHeight*0.5, requiredHeight*0.5));
+    
+    // Bubble up to parent if callback exists
+    if (onChildHeightChange) {
+      onChildHeightChange(requiredHeight);
+    }
+  }, [size, onChildHeightChange]);
+  
+  // Measure content height and trigger callback on mount/update
+  React.useEffect(() => {
+    if (branchContentRef.current) {
+      const contentHeight = branchContentRef.current.offsetHeight;
+      // Trigger callback to inform parent of our height needs
+      if (contentHeight > bracketHeight) {
+        handleChildHeightChange(contentHeight);
+      }
+    }
+  }, [branch1, branch2, bracketHeight, handleChildHeightChange]);
+  
+  // Render content inside branches recursively, incrementing depth
+  const renderBranchContent = (content: string): React.ReactNode => {
     if (!content.trim()) return <span className="opacity-0">.</span>;
-    return <ExpressionRenderer expression={content} size={size} />;
+    // Increment depth for nested branches
+    const childDepth = depth + 1;
+    return (
+      <ExpressionRenderer 
+        expression={content} 
+        size={size} 
+        branchDepth={childDepth}
+        onBranchHeightChange={handleChildHeightChange}
+      />
+    );
   };
   
   const content1 = renderBranchContent(branch1);
@@ -243,6 +291,10 @@ const BranchRenderer: React.FC<{
   // Border styles for brackets using CSS
   const leftBracketClass = "border-l border-t border-b border-foreground";
   const rightBracketClass = "border-r border-t border-b border-foreground";
+  
+  // Calculate font size offset: text-sm is 0.875rem (14px at default 16px base)
+  // Half of font size for upward offset
+  const fontSizeOffset = '0.4375rem'; // Half of 0.875rem (text-sm)
   
   return (
     <span className="inline-flex items-center align-middle">
@@ -257,17 +309,23 @@ const BranchRenderer: React.FC<{
       {showLeftBracket && (
         <span 
           className={`${leftBracketClass} flex-shrink-0`} 
-          style={{ width: '3px', height: `${size * 3.2}px`, alignSelf: 'center' }} 
+          style={{ 
+            width: '3px', 
+            height: `${bracketHeight}px`, 
+            alignSelf: 'center'
+          }} 
         />
       )}
       
       {/* Branch content - stacked vertically with proportional spacing */}
       <span 
+        ref={branchContentRef}
         className="inline-flex flex-col justify-between" 
         style={{ 
           minWidth: '12px', 
           gap: `${size * 2.5}px`, 
-          padding: `${size * 0.5}px 0` 
+          padding: `${size * 0.5}px 0`,
+          transform: `translateY(-${fontSizeOffset})`
         }}
       >
         {/* Top branch content - aligned with top bracket line */}
@@ -285,14 +343,18 @@ const BranchRenderer: React.FC<{
       {showRightBracket && (
         <span 
           className={`${rightBracketClass} flex-shrink-0`} 
-          style={{ width: '3px', height: `${size * 3.2}px`, alignSelf: 'center' }} 
+          style={{ 
+            width: '3px', 
+            height: `${bracketHeight}px`, 
+            alignSelf: 'center'
+          }} 
         />
       )}
     </span>
   );
 };
 
-export const ExpressionRenderer: React.FC<ExpressionRendererProps> = ({ expression, size = 16 }) => {
+export const ExpressionRenderer: React.FC<ExpressionRendererProps> = ({ expression, size = 16, branchDepth = 0, onBranchHeightChange }) => {
   if (!expression.trim()) {
     return (
       <span className="text-muted-foreground italic text-sm">Enter an expression above...</span>
@@ -312,6 +374,8 @@ export const ExpressionRenderer: React.FC<ExpressionRendererProps> = ({ expressi
               key={index}
               branchData={token.branchData}
               size={size}
+              depth={branchDepth}
+              onChildHeightChange={onBranchHeightChange}
             />
           );
         } else if (token.type === 'operator' && token.operatorSrc) {
