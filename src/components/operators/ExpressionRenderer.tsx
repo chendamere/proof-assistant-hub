@@ -263,8 +263,8 @@ const BranchRenderer: React.FC<{
         className="inline-flex flex-col justify-between" 
         style={{ 
           minWidth: '12px', 
-          gap: `${size * 0.8}px`, 
-          padding: `${size * 0.25}px 0` 
+          gap: `${size * 1.5}px`, 
+          padding: `${size * 0.4}px 0` 
         }}
       >
         {/* Top branch content - aligned with top bracket line */}
