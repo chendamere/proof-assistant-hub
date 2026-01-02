@@ -213,6 +213,7 @@ const ProofStep: React.FC = () => {
   const [isTrue, setIsTrue] = useState<boolean | null>(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [selectedRuleId, setSelectedRuleId] = useState<string | null>(null);
+  const [elapsedTime, setElapsedTime] = useState<number | null>(null);
   const cancelRef = useRef(false);
   
   // Combine axioms and theorems - prioritize axioms (more likely to match)
@@ -301,131 +302,204 @@ const ProofStep: React.FC = () => {
     return { match: false };
   };
 
-  // Perform proof step with optimizations
+  // Check a single rule in both directions (returns both results)
+  const checkRule = (
+    rule: Rule,
+    cached: { l2r: { left: string; right: string }; r2l: { left: string; right: string } },
+    targetIntegerLeft: string,
+    targetIntegerRight: string,
+    stepNumber: number
+  ): { steps: ProofStep[]; match: boolean; matchStep?: ProofStep } => {
+    const steps: ProofStep[] = [];
+
+    // Try left-to-right normalization (use cache)
+    const checkResultL2R = checkInferenceRules(
+      targetIntegerLeft,
+      targetIntegerRight,
+      cached.l2r.left,
+      cached.l2r.right
+    );
+
+    const stepL2R: ProofStep = {
+      step: stepNumber,
+      rule: rule,
+      normalized: {
+        left: cached.l2r.left,
+        right: cached.l2r.right,
+        integerLeft: cached.l2r.left,
+        integerRight: cached.l2r.right,
+      },
+      matchDirection: 'left-to-right',
+      result: checkResultL2R.match ? 'match' : 'no-match',
+      inferenceRule: checkResultL2R.inferenceRule,
+      matchPosition: checkResultL2R.matchPosition,
+    };
+
+    steps.push(stepL2R);
+
+    if (checkResultL2R.match) {
+      return { steps, match: true, matchStep: stepL2R };
+    }
+
+    // Try right-to-left normalization (use cache)
+    const checkResultR2L = checkInferenceRules(
+      targetIntegerLeft,
+      targetIntegerRight,
+      cached.r2l.left,
+      cached.r2l.right
+    );
+
+    const stepR2L: ProofStep = {
+      step: stepNumber + 1,
+      rule: rule,
+      normalized: {
+        left: cached.r2l.left,
+        right: cached.r2l.right,
+        integerLeft: cached.r2l.left,
+        integerRight: cached.r2l.right,
+      },
+      matchDirection: 'right-to-left',
+      result: checkResultR2L.match ? 'match' : 'no-match',
+      inferenceRule: checkResultR2L.inferenceRule,
+      matchPosition: checkResultR2L.matchPosition,
+    };
+
+    steps.push(stepR2L);
+
+    if (checkResultR2L.match) {
+      return { steps, match: true, matchStep: stepR2L };
+    }
+
+    return { steps, match: false };
+  };
+
+  // Perform proof step with parallel processing
   const performProof = async () => {
     setIsProving(true);
     setProofSteps([]);
     setIsTrue(null);
     setCurrentStepIndex(0);
+    setElapsedTime(null);
     cancelRef.current = false;
     totalStepsRef.current = allRules.length * 2; // Each rule checked in both directions
+
+    // Start timing
+    const startTime = performance.now();
 
     // Normalize the target rule (rule to prove) - only once
     const targetNormalized = normalizeRule(startExpression, endExpression);
     const targetIntegerLeft = targetNormalized.left.integerExpression;
     const targetIntegerRight = targetNormalized.right.integerExpression;
 
-      const steps: ProofStep[] = [];
-      const BATCH_SIZE = 20; // Process 20 rules before UI update (increased for better performance)
-      const UI_UPDATE_INTERVAL = 50; // Update UI every 50ms
+    const steps: ProofStep[] = [];
+    const PARALLEL_BATCH_SIZE = 10; // Number of rules to check in parallel
+    const UI_UPDATE_INTERVAL = 50; // Update UI every 50ms
+    const YIELD_INTERVAL = 5; // Yield control every 5 batches to keep UI responsive
 
-      // Quick pre-check: if target is empty, skip immediately
-      if (!targetIntegerLeft || !targetIntegerRight) {
-        setIsTrue(false);
-        setProofSteps([]);
-        setIsProving(false);
-        return;
-      }
+    // Quick pre-check: if target is empty, skip immediately
+    if (!targetIntegerLeft || !targetIntegerRight) {
+      const endTime = performance.now();
+      setElapsedTime(endTime - startTime);
+      setIsTrue(false);
+      setProofSteps([]);
+      setIsProving(false);
+      return;
+    }
 
-      // Search through all rules (axioms and theorems)
-      // Axioms are first in the array, so they're checked first
-      for (let i = 0; i < allRules.length; i++) {
+    // Process rules in parallel batches
+    let stepNumber = 1;
+    let foundMatch = false;
+
+    for (let i = 0; i < allRules.length; i += PARALLEL_BATCH_SIZE) {
       // Check if cancelled
       if (cancelRef.current) {
+        const endTime = performance.now();
+        setElapsedTime(endTime - startTime);
         setIsProving(false);
         setProofSteps(steps);
         return;
       }
 
-      const rule = allRules[i];
-      const cached = normalizedRulesCache.get(rule.id);
+      // Get batch of rules to process
+      const batch = allRules.slice(i, i + PARALLEL_BATCH_SIZE);
       
-      if (!cached) {
-        // Fallback if cache miss (shouldn't happen)
-        continue;
-      }
-
-      // Try left-to-right normalization (use cache)
-      const checkResultL2R = checkInferenceRules(
-        targetIntegerLeft,
-        targetIntegerRight,
-        cached.l2r.left,
-        cached.l2r.right
+      // Process batch in parallel - each rule produces 2 steps (L2R and R2L)
+      const batchResults = await Promise.all(
+        batch.map((rule, batchIndex) => {
+          const cached = normalizedRulesCache.get(rule.id);
+          if (!cached) {
+            return { steps: [], match: false, matchStep: undefined, ruleIndex: i + batchIndex };
+          }
+          
+          // Calculate step numbers: first step of this rule within the batch
+          // We'll adjust these after parallel processing to ensure sequential numbering
+          const ruleFirstStep = stepNumber + (batchIndex * 2);
+          
+          const result = checkRule(rule, cached, targetIntegerLeft, targetIntegerRight, ruleFirstStep);
+          return { ...result, ruleIndex: i + batchIndex };
+        })
       );
 
-      steps.push({
-        step: steps.length + 1,
-        rule: rule,
-        normalized: {
-          left: cached.l2r.left,
-          right: cached.l2r.right,
-          integerLeft: cached.l2r.left,
-          integerRight: cached.l2r.right,
-        },
-        matchDirection: 'left-to-right',
-        result: checkResultL2R.match ? 'match' : 'no-match',
-        inferenceRule: checkResultL2R.inferenceRule,
-        matchPosition: checkResultL2R.matchPosition,
-      });
+      // Sort results by rule index to maintain order, then re-number steps sequentially
+      batchResults.sort((a, b) => a.ruleIndex - b.ruleIndex);
 
-      if (checkResultL2R.match) {
-        setIsTrue(true);
-        setProofSteps(steps);
-        setIsProving(false);
-        // Scroll to matched step within ScrollArea after state update
-        setTimeout(() => {
-          scrollToMatchedStep();
-        }, 150);
-        return;
-      }
-
-      // Try right-to-left normalization (use cache)
-      const checkResultR2L = checkInferenceRules(
-        targetIntegerLeft,
-        targetIntegerRight,
-        cached.r2l.left,
-        cached.r2l.right
-      );
-
-      steps.push({
-        step: steps.length + 1,
-        rule: rule,
-        normalized: {
-          left: cached.r2l.left,
-          right: cached.r2l.right,
-          integerLeft: cached.r2l.left,
-          integerRight: cached.r2l.right,
-        },
-        matchDirection: 'right-to-left',
-        result: checkResultR2L.match ? 'match' : 'no-match',
-        inferenceRule: checkResultR2L.inferenceRule,
-        matchPosition: checkResultR2L.matchPosition,
-      });
-
-      if (checkResultR2L.match) {
-        setIsTrue(true);
-        setProofSteps(steps);
-        setIsProving(false);
-        // Scroll to matched step within ScrollArea after state update
-        setTimeout(() => {
-          scrollToMatchedStep();
-        }, 150);
-        return;
-      }
-
-      // Batch UI updates: only update every BATCH_SIZE rules or on last iteration
-      const shouldUpdateUI = (i + 1) % BATCH_SIZE === 0 || i === allRules.length - 1;
+      // Collect all steps and check for matches
+      // Track the starting step number for this batch
+      let batchStartStep = stepNumber;
       
-      if (shouldUpdateUI) {
-        setProofSteps([...steps]);
-        setCurrentStepIndex(steps.length);
+      for (const result of batchResults) {
+        // Re-number steps sequentially to ensure correct ordering
+        const adjustedSteps = result.steps.map((step, idx) => ({
+          ...step,
+          step: batchStartStep + idx
+        }));
         
-        // Small delay for visualization (only on batch updates)
+        // Update batchStartStep for next rule in batch
+        batchStartStep += adjustedSteps.length;
+        
+        steps.push(...adjustedSteps);
+        
+        if (result.match && result.matchStep) {
+          foundMatch = true;
+          // Find the corresponding adjusted step
+          const matchedIndex = result.steps.findIndex(s => s === result.matchStep);
+          const matchedStep = adjustedSteps[matchedIndex];
+          
+          // Calculate elapsed time
+          const endTime = performance.now();
+          setElapsedTime(endTime - startTime);
+          
+          setIsTrue(true);
+          setProofSteps(steps);
+          setIsProving(false);
+          // Scroll to matched step within ScrollArea after state update
+          setTimeout(() => {
+            scrollToMatchedStep();
+          }, 150);
+          return;
+        }
+      }
+      
+      // Update stepNumber for next batch
+      stepNumber = batchStartStep;
+
+      // Update UI progressively (after each batch)
+      setProofSteps([...steps]);
+      setCurrentStepIndex(steps.length);
+
+      // Yield control periodically to keep UI responsive
+      // Yield every YIELD_INTERVAL batches, or if we're near the end
+      const batchNumber = Math.floor(i / PARALLEL_BATCH_SIZE);
+      const shouldYield = batchNumber % YIELD_INTERVAL === 0 || i + PARALLEL_BATCH_SIZE >= allRules.length;
+      
+      if (shouldYield && !foundMatch) {
         await new Promise(resolve => setTimeout(resolve, UI_UPDATE_INTERVAL));
       }
 
-      // Check if cancelled before next iteration
+      // Check if cancelled before next batch
       if (cancelRef.current) {
+        const endTime = performance.now();
+        setElapsedTime(endTime - startTime);
         setIsProving(false);
         setProofSteps(steps);
         return;
@@ -433,7 +507,10 @@ const ProofStep: React.FC = () => {
     }
 
     // No match found (if not cancelled)
-    if (!cancelRef.current) {
+    const endTime = performance.now();
+    setElapsedTime(endTime - startTime);
+    
+    if (!cancelRef.current && !foundMatch) {
       setIsTrue(false);
       setProofSteps(steps);
     }
@@ -452,6 +529,7 @@ const ProofStep: React.FC = () => {
     setProofSteps([]);
     setIsTrue(null);
     setCurrentStepIndex(0);
+    setElapsedTime(null);
     totalStepsRef.current = 0;
     matchedStepRef.current = null;
   };
@@ -677,10 +755,20 @@ const ProofStep: React.FC = () => {
                   <XCircle className="h-4 w-4 text-red-500" />
                 )}
                 <AlertDescription className={isTrue ? 'text-green-400' : 'text-red-400'}>
-                  {isTrue 
-                    ? 'Rule is TRUE - Match found in existing rules!'
-                    : 'Rule is FALSE - No matching rule found in the glossary.'
-                  }
+                  <span>
+                    {isTrue 
+                      ? 'Rule is TRUE - Match found in existing rules!'
+                      : 'Rule is FALSE - No matching rule found in the glossary.'
+                    }
+                    {elapsedTime !== null && (
+                      <span className="ml-2 font-semibold">
+                        ({elapsedTime < 1000 
+                          ? `${elapsedTime.toFixed(2)} ms`
+                          : `${(elapsedTime / 1000).toFixed(3)}s`
+                        })
+                      </span>
+                    )}
+                  </span>
                 </AlertDescription>
               </Alert>
             )}

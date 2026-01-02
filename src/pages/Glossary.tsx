@@ -43,8 +43,8 @@ const Glossary: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState(50);
   const [visibleItems, setVisibleItems] = useState(itemsPerPage);
 
-  // Filter rules with debounced search
-  const filteredRules = useMemo(() => {
+  // Filter rules by search and category only (for type counts display)
+  const searchAndCategoryFilteredRules = useMemo(() => {
     return allRules.filter(rule => {
       // Search filter (using debounced query)
       const matchesSearch = debouncedSearchQuery === '' || 
@@ -53,15 +53,22 @@ const Glossary: React.FC = () => {
         rule.leftSide.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
         rule.rightSide.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
 
-      // Type filter
-      const matchesType = selectedType === 'all' || rule.type === selectedType;
-
       // Category filter
       const matchesCategory = selectedCategory === 'all' || rule.category === selectedCategory;
 
-      return matchesSearch && matchesType && matchesCategory;
+      return matchesSearch && matchesCategory;
     });
-  }, [allRules, debouncedSearchQuery, selectedType, selectedCategory]);
+  }, [allRules, debouncedSearchQuery, selectedCategory]);
+
+  // Filter rules with debounced search, type, and category
+  const filteredRules = useMemo(() => {
+    return searchAndCategoryFilteredRules.filter(rule => {
+      // Type filter
+      const matchesType = selectedType === 'all' || rule.type === selectedType;
+
+      return matchesType;
+    });
+  }, [searchAndCategoryFilteredRules, selectedType]);
 
   // Reset visible items when filters change
   React.useEffect(() => {
@@ -100,14 +107,15 @@ const Glossary: React.FC = () => {
     return groups;
   }, [visibleRules]);
 
-  // Counts
+  // Counts - based on search and category filters only (not type filter)
+  // This shows available counts when the dropdown is opened
   const typeCounts = useMemo(() => {
-    const counts: Record<RuleType | 'all', number> = { all: filteredRules.length, axiom: 0, definition: 0, theorem: 0 };
-    filteredRules.forEach(rule => {
+    const counts: Record<RuleType | 'all', number> = { all: searchAndCategoryFilteredRules.length, axiom: 0, definition: 0, theorem: 0 };
+    searchAndCategoryFilteredRules.forEach(rule => {
       counts[rule.type] = (counts[rule.type] || 0) + 1;
     });
     return counts;
-  }, [filteredRules]);
+  }, [searchAndCategoryFilteredRules]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -149,7 +157,7 @@ const Glossary: React.FC = () => {
                   <SelectTrigger>
                     <SelectValue placeholder="All Types" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent key={`type-select-${typeCounts.all}-${typeCounts.axiom}-${typeCounts.definition}-${typeCounts.theorem}`}>
                     <SelectItem value="all">
                       All Types ({typeCounts.all})
                     </SelectItem>
