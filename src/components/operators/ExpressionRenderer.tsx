@@ -255,25 +255,25 @@ const BranchRenderer: React.FC<{
       
       {/* Left bracket */}
       {showLeftBracket && (
-        <span className={`${leftBracketClass} self-stretch`} style={{ width: '4px', minHeight: '24px' }} />
+        <span className={`${leftBracketClass} self-stretch`} style={{ width: '5px' }} />
       )}
       
-      {/* Branch content - stacked vertically */}
-      <span className="inline-flex flex-col justify-center" style={{ minWidth: '12px' }}>
-        {/* Top branch content */}
-        <span className="inline-flex items-center px-1 py-0.5 whitespace-nowrap">
+      {/* Branch content - stacked vertically with proper spacing */}
+      <span className="inline-flex flex-col justify-between py-0.5" style={{ minWidth: '12px', minHeight: '48px' }}>
+        {/* Top branch content - aligned with top bracket line */}
+        <span className="inline-flex items-center px-1 whitespace-nowrap">
           {content1}
         </span>
         
-        {/* Bottom branch content */}
-        <span className="inline-flex items-center px-1 py-0.5 whitespace-nowrap">
+        {/* Bottom branch content - aligned with bottom bracket line */}
+        <span className="inline-flex items-center px-1 whitespace-nowrap">
           {content2}
         </span>
       </span>
       
       {/* Right bracket */}
       {showRightBracket && (
-        <span className={`${rightBracketClass} self-stretch`} style={{ width: '4px', minHeight: '24px' }} />
+        <span className={`${rightBracketClass} self-stretch`} style={{ width: '5px' }} />
       )}
     </span>
   );
