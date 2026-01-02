@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Verifier from "./pages/Verifier";
 import OperandNormalizer from "./pages/OperandNormalizer";
 import ProofStep from "./pages/ProofStep";
+import Glossary from "./pages/Glossary";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/verifier" element={<Verifier />} />
             <Route path="/normalizer" element={<OperandNormalizer />} />
             <Route path="/proof-step" element={<ProofStep />} />
+            <Route path="/glossary" element={<Glossary />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -9,6 +9,7 @@ import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { normalizeRule } from '@/lib/operandNormalizer';
 import { axioms, Rule } from '@/data/axioms';
+import { theorems } from '@/data/theorems';
 import { Play, RotateCcw, CheckCircle2, XCircle, Loader2, AlertCircle, X } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -213,13 +214,17 @@ const ProofStep: React.FC = () => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [selectedRuleId, setSelectedRuleId] = useState<string | null>(null);
   const cancelRef = useRef(false);
-  const totalStepsRef = useRef(0); // Total steps = axioms.length * 2 (L2R and R2L for each)
+  
+  // Combine axioms and theorems
+  const allRules = useMemo(() => [...axioms, ...theorems], []);
+  
+  const totalStepsRef = useRef(0); // Total steps = allRules.length * 2 (L2R and R2L for each)
   const matchedStepRef = useRef<HTMLDivElement | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
   // Handle rule selection
   const handleSelectRule = (ruleId: string) => {
-    const rule = axioms.find(r => r.id === ruleId);
+    const rule = allRules.find(r => r.id === ruleId);
     if (rule) {
       setStartExpression(rule.leftSide);
       setEndExpression(rule.rightSide);
@@ -268,7 +273,7 @@ const ProofStep: React.FC = () => {
     setIsTrue(null);
     setCurrentStepIndex(0);
     cancelRef.current = false;
-    totalStepsRef.current = axioms.length * 2; // Each rule checked in both directions
+    totalStepsRef.current = allRules.length * 2; // Each rule checked in both directions
 
     // Normalize the target rule (rule to prove)
     const targetNormalized = normalizeRule(startExpression, endExpression);
@@ -278,8 +283,8 @@ const ProofStep: React.FC = () => {
     const steps: ProofStep[] = [];
     let foundMatch = false;
 
-    // Search through all axioms
-    for (let i = 0; i < axioms.length; i++) {
+    // Search through all rules (axioms and theorems)
+    for (let i = 0; i < allRules.length; i++) {
       // Check if cancelled
       if (cancelRef.current) {
         setIsProving(false);
@@ -287,7 +292,7 @@ const ProofStep: React.FC = () => {
         return;
       }
 
-      const rule = axioms[i];
+      const rule = allRules[i];
       
       // Try left-to-right normalization
       const ruleNormalizedL2R = normalizeRule(rule.leftSide, rule.rightSide);
@@ -468,12 +473,12 @@ const ProofStep: React.FC = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Select Rule to Prove</CardTitle>
-                <CardDescription>Choose a rule from the axioms to verify</CardDescription>
+                <CardDescription>Choose a rule from the axioms and theorems to verify</CardDescription>
               </CardHeader>
               <CardContent>
                 <ScrollArea className="h-64">
                   <div className="space-y-2">
-                    {axioms.slice(0, 30).map((rule) => (
+                    {allRules.slice(0, 30).map((rule) => (
                       <Button
                         key={rule.id}
                         variant={selectedRuleId === rule.id ? 'default' : 'outline'}
@@ -636,9 +641,9 @@ const ProofStep: React.FC = () => {
                   <CardTitle className="text-lg">Proof Steps</CardTitle>
                   <CardDescription>
                     {isProving ? (
-                      <>Searching through {axioms.length} rules... ({proofSteps.length} of {totalStepsRef.current} steps checked)</>
+                      <>Searching through {allRules.length} rules... ({proofSteps.length} of {totalStepsRef.current} steps checked)</>
                     ) : (
-                      <>Searched through {axioms.length} rules ({proofSteps.length} of {totalStepsRef.current} steps checked)</>
+                      <>Searched through {allRules.length} rules ({proofSteps.length} of {totalStepsRef.current} steps checked)</>
                     )}
                   </CardDescription>
                 </CardHeader>

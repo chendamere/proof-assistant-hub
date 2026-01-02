@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { axioms, Rule, RuleType, getTypeBadgeClass } from '@/data/axioms';
@@ -7,15 +7,20 @@ import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { usePanelContext } from '@/contexts/PanelContext';
+import { useDebounce } from '@/hooks/useDebounce';
+
+// Lazy load theorems
+const loadTheorems = () => import('@/data/theorems').then(m => m.theorems);
+let theoremsCache: Rule[] | null = null;
 
 interface DraggableRuleCardProps {
   rule: Rule;
 }
 
-const DraggableRuleCard: React.FC<DraggableRuleCardProps> = ({ rule }) => {
+const DraggableRuleCard: React.FC<DraggableRuleCardProps> = React.memo(({ rule }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragStart = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     const data = JSON.stringify({
       id: rule.id,
       name: rule.name,
@@ -32,7 +37,7 @@ const DraggableRuleCard: React.FC<DraggableRuleCardProps> = ({ rule }) => {
     document.body.appendChild(dragImage);
     e.dataTransfer.setDragImage(dragImage, 0, 0);
     setTimeout(() => document.body.removeChild(dragImage), 0);
-  };
+  }, [rule]);
 
   return (
     <div
@@ -99,27 +104,77 @@ const DraggableRuleCard: React.FC<DraggableRuleCardProps> = ({ rule }) => {
       </div>
     </div>
   );
-};
+});
+
+DraggableRuleCard.displayName = 'DraggableRuleCard';
 
 export const RulesSidePanel: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [selectedType, setSelectedType] = useState<RuleType | 'all'>('all');
   const { isRulesPanelOpen, setRulesPanelOpen, isWorkbenchExpanded } = usePanelContext();
+  
+  // Lazy load theorems
+  const [theorems, setTheorems] = useState<Rule[]>([]);
+  const [isLoadingTheorems, setIsLoadingTheorems] = useState(false);
+
+  useEffect(() => {
+    if (!theoremsCache && theorems.length === 0 && !isLoadingTheorems) {
+      setIsLoadingTheorems(true);
+      loadTheorems().then(loadedTheorems => {
+        theoremsCache = loadedTheorems;
+        setTheorems(loadedTheorems);
+        setIsLoadingTheorems(false);
+      });
+    } else if (theoremsCache) {
+      setTheorems(theoremsCache);
+    }
+  }, [theorems.length, isLoadingTheorems]);
 
   const isOpen = isRulesPanelOpen;
   const setIsOpen = setRulesPanelOpen;
 
-  const filteredRules = axioms.filter(rule => {
-    const matchesSearch = 
-      rule.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      rule.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      rule.leftSide.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      rule.rightSide.toLowerCase().includes(searchQuery.toLowerCase());
+  // Combine axioms and theorems
+  const allRules = useMemo(() => [...axioms, ...theorems], [theorems]);
+
+  const filteredRules = useMemo(() => {
+    return allRules.filter(rule => {
+      const matchesSearch = debouncedSearchQuery === '' ||
+        rule.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+        rule.description.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+        rule.leftSide.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+        rule.rightSide.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
+      
+      const matchesType = selectedType === 'all' || rule.type === selectedType;
+      
+      return matchesSearch && matchesType;
+    });
+  }, [allRules, debouncedSearchQuery, selectedType]);
+
+  // Limit visible rules for performance (show first 100, load more on scroll)
+  const [visibleCount, setVisibleCount] = useState(100);
+  const visibleRules = useMemo(() => filteredRules.slice(0, visibleCount), [filteredRules, visibleCount]);
+  
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  
+  const handleScroll = useCallback(() => {
+    if (!scrollAreaRef.current) return;
+    const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
+    if (!viewport) return;
     
-    const matchesType = selectedType === 'all' || rule.type === selectedType;
+    const scrollPercentage = (viewport.scrollTop + viewport.clientHeight) / viewport.scrollHeight;
+    if (scrollPercentage > 0.8 && visibleCount < filteredRules.length) {
+      setVisibleCount(prev => Math.min(prev + 50, filteredRules.length));
+    }
+  }, [visibleCount, filteredRules.length]);
+  
+  useEffect(() => {
+    const viewport = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
+    if (!viewport) return;
     
-    return matchesSearch && matchesType;
-  });
+    viewport.addEventListener('scroll', handleScroll);
+    return () => viewport.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
 
   return (
     <>
@@ -205,7 +260,7 @@ export const RulesSidePanel: React.FC = () => {
                   : 'bg-muted text-muted-foreground hover:text-foreground'
               }`}
             >
-              All ({axioms.length})
+              All ({allRules.length})
             </button>
             <button
               onClick={() => setSelectedType('axiom')}
@@ -246,15 +301,26 @@ export const RulesSidePanel: React.FC = () => {
         </div>
 
         {/* Rules List */}
-        <ScrollArea className="h-[calc(100vh-280px)]">
+        <ScrollArea ref={scrollAreaRef} className="h-[calc(100vh-280px)]">
           <div className="p-4 space-y-2">
-            {filteredRules.map((rule) => (
+            {isLoadingTheorems && (
+              <div className="text-center py-4 text-muted-foreground text-sm">
+                Loading theorems...
+              </div>
+            )}
+            {visibleRules.map((rule) => (
               <DraggableRuleCard key={rule.id} rule={rule} />
             ))}
 
-            {filteredRules.length === 0 && (
+            {filteredRules.length === 0 && !isLoadingTheorems && (
               <div className="text-center py-8 text-muted-foreground text-sm">
                 No rules match your search
+              </div>
+            )}
+            
+            {visibleCount < filteredRules.length && (
+              <div className="text-center py-4 text-muted-foreground text-xs">
+                Showing {visibleCount} of {filteredRules.length} rules. Scroll for more...
               </div>
             )}
           </div>
