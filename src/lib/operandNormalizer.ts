@@ -70,11 +70,6 @@ function extractOperands(expression: string): Array<{ value: string; index: numb
   const variablePattern = /\b([a-z])\b/g;
   subscriptPattern.lastIndex = 0;
   while ((match = variablePattern.exec(expression)) !== null) {
-    // Skip if it's part of an operator (\Oa, \Ob, \Og, etc.), branch operator (\Blb, \Br, etc.), 
-    // or unary relationship operators (\Pu, \nPu)
-    const beforeContext = expression.substring(Math.max(0, match.index - 4), match.index);
-    const isOperator = /\\O[a-z]|\\B[a-z]+|\\Pu|\\nPu/.test(beforeContext + match[1]);
-    
     // Skip if it's part of a function call or already matched
     const isInFunction = matches.some(m => 
       match.index >= m.index && match.index < m.endIndex
@@ -83,10 +78,42 @@ function extractOperands(expression: string): Array<{ value: string; index: numb
     // Skip if it's already matched as a subscripted variable
     const isSubscripted = matches.some(m => m.value.startsWith(match[1] + '_'));
     
-    // Skip common keywords and operators
-    const isKeyword = /\\[A-Za-z]+/.test(expression.substring(Math.max(0, match.index - 1), match.index + match[1].length));
+    // Check if this variable is part of an operator name (like 'a' in '\Oa', 'b' in '\Blb')
+    // Strategy: Look backwards for a backslash. If found, check if there's any whitespace/comma
+    // between the backslash and this variable. If no whitespace/comma, it's part of operator name.
+    // If there's whitespace/comma, it's an operand that comes after the operator.
+    let isPartOfOperatorName = false;
+    let searchIndex = match.index - 1;
+    let foundBackslash = false;
     
-    if (!isOperator && !isInFunction && !isSubscripted && !isKeyword) {
+    // Look backwards up to 5 characters to find a backslash
+    while (searchIndex >= 0 && searchIndex >= match.index - 5) {
+      const char = expression[searchIndex];
+      if (char === '\\') {
+        foundBackslash = true;
+        // Check if there's any whitespace or comma between backslash and variable
+        const segmentBetween = expression.substring(searchIndex + 1, match.index);
+        // If segment contains only letters (no space/comma), it's part of operator name
+        // If segment has space/comma, variable is an operand
+        if (segmentBetween.length > 0 && !/[\s,]/.test(segmentBetween)) {
+          isPartOfOperatorName = true;
+        }
+        break;
+      } else if (/[\s,]/.test(char)) {
+        // Found whitespace/comma before finding backslash, so variable is an operand
+        break;
+      }
+      searchIndex--;
+    }
+    
+    // Also check if immediately preceded by a letter (continuation of operator name)
+    const charBefore = match.index > 0 ? expression[match.index - 1] : '';
+    if (/[a-z]/.test(charBefore) && foundBackslash && !/[\s,]/.test(charBefore)) {
+      isPartOfOperatorName = true;
+    }
+    
+    // Only add if it's NOT part of operator name and NOT in function/subscript
+    if (!isPartOfOperatorName && !isInFunction && !isSubscripted) {
       matches.push({ 
         value: match[1], 
         index: match.index, 
@@ -178,27 +205,39 @@ export function normalizeOperands(expression: string): NormalizationResult {
   });
   
   // Build normalized expression by replacing operands
+  // We need to replace from left to right and track cumulative offset
   let normalizedExpression = expression;
   let integerExpression = expression;
   
-  // Replace from right to left to avoid index shifting issues
-  const sortedOps = [...operands].sort((a, b) => b.index - a.index);
+  // Sort operands by index (left to right)
+  const sortedOps = [...operands].sort((a, b) => a.index - b.index);
+  
+  // Track cumulative offset from replacements (as we replace, string length changes)
+  let normalizedOffset = 0;
+  let integerOffset = 0;
+  
   sortedOps.forEach(op => {
     const normalized = operandMap.get(op.value)!;
     const normalizedOperand = normalizedOperands.find(no => 
-      no.original === op.value && no.normalized === normalized
+      no.original === op.value
     );
     const integerValue = normalizedOperand?.normalizedNumber.toString() || '';
     
-    // Replace the operand at its specific position
-    const before = normalizedExpression.substring(0, op.index);
-    const after = normalizedExpression.substring(op.index + op.value.length);
-    normalizedExpression = before + normalized + after;
+    // Calculate adjusted index based on cumulative offset
+    const normalizedIndex = op.index + normalizedOffset;
+    const integerIndex = op.index + integerOffset;
     
-    // Also build integer-only expression
-    const beforeInt = integerExpression.substring(0, op.index);
-    const afterInt = integerExpression.substring(op.index + op.value.length);
-    integerExpression = beforeInt + integerValue + afterInt;
+    // Replace in normalized expression
+    const normalizedBefore = normalizedExpression.substring(0, normalizedIndex);
+    const normalizedAfter = normalizedExpression.substring(normalizedIndex + op.value.length);
+    normalizedExpression = normalizedBefore + normalized + normalizedAfter;
+    normalizedOffset += normalized.length - op.value.length;
+    
+    // Replace in integer expression
+    const integerBefore = integerExpression.substring(0, integerIndex);
+    const integerAfter = integerExpression.substring(integerIndex + op.value.length);
+    integerExpression = integerBefore + integerValue + integerAfter;
+    integerOffset += integerValue.length - op.value.length;
   });
   
   return {
@@ -270,39 +309,63 @@ export function normalizeRule(leftSide: string, rightSide: string): {
   });
   
   // Build normalized left side (with operand_number format)
+  // Replace from left to right and track cumulative offset
   let normalizedLeftExpression = leftSide;
   let integerLeftExpression = leftSide;
-  const sortedLeftOps = [...leftOperands].sort((a, b) => b.index - a.index);
+  const sortedLeftOps = [...leftOperands].sort((a, b) => a.index - b.index);
+  
+  let leftNormalizedOffset = 0;
+  let leftIntegerOffset = 0;
+  
   sortedLeftOps.forEach(op => {
     const normalized = operandMap.get(op.value)!;
     const integerValue = operandToIntegerMap.get(op.value) || '';
     
-    const before = normalizedLeftExpression.substring(0, op.index);
-    const after = normalizedLeftExpression.substring(op.index + op.value.length);
-    normalizedLeftExpression = before + normalized + after;
+    // Calculate adjusted index based on cumulative offset
+    const normalizedIndex = op.index + leftNormalizedOffset;
+    const integerIndex = op.index + leftIntegerOffset;
     
-    // Build integer-only expression
-    const beforeInt = integerLeftExpression.substring(0, op.index);
-    const afterInt = integerLeftExpression.substring(op.index + op.value.length);
-    integerLeftExpression = beforeInt + integerValue + afterInt;
+    // Replace in normalized expression
+    const normalizedBefore = normalizedLeftExpression.substring(0, normalizedIndex);
+    const normalizedAfter = normalizedLeftExpression.substring(normalizedIndex + op.value.length);
+    normalizedLeftExpression = normalizedBefore + normalized + normalizedAfter;
+    leftNormalizedOffset += normalized.length - op.value.length;
+    
+    // Replace in integer expression
+    const integerBefore = integerLeftExpression.substring(0, integerIndex);
+    const integerAfter = integerLeftExpression.substring(integerIndex + op.value.length);
+    integerLeftExpression = integerBefore + integerValue + integerAfter;
+    leftIntegerOffset += integerValue.length - op.value.length;
   });
   
   // Build normalized right side (with operand_number format)
+  // Replace from left to right and track cumulative offset
   let normalizedRightExpression = rightSide;
   let integerRightExpression = rightSide;
-  const sortedRightOps = [...rightOperands].sort((a, b) => b.index - a.index);
+  const sortedRightOps = [...rightOperands].sort((a, b) => a.index - b.index);
+  
+  let rightNormalizedOffset = 0;
+  let rightIntegerOffset = 0;
+  
   sortedRightOps.forEach(op => {
     const normalized = operandMap.get(op.value)!;
     const integerValue = operandToIntegerMap.get(op.value) || '';
     
-    const before = normalizedRightExpression.substring(0, op.index);
-    const after = normalizedRightExpression.substring(op.index + op.value.length);
-    normalizedRightExpression = before + normalized + after;
+    // Calculate adjusted index based on cumulative offset
+    const normalizedIndex = op.index + rightNormalizedOffset;
+    const integerIndex = op.index + rightIntegerOffset;
     
-    // Build integer-only expression
-    const beforeInt = integerRightExpression.substring(0, op.index);
-    const afterInt = integerRightExpression.substring(op.index + op.value.length);
-    integerRightExpression = beforeInt + integerValue + afterInt;
+    // Replace in normalized expression
+    const normalizedBefore = normalizedRightExpression.substring(0, normalizedIndex);
+    const normalizedAfter = normalizedRightExpression.substring(normalizedIndex + op.value.length);
+    normalizedRightExpression = normalizedBefore + normalized + normalizedAfter;
+    rightNormalizedOffset += normalized.length - op.value.length;
+    
+    // Replace in integer expression
+    const integerBefore = integerRightExpression.substring(0, integerIndex);
+    const integerAfter = integerRightExpression.substring(integerIndex + op.value.length);
+    integerRightExpression = integerBefore + integerValue + integerAfter;
+    rightIntegerOffset += integerValue.length - op.value.length;
   });
   
   return {

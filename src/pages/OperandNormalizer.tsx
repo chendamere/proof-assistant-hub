@@ -13,8 +13,8 @@ import { ArrowRight, Play, RotateCcw, FileText } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 const OperandNormalizer: React.FC = () => {
-  const [leftExpression, setLeftExpression] = useState(', i \\Pu j,');
-  const [rightExpression, setRightExpression] = useState(', j \\Pu i,');
+  const [leftExpression, setLeftExpression] = useState(', i \\Pu,');
+  const [rightExpression, setRightExpression] = useState(', j \\Pu,');
   const [selectedRuleId, setSelectedRuleId] = useState<string | null>(null);
 
   // Normalize the expressions
@@ -114,7 +114,7 @@ const OperandNormalizer: React.FC = () => {
                   <SyntaxInput
                     value={leftExpression}
                     onChange={setLeftExpression}
-                    placeholder=", i \\Pu j,"
+                    placeholder=", i \\Pu,"
                   />
                 </div>
                 <div>
@@ -124,7 +124,7 @@ const OperandNormalizer: React.FC = () => {
                   <SyntaxInput
                     value={rightExpression}
                     onChange={setRightExpression}
-                    placeholder=", j \\Pu i,"
+                    placeholder=", j \\Pu,"
                   />
                 </div>
                 <Button
@@ -132,8 +132,8 @@ const OperandNormalizer: React.FC = () => {
                   size="sm"
                   className="w-full"
                   onClick={() => {
-                    setLeftExpression(', i \\Pu j,');
-                    setRightExpression(', j \\Pu i,');
+                    setLeftExpression(', i \\Pu,');
+                    setRightExpression(', j \\Pu,');
                     setSelectedRuleId(null);
                   }}
                 >

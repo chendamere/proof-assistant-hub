@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,7 @@ import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { normalizeRule } from '@/lib/operandNormalizer';
 import { axioms, Rule } from '@/data/axioms';
-import { Play, RotateCcw, CheckCircle2, XCircle, Loader2, AlertCircle } from 'lucide-react';
+import { Play, RotateCcw, CheckCircle2, XCircle, Loader2, AlertCircle, X } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
@@ -205,13 +205,17 @@ const InferenceRules: InferenceRule[] = [
 ];
 
 const ProofStep: React.FC = () => {
-  const [startExpression, setStartExpression] = useState(', i \\Pu j,');
-  const [endExpression, setEndExpression] = useState(', j \\Pu i,');
+  const [startExpression, setStartExpression] = useState(', i \\Pu,');
+  const [endExpression, setEndExpression] = useState(', j \\Pu,');
   const [isProving, setIsProving] = useState(false);
   const [proofSteps, setProofSteps] = useState<ProofStep[]>([]);
   const [isTrue, setIsTrue] = useState<boolean | null>(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [selectedRuleId, setSelectedRuleId] = useState<string | null>(null);
+  const cancelRef = useRef(false);
+  const totalStepsRef = useRef(0); // Total steps = axioms.length * 2 (L2R and R2L for each)
+  const matchedStepRef = useRef<HTMLDivElement | null>(null);
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
   // Handle rule selection
   const handleSelectRule = (ruleId: string) => {
@@ -263,6 +267,8 @@ const ProofStep: React.FC = () => {
     setProofSteps([]);
     setIsTrue(null);
     setCurrentStepIndex(0);
+    cancelRef.current = false;
+    totalStepsRef.current = axioms.length * 2; // Each rule checked in both directions
 
     // Normalize the target rule (rule to prove)
     const targetNormalized = normalizeRule(startExpression, endExpression);
@@ -274,6 +280,13 @@ const ProofStep: React.FC = () => {
 
     // Search through all axioms
     for (let i = 0; i < axioms.length; i++) {
+      // Check if cancelled
+      if (cancelRef.current) {
+        setIsProving(false);
+        setProofSteps(steps);
+        return;
+      }
+
       const rule = axioms[i];
       
       // Try left-to-right normalization
@@ -305,6 +318,10 @@ const ProofStep: React.FC = () => {
         setIsTrue(true);
         setProofSteps(steps);
         setIsProving(false);
+        // Scroll to matched step within ScrollArea after state update
+        setTimeout(() => {
+          scrollToMatchedStep();
+        }, 150);
         return;
       }
 
@@ -337,6 +354,10 @@ const ProofStep: React.FC = () => {
         setIsTrue(true);
         setProofSteps(steps);
         setIsProving(false);
+        // Scroll to matched step within ScrollArea after state update
+        setTimeout(() => {
+          scrollToMatchedStep();
+        }, 150);
         return;
       }
 
@@ -344,22 +365,85 @@ const ProofStep: React.FC = () => {
       setProofSteps([...steps]);
       setCurrentStepIndex(steps.length);
 
+      // Check if cancelled before next iteration
+      if (cancelRef.current) {
+        setIsProving(false);
+        setProofSteps(steps);
+        return;
+      }
+
       // Small delay for visualization
       await new Promise(resolve => setTimeout(resolve, 100));
     }
 
-    // No match found
-    setIsTrue(false);
-    setProofSteps(steps);
+    // No match found (if not cancelled)
+    if (!cancelRef.current) {
+      setIsTrue(false);
+      setProofSteps(steps);
+    }
+    setIsProving(false);
+  };
+
+  // Cancel proof checking
+  const cancelProof = () => {
+    cancelRef.current = true;
     setIsProving(false);
   };
 
   const resetProof = () => {
+    cancelRef.current = true;
     setIsProving(false);
     setProofSteps([]);
     setIsTrue(null);
     setCurrentStepIndex(0);
+    totalStepsRef.current = 0;
+    matchedStepRef.current = null;
   };
+
+  // Function to scroll to matched step within the ScrollArea
+  const scrollToMatchedStep = () => {
+    if (!matchedStepRef.current || !scrollAreaRef.current) return;
+    
+    // Find the scrollable viewport within ScrollArea
+    // Try multiple selectors to find the viewport element
+    const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement ||
+                     scrollAreaRef.current.querySelector('.overflow-auto, .overflow-y-auto, [style*="overflow"]') as HTMLElement ||
+                     (scrollAreaRef.current.firstElementChild as HTMLElement);
+    
+    if (!viewport || !matchedStepRef.current || !viewport.scrollTo) return;
+    
+    const matchedElement = matchedStepRef.current;
+    
+    // Get the position of the element relative to the viewport's scroll container
+    const viewportScrollTop = viewport.scrollTop;
+    const viewportRect = viewport.getBoundingClientRect();
+    const elementRect = matchedElement.getBoundingClientRect();
+    
+    // Calculate the element's position relative to the viewport's scroll container
+    const elementTopInViewport = elementRect.top - viewportRect.top + viewportScrollTop;
+    
+    // Calculate target scroll position to center the element
+    const elementHeight = elementRect.height;
+    const viewportHeight = viewportRect.height;
+    const targetScrollTop = elementTopInViewport - (viewportHeight / 2) + (elementHeight / 2);
+    
+    // Scroll the viewport
+    viewport.scrollTo({
+      top: Math.max(0, targetScrollTop),
+      behavior: 'smooth'
+    });
+  };
+
+  // Scroll to matched step when a match is found
+  useEffect(() => {
+    if (isTrue === true && matchedStepRef.current) {
+      // Use a small timeout to ensure DOM has updated
+      const timer = setTimeout(() => {
+        scrollToMatchedStep();
+      }, 200);
+      return () => clearTimeout(timer);
+    }
+  }, [isTrue, proofSteps]);
 
   return (
     <div className="min-h-screen gradient-bg">
@@ -424,7 +508,7 @@ const ProofStep: React.FC = () => {
                   <SyntaxInput
                     value={startExpression}
                     onChange={setStartExpression}
-                    placeholder=", i \\Pu j,"
+                    placeholder=", i \\Pu,"
                   />
                 </div>
                 <div>
@@ -434,34 +518,39 @@ const ProofStep: React.FC = () => {
                   <SyntaxInput
                     value={endExpression}
                     onChange={setEndExpression}
-                    placeholder=", j \\Pu i,"
+                    placeholder=", j \\Pu,"
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Button
-                    onClick={performProof}
-                    disabled={isProving || !startExpression.trim() || !endExpression.trim()}
-                    className="flex-1 gap-2"
-                  >
-                    {isProving ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        Proving...
-                      </>
-                    ) : (
-                      <>
+                  {!isProving ? (
+                    <>
+                      <Button
+                        onClick={performProof}
+                        disabled={!startExpression.trim() || !endExpression.trim()}
+                        className="flex-1 gap-2"
+                      >
                         <Play className="w-4 h-4" />
                         Prove Rule
-                      </>
-                    )}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={resetProof}
-                    disabled={isProving}
-                  >
-                    <RotateCcw className="w-4 h-4" />
-                  </Button>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={resetProof}
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        onClick={cancelProof}
+                        variant="destructive"
+                        className="flex-1 gap-2"
+                      >
+                        <X className="w-4 h-4" />
+                        Cancel
+                      </Button>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -546,15 +635,20 @@ const ProofStep: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="text-lg">Proof Steps</CardTitle>
                   <CardDescription>
-                    Searching through {axioms.length} rules... ({proofSteps.length} steps checked)
+                    {isProving ? (
+                      <>Searching through {axioms.length} rules... ({proofSteps.length} of {totalStepsRef.current} steps checked)</>
+                    ) : (
+                      <>Searched through {axioms.length} rules ({proofSteps.length} of {totalStepsRef.current} steps checked)</>
+                    )}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ScrollArea className="h-[500px]">
+                  <ScrollArea className="h-[500px]" ref={scrollAreaRef}>
                     <div className="space-y-3">
                       {proofSteps.map((step, idx) => (
                         <div
                           key={idx}
+                          ref={step.result === 'match' ? matchedStepRef : null}
                           className={`p-3 rounded-lg border transition-colors ${
                             step.result === 'match'
                               ? 'bg-green-500/10 border-green-500/30'

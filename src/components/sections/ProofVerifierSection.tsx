@@ -148,7 +148,7 @@ const ProofVerifierSection: React.FC = () => {
                 Left Side (to prove)
               </label>
               <SyntaxInput
-                placeholder=", i \Pu j,"
+                placeholder=", i \Pu,"
                 value={leftSideToProve}
                 onChange={setLeftSideToProve}
               />
@@ -168,7 +168,7 @@ const ProofVerifierSection: React.FC = () => {
                 Right Side (goal)
               </label>
               <SyntaxInput
-                placeholder=", j \Pu i,"
+                placeholder=", j \Pu,"
                 value={rightSideToProve}
                 onChange={setRightSideToProve}
               />

@@ -157,9 +157,11 @@ export const ExpressionRenderer: React.FC<ExpressionRendererProps> = ({ expressi
       <span className="text-muted-foreground italic text-sm">Enter an expression above...</span>
     );
   }
-  
+
   const tokens = parseExpression(expression);
-  
+  // Increase size by 20%
+  const adjustedSize = size * 1.2;
+
   return (
     <span className="inline-flex items-center flex-wrap gap-0.5">
       {tokens.map((token, index) => {
@@ -170,8 +172,8 @@ export const ExpressionRenderer: React.FC<ExpressionRendererProps> = ({ expressi
               src={token.operatorSrc}
               alt={token.value}
               title={token.value}
-              style={{ width: size, height: size }}
-              className="inline-block invert brightness-0 invert"
+              style={{ width: adjustedSize, height: adjustedSize, verticalAlign: 'middle' }}
+              className="inline-block invert brightness-0 invert align-middle"
             />
           );
         } else {
