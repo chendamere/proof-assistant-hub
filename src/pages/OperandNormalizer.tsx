@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -62,9 +63,30 @@ const OperandNormalizer: React.FC = () => {
           <h1 className="text-4xl font-bold text-glow mb-3">
             Operand Normalization
           </h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-2xl mx-auto mb-4">
             Visualize how operands in rules are normalized by instantiating and numbering them from left to right.
           </p>
+          
+          {/* Explanation Card */}
+          <Card className="max-w-4xl mx-auto mt-6 mb-4">
+            <CardContent className="p-6">
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Operands in rules function like universal quantifier variables in traditional propositional logic. 
+                When applying a rule during a proof step, these variables must be instantiated to match the specific 
+                context of the proof. Normalizing operands is essential for checking whether two expressions are 
+                symbolically equivalent. By instantiating all operands from left to right and assigning them 
+                sequential integer values, we can compare expressions at a structural level, independent of the 
+                specific variable names used in the original rule formulation.
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Link to="/proof-step">
+            <Button variant="outline" className="gap-2">
+              Continue to Proof Step
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
@@ -73,7 +95,7 @@ const OperandNormalizer: React.FC = () => {
             {/* Rule Selection */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Select Rule</CardTitle>
+                <CardTitle className="text-lg">Select Rule to Normalize</CardTitle>
                 <CardDescription>Choose a rule from the axioms to normalize</CardDescription>
               </CardHeader>
               <CardContent>

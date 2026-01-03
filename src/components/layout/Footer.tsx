@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
@@ -22,25 +23,37 @@ const Footer: React.FC = () => {
           </div>
 
           {/* Links */}
-          <div className="flex items-center gap-6 text-sm">
-            <button 
-              onClick={() => document.getElementById('introduction')?.scrollIntoView({ behavior: 'smooth' })}
+          <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
+            <Link 
+              to="/"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Introduction
-            </button>
-            <button 
-              onClick={() => document.getElementById('glossary')?.scrollIntoView({ behavior: 'smooth' })}
+            </Link>
+            <Link 
+              to="/normalizer"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Operand Normalizer
+            </Link>
+            <Link 
+              to="/proof-step"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Proof Step
+            </Link>
+            <Link 
+              to="/glossary"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Glossary
-            </button>
-            <button 
-              onClick={() => document.getElementById('verifier')?.scrollIntoView({ behavior: 'smooth' })}
+            </Link>
+            <Link 
+              to="/verifier"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Verifier
-            </button>
+            </Link>
           </div>
         </div>
 

@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -10,7 +11,7 @@ import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { normalizeRule } from '@/lib/operandNormalizer';
 import { axioms, Rule } from '@/data/axioms';
 import { theorems } from '@/data/theorems';
-import { Play, RotateCcw, CheckCircle2, XCircle, Loader2, AlertCircle, X } from 'lucide-react';
+import { Play, RotateCcw, CheckCircle2, XCircle, Loader2, AlertCircle, X, BookOpen } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
@@ -590,9 +591,48 @@ const ProofStep: React.FC = () => {
           <h1 className="text-4xl font-bold text-glow mb-3">
             Proof Step Demonstration
           </h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-2xl mx-auto mb-4">
             Verify if a rule is true by checking if it can be transformed using existing true rules.
           </p>
+          
+          {/* Explanation Card */}
+          <Card className="max-w-4xl mx-auto mt-6 mb-4">
+            <CardContent className="p-6">
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                A rule is true if it satisfies one or a combination of inference rules together with rules that are 
+                already known to be true. A proof-step is one satisfiable step of applying an inference rule together 
+                with a true rule. A rule in question is true if the beginning expression (left side) can be transformed 
+                into the ending expression (right side) after a series of inference steps.
+              </p>
+              
+              {/* Inference Rules Box */}
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-primary mb-3">Inference Rules</h3>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <span className="font-semibold text-foreground block text-center">Equivalent Commutativity</span>
+                    <p className="text-muted-foreground mt-1">A ⟺ B implies B ⟺ A - Exact match (reversed)</p>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-foreground block text-center">Equivalent Transitivity</span>
+                    <p className="text-muted-foreground mt-1">A ⟺ B and B ⟺ C implies A ⟺ C - Chain through common side</p>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-foreground block text-center">Equivalent Substitution</span>
+                    <p className="text-muted-foreground mt-1">A ⟺ B allows replacing A with B in any context M·A·N → M·B·N</p>
+                    <p className="text-primary/80 text-xs italic mt-2 font-medium text-center">Note: Equivalent Substitution carries the bulk of most proofs.</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Link to="/glossary">
+            <Button variant="outline" className="gap-2">
+              <BookOpen className="w-4 h-4" />
+              View Glossary
+            </Button>
+          </Link>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
@@ -601,7 +641,7 @@ const ProofStep: React.FC = () => {
             {/* Rule Selection */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Select Rule to Prove</CardTitle>
+                <CardTitle className="text-lg">Select A True Rule To Edit and Verify</CardTitle>
                 <CardDescription>Choose a rule from the axioms and theorems to verify</CardDescription>
               </CardHeader>
               <CardContent>
@@ -879,7 +919,7 @@ const ProofStep: React.FC = () => {
                 <CardContent className="py-12 text-center">
                   <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                   <p className="text-muted-foreground">
-                    Enter expressions and click "Prove Rule" to start the proof process
+                    Enter expressions and click "Prove Rule" to find satisfiable inference rules.
                   </p>
                 </CardContent>
               </Card>

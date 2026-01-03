@@ -69,6 +69,7 @@ interface SyntaxInputProps {
   onChange: (value: string) => void;
   onFocus?: () => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  onPaste?: (e: React.ClipboardEvent<HTMLTextAreaElement>) => void;
   onDrop?: (e: React.DragEvent<HTMLTextAreaElement>) => void;
   onDragOver?: (e: React.DragEvent<HTMLTextAreaElement>) => void;
   onDragLeave?: (e: React.DragEvent<HTMLTextAreaElement>) => void;
@@ -133,6 +134,7 @@ export const SyntaxInput: React.FC<SyntaxInputProps> = ({
   onChange,
   onFocus,
   onKeyDown,
+  onPaste,
   onDrop,
   onDragOver,
   onDragLeave,
@@ -182,6 +184,7 @@ export const SyntaxInput: React.FC<SyntaxInputProps> = ({
         onChange={(e) => onChange(e.target.value)}
         onFocus={onFocus}
         onKeyDown={onKeyDown}
+        onPaste={onPaste}
         onScroll={handleScroll}
         onDrop={(e) => {
           e.preventDefault();

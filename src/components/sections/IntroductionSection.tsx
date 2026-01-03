@@ -2,7 +2,7 @@ import React from 'react';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import NodeDiagram from '@/components/visuals/NodeDiagram';
 import TreeStructureDiagram from '@/components/visuals/TreeStructureDiagram';
-import { BookOpen, ExternalLink, Hash, GitBranch } from 'lucide-react';
+import { BookOpen, ExternalLink, Hash, GitBranch, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
@@ -223,6 +223,18 @@ const IntroductionSection: React.FC = () => {
               <Button variant="outline" className="gap-2">
                 <GitBranch className="w-4 h-4" />
                 Proof Step Demo
+              </Button>
+            </Link>
+            <Link to="/glossary">
+              <Button variant="outline" className="gap-2">
+                <BookOpen className="w-4 h-4" />
+                Glossary
+              </Button>
+            </Link>
+            <Link to="/verifier">
+              <Button variant="outline" className="gap-2">
+                <Play className="w-4 h-4" />
+                Proof Verifier
               </Button>
             </Link>
           </div>

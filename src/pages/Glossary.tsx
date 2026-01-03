@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useCallback, lazy, Suspense } from 'react';
+import { Link } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { axioms, getTypeBadgeClass, categories, Rule, RuleType, RuleCategory } from '@/data/axioms';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, Play } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Navigation from '@/components/layout/Navigation';
@@ -126,9 +127,15 @@ const Glossary: React.FC = () => {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-foreground mb-2">Glossary</h1>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground mb-4">
               Complete reference of all axioms, definitions, and theorems
             </p>
+            <Link to="/verifier">
+              <Button variant="outline" className="gap-2">
+                <Play className="w-4 h-4" />
+                Go to Proof Verifier
+              </Button>
+            </Link>
           </div>
 
           {/* Filters */}
