@@ -657,8 +657,8 @@ const ProofStep: React.FC = () => {
                       >
                         <div className="flex-1 min-w-0">
                           <div className="font-medium text-xs truncate">{rule.name}</div>
-                          <div className="text-xs text-muted-foreground font-mono truncate">
-                            {rule.leftSide} ≡ {rule.rightSide}
+                          <div className="text-xs text-muted-foreground font-mono truncate flex items-center gap-1">
+                            {rule.leftSide} <EquivalenceSymbol size={12} /> {rule.rightSide}
                           </div>
                         </div>
                       </Button>
@@ -873,13 +873,13 @@ const ProofStep: React.FC = () => {
                           </div>
                           <div className="flex items-center gap-2 text-xs font-mono mb-2">
                             <span className="text-muted-foreground">{step.rule.leftSide}</span>
-                            <span className="text-primary">≡</span>
+                            <EquivalenceSymbol size={14} />
                             <span className="text-muted-foreground">{step.rule.rightSide}</span>
                           </div>
                           <div className="flex items-center gap-2 text-xs font-mono">
                             <span className="text-foreground">Normalized:</span>
                             <span className="text-primary">{step.normalized.left}</span>
-                            <span className="text-primary">≡</span>
+                            <EquivalenceSymbol size={14} />
                             <span className="text-primary">{step.normalized.right}</span>
                           </div>
                           {/* Show substitution context if Equivalent Substitution is used */}

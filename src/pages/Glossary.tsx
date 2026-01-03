@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { axioms, getTypeBadgeClass, categories, Rule, RuleType, RuleCategory } from '@/data/axioms';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
+import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { Search, Filter, Play } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -274,7 +275,7 @@ const RuleCard: React.FC<{ rule: Rule }> = ({ rule }) => {
         {/* Rendered expression */}
         <div className="flex items-center gap-2 text-sm overflow-x-auto pb-2 mb-2 border-b border-border">
           <ExpressionRenderer expression={rule.leftSide} size={14} />
-          <span className="text-primary font-mono text-xs">≡</span>
+          <EquivalenceSymbol size={14} />
           <ExpressionRenderer expression={rule.rightSide} size={14} />
         </div>
 

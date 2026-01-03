@@ -704,8 +704,8 @@ const ProofVerifierSection: React.FC = () => {
                               {appRule.direction === 'left-to-right' ? 'L→R' : 'R→L'}
                             </Badge>
                           </div>
-                          <div className="text-[10px] text-muted-foreground font-mono mb-1">
-                            {appRule.rule.leftSide} ≡ {appRule.rule.rightSide}
+                          <div className="text-[10px] text-muted-foreground font-mono mb-1 flex items-center gap-1">
+                            {appRule.rule.leftSide} <EquivalenceSymbol size={10} /> {appRule.rule.rightSide}
                           </div>
                           {appRule.inferenceRule && (
                             <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/30">

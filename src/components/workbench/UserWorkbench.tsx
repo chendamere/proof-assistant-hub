@@ -17,6 +17,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
+import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 
 interface ImportedRule {
   id: string;
@@ -38,9 +39,9 @@ const UserWorkbench: React.FC = () => {
   const parseRulesFromText = (content: string, filename: string): ImportedRule[] => {
     const rules: ImportedRule[] = [];
     
-    // Pattern to match: leftSide ≡ rightSide or leftSide = rightSide
+    // Pattern to match: leftSide \\Rq rightSide or leftSide = rightSide
     const equivalencePatterns = [
-      /([^\n≡=]+)\s*≡\s*([^\n]+)/g,
+      /([^\n\\Rq=]+)\s*\\Rq\s*([^\n]+)/g,
       /([^\n]+)\s*\\equiv\s*([^\n]+)/g,
     ];
 
@@ -143,8 +144,8 @@ const UserWorkbench: React.FC = () => {
   // Download rules as txt
   const downloadRules = () => {
     const allRules = [
-      ...contextRules.map(r => `${r.leftSide} ≡ ${r.rightSide}`),
-      ...importedRules.map(r => `${r.leftSide} ≡ ${r.rightSide}`),
+      ...contextRules.map(r => `${r.leftSide} \\Rq ${r.rightSide}`),
+      ...importedRules.map(r => `${r.leftSide} \\Rq ${r.rightSide}`),
     ];
     
     const content = allRules.join(`\n${delimiter}\n`);
@@ -173,7 +174,7 @@ const UserWorkbench: React.FC = () => {
       // Convert ImportedRule to Rule format
       return {
         id: `imported-context-${importedRule.id}`,
-        name: `Imported: ${importedRule.leftSide} ≡ ${importedRule.rightSide}`,
+        name: `Imported: ${importedRule.leftSide} \\Rq ${importedRule.rightSide}`,
         type: 'definition' as RuleType,
         category: 'logic' as RuleCategory,
         description: `Imported rule from ${importedRule.source}`,
@@ -185,10 +186,10 @@ const UserWorkbench: React.FC = () => {
     // Add to context rules, avoiding duplicates based on leftSide and rightSide
     setContextRules(prev => {
       const existingPairs = new Set(
-        prev.map(r => `${r.leftSide}≡${r.rightSide}`)
+        prev.map(r => `${r.leftSide}\\Rq${r.rightSide}`)
       );
       const uniqueNewRules = newContextRules.filter(
-        r => !existingPairs.has(`${r.leftSide}≡${r.rightSide}`)
+        r => !existingPairs.has(`${r.leftSide}\\Rq${r.rightSide}`)
       );
       return [...prev, ...uniqueNewRules];
     });
@@ -351,7 +352,7 @@ const UserWorkbench: React.FC = () => {
                     >
                       <div className="flex-1 flex items-center gap-2 text-xs overflow-x-auto">
                         <ExpressionRenderer expression={rule.leftSide} size={10} />
-                        <span className="text-primary font-mono">≡</span>
+                        <EquivalenceSymbol size={10} />
                         <ExpressionRenderer expression={rule.rightSide} size={10} />
                       </div>
                       <Button
@@ -477,8 +478,8 @@ const UserWorkbench: React.FC = () => {
                           <Trash2 className="w-3 h-3" />
                         </Button>
                       </div>
-                      <div className="font-mono text-xs text-foreground break-all">
-                        {rule.leftSide} ≡ {rule.rightSide}
+                      <div className="font-mono text-xs text-foreground break-all flex items-center gap-1">
+                        {rule.leftSide} <EquivalenceSymbol size={10} /> {rule.rightSide}
                       </div>
                     </div>
                   ))}

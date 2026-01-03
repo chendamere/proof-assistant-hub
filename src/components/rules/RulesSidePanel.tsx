@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { axioms, Rule, RuleType, getTypeBadgeClass } from '@/data/axioms';
 import { BookOpen, Search, ChevronDown, ChevronUp, GripVertical, X, PanelRightOpen } from 'lucide-react';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
+import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { usePanelContext } from '@/contexts/PanelContext';
@@ -60,7 +61,7 @@ const DraggableRuleCard: React.FC<DraggableRuleCardProps> = React.memo(({ rule }
           {/* Rendered expression */}
           <div className="flex items-center gap-2 text-sm overflow-x-auto pb-1 pointer-events-none">
             <ExpressionRenderer expression={rule.leftSide} size={12} />
-            <span className="text-primary font-mono text-xs">≡</span>
+            <EquivalenceSymbol size={12} />
             <ExpressionRenderer expression={rule.rightSide} size={12} />
           </div>
           

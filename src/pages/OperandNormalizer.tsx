@@ -111,8 +111,8 @@ const OperandNormalizer: React.FC = () => {
                       >
                         <div className="flex-1 min-w-0">
                           <div className="font-medium text-xs truncate">{rule.name}</div>
-                          <div className="text-xs text-muted-foreground font-mono truncate">
-                            {rule.leftSide} ≡ {rule.rightSide}
+                          <div className="text-xs text-muted-foreground font-mono truncate flex items-center gap-1">
+                            {rule.leftSide} <EquivalenceSymbol size={12} /> {rule.rightSide}
                           </div>
                         </div>
                       </Button>

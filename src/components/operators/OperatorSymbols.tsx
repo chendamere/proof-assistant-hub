@@ -181,7 +181,7 @@ export const EquivalenceSymbol: React.FC<{ className?: string; size?: number }> 
   return (
     <span className={cn("operator-symbol mx-2", className)}>
       <svg width={adjustedSize} height={adjustedSize * 0.5} viewBox="0 0 48 24" fill="none" className="text-primary" style={{ verticalAlign: 'middle' }}>
-      <path d="M10 8h28M10 16h28" stroke="currentColor" strokeWidth="2.5" />
+      <path d="M16 8h16M16 16h16" stroke="currentColor" strokeWidth="2.5" />
       <path d="M32 4l8 8-8 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
       <path d="M16 4l-8 8 8 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
     </svg>
