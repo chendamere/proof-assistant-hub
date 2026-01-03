@@ -336,7 +336,9 @@ const BranchRenderer: React.FC<{
   const yoffset = transformOffset.toString() + 'rem';
 
   return (
-    <span className="inline-flex items-center align-middle">
+    <span className="inline-flex items-center align-middle"
+
+    >
       {/* Condition before brackets */}
       {condition && (
         <span className="inline-flex items-center">
@@ -344,66 +346,79 @@ const BranchRenderer: React.FC<{
         </span>
       )}
       
-      {/* Left bracket */}
-      {showLeftBracket && (
-        <span 
-          className={`${leftBracketClass} flex-shrink-0`} 
-          style={{ 
-            width: '3px', 
-            height: `${bracketHeight}px`, 
-            alignSelf: 'center'
-          }} 
-        />
-      )}
-      
-      {/* Branch content - stacked vertically with proportional spacing */}
+      {/* Bracketed branch content */}
       <span 
-        className="inline-flex flex-col justify-between" 
+        className="inline-flex items-center branch-bracket-group" 
         style={{ 
-          minWidth: '12px', 
-          gap: `${size * 2.5}px`, 
-          padding: `${size * 0.5}px 0`,
-          transform: `translateY(-${yoffset})`
+          boxSizing: 'border-box',
+          paddingLeft: '10px'
         }}
       >
-        {/* Top branch content - aligned with top bracket line */}
+        {/* Left bracket */}
+        {showLeftBracket && (
+          <span 
+            className={`${leftBracketClass} flex-shrink-0`} 
+            style={{ 
+              width: '3px', 
+              height: `${bracketHeight}px`, 
+              alignSelf: 'center',
+              transform: `translateX(${0}px)`
+            }} 
+          />
+        )}
+        
+        {/* Branch content - stacked vertically with proportional spacing */}
         <span 
-          ref={branch1Ref}
-          className="inline-flex items-center px-1 whitespace-nowrap"
-          style={{
-            minHeight: branch1HasNested ? 'auto' : `${minBracketHeight}px`,
-            display: 'inline-flex',
-            alignItems: 'center'
+          className="inline-flex flex-col justify-between" 
+          style={{ 
+            minWidth: '12px', 
+            gap: `${size * 2.5}px`, 
+            padding: `${size * 0.5}px 0`,
+            transform: `translateY(-${yoffset})`
           }}
         >
-          {content1}
+          {/* Top branch content - aligned with top bracket line */}
+          <span 
+            ref={branch1Ref}
+            className="inline-flex items-center px-1 whitespace-nowrap"
+            style={{
+              minHeight: branch1HasNested ? 'auto' : `${minBracketHeight}px`,
+              display: 'inline-flex',
+              alignItems: 'center',
+              transform: (branch1HasNested&&!branch2HasNested) ? 'translateY(-20px)' : 'translateY(0px)'
+
+            }}
+          >
+            {content1}
+          </span>
+          
+          {/* Bottom branch content - aligned with bottom bracket line */}
+          <span 
+            ref={branch2Ref}
+            className="inline-flex items-center px-1 whitespace-nowrap"
+            style={{
+              minHeight: branch2HasNested ? 'auto' : `${minBracketHeight}px`,
+              display: 'inline-flex',
+              alignItems: 'center',
+              transform: (branch2HasNested&&!branch1HasNested) ? 'translateY(20px)' : 'translateY(0px)'
+            }}
+          >
+            {content2}
+          </span>
         </span>
         
-        {/* Bottom branch content - aligned with bottom bracket line */}
-        <span 
-          ref={branch2Ref}
-          className="inline-flex items-center px-1 whitespace-nowrap"
-          style={{
-            minHeight: branch2HasNested ? 'auto' : `${minBracketHeight}px`,
-            display: 'inline-flex',
-            alignItems: 'center'
-          }}
-        >
-          {content2}
-        </span>
+        {/* Right bracket */}
+        {showRightBracket && (
+          <span 
+            className={`${rightBracketClass} flex-shrink-0`} 
+            style={{ 
+              width: '3px', 
+              height: `${bracketHeight}px`, 
+              alignSelf: 'center'
+            }} 
+          />
+        )}
       </span>
-      
-      {/* Right bracket */}
-      {showRightBracket && (
-        <span 
-          className={`${rightBracketClass} flex-shrink-0`} 
-          style={{ 
-            width: '3px', 
-            height: `${bracketHeight}px`, 
-            alignSelf: 'center'
-          }} 
-        />
-      )}
     </span>
   );
 };
@@ -419,33 +434,44 @@ export const ExpressionRenderer: React.FC<ExpressionRendererProps> = ({ expressi
   // Increase size by 20%
   const adjustedSize = size * 1.2;
 
+  const minContainerHeight = size * 1.8;
+  const minContainerWidth = size * 2.5;
+
   return (
-    <span className="inline-flex items-center flex-wrap gap-0.5">
+    <span
+      className="inline-flex items-center flex-wrap gap-0.5"
+      style={{
+        minHeight: `${minContainerHeight}px`,
+        minWidth: `${minContainerWidth}px`,
+      }}
+    >
       {tokens.map((token, index) => {
         if (token.type === 'branch' && token.branchData) {
           return (
-            <BranchRenderer
-              key={index}
-              branchData={token.branchData}
-              size={size}
-              depth={branchDepth}
-              onChildHeightChange={onBranchHeightChange}
-            />
+            <span key={index} className="inline-flex whitespace-nowrap">
+              <BranchRenderer
+                branchData={token.branchData}
+                size={size}
+                depth={branchDepth}
+                onChildHeightChange={onBranchHeightChange}
+              />
+            </span>
           );
         } else if (token.type === 'operator' && token.operatorSrc) {
           return (
-            <img
-              key={index}
-              src={token.operatorSrc}
-              alt={token.value}
-              title={token.value}
-              style={{ width: adjustedSize, height: adjustedSize, verticalAlign: 'middle' }}
-              className="inline-block invert brightness-0 invert align-middle"
-            />
+            <span key={index} className="inline-flex whitespace-nowrap">
+              <img
+                src={token.operatorSrc}
+                alt={token.value}
+                title={token.value}
+                style={{ width: adjustedSize, height: adjustedSize, verticalAlign: 'middle' }}
+                className="inline-block invert brightness-0 invert align-middle"
+              />
+            </span>
           );
         } else {
           return (
-            <span key={index} className="font-mono text-foreground text-sm">
+            <span key={index} className="font-mono text-foreground text-sm whitespace-nowrap inline-flex">
               {token.value}
             </span>
           );
