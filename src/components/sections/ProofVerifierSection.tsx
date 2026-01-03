@@ -720,17 +720,19 @@ const ProofVerifierSection: React.FC = () => {
               </div>
             </div>
             
-            <div className="flex justify-end mt-4">
-              <Button
-                onClick={addProofStep}
-                disabled={!currentExpression.trim()}
-                size="sm"
-                className="gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                Add Step
-              </Button>
-            </div>
+            {(!currentExpression.trim() || applicableRules.length > 0) && (
+              <div className="flex justify-end mt-4">
+                <Button
+                  onClick={addProofStep}
+                  disabled={!currentExpression.trim()}
+                  size="sm"
+                  className="gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Step
+                </Button>
+              </div>
+            )}
           </div>
           )}
         </div>
