@@ -58,9 +58,9 @@ const DraggableRuleCard: React.FC<DraggableRuleCardProps> = React.memo(({ rule }
           </div>
           
           {/* Rendered expression */}
-          <div className="flex items-center gap-2 text-sm overflow-x-auto pb-1 pointer-events-none whitespace-nowrap">
+          <div className="flex items-center gap-2 text-sm overflow-x-auto pb-1 pointer-events-none">
             <ExpressionRenderer expression={rule.leftSide} size={12} />
-            <span className="text-primary font-mono text-xs flex-shrink-0">≡</span>
+            <span className="text-primary font-mono text-xs">≡</span>
             <ExpressionRenderer expression={rule.rightSide} size={12} />
           </div>
           

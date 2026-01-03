@@ -336,11 +336,8 @@ const BranchRenderer: React.FC<{
   const yoffset = transformOffset.toString() + 'rem';
 
   return (
-    <span 
-      className="inline-flex items-center align-middle"
-      style={{
-        transform: `translateY(-${yoffset})`
-      }}
+    <span className="inline-flex items-center align-middle"
+
     >
       {/* Condition before brackets */}
       {condition && (
@@ -376,7 +373,8 @@ const BranchRenderer: React.FC<{
           style={{ 
             minWidth: '12px', 
             gap: `${size * 2.5}px`, 
-            padding: `${size * 0.5}px 0`
+            padding: `${size * 0.5}px 0`,
+            transform: `translateY(-${yoffset})`
           }}
         >
           {/* Top branch content - aligned with top bracket line */}

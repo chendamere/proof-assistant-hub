@@ -265,12 +265,11 @@ const RuleCard: React.FC<{ rule: Rule }> = ({ rule }) => {
         )}
 
         {/* Rendered expression */}
-
-          <div className="flex items-center gap-2 text-sm overflow-x-auto overflow-y-auto pb-2 mb-2 border-b border-border">
-            <ExpressionRenderer expression={rule.leftSide} size={14} />
-            <span className="text-primary font-mono text-xs">≡</span>
-            <ExpressionRenderer expression={rule.rightSide} size={14} />
-          </div>
+        <div className="flex items-center gap-2 text-sm overflow-x-auto pb-2 mb-2 border-b border-border">
+          <ExpressionRenderer expression={rule.leftSide} size={14} />
+          <span className="text-primary font-mono text-xs">≡</span>
+          <ExpressionRenderer expression={rule.rightSide} size={14} />
+        </div>
 
         {/* Text form */}
         <div className="bg-muted/30 rounded p-2 font-mono text-xs space-y-1">
