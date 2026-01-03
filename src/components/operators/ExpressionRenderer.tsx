@@ -229,7 +229,7 @@ const BranchRenderer: React.FC<{
 }> = ({ branchData, size, depth = 0, onChildHeightChange }) => {
   const [bracketHeight, setBracketHeight] = React.useState<number>(() => {
     // Calculate initial bracket height based on depth
-    const baseHeight = size * 3.6;
+    const baseHeight = size * 4.5;
     const depthReduction = depth * 0.8;
     const depthMultiplier = Math.max(0, 1 - depthReduction);
     return baseHeight * depthMultiplier;
