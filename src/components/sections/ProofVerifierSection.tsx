@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { SyntaxInput } from '@/components/ui/syntax-input';
 import { Rule, getTypeBadgeClass, axioms } from '@/data/axioms';
 import { theorems } from '@/data/theorems';
-import { normalizeRule } from '@/lib/operandNormalizer';
+import { normalizeRule, normalizeOperands } from '@/lib/operandNormalizer';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { Play, Plus, RotateCcw, ChevronRight, AlertCircle, PartyPopper } from 'lucide-react';
@@ -120,43 +120,157 @@ const InferenceRules: InferenceRule[] = [
     name: 'Equivalent Substitution',
     description: 'A ⟺ B allows replacing A with B in any context M·A·N → M·B·N',
     check: (targetLeft, targetRight, ruleLeft, ruleRight) => {
-      // Check if rule can be substituted into target
+      // Strategy 2: Operand-Aligned Pattern Matching with Pattern Recognition (Approach 3)
+      // Extract operand patterns and match patterns rather than exact numbers to handle
+      // separately normalized expressions
       const findSubstitution = (target: string, ruleSide: string, side: 'left' | 'right') => {
-        if (target.includes(ruleSide)) {
-          const position = target.indexOf(ruleSide);
-          const prefix = target.substring(0, position);
-          const suffix = target.substring(position + ruleSide.length);
-          return {
-            match: true,
-            position: {
-              side: side,
-              position: position,
-              description: `Rule found at position ${position} in ${side} side`,
-              prefix: prefix || undefined,
-              suffix: suffix || undefined,
+        // Extract operand tokens and their positions from integer expressions
+        const extractOperandTokens = (expr: string): Array<{ token: string; index: number; endIndex: number }> => {
+          const tokens: Array<{ token: string; index: number; endIndex: number }> = [];
+          const numberPattern = /\b(\d+)\b/g;
+          let match;
+          while ((match = numberPattern.exec(expr)) !== null) {
+            tokens.push({
+              token: match[1],
+              index: match.index,
+              endIndex: match.index + match[1].length
+            });
+          }
+          return tokens;
+        };
+
+        // Extract operand pattern: convert numbers to pattern variables (A, B, C, ...)
+        // e.g., ", 1 \Oc 2, 2 \Os," → ", A \Oc B, B \Os,"
+        // Maps each unique operand number to a pattern variable, preserving operand reuse
+        const extractOperandPattern = (expr: string, tokens: Array<{ token: string; index: number; endIndex: number }>): string => {
+          const patternVars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+          const operandToVar = new Map<string, string>(); // Maps operand number to pattern variable
+          let patternVarIdx = 0;
+          
+          // Build mapping: first occurrence of each operand number gets next pattern variable
+          tokens.forEach(token => {
+            if (!operandToVar.has(token.token)) {
+              operandToVar.set(token.token, patternVars[patternVarIdx++]);
             }
-          };
+          });
+          
+          // Build pattern string by replacing operand numbers with pattern variables
+          let pattern = expr;
+          // Replace from right to left to avoid index shifting issues
+          const sortedTokens = [...tokens].sort((a, b) => b.index - a.index);
+          sortedTokens.forEach(token => {
+            const patternVar = operandToVar.get(token.token)!;
+            pattern = pattern.substring(0, token.index) + patternVar + pattern.substring(token.endIndex);
+          });
+          
+          return pattern;
+        };
+
+        const targetTokens = extractOperandTokens(target);
+        const ruleTokens = extractOperandTokens(ruleSide);
+
+        // Handle case where ruleSide has no operands (empty or operators only)
+        if (ruleTokens.length === 0) {
+          const trimmedRuleSide = ruleSide.trim();
+          if (trimmedRuleSide === '') {
+            return {
+              match: true,
+              position: {
+                side: side,
+                position: 0,
+                description: `Empty rule found in ${side} side`,
+                prefix: undefined,
+                suffix: target || undefined,
+              }
+            };
+          }
+          
+          // ruleSide has operators but no operands - use simple string matching
+          const index = target.indexOf(ruleSide);
+          if (index !== -1) {
+            const prefix = target.substring(0, index);
+            const suffix = target.substring(index + ruleSide.length);
+            
+            return {
+              match: true,
+              position: {
+                side: side,
+                position: index,
+                description: `Rule (operators only, no operands) found at position ${index} in ${side} side`,
+                prefix: prefix || undefined,
+                suffix: suffix || undefined,
+              }
+            };
+          }
+          
+          return { match: false };
         }
-        if (ruleSide.includes(target)) {
-          const position = ruleSide.indexOf(target);
-          const prefix = ruleSide.substring(0, position);
-          const suffix = ruleSide.substring(position + target.length);
-          return {
-            match: true,
-            position: {
-              side: side,
-              description: `${side} side is contained in rule`,
-              prefix: prefix || undefined,
-              suffix: suffix || undefined,
+
+        // If ruleSide has more operands than target, no match possible
+        if (ruleTokens.length > targetTokens.length) {
+          return { match: false };
+        }
+
+        // Extract rule pattern once (pattern caching optimization)
+        const rulePattern = extractOperandPattern(ruleSide, ruleTokens);
+
+        // Try each operand-aligned starting position in target
+        for (let startIdx = 0; startIdx <= targetTokens.length - ruleTokens.length; startIdx++) {
+          // Extract the substring that spans from the start operand to the end operand
+          const startToken = targetTokens[startIdx];
+          const endTokenIdx = startIdx + ruleTokens.length - 1;
+          const endToken = targetTokens[endTokenIdx];
+          
+          const candidateStart = startToken.index;
+          const candidateEnd = endToken.endIndex;
+          const candidate = target.substring(candidateStart, candidateEnd);
+
+          // Fast path: try exact string match first (very fast, O(1) for many cases)
+          if (candidate === ruleSide) {
+            const prefix = target.substring(0, candidateStart);
+            const suffix = target.substring(candidateEnd);
+            
+            return {
+              match: true,
+              position: {
+                side: side,
+                position: candidateStart,
+                description: `Rule found at operand-aligned position ${startIdx} in ${side} side`,
+                prefix: prefix || undefined,
+                suffix: suffix || undefined,
+              }
+            };
+          }
+
+          // Pattern matching: extract candidate pattern and compare with rule pattern
+          const candidateTokens = extractOperandTokens(candidate);
+          if (candidateTokens.length === ruleTokens.length) {
+            const candidatePattern = extractOperandPattern(candidate, candidateTokens);
+            
+            // Patterns match if they have the same structure (same pattern variables in same positions)
+            if (candidatePattern === rulePattern) {
+              const prefix = target.substring(0, candidateStart);
+              const suffix = target.substring(candidateEnd);
+              
+              return {
+                match: true,
+                position: {
+                  side: side,
+                  position: candidateStart,
+                  description: `Rule found at operand-aligned position ${startIdx} (pattern match) in ${side} side`,
+                  prefix: prefix || undefined,
+                  suffix: suffix || undefined,
+                }
+              };
             }
-          };
+          }
         }
+
         return { match: false };
       };
 
       // Check both sides for substitution
-      // For substitution to work, we need to check if applying the rule to one side
-      // results in the other side matching
+      // Note: targetLeft, targetRight, ruleLeft, ruleRight are already integer expressions
       
       // Try: targetLeft contains ruleLeft, then check if replacing it with ruleRight gives targetRight
       let result = findSubstitution(targetLeft, ruleLeft, 'left');

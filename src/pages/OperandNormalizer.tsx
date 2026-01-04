@@ -291,6 +291,94 @@ const OperandNormalizer: React.FC = () => {
             )}
           </div>
         </div>
+
+        {/* Pattern Matching Section */}
+        <Card className="max-w-4xl mx-auto mt-8 border-primary/30 bg-primary/5">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <FileText className="w-5 h-5" />
+              Pattern Matching for Substitution
+            </CardTitle>
+            <CardDescription>
+              How pattern matching enables substitution matching when expressions are normalized separately
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <h3 className="text-sm font-semibold mb-2 text-foreground">The Problem</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                When checking if a rule can be substituted into a target expression, we use normalized integer expressions. 
+                However, when expressions are normalized <strong>separately</strong>, they get different operand numbers 
+                even when they have the same structure.
+              </p>
+              <div className="bg-muted/50 rounded-lg p-3 font-mono text-xs space-y-1 border border-border/50">
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">Rule normalized separately:</span>
+                  <code className="text-primary">, 1 \Oc 2, 2 \Os,</code>
+                  <span className="text-muted-foreground text-[10px]">(i→1, m→2)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">Target normalized separately:</span>
+                  <code className="text-primary">, 3 \Oc 4, 4 \Os,</code>
+                  <span className="text-muted-foreground text-[10px]">(i→3, m→4)</span>
+                </div>
+                <div className="text-yellow-600 dark:text-yellow-500 mt-2 pt-2 border-t border-border/50">
+                  ❌ Exact matching fails: <code>1 \Oc 2, 2 \Os</code> ≠ <code>3 \Oc 4, 4 \Os</code>
+                </div>
+                <div className="text-green-600 dark:text-green-500">
+                  ✅ But patterns are structurally identical! Both represent <code>, i \Oc m, m \Os,</code>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold mb-2 text-foreground">The Solution: Pattern Matching</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                Pattern matching converts operand numbers to pattern variables (A, B, C, ...) preserving operand 
+                reuse relationships, allowing matching of expressions with the same structure even when normalized separately.
+              </p>
+              <div className="bg-muted/50 rounded-lg p-3 font-mono text-xs space-y-2 border border-border/50">
+                <div>
+                  <div className="text-muted-foreground text-[10px] mb-1">Rule Pattern:</div>
+                  <div className="flex items-center gap-2">
+                    <code className="text-primary">, 1 \Oc 2, 2 \Os,</code>
+                    <ArrowRight className="w-3 h-3 text-muted-foreground" />
+                    <code className="text-green-600 dark:text-green-500">, A \Oc B, B \Os,</code>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground text-[10px] mb-1">Target Pattern:</div>
+                  <div className="flex items-center gap-2">
+                    <code className="text-primary">, 3 \Oc 4, 4 \Os,</code>
+                    <ArrowRight className="w-3 h-3 text-muted-foreground" />
+                    <code className="text-green-600 dark:text-green-500">, A \Oc B, B \Os,</code>
+                  </div>
+                </div>
+                <div className="text-green-600 dark:text-green-500 mt-2 pt-2 border-t border-border/50 font-semibold">
+                  ✅ Patterns Match!
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-primary/10 rounded-lg p-3 border border-primary/20">
+              <h3 className="text-sm font-semibold mb-2 text-foreground">Key Benefits</h3>
+              <ul className="text-sm text-muted-foreground space-y-1.5 list-disc list-inside">
+                <li><strong>Handles Separately Normalized Expressions:</strong> Matches patterns even when operand numbers differ</li>
+                <li><strong>Preserves Operand Relationships:</strong> Recognizes when the same operand appears multiple times</li>
+                <li><strong>Fast and Efficient:</strong> Operand-aligned matching with pattern recognition</li>
+                <li><strong>Works with Existing System:</strong> Uses normalized integer expressions (no architectural changes)</li>
+              </ul>
+            </div>
+
+            <div className="text-xs text-muted-foreground pt-2 border-t border-border/50">
+              <p>
+                <strong>Note:</strong> Pattern matching complements normalization—it doesn't replace it. 
+                Normalization converts expressions to canonical integer form, while pattern matching handles 
+                cases where exact matching fails due to separate normalization.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
       </main>
 
       <Footer />
