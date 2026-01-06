@@ -9,19 +9,12 @@ import { Badge } from '@/components/ui/badge';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { normalizeRule } from '@/lib/operandNormalizer';
+import { checkInferenceRules, MatchPosition } from '@/lib/inferenceRules';
 import { axioms, Rule } from '@/data/axioms';
 import { theorems } from '@/data/theorems';
 import { Play, RotateCcw, CheckCircle2, XCircle, Loader2, AlertCircle, X, BookOpen } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-
-interface MatchPosition {
-  side: 'left' | 'right' | 'both';
-  position?: number; // Character position or pattern position
-  description: string;
-  prefix?: string; // Text before the substituted rule (M in M·A·N)
-  suffix?: string; // Text after the substituted rule (N in M·A·N)
-}
 
 interface ProofStep {
   step: number;
@@ -38,173 +31,6 @@ interface ProofStep {
   matchPosition?: MatchPosition;
 }
 
-interface InferenceRule {
-  name: string;
-  description: string;
-  check: (
-    targetLeft: string,
-    targetRight: string,
-    ruleLeft: string,
-    ruleRight: string
-  ) => { match: boolean; position?: MatchPosition };
-}
-
-const InferenceRules: InferenceRule[] = [
-  {
-    name: 'Equivalent Commutativity',
-    description: 'A ⟺ B implies B ⟺ A - Exact match (reversed)',
-    check: (targetLeft, targetRight, ruleLeft, ruleRight) => {
-      // Check if target matches rule in reverse
-      if (targetLeft === ruleRight && targetRight === ruleLeft) {
-        return {
-          match: true,
-          position: {
-            side: 'both',
-            description: 'Both sides match in reverse order'
-          }
-        };
-      }
-      return { match: false };
-    },
-  },
-  {
-    name: 'Equivalent Transitivity',
-    description: 'A ⟺ B and B ⟺ C implies A ⟺ C - Chain through common side',
-    check: (targetLeft, targetRight, ruleLeft, ruleRight) => {
-      // If target left matches rule left, check if target right matches rule right exactly
-      if (targetLeft === ruleLeft) {
-        if (targetRight === ruleRight) {
-          return {
-            match: true,
-            position: {
-              side: 'both',
-              description: 'Left sides match, right sides match exactly'
-            }
-          };
-        }
-      }
-      // If target left matches rule right, check if target right matches rule left exactly
-      if (targetLeft === ruleRight) {
-        if (targetRight === ruleLeft) {
-          return {
-            match: true,
-            position: {
-              side: 'both',
-              description: 'Target left matches rule right, target right matches rule left exactly'
-            }
-          };
-        }
-      }
-      // If target right matches rule left, check if target left matches rule right exactly
-      if (targetRight === ruleLeft) {
-        if (targetLeft === ruleRight) {
-          return {
-            match: true,
-            position: {
-              side: 'both',
-              description: 'Target right matches rule left, target left matches rule right exactly'
-            }
-          };
-        }
-      }
-      // If target right matches rule right, check if target left matches rule left exactly
-      if (targetRight === ruleRight) {
-        if (targetLeft === ruleLeft) {
-          return {
-            match: true,
-            position: {
-              side: 'both',
-              description: 'Right sides match, left sides match exactly'
-            }
-          };
-        }
-      }
-      return { match: false };
-    },
-  },
-  {
-    name: 'Equivalent Substitution',
-    description: 'A ⟺ B allows replacing A with B in any context M·A·N → M·B·N',
-    check: (targetLeft, targetRight, ruleLeft, ruleRight) => {
-      // Check if rule can be substituted into target
-      const findSubstitution = (target: string, ruleSide: string, side: 'left' | 'right') => {
-        if (target.includes(ruleSide)) {
-          const position = target.indexOf(ruleSide);
-          const prefix = target.substring(0, position);
-          const suffix = target.substring(position + ruleSide.length);
-          return {
-            match: true,
-            position: {
-              side: side,
-              position: position,
-              description: `Rule found at position ${position} in ${side} side`,
-              prefix: prefix || undefined,
-              suffix: suffix || undefined,
-            }
-          };
-        }
-        if (ruleSide.includes(target)) {
-          const position = ruleSide.indexOf(target);
-          const prefix = ruleSide.substring(0, position);
-          const suffix = ruleSide.substring(position + target.length);
-          return {
-            match: true,
-            position: {
-              side: side,
-              description: `${side} side is contained in rule`,
-              prefix: prefix || undefined,
-              suffix: suffix || undefined,
-            }
-          };
-        }
-        return { match: false };
-      };
-
-      // Check both sides for substitution
-      // For substitution to work, we need to check if applying the rule to one side
-      // results in the other side matching
-      
-      // Try: targetLeft contains ruleLeft, then check if replacing it with ruleRight gives targetRight
-      let result = findSubstitution(targetLeft, ruleLeft, 'left');
-      if (result.match && result.position) {
-        // Check if applying substitution (replacing ruleLeft with ruleRight in targetLeft) matches targetRight
-        const substituted = (result.position.prefix || '') + ruleRight + (result.position.suffix || '');
-        if (substituted === targetRight) {
-          return result;
-        }
-      }
-      
-      // Try: targetLeft contains ruleRight, then check if replacing it with ruleLeft gives targetRight
-      result = findSubstitution(targetLeft, ruleRight, 'left');
-      if (result.match && result.position) {
-        const substituted = (result.position.prefix || '') + ruleLeft + (result.position.suffix || '');
-        if (substituted === targetRight) {
-          return result;
-        }
-      }
-      
-      // Try: targetRight contains ruleLeft, then check if replacing it with ruleRight gives targetLeft
-      result = findSubstitution(targetRight, ruleLeft, 'right');
-      if (result.match && result.position) {
-        const substituted = (result.position.prefix || '') + ruleRight + (result.position.suffix || '');
-        if (substituted === targetLeft) {
-          return result;
-        }
-      }
-      
-      // Try: targetRight contains ruleRight, then check if replacing it with ruleLeft gives targetLeft
-      result = findSubstitution(targetRight, ruleRight, 'right');
-      if (result.match && result.position) {
-        const substituted = (result.position.prefix || '') + ruleLeft + (result.position.suffix || '');
-        if (substituted === targetLeft) {
-          return result;
-        }
-      }
-
-      return { match: false };
-    },
-  },
-];
 
 const ProofStep: React.FC = () => {
   const [startExpression, setStartExpression] = useState(', i \\Pu,');
@@ -265,43 +91,6 @@ const ProofStep: React.FC = () => {
     }
   };
 
-  // Check if a normalized rule matches the target using inference rules
-  // Optimized with early termination checks
-  const checkInferenceRules = (
-    targetIntegerLeft: string,
-    targetIntegerRight: string,
-    ruleIntegerLeft: string,
-    ruleIntegerRight: string
-  ): { match: boolean; inferenceRule?: string; matchPosition?: MatchPosition } => {
-    // Quick rejection: if both sides are completely different, skip inference checks
-    // (But still allow inference rules to handle transformations)
-    
-    // Try exact match first (fastest check)
-    if (targetIntegerLeft === ruleIntegerLeft && targetIntegerRight === ruleIntegerRight) {
-      return {
-        match: true,
-        inferenceRule: 'Exact Match',
-        matchPosition: {
-          side: 'both',
-          description: 'Both sides match exactly'
-        }
-      };
-    }
-
-    // Try each inference rule (ordered by likelihood/fastest checks first)
-    for (const infRule of InferenceRules) {
-      const result = infRule.check(targetIntegerLeft, targetIntegerRight, ruleIntegerLeft, ruleIntegerRight);
-      if (result.match) {
-        return {
-          match: true,
-          inferenceRule: infRule.name,
-          matchPosition: result.position
-        };
-      }
-    }
-
-    return { match: false };
-  };
 
   // Check a single rule in both directions (returns both results)
   const checkRule = (
