@@ -5,6 +5,7 @@ import { Rule, getTypeBadgeClass, axioms } from '@/data/axioms';
 import { theorems } from '@/data/theorems';
 import { normalizeRule, normalizeOperands } from '@/lib/operandNormalizer';
 import { checkInferenceRules, MatchPosition } from '@/lib/inferenceRules';
+import { checkGrammar } from '@/lib/grammarChecker';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { Play, Plus, RotateCcw, ChevronRight, AlertCircle, PartyPopper } from 'lucide-react';
@@ -23,6 +24,7 @@ interface ApplicableRule {
   rule: Rule;
   direction: 'left-to-right' | 'right-to-left';
   inferenceRule?: string;
+  grammarError?: string;
 }
 
 const ProofVerifierSection: React.FC = () => {
@@ -30,6 +32,8 @@ const ProofVerifierSection: React.FC = () => {
   const [leftSideToProve, setLeftSideToProve] = useState('');
   const [rightSideToProve, setRightSideToProve] = useState('');
   const [isProving, setIsProving] = useState(false);
+  const [leftGrammarError, setLeftGrammarError] = useState<string | null>(null);
+  const [rightGrammarError, setRightGrammarError] = useState<string | null>(null);
   
   // Proof steps
   const [proofSteps, setProofSteps] = useState<ProofStep[]>([]);
@@ -37,6 +41,7 @@ const ProofVerifierSection: React.FC = () => {
   const [applicableRules, setApplicableRules] = useState<ApplicableRule[]>([]);
   const [isSearchingRules, setIsSearchingRules] = useState(false);
   const [isProofComplete, setIsProofComplete] = useState(false);
+  const [currentGrammarError, setCurrentGrammarError] = useState<string | null>(null);
   const confettiTriggeredRef = useRef(false);
   
   // Drag state
@@ -92,6 +97,29 @@ const ProofVerifierSection: React.FC = () => {
         const targetNormalized = normalizeRule(previousExpression, currentExpression);
         const targetLeft = targetNormalized.left.integerExpression;
         const targetRight = targetNormalized.right.integerExpression;
+
+        // Check grammar first before checking inference rules
+        const targetLeftGrammar = checkGrammar(targetLeft);
+        if (!targetLeftGrammar.isValid) {
+          const errors = targetLeftGrammar.errors.map(e => e.message).join('; ');
+          setApplicableRules([{
+            rule: { id: 'grammar-error', name: 'Grammar Error', type: 'axiom', category: 'operators', description: '', leftSide: '', rightSide: '' },
+            direction: 'left-to-right',
+            grammarError: `Target left side has grammar errors: ${errors}`
+          }]);
+          return;
+        }
+
+        const targetRightGrammar = checkGrammar(targetRight);
+        if (!targetRightGrammar.isValid) {
+          const errors = targetRightGrammar.errors.map(e => e.message).join('; ');
+          setApplicableRules([{
+            rule: { id: 'grammar-error', name: 'Grammar Error', type: 'axiom', category: 'operators', description: '', leftSide: '', rightSide: '' },
+            direction: 'left-to-right',
+            grammarError: `Target right side has grammar errors: ${errors}`
+          }]);
+          return;
+        }
 
         const foundMatches: ApplicableRule[] = [];
 
@@ -177,6 +205,26 @@ const ProofVerifierSection: React.FC = () => {
   const startProving = () => {
     if (!leftSideToProve.trim() || !rightSideToProve.trim()) return;
     
+    // Check grammar before starting
+    const leftGrammar = checkGrammar(leftSideToProve);
+    const rightGrammar = checkGrammar(rightSideToProve);
+    
+    if (!leftGrammar.isValid) {
+      const errors = leftGrammar.errors.map(e => e.message).join('; ');
+      setLeftGrammarError(`Grammar errors: ${errors}`);
+      return;
+    } else {
+      setLeftGrammarError(null);
+    }
+    
+    if (!rightGrammar.isValid) {
+      const errors = rightGrammar.errors.map(e => e.message).join('; ');
+      setRightGrammarError(`Grammar errors: ${errors}`);
+      return;
+    } else {
+      setRightGrammarError(null);
+    }
+    
     setIsProving(true);
     setIsProofComplete(false);
     confettiTriggeredRef.current = false;
@@ -192,6 +240,16 @@ const ProofVerifierSection: React.FC = () => {
   const addProofStep = () => {
     if (!currentExpression.trim()) return;
     
+    // Check grammar before adding step
+    const grammar = checkGrammar(currentExpression);
+    if (!grammar.isValid) {
+      const errors = grammar.errors.map(e => e.message).join('; ');
+      setCurrentGrammarError(`Grammar errors: ${errors}`);
+      return;
+    }
+    
+    setCurrentGrammarError(null);
+    
     // Use the first applicable rule as the applied rule, or show a generic message
     const appliedRule = applicableRules.length > 0
       ? `${applicableRules[0].rule.name} (${applicableRules[0].direction === 'left-to-right' ? 'L→R' : 'R→L'}${applicableRules[0].inferenceRule ? `, ${applicableRules[0].inferenceRule}` : ''})`
@@ -206,6 +264,7 @@ const ProofVerifierSection: React.FC = () => {
     setProofSteps([...proofSteps, newStep]);
     setCurrentExpression('');
     setApplicableRules([]);
+    setCurrentGrammarError(null);
   };
 
   const handleReset = () => {
@@ -217,6 +276,9 @@ const ProofVerifierSection: React.FC = () => {
     setProofSteps([]);
     setCurrentExpression('');
     setApplicableRules([]);
+    setLeftGrammarError(null);
+    setRightGrammarError(null);
+    setCurrentGrammarError(null);
   };
 
   // Trigger confetti animation
@@ -314,11 +376,33 @@ const ProofVerifierSection: React.FC = () => {
               <SyntaxInput
                 placeholder=", i \Pu,"
                 value={leftSideToProve}
-                onChange={setLeftSideToProve}
+                onChange={(value) => {
+                  setLeftSideToProve(value);
+                  // Check grammar on change
+                  if (value.trim()) {
+                    const grammar = checkGrammar(value);
+                    if (!grammar.isValid) {
+                      const errors = grammar.errors.map(e => e.message).join('; ');
+                      setLeftGrammarError(`Grammar errors: ${errors}`);
+                    } else {
+                      setLeftGrammarError(null);
+                    }
+                  } else {
+                    setLeftGrammarError(null);
+                  }
+                }}
               />
               <div className="p-3 bg-muted/30 rounded-lg border border-border/50 min-h-[48px] flex items-center">
                 <ExpressionRenderer expression={leftSideToProve} size={20} />
               </div>
+              {leftGrammarError && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription className="text-xs">
+                    {leftGrammarError}
+                  </AlertDescription>
+                </Alert>
+              )}
             </div>
 
             {/* Equivalence Symbol */}
@@ -334,11 +418,33 @@ const ProofVerifierSection: React.FC = () => {
               <SyntaxInput
                 placeholder=", j \Pu,"
                 value={rightSideToProve}
-                onChange={setRightSideToProve}
+                onChange={(value) => {
+                  setRightSideToProve(value);
+                  // Check grammar on change
+                  if (value.trim()) {
+                    const grammar = checkGrammar(value);
+                    if (!grammar.isValid) {
+                      const errors = grammar.errors.map(e => e.message).join('; ');
+                      setRightGrammarError(`Grammar errors: ${errors}`);
+                    } else {
+                      setRightGrammarError(null);
+                    }
+                  } else {
+                    setRightGrammarError(null);
+                  }
+                }}
               />
               <div className="p-3 bg-muted/30 rounded-lg border border-border/50 min-h-[48px] flex items-center">
                 <ExpressionRenderer expression={rightSideToProve} size={20} />
               </div>
+              {rightGrammarError && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription className="text-xs">
+                    {rightGrammarError}
+                  </AlertDescription>
+                </Alert>
+              )}
             </div>
           </div>
 
@@ -346,7 +452,7 @@ const ProofVerifierSection: React.FC = () => {
           <div className="flex justify-center gap-4 mt-6">
             <Button
               onClick={startProving}
-              disabled={!leftSideToProve.trim() || !rightSideToProve.trim()}
+              disabled={!leftSideToProve.trim() || !rightSideToProve.trim() || !!leftGrammarError || !!rightGrammarError}
               className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2"
             >
               <Play className="w-4 h-4" />
@@ -427,18 +533,52 @@ const ProofVerifierSection: React.FC = () => {
                 <SyntaxInput
                   placeholder="Enter the next expression..."
                   value={currentExpression}
-                  onChange={setCurrentExpression}
+                  onChange={(value) => {
+                    setCurrentExpression(value);
+                    // Check grammar on change
+                    if (value.trim()) {
+                      const grammar = checkGrammar(value);
+                      if (!grammar.isValid) {
+                        const errors = grammar.errors.map(e => e.message).join('; ');
+                        setCurrentGrammarError(`Grammar errors: ${errors}`);
+                      } else {
+                        setCurrentGrammarError(null);
+                      }
+                    } else {
+                      setCurrentGrammarError(null);
+                    }
+                  }}
                   onPaste={(e) => {
                     e.preventDefault();
                     const pastedText = e.clipboardData.getData('text');
                     // Remove all line breaks and replace with space (or nothing)
                     const singleLineText = pastedText.replace(/\r?\n|\r/g, ' ').replace(/\s+/g, ' ').trim();
                     setCurrentExpression(singleLineText);
+                    // Check grammar after paste
+                    if (singleLineText.trim()) {
+                      const grammar = checkGrammar(singleLineText);
+                      if (!grammar.isValid) {
+                        const errors = grammar.errors.map(e => e.message).join('; ');
+                        setCurrentGrammarError(`Grammar errors: ${errors}`);
+                      } else {
+                        setCurrentGrammarError(null);
+                      }
+                    } else {
+                      setCurrentGrammarError(null);
+                    }
                   }}
                 />
                 <div className="p-2 bg-muted/30 rounded border border-border/50 min-h-[40px] flex items-center">
                   <ExpressionRenderer expression={currentExpression} size={14} />
                 </div>
+                {currentGrammarError && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription className="text-xs">
+                      {currentGrammarError}
+                    </AlertDescription>
+                  </Alert>
+                )}
               </div>
 
               {/* Applicable Rules */}
@@ -457,6 +597,15 @@ const ProofVerifierSection: React.FC = () => {
                   )}
                 </div>
                 
+                {currentExpression.trim() && !isSearchingRules && applicableRules.length > 0 && applicableRules[0].grammarError && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription className="text-xs">
+                      {applicableRules[0].grammarError}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 {currentExpression.trim() && !isSearchingRules && applicableRules.length === 0 && (
                   <Alert className="border-yellow-500/50 bg-yellow-500/10">
                     <AlertCircle className="h-4 w-4 text-yellow-500" />
@@ -472,7 +621,7 @@ const ProofVerifierSection: React.FC = () => {
                   </div>
                 )}
 
-                {applicableRules.length > 0 && (
+                {applicableRules.length > 0 && !applicableRules[0].grammarError && (
                   <ScrollArea className="h-[200px] border border-border/50 rounded-lg">
                     <div className="p-2 space-y-2">
                       {applicableRules.map((appRule, idx) => (
@@ -510,15 +659,15 @@ const ProofVerifierSection: React.FC = () => {
             
             {(!currentExpression.trim() || applicableRules.length > 0) && (
               <div className="flex justify-end mt-4">
-                <Button
-                  onClick={addProofStep}
-                  disabled={!currentExpression.trim()}
-                  size="sm"
-                  className="gap-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Step
-                </Button>
+                  <Button
+                    onClick={addProofStep}
+                    disabled={!currentExpression.trim() || !!currentGrammarError}
+                    size="sm"
+                    className="gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Step
+                  </Button>
               </div>
             )}
           </div>

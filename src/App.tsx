@@ -9,6 +9,7 @@ import Verifier from "./pages/Verifier";
 import OperandNormalizer from "./pages/OperandNormalizer";
 import ProofStep from "./pages/ProofStep";
 import Glossary from "./pages/Glossary";
+import Grammar from "./pages/Grammar";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/grammar" element={<Grammar />} />
             <Route path="/verifier" element={<Verifier />} />
             <Route path="/normalizer" element={<OperandNormalizer />} />
             <Route path="/proof-step" element={<ProofStep />} />

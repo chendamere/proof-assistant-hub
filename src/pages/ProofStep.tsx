@@ -10,6 +10,7 @@ import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { normalizeRule } from '@/lib/operandNormalizer';
 import { checkInferenceRules, MatchPosition } from '@/lib/inferenceRules';
+import { checkGrammar } from '@/lib/grammarChecker';
 import { axioms, Rule } from '@/data/axioms';
 import { theorems } from '@/data/theorems';
 import { Play, RotateCcw, CheckCircle2, XCircle, Loader2, AlertCircle, X, BookOpen } from 'lucide-react';
@@ -36,6 +37,30 @@ const ProofStep: React.FC = () => {
   const [startExpression, setStartExpression] = useState(', i \\Pu,');
   const [endExpression, setEndExpression] = useState(', j \\Pu,');
   const [isProving, setIsProving] = useState(false);
+  const [startGrammarError, setStartGrammarError] = useState<string | null>(null);
+  const [endGrammarError, setEndGrammarError] = useState<string | null>(null);
+  
+  // Check grammar on initial load
+  useEffect(() => {
+    if (startExpression.trim()) {
+      const grammar = checkGrammar(startExpression);
+      if (!grammar.isValid) {
+        const errors = grammar.errors.map(e => e.message).join('; ');
+        setStartGrammarError(`Grammar errors: ${errors}`);
+      } else {
+        setStartGrammarError(null);
+      }
+    }
+    if (endExpression.trim()) {
+      const grammar = checkGrammar(endExpression);
+      if (!grammar.isValid) {
+        const errors = grammar.errors.map(e => e.message).join('; ');
+        setEndGrammarError(`Grammar errors: ${errors}`);
+      } else {
+        setEndGrammarError(null);
+      }
+    }
+  }, []); // Only run on mount
   const [proofSteps, setProofSteps] = useState<ProofStep[]>([]);
   const [isTrue, setIsTrue] = useState<boolean | null>(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -80,6 +105,28 @@ const ProofStep: React.FC = () => {
   const totalStepsRef = useRef(0); // Total steps = allRules.length * 2 (L2R and R2L for each)
   const matchedStepRef = useRef<HTMLDivElement | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
+
+  // Check grammar on initial load
+  useEffect(() => {
+    if (startExpression.trim()) {
+      const grammar = checkGrammar(startExpression);
+      if (!grammar.isValid) {
+        const errors = grammar.errors.map(e => e.message).join('; ');
+        setStartGrammarError(`Grammar errors: ${errors}`);
+      } else {
+        setStartGrammarError(null);
+      }
+    }
+    if (endExpression.trim()) {
+      const grammar = checkGrammar(endExpression);
+      if (!grammar.isValid) {
+        const errors = grammar.errors.map(e => e.message).join('; ');
+        setEndGrammarError(`Grammar errors: ${errors}`);
+      } else {
+        setEndGrammarError(null);
+      }
+    }
+  }, []); // Only run on mount
 
   // Handle rule selection
   const handleSelectRule = (ruleId: string) => {
@@ -165,6 +212,26 @@ const ProofStep: React.FC = () => {
 
   // Perform proof step with parallel processing
   const performProof = async () => {
+    // Check grammar first
+    const startGrammar = checkGrammar(startExpression);
+    const endGrammar = checkGrammar(endExpression);
+    
+    if (!startGrammar.isValid) {
+      const errors = startGrammar.errors.map(e => e.message).join('; ');
+      setStartGrammarError(`Grammar errors: ${errors}`);
+      return;
+    } else {
+      setStartGrammarError(null);
+    }
+    
+    if (!endGrammar.isValid) {
+      const errors = endGrammar.errors.map(e => e.message).join('; ');
+      setEndGrammarError(`Grammar errors: ${errors}`);
+      return;
+    } else {
+      setEndGrammarError(null);
+    }
+    
     setIsProving(true);
     setProofSteps([]);
     setIsTrue(null);
@@ -322,6 +389,8 @@ const ProofStep: React.FC = () => {
     setElapsedTime(null);
     totalStepsRef.current = 0;
     matchedStepRef.current = null;
+    setStartGrammarError(null);
+    setEndGrammarError(null);
   };
 
   // Function to scroll to matched step within the ScrollArea
@@ -470,9 +539,31 @@ const ProofStep: React.FC = () => {
                   </label>
                   <SyntaxInput
                     value={startExpression}
-                    onChange={setStartExpression}
+                    onChange={(value) => {
+                      setStartExpression(value);
+                      // Check grammar on change
+                      if (value.trim()) {
+                        const grammar = checkGrammar(value);
+                        if (!grammar.isValid) {
+                          const errors = grammar.errors.map(e => e.message).join('; ');
+                          setStartGrammarError(`Grammar errors: ${errors}`);
+                        } else {
+                          setStartGrammarError(null);
+                        }
+                      } else {
+                        setStartGrammarError(null);
+                      }
+                    }}
                     placeholder=", i \\Pu,"
                   />
+                  {startGrammarError && (
+                    <Alert variant="destructive" className="mt-2">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription className="text-xs">
+                        {startGrammarError}
+                      </AlertDescription>
+                    </Alert>
+                  )}
                 </div>
                 <div>
                   <label className="text-xs text-muted-foreground mb-1.5 block">
@@ -480,16 +571,38 @@ const ProofStep: React.FC = () => {
                   </label>
                   <SyntaxInput
                     value={endExpression}
-                    onChange={setEndExpression}
+                    onChange={(value) => {
+                      setEndExpression(value);
+                      // Check grammar on change
+                      if (value.trim()) {
+                        const grammar = checkGrammar(value);
+                        if (!grammar.isValid) {
+                          const errors = grammar.errors.map(e => e.message).join('; ');
+                          setEndGrammarError(`Grammar errors: ${errors}`);
+                        } else {
+                          setEndGrammarError(null);
+                        }
+                      } else {
+                        setEndGrammarError(null);
+                      }
+                    }}
                     placeholder=", j \\Pu,"
                   />
+                  {endGrammarError && (
+                    <Alert variant="destructive" className="mt-2">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription className="text-xs">
+                        {endGrammarError}
+                      </AlertDescription>
+                    </Alert>
+                  )}
                 </div>
                 <div className="flex gap-2">
                   {!isProving ? (
                     <>
                       <Button
                         onClick={performProof}
-                        disabled={!startExpression.trim() || !endExpression.trim()}
+                        disabled={!startExpression.trim() || !endExpression.trim() || !!startGrammarError || !!endGrammarError}
                         className="flex-1 gap-2"
                       >
                         <Play className="w-4 h-4" />
