@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, CheckSquare, Hash, GitBranch, Book, FileText } from 'lucide-react';
+import { BookOpen, CheckSquare, Hash, GitBranch, Book, FileText, Bug } from 'lucide-react';
 
 interface NavItem {
   path: string;
@@ -16,6 +16,7 @@ const Navigation: React.FC = () => {
     { path: '/grammar', label: 'Grammar', icon: <FileText className="w-4 h-4" /> },
     { path: '/normalizer', label: 'Normalizer', icon: <Hash className="w-4 h-4" /> },
     { path: '/proof-step', label: 'Proof Step', icon: <GitBranch className="w-4 h-4" /> },
+    { path: '/subexpressions-debug', label: 'Subexpr Debug', icon: <Bug className="w-4 h-4" /> },
     { path: '/glossary', label: 'Glossary', icon: <Book className="w-4 h-4" /> },
     { path: '/verifier', label: 'Verifier', icon: <CheckSquare className="w-4 h-4" /> }
   ];

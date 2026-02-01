@@ -85,7 +85,7 @@ export const InferenceRules: InferenceRule[] = [
   },
   {
     name: 'Equivalent Substitution',
-    description: 'A ⟺ B allows replacing A with B in any context M·A·N → M·B·N',
+    description: 'A ⟺ B allows inserting A with B in any context M·A·N ⟺ M·B·N',
     check: (targetLeft, targetRight, ruleLeft, ruleRight) => {
       // Strategy: Operand-Aligned Pattern Matching with Pattern Recognition
       // Extract operand patterns and match patterns rather than exact numbers to handle

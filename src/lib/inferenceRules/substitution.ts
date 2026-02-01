@@ -202,7 +202,6 @@ export const findSubstitution = function findSubstitutionRecursive(
     // ruleSide has operators but no operands - use normalized spacing matching
     const normalizedRule = normalizeSpacing(ruleSide);
     const normalizedTarget = normalizeSpacing(target);
-    
     // Check if normalized rule matches normalized target exactly
     if (normalizedRule === normalizedTarget) {
       return {
@@ -235,28 +234,6 @@ export const findSubstitution = function findSubstitutionRecursive(
       };
     }
     
-    // If exact match fails, try matching with normalization
-    // Find where the normalized rule could match in the normalized target
-    if (normalizedTarget === normalizedRule) {
-      // The entire target matches the rule after normalization
-      // Find a reasonable position (usually 0 for simple cases)
-      return {
-        match: true,
-        position: {
-          side: side,
-          position: 0,
-          description: `Rule (operators only) matches after normalization in ${side} side`,
-          prefix: undefined,
-          suffix: undefined,
-        }
-      };
-    }
-    
-    return { match: false };
-  }
-
-  // If ruleSide has more operands than target, no match possible
-  if (ruleTokens.length > targetTokens.length) {
     return { match: false };
   }
 

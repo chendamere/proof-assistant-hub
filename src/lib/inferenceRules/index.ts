@@ -15,6 +15,12 @@ export type { MatchPosition, InferenceRule } from './types';
 // Re-export rules
 export { InferenceRules } from './rules';
 
+// Re-export subexpression generation
+export { generateSubexpressions } from './subexpressions';
+
+// Re-export branch tree formatting for terminal display
+export { formatBranchTree, logBranchTree } from './branchTreeFormat';
+
 /**
  * Check if a normalized rule matches the target using inference rules
  * 
