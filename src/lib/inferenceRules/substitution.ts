@@ -1,9 +1,16 @@
 /**
  * Substitution logic for inference rules
+ * Uses DAG isomorphism (VF2) for rule applicability after operand normalization.
+ * A single VF2 pass on the full target finds the match and operand mapping.
  */
 
 import { MatchPosition } from './types';
-import { normalizeSpacing, extractOperandTokens, extractOperandPattern, buildOperandMapping } from './utils';
+import { normalizeSpacing, extractOperandTokens, extractOperandPattern } from './utils';
+import {
+  exprToDAGPattern,
+  exprToDAGTarget,
+  vf2ExprSubgraphIsomorphism,
+} from '../dag';
 
 /**
  * Convert ruleOtherSide using operand mapping
@@ -173,14 +180,15 @@ export const convertRuleOtherSide = (
 };
 
 /**
- * Find substitution match in target expression
+ * Find substitution match in target expression using DAG isomorphism.
+ * Rule applicability after operand normalization is equivalent to DAG isomorphism:
+ * the rule matches if its expression DAG is isomorphic to a subgraph of the target's DAG.
  */
 export const findSubstitution = function findSubstitutionRecursive(
-  target: string, 
-  ruleSide: string, 
+  target: string,
+  ruleSide: string,
   side: 'left' | 'right'
 ): { match: boolean; position?: MatchPosition } {
-  const targetTokens = extractOperandTokens(target);
   const ruleTokens = extractOperandTokens(ruleSide);
 
   // Handle case where ruleSide has no operands (empty or operators only)
@@ -195,14 +203,13 @@ export const findSubstitution = function findSubstitutionRecursive(
           description: `Empty rule found in ${side} side`,
           prefix: undefined,
           suffix: target || undefined,
-        }
+        },
       };
     }
-    
+
     // ruleSide has operators but no operands - use normalized spacing matching
     const normalizedRule = normalizeSpacing(ruleSide);
     const normalizedTarget = normalizeSpacing(target);
-    // Check if normalized rule matches normalized target exactly
     if (normalizedRule === normalizedTarget) {
       return {
         match: true,
@@ -212,144 +219,113 @@ export const findSubstitution = function findSubstitutionRecursive(
           description: `Rule (operators only) matches exactly in ${side} side`,
           prefix: undefined,
           suffix: undefined,
-        }
+        },
       };
     }
-    
-    // Try exact string matching as fallback
+
     const index = target.indexOf(ruleSide);
     if (index !== -1) {
-      const prefix = target.substring(0, index);
-      const suffix = target.substring(index + ruleSide.length);
-      
       return {
         match: true,
         position: {
           side: side,
           position: index,
           description: `Rule (operators only, no operands) found at position ${index} in ${side} side`,
-          prefix: prefix || undefined,
-          suffix: suffix || undefined,
-        }
+          prefix: target.substring(0, index) || undefined,
+          suffix: target.substring(index + ruleSide.length) || undefined,
+        },
       };
     }
-    
+
     return { match: false };
   }
 
-  // Extract rule pattern once (pattern caching optimization)
-  const { pattern: rulePattern, operandToVar: ruleOperandToVar } = extractOperandPattern(ruleSide, ruleTokens);
+  const normalizedTarget = normalizeSpacing(target);
+  const normalizedRule = normalizeSpacing(ruleSide);
 
-  // Try each operand-aligned starting position in target
-  for (let startIdx = 0; startIdx <= targetTokens.length - ruleTokens.length; startIdx++) {
-    // Extract the substring that spans from the start operand to the end operand
-    const startToken = targetTokens[startIdx];
-    const endTokenIdx = startIdx + ruleTokens.length - 1;
-    const endToken = targetTokens[endTokenIdx];
-    
-    // Extend candidate boundaries to include surrounding characters (commas, operators, etc.)
-    // that match the rule side structure. The rule side may have commas before the first token
-    // and after the last token that need to be included in the candidate.
-    let candidateStart = startToken.index;
-    let candidateEnd = endToken.endIndex;
-    
-    // Try to extend backwards to include leading comma/operators if rule side starts with comma
-    const ruleTrimmed = ruleSide.trim();
-    if (ruleTrimmed.startsWith(',')) {
-      // Look backwards from candidateStart to find the preceding comma
-      // Continue through operators (backslashes and letters) and whitespace
-      for (let i = candidateStart - 1; i >= 0; i--) {
-        const char = target[i];
-        if (char === ',') {
-          candidateStart = i;
-          break;
-        } else if (/\s/.test(char)) {
-          // Continue through whitespace
-          continue;
-        } else if (char === '\\' || /[a-zA-Z]/.test(char)) {
-          // Continue through operators (backslash and letters like \Og, \Os, etc.)
-          continue;
-        } else {
-          // Hit something else, stop
-          break;
-        }
-      }
-    }
-    
-    // Try to extend forwards to include trailing comma/operators if rule side ends with comma
-    if (ruleTrimmed.endsWith(',')) {
-      // Look forwards from candidateEnd to find the following comma
-      // Continue through operators (backslashes and letters) and whitespace
-      for (let i = candidateEnd; i < target.length; i++) {
-        const char = target[i];
-        if (char === ',') {
-          candidateEnd = i + 1;
-          break;
-        } else if (/\s/.test(char)) {
-          // Continue through whitespace
-          continue;
-        } else if (char === '\\' || /[a-zA-Z]/.test(char)) {
-          // Continue through operators (backslash and letters like \Og, \Os, etc.)
-          continue;
-        } else {
-          // Hit something else, stop
-          break;
-        }
-      }
-    }
-    
-    const candidate = target.substring(candidateStart, candidateEnd);
-    let prefix = target.substring(0, candidateStart);
-    let suffix = target.substring(candidateEnd);
-    
-    // Special handling: if candidate starts with comma and we're replacing with empty/comma-only,
-    // we may need to preserve the comma structure. But actually, the prefix should already
-    // be correct - if candidate starts at a comma, that comma is part of what we're removing.
-    // The issue might be that we need to check if prefix ends with the right structure.
-
-    // Fast path: try exact string match first (very fast, O(1) for many cases)
-    // Normalize spacing to handle spacing variations
-    if (normalizeSpacing(candidate) === normalizeSpacing(ruleSide)) {
-      return {
-        match: true,
-        position: {
-          side: side,
-          position: candidateStart,
-          description: `Rule found at operand-aligned position ${startIdx} in ${side} side`,
-          prefix: prefix || undefined,
-          suffix: suffix || undefined,
-          wasPatternMatch: false,
-        }
-      };
-    }
-
-    // Pattern matching: extract candidate pattern and compare with rule pattern
-    const candidateTokens = extractOperandTokens(candidate);
-    if (candidateTokens.length === ruleTokens.length) {
-      const { pattern: candidatePattern } = extractOperandPattern(candidate, candidateTokens);
-      
-      // Patterns match if they have the same structure (same pattern variables in same positions)
-      if (normalizeSpacing(candidatePattern) === normalizeSpacing(rulePattern)) {
-        // Build operand mapping from ruleSide to candidate
-        const operandMapping = buildOperandMapping(ruleTokens, candidateTokens, ruleOperandToVar);
-        
-        return {
-          match: true,
-          position: {
-            side: side,
-            position: candidateStart,
-            description: `Rule found at operand-aligned position ${startIdx} (pattern match) in ${side} side`,
-            prefix: prefix || undefined,
-            suffix: suffix || undefined,
-            operandMapping: operandMapping,
-            wasPatternMatch: true,
-          }
-        };
-      }
-    }
+  // Fast path: exact string match
+  if (normalizedTarget === normalizedRule) {
+    return {
+      match: true,
+      position: {
+        side,
+        position: 0,
+        description: `Rule matches exactly in ${side} side`,
+        prefix: undefined,
+        suffix: undefined,
+        wasPatternMatch: false,
+      },
+    };
   }
 
-  return { match: false };
+  const ruleIndex = target.indexOf(ruleSide.trim());
+  if (ruleIndex !== -1) {
+    return {
+      match: true,
+      position: {
+        side,
+        position: ruleIndex,
+        description: `Rule found at position ${ruleIndex} in ${side} side`,
+        prefix: target.substring(0, ruleIndex) || undefined,
+        suffix: target.substring(ruleIndex + ruleSide.trim().length) || undefined,
+        wasPatternMatch: false,
+      },
+    };
+  }
+
+  // DAG isomorphism: single pass on full target
+  const patternDAG = exprToDAGPattern(ruleSide);
+  const targetDAG = exprToDAGTarget(normalizedTarget);
+
+  if (patternDAG.nodes.length === 0 || patternDAG.nodes.length > targetDAG.nodes.length) {
+    return { match: false };
+  }
+
+  const result = vf2ExprSubgraphIsomorphism(patternDAG, targetDAG);
+  if (result === null) {
+    return { match: false };
+  }
+
+  // Get match region from matched target nodes' positions
+  let candidateStart = target.length;
+  let candidateEnd = 0;
+  const tNodeMap = new Map(targetDAG.nodes.map((n) => [n.id, n]));
+  for (const targetId of result.mapping.values()) {
+    const node = tNodeMap.get(targetId);
+    const data = node?.data as { start?: number; end?: number } | undefined;
+    if (data?.start != null) candidateStart = Math.min(candidateStart, data.start);
+    if (data?.end != null) candidateEnd = Math.max(candidateEnd, data.end);
+  }
+
+  if (candidateStart >= candidateEnd) {
+    return { match: false };
+  }
+
+  // Positions are in normalized target (DAG built from it)
+  const prefix = normalizedTarget.substring(0, candidateStart);
+  const suffix = normalizedTarget.substring(candidateEnd);
+
+  const { operandToVar: ruleOperandToVar } = extractOperandPattern(ruleSide, ruleTokens);
+  const operandMapping = new Map<string, string>();
+  ruleTokens.forEach((rt) => {
+    const ruleVar = ruleOperandToVar.get(rt.token);
+    if (ruleVar && result.operandMapping.has(ruleVar)) {
+      operandMapping.set(rt.token, result.operandMapping.get(ruleVar)!);
+    }
+  });
+
+  return {
+    match: true,
+    position: {
+      side,
+      position: candidateStart,
+      description: `Rule found (DAG isomorphism) in ${side} side`,
+      prefix: prefix || undefined,
+      suffix: suffix || undefined,
+      operandMapping: operandMapping.size > 0 ? operandMapping : undefined,
+      wasPatternMatch: true,
+    },
+  };
 };
 
 /**

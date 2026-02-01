@@ -6,7 +6,7 @@
  */
 
 import { normalizeRule } from '../src/lib/operandNormalizer.ts';
-import { checkInferenceRules } from '../src/lib/inferenceRules.ts';
+import { checkInferenceRules } from '../src/lib/inferenceRules';
 
 // Test case
 const targetLeft = ",x \\Op ,x \\Od y, a \\Oc b,";
