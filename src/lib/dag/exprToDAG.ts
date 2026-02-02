@@ -6,7 +6,6 @@
 
 import type { DAGStructure, DAGNode, DAGEdge, ExprNodeData } from './types';
 import { normalizeSpacing } from '../inferenceRules/utils';
-import { extractOperandPattern, extractOperandTokens } from '../inferenceRules/utils';
 
 function parseOneBraced(expr: string, pos: number): { content: string; end: number } | null {
   if (pos >= expr.length || expr[pos] !== '{') return null;
@@ -136,7 +135,6 @@ function parseBranchAtStart(
 /** Recursively build DAG. Handles branch when expr is solely \Bb, \Blb, or \Brb. */
 function buildDAGRec(
   expr: string,
-  usePatternVars: boolean,
   nodes: DAGNode<ExprNodeData>[],
   edges: DAGEdge[],
   nextId: { n: number }
@@ -154,7 +152,7 @@ function buildDAGRec(
     const topNodes: DAGNode<ExprNodeData>[] = [];
     const topEdges: DAGEdge[] = [];
     const topNextId = { n: 0 };
-    buildDAGRec(branch.top, usePatternVars, topNodes, topEdges, topNextId);
+    buildDAGRec(branch.top, topNodes, topEdges, topNextId);
     const topRoot = topNodes[0]?.id;
     if (topRoot) {
       const offset = nextId.n;
@@ -172,7 +170,7 @@ function buildDAGRec(
     const bottomNodes: DAGNode<ExprNodeData>[] = [];
     const bottomEdges: DAGEdge[] = [];
     const bottomNextId = { n: 0 };
-    buildDAGRec(branch.bottom, usePatternVars, bottomNodes, bottomEdges, bottomNextId);
+    buildDAGRec(branch.bottom, bottomNodes, bottomEdges, bottomNextId);
     const bottomRoot = bottomNodes[0]?.id;
     if (bottomRoot) {
       const offset = nextId.n;
@@ -193,11 +191,7 @@ function buildDAGRec(
   for (let i = 0; i < ops.length; i++) {
     const o = ops[i];
     const nodeId = `n${nextId.n++}`;
-    const data: ExprNodeData = { op: o.op, operands: [...o.operands] };
-    if (!usePatternVars) {
-      data.start = o.start;
-      data.end = o.end;
-    }
+    const data: ExprNodeData = { op: o.op, operands: [...o.operands], start: o.start, end: o.end };
     nodes.push({ id: nodeId, data });
     if (i > 0) {
       edges.push({ from: `n${nextId.n - 2}`, to: nodeId });
@@ -206,12 +200,11 @@ function buildDAGRec(
 }
 
 /**
- * Convert expression to DAG. Uses operand pattern (A,B,C) for rules, raw operands for targets.
+ * Convert expression to DAG.
  * Bb, Blb, Brb are nodes with two outgoing edges (to top and bottom arms).
- * @param expr - Normalized expression (integers or variables)
- * @param usePatternVars - If true, replace operands with A,B,C for pattern matching
+ * @param expr - Expression (already in pattern form A,B,C for rules, or integers for target)
  */
-export function exprToDAG(expr: string, usePatternVars = false): DAGStructure<ExprNodeData> {
+export function exprToDAG(expr: string): DAGStructure<ExprNodeData> {
   const normalized = normalizeSpacing(expr);
   const nodes: DAGNode<ExprNodeData>[] = [];
   const edges: DAGEdge[] = [];
@@ -220,28 +213,7 @@ export function exprToDAG(expr: string, usePatternVars = false): DAGStructure<Ex
     return { nodes, edges };
   }
 
-  let exprForOps = normalized;
-  if (usePatternVars) {
-    const tokens = extractOperandTokens(normalized);
-    const { pattern } = extractOperandPattern(normalized, tokens);
-    exprForOps = pattern;
-  }
-
-  buildDAGRec(exprForOps, usePatternVars, nodes, edges, { n: 0 });
+  buildDAGRec(normalized, nodes, edges, { n: 0 });
 
   return { nodes, edges };
-}
-
-/**
- * Convert expression to DAG using integer operands (for target).
- */
-export function exprToDAGTarget(expr: string): DAGStructure<ExprNodeData> {
-  return exprToDAG(expr, false);
-}
-
-/**
- * Convert expression to DAG using pattern variables A,B,C (for rule pattern).
- */
-export function exprToDAGPattern(expr: string): DAGStructure<ExprNodeData> {
-  return exprToDAG(expr, true);
 }

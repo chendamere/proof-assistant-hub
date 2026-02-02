@@ -1,6 +1,6 @@
 /**
  * VF2 subgraph isomorphism for expression DAGs with variable operand binding.
- * Pattern operands (A, B, C) match target operands (1, 2, 3) with consistent binding.
+ * Pattern (rule) operands (i, m, j, etc.) match target operands (1, 2, 3) with consistent binding.
  */
 
 import type { DAGStructure, ExprNodeData } from './types';
@@ -26,15 +26,12 @@ function buildAdjacency(structure: DAGStructure): {
   return { outgoing, incoming };
 }
 
-/** Single uppercase letter = pattern variable */
-function isPatternVariable(s: string): boolean {
-  return /^[A-Z]$/.test(s);
-}
-
+/** Pattern operands bind to target operands. One-to-one: each rule operand -> unique target operand, each target operand -> at most one rule operand. */
 function exprDataMatches(
   pData: ExprNodeData,
   tData: ExprNodeData,
-  varToTarget: Map<string, string>
+  varToTarget: Map<string, string>,
+  targetToVar: Map<string, string>
 ): boolean {
   if (pData.op !== tData.op) return false;
   if (pData.operands.length !== tData.operands.length) return false;
@@ -42,14 +39,12 @@ function exprDataMatches(
   for (let i = 0; i < pData.operands.length; i++) {
     const pOp = pData.operands[i];
     const tOp = tData.operands[i];
-    if (isPatternVariable(pOp)) {
-      if (varToTarget.has(pOp)) {
-        if (varToTarget.get(pOp) !== tOp) return false;
-      } else {
-        varToTarget.set(pOp, tOp);
-      }
+    if (varToTarget.has(pOp)) {
+      if (varToTarget.get(pOp) !== tOp) return false;
     } else {
-      if (pOp !== tOp) return false;
+      if (targetToVar.has(tOp) && targetToVar.get(tOp) !== pOp) return false;
+      varToTarget.set(pOp, tOp);
+      targetToVar.set(tOp, pOp);
     }
   }
   return true;
@@ -78,6 +73,7 @@ export function vf2ExprSubgraphIsomorphism(
   const mapping = new Map<string, string>();
   const reverseMapping = new Map<string, string>();
   const varToTarget = new Map<string, string>();
+  const targetToVar = new Map<string, string>();
 
   function feasible(p: string, t: string): boolean {
     const pNode = pNodeMap.get(p)!;
@@ -86,9 +82,12 @@ export function vf2ExprSubgraphIsomorphism(
     const tData = tNode.data as ExprNodeData;
 
     const savedVar = new Map(varToTarget);
-    if (!exprDataMatches(pData, tData, varToTarget)) {
+    const savedTarget = new Map(targetToVar);
+    if (!exprDataMatches(pData, tData, varToTarget, targetToVar)) {
       varToTarget.clear();
+      targetToVar.clear();
       savedVar.forEach((v, k) => varToTarget.set(k, v));
+      savedTarget.forEach((v, k) => targetToVar.set(k, v));
       return false;
     }
 
@@ -100,17 +99,23 @@ export function vf2ExprSubgraphIsomorphism(
     const isLeaf = pOut === 0;
     if (isRoot && pOut !== tOut) {
       varToTarget.clear();
+      targetToVar.clear();
       savedVar.forEach((v, k) => varToTarget.set(k, v));
+      savedTarget.forEach((v, k) => targetToVar.set(k, v));
       return false;
     }
     if (isLeaf && pIn !== tIn) {
       varToTarget.clear();
+      targetToVar.clear();
       savedVar.forEach((v, k) => varToTarget.set(k, v));
+      savedTarget.forEach((v, k) => targetToVar.set(k, v));
       return false;
     }
     if (!isRoot && !isLeaf && (pOut !== tOut || pIn !== tIn)) {
       varToTarget.clear();
+      targetToVar.clear();
       savedVar.forEach((v, k) => varToTarget.set(k, v));
+      savedTarget.forEach((v, k) => targetToVar.set(k, v));
       return false;
     }
 
@@ -119,7 +124,9 @@ export function vf2ExprSubgraphIsomorphism(
         const t2 = mapping.get(p2)!;
         if (!tAdj.outgoing.get(t)?.has(t2)) {
           varToTarget.clear();
+          targetToVar.clear();
           savedVar.forEach((v, k) => varToTarget.set(k, v));
+          savedTarget.forEach((v, k) => targetToVar.set(k, v));
           return false;
         }
       }
@@ -129,7 +136,9 @@ export function vf2ExprSubgraphIsomorphism(
         const t1 = mapping.get(p1)!;
         if (!tAdj.incoming.get(t)?.has(t1)) {
           varToTarget.clear();
+          targetToVar.clear();
           savedVar.forEach((v, k) => varToTarget.set(k, v));
+          savedTarget.forEach((v, k) => targetToVar.set(k, v));
           return false;
         }
       }
@@ -158,19 +167,6 @@ export function vf2ExprSubgraphIsomorphism(
 
   if (!search()) return null;
 
-  // Build operand mapping: pattern uses A,B,C; we need rule operand -> target operand
-  // The pattern was built from rule with extractOperandPattern, so A,B,C map to rule operands in first-occurrence order
-  // We need rule operand (e.g. "i", "m") -> target operand (e.g. "1", "2")
-  // The varToTarget has A->1, B->2, etc. The rule's operandToVar has i->A, m->B.
-  // So we need the reverse: for each rule operand, get its var, then get target from varToTarget
-  // But we don't have rule operandToVar here - we only have the pattern. The operand mapping
-  // is built from the pattern's A,B,C to target's 1,2,3. The caller (findSubstitution) has
-  // ruleTokens and ruleOperandToVar. So we return varToTarget (A->1, B->2) and the caller
-  // can build ruleOperand->targetOperand using ruleOperandToVar.
-  const operandMapping = new Map<string, string>();
-  varToTarget.forEach((targetOp, varOp) => {
-    operandMapping.set(varOp, targetOp);
-  });
-
-  return { mapping, operandMapping };
+  // operandMapping: rule operand (e.g. "i", "m") -> target operand (e.g. "1", "2")
+  return { mapping, operandMapping: new Map(varToTarget) };
 }

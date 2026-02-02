@@ -3,6 +3,6 @@
  */
 
 export type { DAGNode, DAGEdge, DAGStructure, DAGValidationResult, ExprNodeData } from './types';
-export { exprToDAG, exprToDAGTarget, exprToDAGPattern } from './exprToDAG';
+export { exprToDAG } from './exprToDAG';
 export { vf2SubgraphIsomorphism, isSubgraphIsomorphic } from './vf2';
 export { vf2ExprSubgraphIsomorphism } from './vf2Expr';

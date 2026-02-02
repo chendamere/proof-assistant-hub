@@ -5,12 +5,8 @@
  */
 
 import { MatchPosition } from './types';
-import { normalizeSpacing, extractOperandTokens, extractOperandPattern } from './utils';
-import {
-  exprToDAGPattern,
-  exprToDAGTarget,
-  vf2ExprSubgraphIsomorphism,
-} from '../dag';
+import { normalizeSpacing, extractOperandTokens } from './utils';
+import { exprToDAG, vf2ExprSubgraphIsomorphism } from '../dag';
 
 /**
  * Convert ruleOtherSide using operand mapping
@@ -243,39 +239,9 @@ export const findSubstitution = function findSubstitutionRecursive(
   const normalizedTarget = normalizeSpacing(target);
   const normalizedRule = normalizeSpacing(ruleSide);
 
-  // Fast path: exact string match
-  if (normalizedTarget === normalizedRule) {
-    return {
-      match: true,
-      position: {
-        side,
-        position: 0,
-        description: `Rule matches exactly in ${side} side`,
-        prefix: undefined,
-        suffix: undefined,
-        wasPatternMatch: false,
-      },
-    };
-  }
-
-  const ruleIndex = target.indexOf(ruleSide.trim());
-  if (ruleIndex !== -1) {
-    return {
-      match: true,
-      position: {
-        side,
-        position: ruleIndex,
-        description: `Rule found at position ${ruleIndex} in ${side} side`,
-        prefix: target.substring(0, ruleIndex) || undefined,
-        suffix: target.substring(ruleIndex + ruleSide.trim().length) || undefined,
-        wasPatternMatch: false,
-      },
-    };
-  }
-
-  // DAG isomorphism: single pass on full target
-  const patternDAG = exprToDAGPattern(ruleSide);
-  const targetDAG = exprToDAGTarget(normalizedTarget);
+  // DAG isomorphism: single pass on full target. Rule DAG uses original operands (i, m, j).
+  const patternDAG = exprToDAG(normalizedRule);
+  const targetDAG = exprToDAG(normalizedTarget);
 
   if (patternDAG.nodes.length === 0 || patternDAG.nodes.length > targetDAG.nodes.length) {
     return { match: false };
@@ -305,14 +271,8 @@ export const findSubstitution = function findSubstitutionRecursive(
   const prefix = normalizedTarget.substring(0, candidateStart);
   const suffix = normalizedTarget.substring(candidateEnd);
 
-  const { operandToVar: ruleOperandToVar } = extractOperandPattern(ruleSide, ruleTokens);
-  const operandMapping = new Map<string, string>();
-  ruleTokens.forEach((rt) => {
-    const ruleVar = ruleOperandToVar.get(rt.token);
-    if (ruleVar && result.operandMapping.has(ruleVar)) {
-      operandMapping.set(rt.token, result.operandMapping.get(ruleVar)!);
-    }
-  });
+  // result.operandMapping already maps rule operand -> target operand
+  const operandMapping = result.operandMapping.size > 0 ? result.operandMapping : undefined;
 
   return {
     match: true,
@@ -322,7 +282,7 @@ export const findSubstitution = function findSubstitutionRecursive(
       description: `Rule found (DAG isomorphism) in ${side} side`,
       prefix: prefix || undefined,
       suffix: suffix || undefined,
-      operandMapping: operandMapping.size > 0 ? operandMapping : undefined,
+      operandMapping,
       wasPatternMatch: true,
     },
   };

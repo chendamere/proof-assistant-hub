@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PanelProvider } from "@/contexts/PanelContext";
 import Index from "./pages/Index";
 import Verifier from "./pages/Verifier";
-import OperandNormalizer from "./pages/OperandNormalizer";
 import ProofStep from "./pages/ProofStep";
 import SubstitutionDAGDemo from "./pages/SubstitutionDAGDemo";
 import Glossary from "./pages/Glossary";
@@ -26,7 +25,6 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/grammar" element={<Grammar />} />
             <Route path="/verifier" element={<Verifier />} />
-            <Route path="/normalizer" element={<OperandNormalizer />} />
             <Route path="/proof-step" element={<ProofStep />} />
             <Route path="/substitution-dag" element={<SubstitutionDAGDemo />} />
             <Route path="/glossary" element={<Glossary />} />

@@ -7,14 +7,13 @@
 import { useState } from 'react';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
-import { exprToDAGPattern, exprToDAGTarget, vf2ExprSubgraphIsomorphism } from '@/lib/dag';
+import { exprToDAG, vf2ExprSubgraphIsomorphism } from '@/lib/dag';
 import { findSubstitution as findSubst } from '@/lib/inferenceRules/substitution';
 import { normalizeSpacing } from '@/lib/inferenceRules/utils';
 import { DAGGraphVisual } from '@/components/dag/DAGGraphVisual';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 const DEMO_TARGET = ', 1 \\Oc 2, 2 \\Os, 3 \\Od 4,';
@@ -25,8 +24,8 @@ export default function SubstitutionDAGDemo() {
   const [ruleExpr, setRuleExpr] = useState(DEMO_RULE);
 
   const normalizedTarget = normalizeSpacing(targetExpr);
-  const patternDAG = exprToDAGPattern(ruleExpr);
-  const targetDAG = exprToDAGTarget(normalizedTarget);
+  const patternDAG = exprToDAG(ruleExpr);
+  const targetDAG = exprToDAG(normalizedTarget);
 
   // Try to find substitution match in target
   const subResult = findSubst(normalizedTarget, ruleExpr, 'left');
@@ -34,7 +33,7 @@ export default function SubstitutionDAGDemo() {
 
   // For display: try DAG on a candidate substring
   const candidate = ', 1 \\Oc 2, 2 \\Os,'; // typical candidate
-  const candidateDAG = exprToDAGTarget(candidate);
+  const candidateDAG = exprToDAG(candidate);
   const vf2Result = vf2ExprSubgraphIsomorphism(patternDAG, candidateDAG);
 
   return (
@@ -54,7 +53,7 @@ export default function SubstitutionDAGDemo() {
         <Card>
           <CardHeader>
             <CardTitle>Rule (Pattern)</CardTitle>
-            <CardDescription>Expression from the inference rule (operands → A, B, C)</CardDescription>
+            <CardDescription>Expression from the inference rule (original operands i, m, j)</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
@@ -141,7 +140,7 @@ export default function SubstitutionDAGDemo() {
             <li><strong>Expression → DAG:</strong> Each operation (\Oc, \Od, \Os, etc.) becomes a node. Operands are stored in node data.</li>
             <li><strong>Sequential edges:</strong> Operations in a comma-separated list form a chain (op₁→op₂→op₃).</li>
             <li><strong>Bb, Blb, Brb:</strong> Branch operators have two outgoing edges to the top and bottom arms.</li>
-            <li><strong>VF2:</strong> Subgraph isomorphism with variable binding—pattern operands (A, B, C) match target operands (1, 2, 3) consistently.</li>
+            <li><strong>VF2:</strong> Subgraph isomorphism with variable binding—rule operands (i, m, j) match target operands (1, 2, 3) consistently.</li>
           </ul>
         </CardContent>
       </Card>

@@ -31,12 +31,6 @@ const Footer: React.FC = () => {
               Introduction
             </Link>
             <Link 
-              to="/normalizer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Operand Normalizer
-            </Link>
-            <Link 
               to="/proof-step"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >

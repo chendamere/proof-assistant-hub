@@ -2,7 +2,7 @@ import React from 'react';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import NodeDiagram from '@/components/visuals/NodeDiagram';
 import TreeStructureDiagram from '@/components/visuals/TreeStructureDiagram';
-import { BookOpen, ExternalLink, Hash, GitBranch, Play } from 'lucide-react';
+import { BookOpen, ExternalLink, GitBranch, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
@@ -213,12 +213,6 @@ const IntroductionSection: React.FC = () => {
             </svg>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link to="/normalizer">
-              <Button variant="outline" className="gap-2">
-                <Hash className="w-4 h-4" />
-                Operand Normalizer
-              </Button>
-            </Link>
             <Link to="/proof-step">
               <Button variant="outline" className="gap-2">
                 <GitBranch className="w-4 h-4" />
