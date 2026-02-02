@@ -98,9 +98,9 @@ function parseBranchAtStart(
   expr: string
 ): { kind: 'Bb' | 'Blb' | 'Brb'; cond?: string; top: string; bottom: string } | null {
   const trimmed = expr.trim();
-  const bb = trimmed.match(/^\s*\\Bb\s*\{/);
-  const blb = trimmed.match(/^\s*\\Blb\s*\{/);
-  const brb = trimmed.match(/^\s*\\Brb\s*\{/);
+  const bb = trimmed.match(/^[\s,]*\\Bb\s*\{/);
+  const blb = trimmed.match(/^[\s,]*\\Blb\s*\{/);
+  const brb = trimmed.match(/^[\s,]*\\Brb\s*\{/);
 
   const candidates: { m: RegExpMatchArray; kind: 'Bb' | 'Blb' | 'Brb' }[] = [];
   if (bb) candidates.push({ m: bb, kind: 'Bb' });
@@ -132,71 +132,83 @@ function parseBranchAtStart(
   return { kind, top: topRes.content, bottom: bottomRes.content };
 }
 
-/** Recursively build DAG. Handles branch when expr is solely \Bb, \Blb, or \Brb. */
+/** Result of building a sub-DAG: first and last node ids for chaining. */
+type BuildResult = { firstId: string; lastId: string } | null;
+
+/** Recursively build DAG. Returns { firstId, lastId } for chaining. */
 function buildDAGRec(
   expr: string,
   nodes: DAGNode<ExprNodeData>[],
   edges: DAGEdge[],
   nextId: { n: number }
-): void {
+): BuildResult {
   const trimmed = expr.trim();
-  if (!trimmed) return;
+  if (!trimmed) return null;
 
   const branch = parseBranchAtStart(trimmed);
   if (branch) {
-    const branchId = `n${nextId.n++}`;
     const opFull = branch.kind === 'Bb' ? '\\Bb' : branch.kind === 'Blb' ? '\\Blb' : '\\Brb';
-    const operands = branch.cond ? [branch.cond] : [];
-    nodes.push({ id: branchId, data: { op: opFull, operands } });
 
-    const topNodes: DAGNode<ExprNodeData>[] = [];
-    const topEdges: DAGEdge[] = [];
-    const topNextId = { n: 0 };
-    buildDAGRec(branch.top, topNodes, topEdges, topNextId);
-    const topRoot = topNodes[0]?.id;
-    if (topRoot) {
-      const offset = nextId.n;
-      topNodes.forEach((n) => nodes.push({ ...n, id: `n${offset + parseInt(n.id.slice(1), 10)}` }));
-      nextId.n += topNodes.length;
-      topEdges.forEach((e) =>
-        edges.push({
-          from: `n${offset + parseInt(e.from.slice(1), 10)}`,
-          to: `n${offset + parseInt(e.to.slice(1), 10)}`,
-        })
-      );
-      edges.push({ from: branchId, to: `n${offset}` });
+    // 1. Bb node (first node) - operator only
+    const bbNodeId = `n${nextId.n++}`;
+    nodes.push({ id: bbNodeId, data: { op: opFull, operands: [] } });
+
+    // 2. Cond head - condition as data, Bb node points here
+    const condHeadId = `n${nextId.n++}`;
+    const condOperands = branch.cond ? [branch.cond] : [];
+    nodes.push({ id: condHeadId, data: { op: `${opFull}:cond`, operands: condOperands } });
+    edges.push({ from: bbNodeId, to: condHeadId });
+
+    // 3. Top head and bot head - cond head points to both
+    const topHeadId = `n${nextId.n++}`;
+    const botHeadId = `n${nextId.n++}`;
+    nodes.push({ id: topHeadId, data: { op: `${opFull}:top`, operands: [] } });
+    nodes.push({ id: botHeadId, data: { op: `${opFull}:bot`, operands: [] } });
+    edges.push({ from: condHeadId, to: topHeadId });
+    edges.push({ from: condHeadId, to: botHeadId });
+
+    // 4. Tail node - both arms converge here
+    const tailId = `n${nextId.n++}`;
+    nodes.push({ id: tailId, data: { op: `${opFull}:tail`, operands: [] } });
+
+    // 5. Build top arm: top_head -> first_op -> ... -> last_op -> tail
+    const topResult = buildDAGRec(branch.top, nodes, edges, nextId);
+    if (topResult) {
+      edges.push({ from: topHeadId, to: topResult.firstId });
+      edges.push({ from: topResult.lastId, to: tailId });
+    } else {
+      edges.push({ from: topHeadId, to: tailId });
     }
 
-    const bottomNodes: DAGNode<ExprNodeData>[] = [];
-    const bottomEdges: DAGEdge[] = [];
-    const bottomNextId = { n: 0 };
-    buildDAGRec(branch.bottom, bottomNodes, bottomEdges, bottomNextId);
-    const bottomRoot = bottomNodes[0]?.id;
-    if (bottomRoot) {
-      const offset = nextId.n;
-      bottomNodes.forEach((n) => nodes.push({ ...n, id: `n${offset + parseInt(n.id.slice(1), 10)}` }));
-      nextId.n += bottomNodes.length;
-      bottomEdges.forEach((e) =>
-        edges.push({
-          from: `n${offset + parseInt(e.from.slice(1), 10)}`,
-          to: `n${offset + parseInt(e.to.slice(1), 10)}`,
-        })
-      );
-      edges.push({ from: branchId, to: `n${offset}` });
+    // 6. Build bottom arm: bot_head -> first_op -> ... -> last_op -> tail
+    const botResult = buildDAGRec(branch.bottom, nodes, edges, nextId);
+    if (botResult) {
+      edges.push({ from: botHeadId, to: botResult.firstId });
+      edges.push({ from: botResult.lastId, to: tailId });
+    } else {
+      edges.push({ from: botHeadId, to: tailId });
     }
-    return;
+
+    return { firstId: bbNodeId, lastId: tailId };
   }
 
   const ops = extractOperations(trimmed);
+  if (ops.length === 0) return null;
+
+  let firstId: string | null = null;
+  let lastId: string | null = null;
   for (let i = 0; i < ops.length; i++) {
     const o = ops[i];
     const nodeId = `n${nextId.n++}`;
     const data: ExprNodeData = { op: o.op, operands: [...o.operands], start: o.start, end: o.end };
     nodes.push({ id: nodeId, data });
+    if (i === 0) firstId = nodeId;
+    lastId = nodeId;
     if (i > 0) {
       edges.push({ from: `n${nextId.n - 2}`, to: nodeId });
     }
   }
+  return firstId && lastId ? { firstId, lastId } : null;
 }
 
 /**

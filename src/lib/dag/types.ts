@@ -28,8 +28,8 @@ export interface DAGValidationResult {
 
 /** Node data for expression DAG: operator + operands (ordered) */
 export interface ExprNodeData {
-  op: string;         // e.g. "\\Oc", "\\Bb"
-  operands: string[]; // ordered: ["1","2"] or ["A","B"] for pattern
+  op: string;         // e.g. "\\Oc", "\\Bb", "\\Bb:top", "\\Bb:bot", "\\Bb:tail"
+  operands: string[]; // for ops: ordered operands; for cond head: [condition]
   /** Character range in original expression (for target DAG) */
   start?: number;
   end?: number;

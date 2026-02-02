@@ -16,8 +16,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 
-const DEMO_TARGET = ', 1 \\Oc 2, 2 \\Os, 3 \\Od 4,';
-const DEMO_RULE = ', i \\Oc m, m \\Os,';
+const DEMO_TARGET = ',i \\Op, \\Bb{i \\Oe j}{,i \\Op, }{, i \\Op, },';
+const DEMO_RULE = ', \\Bb{i \\Oe j}{,i \\Op, }{, i \\Op, },';
 
 export default function SubstitutionDAGDemo() {
   const [targetExpr, setTargetExpr] = useState(DEMO_TARGET);
