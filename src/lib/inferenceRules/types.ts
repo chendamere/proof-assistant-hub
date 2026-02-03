@@ -2,6 +2,8 @@
  * Types and interfaces for inference rules
  */
 
+import type { DAGStructure, ExprNodeData } from '../dag/types';
+
 export interface MatchPosition {
   side: 'left' | 'right' | 'both';
   position?: number;
@@ -10,6 +12,10 @@ export interface MatchPosition {
   suffix?: string;
   operandMapping?: Map<string, string>; // Maps ruleSide operand numbers to target operand numbers (for pattern matching)
   wasPatternMatch?: boolean; // Indicates if this match was via pattern matching
+  /** For DAG-based substitution: structural boundaries instead of character positions */
+  targetDAG?: DAGStructure<ExprNodeData>;
+  patternDAG?: DAGStructure<ExprNodeData>;
+  nodeMapping?: Map<string, string>; // patternNodeId -> targetNodeId (VF2 result)
 }
 
 export interface InferenceRule {

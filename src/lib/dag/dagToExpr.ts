@@ -56,6 +56,77 @@ export function dagToExpr(
   const itemParts: string[] = [];
   const visited = new Set<string>();
 
+  /** Can we reach a :tail from this node? */
+  function reachesTail(id: string): boolean {
+    const stack = [id];
+    const seen = new Set(stack);
+    while (stack.length) {
+      const cur = stack.pop()!;
+      const op = (nodeMap.get(cur)?.data as ExprNodeData)?.op ?? '';
+      if (op.endsWith(':tail')) return true;
+      for (const c of outgoing.get(cur) ?? []) {
+        if (!seen.has(c)) {
+          seen.add(c);
+          stack.push(c);
+        }
+      }
+    }
+    return false;
+  }
+
+  /** Both arms lead to a :tail node? */
+  function armsLeadToTail(children: string[]): boolean {
+    if (children.length < 2) return false;
+    return reachesTail(children[0]) && reachesTail(children[1]);
+  }
+
+  /** Get branchKind from the first reachable tail node (for target kind when substituting Blb in Bb) */
+  function getReachableTailBranchKind(children: string[]): 'Bb' | 'Blb' | 'Brb' | undefined {
+    const stack = [...children];
+    const seen = new Set(children);
+    while (stack.length > 0) {
+      const cur = stack.pop()!;
+      const node = nodeMap.get(cur);
+      const data = node?.data as (ExprNodeData & { branchKind?: 'Bb' | 'Blb' | 'Brb' }) | undefined;
+      const op = data?.op ?? '';
+      if (op.endsWith(':tail') && data?.branchKind) return data.branchKind;
+      for (const c of outgoing.get(cur) ?? []) {
+        if (!seen.has(c)) {
+          seen.add(c);
+          stack.push(c);
+        }
+      }
+    }
+    return undefined;
+  }
+
+  /** Do these two roots both reach the same :tail? */
+  function isBrbDualRoots(r0: string, r1: string): boolean {
+    const reachTails = (id: string) => {
+      const hits = new Set<string>();
+      const stack = [id];
+      const seen = new Set(stack);
+      while (stack.length) {
+        const cur = stack.pop()!;
+        const op = (nodeMap.get(cur)?.data as ExprNodeData)?.op ?? '';
+        if (op.endsWith(':tail')) hits.add(cur);
+        for (const c of outgoing.get(cur) ?? []) {
+          if (!seen.has(c)) {
+            seen.add(c);
+            stack.push(c);
+          }
+        }
+      }
+      return hits;
+    };
+    const t0 = reachTails(r0);
+    const t1 = reachTails(r1);
+    for (const t of t0) {
+      if (t1.has(t)) return true;
+    }
+    return false;
+  }
+
   function serializeChain(startId: string): { parts: string[]; nextId: string | null } {
     const parts: string[] = [];
     let cur: string | null = startId;
@@ -106,19 +177,26 @@ export function dagToExpr(
       return [...(outgoing.get(id) ?? [])];
     }
 
-    if (op.includes(':cond') && (outgoing.get(id)?.length ?? 0) >= 2) {
+    if (op.includes(':cond') && (outgoing.get(id)?.length ?? 0) >= 1) {
       visited.add(id);
       const children = outgoing.get(id) ?? [];
-      const isBlb = op.startsWith('\\Blb');
-      const isBrb = op.startsWith('\\Brb');
-      const kind = isBlb ? 'Blb' : isBrb ? 'Brb' : 'Bb';
+      const hasTail = children.length >= 2 ? armsLeadToTail(children) : reachesTail(children[0]);
+      let kind: 'Bb' | 'Blb' | 'Brb' = hasTail ? 'Bb' : 'Blb';
+      // Prefer tail's branchKind (target context when substituting Blb in Bb) over cond's
+      const tailKind = getReachableTailBranchKind(children);
+      if (tailKind) {
+        kind = tailKind;
+      } else {
+        const condBranchKind = (data as ExprNodeData & { branchKind?: 'Bb' | 'Blb' | 'Brb' })?.branchKind;
+        if (condBranchKind) kind = condBranchKind;
+      }
       const cond = formatCond(data!, operandMapping);
-      const topParts = serializeArm(children[0]);
-      const botParts = serializeArm(children[1]);
-      const topStr = topParts.length ? ',' + topParts.join(', ') + ',' : '';
-      const botStr = botParts.length ? ',' + botParts.join(', ') + ',' : '';
+      const topParts = children[0] ? serializeArm(children[0]) : [];
+      const botParts = children[1] ? serializeArm(children[1]) : [];
+      const topStr = topParts.length ? ',' + topParts.join(', ') + ',' : ',';
+      const botStr = botParts.length ? ',' + botParts.join(', ') + ',' : ',';
       itemParts.push(`, \\${kind}{${cond}}{${topStr}}{${botStr}}`);
-      if (kind === 'Bb' || kind === 'Brb') {
+      if (kind === 'Bb' && children[0]) {
         const tailId = (outgoing.get(children[0]) ?? []).find(
           (c) => (nodeMap.get(c)?.data as ExprNodeData)?.op?.endsWith(':tail')
         );
@@ -138,7 +216,28 @@ export function dagToExpr(
     return nextIds;
   }
 
+  // Brb: two roots that both lead to the same tail (no cond node)
   let worklist = [...roots];
+  if (roots.length === 2 && isBrbDualRoots(roots[0], roots[1])) {
+    const [r0, r1] = roots;
+    visited.add(r0);
+    visited.add(r1);
+    const topParts = serializeArm(r0);
+    const botParts = serializeArm(r1);
+    const topStr = topParts.length ? ',' + topParts.join(', ') + ',' : '';
+    const botStr = botParts.length ? ',' + botParts.join(', ') + ',' : '';
+    itemParts.push(`, \\Brb{${topStr}}{${botStr}}`);
+    const tailId = (outgoing.get(r0) ?? []).find(
+      (c) => (nodeMap.get(c)?.data as ExprNodeData)?.op?.endsWith(':tail')
+    );
+    if (tailId) {
+      visited.add(tailId);
+      worklist = [...(outgoing.get(tailId) ?? [])];
+    } else {
+      worklist = [];
+    }
+  }
+
   while (worklist.length) {
     const id = worklist.shift()!;
     const next = processFrom(id);

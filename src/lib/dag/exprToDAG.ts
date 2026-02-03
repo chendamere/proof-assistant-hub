@@ -1,7 +1,7 @@
 /**
  * Convert proof-assistant expressions to DAG structure.
  * Operations become nodes; operands are stored in node data.
- * Bb, Blb, Brb are nodes with two outgoing edges (top, bottom arms).
+ * Branch head nodes are identified by :cond, tail by :tail (no Bb/Blb/Brb in node data).
  */
 
 import type { DAGStructure, DAGNode, DAGEdge, ExprNodeData } from './types';
@@ -196,8 +196,6 @@ function buildItem(
 
   const branch = parseBranchAtStart(trimmed);
   if (branch) {
-    const opFull = branch.kind === 'Bb' ? '\\Bb' : branch.kind === 'Blb' ? '\\Blb' : '\\Brb';
-
     if (branch.kind === 'Brb') {
       const topBracePos = trimmed.indexOf('{');
       const topRes = topBracePos >= 0 ? parseOneBraced(trimmed, topBracePos) : null;
@@ -207,7 +205,7 @@ function buildItem(
       const tailId = `n${nextId.n++}`;
       nodes.push({
         id: tailId,
-        data: { op: `${opFull}:tail`, operands: [], start: trimmedOffset, end: trimmedOffset + trimmed.length },
+        data: { op: ':tail', operands: [], start: trimmedOffset, end: trimmedOffset + trimmed.length, branchKind: 'Brb' },
       });
 
       const topResult = buildItem(branch.top, nodes, edges, nextId, topOffset);
@@ -232,13 +230,11 @@ function buildItem(
       const botOffset = branch.topEnd != null ? trimmedOffset + branch.topEnd + 1 : trimmedOffset;
       const condHeadId = `n${nextId.n++}`;
       const condParsed = branch.cond ? parseConditionOp(branch.cond) : null;
-      const condOp = condParsed
-        ? `${opFull}:cond:${condParsed.op}`
-        : `${opFull}:cond`;
+      const condOp = condParsed ? `:cond:${condParsed.op}` : ':cond';
       const condOperands = condParsed ? condParsed.operands : branch.cond ? [branch.cond] : [];
       nodes.push({
         id: condHeadId,
-        data: { op: condOp, operands: condOperands, start: trimmedOffset, end: branch.condEnd ?? trimmedOffset },
+        data: { op: condOp, operands: condOperands, start: trimmedOffset, end: branch.condEnd ?? trimmedOffset, branchKind: 'Blb' },
       });
 
       const lastIds: string[] = [];
@@ -266,19 +262,17 @@ function buildItem(
     const botOffset = branch.topEnd != null ? trimmedOffset + branch.topEnd + 1 : trimmedOffset;
     const condHeadId = `n${nextId.n++}`;
     const condParsed = branch.cond ? parseConditionOp(branch.cond) : null;
-    const condOp = condParsed
-      ? `${opFull}:cond:${condParsed.op}`
-      : `${opFull}:cond`;
+    const condOp = condParsed ? `:cond:${condParsed.op}` : ':cond';
     const condOperands = condParsed ? condParsed.operands : branch.cond ? [branch.cond] : [];
     nodes.push({
       id: condHeadId,
-      data: { op: condOp, operands: condOperands, start: trimmedOffset, end: branch.condEnd ?? trimmedOffset },
+      data: { op: condOp, operands: condOperands, start: trimmedOffset, end: branch.condEnd ?? trimmedOffset, branchKind: 'Bb' },
     });
 
     const tailId = `n${nextId.n++}`;
     nodes.push({
       id: tailId,
-      data: { op: `${opFull}:tail`, operands: [], start: trimmedOffset, end: trimmedOffset + trimmed.length },
+      data: { op: ':tail', operands: [], start: trimmedOffset, end: trimmedOffset + trimmed.length, branchKind: 'Bb' },
     });
 
     const topResult = buildItem(branch.top, nodes, edges, nextId, topOffset);
@@ -357,7 +351,7 @@ function buildDAGRec(
 
 /**
  * Convert expression to DAG.
- * Bb, Blb, Brb are nodes with two outgoing edges (to top and bottom arms).
+ * Branch head identified by :cond, tail by :tail.
  * @param expr - Expression (already in pattern form A,B,C for rules, or integers for target)
  */
 export function exprToDAG(expr: string): DAGStructure<ExprNodeData> {

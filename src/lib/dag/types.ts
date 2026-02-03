@@ -28,9 +28,11 @@ export interface DAGValidationResult {
 
 /** Node data for expression DAG: operator + operands (ordered) */
 export interface ExprNodeData {
-  op: string;         // e.g. "\\Oc", "\\Bb", "\\Bb:top", "\\Bb:bot", "\\Bb:tail"
+  op: string;         // e.g. "\\Oc", ":cond:\\Oe", ":tail" (branch head by :cond, tail by :tail)
   operands: string[]; // for ops: ordered operands; for cond head: [condition]
   /** Character range in original expression (for target DAG) */
   start?: number;
   end?: number;
+  /** Branch kind from source expression; used when serializing to prefer target's kind over inferred */
+  branchKind?: 'Bb' | 'Blb' | 'Brb';
 }

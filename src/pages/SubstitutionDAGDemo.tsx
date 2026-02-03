@@ -94,58 +94,73 @@ interface TrySubExample {
 const TRY_SUB_EXAMPLES: TrySubExample[] = [
   {
     name: 'Copy-release (non-branch)',
-    targetLeft: ', 1 \\Oc 2, 2 \\Os,',
-    targetRight: ', 1 \\Oc 2, 2 \\Os,',
+    targetLeft: ', a \\Oc b, b \\Os,',
+    targetRight: ', a \\Oc b, b\\Os,',
     ruleLeft: ', i \\Oc m, m \\Os,',
     ruleRight: ', i \\Oc m, m \\Os,',
     description: 'Rule matches target exactly; substitution yields same result.',
   },
   {
     name: 'Branch identity',
-    targetLeft: ', \\Bb{a \\Oe c}{,b \\Op,}{, c \\Op, },',
-    targetRight: ', \\Bb{a \\Oe c}{,b \\Op,}{, c \\Op, },',
+    targetLeft: ', \\Bb{a \\Oe c}{,a \\Op,}{, a \\Op, },',
+    targetRight: ', \\Bb{a \\Oe c}{,a \\Op,}{, a \\Op, },',
     ruleLeft: ', \\Bb{i \\Oe j}{,i \\Op,}{, i \\Op, },',
     ruleRight: ', \\Bb{i \\Oe j}{,i \\Op,}{, i \\Op, },',
     description: 'Branch structure matches; rule left = rule right.',
   },
   {
     name: 'Branch arm swap',
-    targetLeft: ', \\Bb{1 \\Oe 2}{,1 \\Od 2, 2 \\Oc 3,}{,},',
-    targetRight: ', \\Bb{1 \\Oe 2}{,1 \\Od 2, 3 \\Oc 2,}{,},',
+    targetLeft: ', \\Bb{a \\Oe b}{,c \\Od e, e \\Oc f,}{,},',
+    targetRight: ', \\Bb{a \\Oe b}{,c \\Od e, f \\Oc e,}{,},',
     ruleLeft: ', i \\Od j, j \\Oc k,',
     ruleRight: ', i \\Od j, k \\Oc j,',
     description: 'Substitute inside branch top arm: swap j\\Oc k with k\\Oc j.',
   },
   {
-    name: 'Op + branch',
-    targetLeft: ', 1 \\Oc 2, \\Bb{2 \\Oe 3}{,2 \\Op,}{, 2 \\Op, },',
-    targetRight: ', 1 \\Oc 2, \\Bb{2 \\Oe 3}{,2 \\Op,}{, 2 \\Op, },',
-    ruleLeft: ', i \\Oc m, \\Bb{m \\Oe j}{,m \\Op,}{, m \\Op, },',
-    ruleRight: ', i \\Oc m, \\Bb{m \\Oe j}{,m \\Op,}{, m \\Op, },',
-    description: 'Rule with op before branch matches target.',
+    name: 'Branch arm swap2',
+    targetLeft: ', \\Bb{a \\Oe b}{,c \\Od e, e \\Oc f,}{,},',
+    targetRight: ', \\Bb{a \\Oe b}{,c \\Od e, f \\Oc e,}{,},',
+    ruleLeft: ', \\Blb{a \\Oe b}{,c \\Od e, e \\Oc f,}{,},',
+    ruleRight: ', \\Blb{a \\Oe b}{,c \\Od e, f \\Oc e,}{,},',
+    description: 'Substitute inside branch top arm: swap j\\Oc k with k\\Oc j.',
   },
   {
-    name: 'Front',
-    targetLeft: ',\\Bb{1 \\Oe 2}{,1 \\Od 2, 2 \\Oc 3,}{,},',
-    targetRight: ',\\Bb{1 \\Oe 2}{,1 \\Od 2, 2 \\Oc 3,}{,},',
-    ruleLeft: ', \\Bb{1 \\Oe 2}{,1 \\Od 2, 2 \\Oc 3,}{,},',
-    ruleRight: ',\\Bb{1 \\Oe 2}{,1 \\Od 2, 2 \\Oc 3,}{,},',
-    description: 'Target has 3\\Os but rule expects m\\Os (2); no match.',
+    name: 'Branch arm swap3',
+    targetLeft: ', \\Bb{a \\Oe b}{,c \\Od e, e \\Oc f,}{,},',
+    targetRight: ', \\Bb{a \\Oe b}{,c \\Od e, f \\Oc e,}{,},',
+    ruleLeft: ', \\Brb{,c \\Od e, e \\Oc f,}{,},',
+    ruleRight: ', \\Brb{,c \\Od e, f \\Oc e,}{,},',
+    description: 'Substitute inside branch top arm: swap j\\Oc k with k\\Oc j.',
   },
 ];
 
 const DEMO_TARGET = DAG_EXAMPLES[0].target;
 const DEMO_RULE = DAG_EXAMPLES[0].rule;
 
+function safeTrySubstitution(
+  target: string,
+  ruleSide: string,
+  otherRuleSide: string,
+  expectedResult: string,
+  targetSideForOperands: string,
+  side: 'left' | 'right'
+) {
+  try {
+    return trySubstitution(target, ruleSide, otherRuleSide, expectedResult, targetSideForOperands, side);
+  } catch {
+    return null;
+  }
+}
+
 function TrySubstitutionSection() {
   const [selected, setSelected] = useState(TRY_SUB_EXAMPLES[0].name);
   const ex = TRY_SUB_EXAMPLES.find((e) => e.name === selected) ?? TRY_SUB_EXAMPLES[0];
 
   const results = {
-    leftRuleLeft: trySubstitution(ex.targetLeft, ex.ruleLeft, ex.ruleRight, ex.targetRight, ex.targetLeft, 'left'),
-    leftRuleRight: trySubstitution(ex.targetLeft, ex.ruleRight, ex.ruleLeft, ex.targetRight, ex.targetLeft, 'left'),
-    rightRuleLeft: trySubstitution(ex.targetRight, ex.ruleLeft, ex.ruleRight, ex.targetLeft, ex.targetRight, 'right'),
-    rightRuleRight: trySubstitution(ex.targetRight, ex.ruleRight, ex.ruleLeft, ex.targetLeft, ex.targetRight, 'right'),
+    leftRuleLeft: safeTrySubstitution(ex.targetLeft, ex.ruleLeft, ex.ruleRight, ex.targetRight, ex.targetLeft, 'left'),
+    leftRuleRight: safeTrySubstitution(ex.targetLeft, ex.ruleRight, ex.ruleLeft, ex.targetRight, ex.targetLeft, 'left'),
+    rightRuleLeft: safeTrySubstitution(ex.targetRight, ex.ruleLeft, ex.ruleRight, ex.targetLeft, ex.targetRight, 'right'),
+    rightRuleRight: safeTrySubstitution(ex.targetRight, ex.ruleRight, ex.ruleLeft, ex.targetLeft, ex.targetRight, 'right'),
   };
   const matchResult = results.leftRuleLeft ?? results.leftRuleRight ?? results.rightRuleLeft ?? results.rightRuleRight;
   const matchDirection =

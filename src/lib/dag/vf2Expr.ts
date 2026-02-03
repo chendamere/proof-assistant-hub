@@ -28,10 +28,10 @@ function buildAdjacency(structure: DAGStructure): {
 
 /**
  * Normalize branch structural op for comparison.
- * Bb, Blb, Brb are interchangeable for structural roles: cond nodes and tail nodes.
- * e.g. \Bb:cond:\Oe matches \Blb:cond:\Oe; \Bb:tail matches \Brb:tail.
+ * Branch nodes use :cond or :tail (no Bb/Blb/Brb prefix in node data).
  */
 function normalizeBranchOp(op: string): string {
+  if (/^:cond(:|$)|^:tail$/.test(op)) return op;
   const m = op.match(/^\\B[lr]?b(:cond(?::\S+)?|:tail)$/);
   return m ? m[1] : op;
 }

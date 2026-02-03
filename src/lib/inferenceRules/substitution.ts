@@ -4,9 +4,10 @@
  * A single VF2 pass on the full target finds the match and operand mapping.
  */
 
+import type { DAGStructure, ExprNodeData } from '../dag';
 import { MatchPosition } from './types';
 import { normalizeSpacing, extractOperandTokens } from './utils';
-import { exprToDAG, dagToExpr, vf2ExprSubgraphIsomorphism } from '../dag';
+import { exprToDAG, dagToExpr, vf2ExprSubgraphIsomorphism, substituteInDAG } from '../dag';
 
 /**
  * Convert ruleOtherSide using operand mapping
@@ -175,31 +176,34 @@ export const convertRuleOtherSide = (
   return converted;
 };
 
+/** Extract operand tokens (numbers, identifiers) from text for mapping */
+function extractOperandsFromText(text: string): Set<string> {
+  const operands = new Set<string>();
+  const numberPattern = /\b(\d+)\b/g;
+  const identPattern = /\b([a-zA-Z](?:_\d+)?)\b/g;
+  let match;
+  while ((match = numberPattern.exec(text)) !== null) operands.add(match[1]);
+  while ((match = identPattern.exec(text)) !== null) operands.add(match[1]);
+  return operands;
+}
+
 /**
- * Convert ruleOtherSide using DAG: build DAG from other side, apply operand mapping, convert back.
- * Replaces the sub-DAG in the target with the other side as a DAG (preserves branch structure).
+ * Convert ruleOtherSide using DAG-based substitution.
+ * Replaces the matched sub-DAG in target with the rule's other side,
+ * connecting prefix DAG tails to replacement heads and replacement tails to suffix DAG heads.
  */
 function convertRuleOtherSideWithDAG(
   ruleOtherSide: string,
   operandMapping: Map<string, string>,
-  prefix: string,
-  suffix: string,
+  targetDAG: DAGStructure<ExprNodeData>,
+  patternDAG: DAGStructure<ExprNodeData>,
+  nodeMapping: Map<string, string>,
   targetSide: string,
   expectedResult?: string
 ): string {
-  const extractOperandsFromText = (text: string): Set<string> => {
-    const operands = new Set<string>();
-    const numberPattern = /\b(\d+)\b/g;
-    let match;
-    while ((match = numberPattern.exec(text)) !== null) operands.add(match[1]);
-    return operands;
-  };
-
-  const prefixOperands = extractOperandsFromText(prefix);
-  const suffixOperands = extractOperandsFromText(suffix);
   const targetOperands = extractOperandsFromText(targetSide);
   const expectedOperands = expectedResult ? extractOperandsFromText(expectedResult) : new Set<string>();
-  const existingOperands = new Set([...prefixOperands, ...suffixOperands, ...targetOperands, ...expectedOperands]);
+  const existingOperands = new Set([...targetOperands, ...expectedOperands]);
 
   const ruleOtherTokens = extractOperandTokens(ruleOtherSide);
   const unmappedTokens = ruleOtherTokens.filter((t) => !operandMapping.has(t.token));
@@ -207,16 +211,12 @@ function convertRuleOtherSideWithDAG(
   const replacementDAG = exprToDAG(normalizeSpacing(ruleOtherSide));
 
   const tryConversion = (mapping: Map<string, string>): string => {
-    let converted = dagToExpr(replacementDAG, mapping);
-    // Strip outer commas to fit between prefix/suffix (match region is inner content)
-    converted = converted.replace(/^,\s*/, '').replace(/\s*,$/, '').trim();
-    const isJustComma = converted === '';
-    return isJustComma ? '' : converted;
+    const merged = substituteInDAG(targetDAG, patternDAG, replacementDAG, nodeMapping, mapping);
+    return dagToExpr(merged);
   };
 
   const testMatch = (mapping: Map<string, string>): boolean => {
-    const converted = tryConversion(mapping);
-    const substituted = prefix + converted + suffix;
+    const substituted = tryConversion(mapping);
     return normalizeSpacing(substituted) === normalizeSpacing(expectedResult ?? '');
   };
 
@@ -241,7 +241,7 @@ function convertRuleOtherSideWithDAG(
     if (result !== null) return result;
   }
 
-  const usedOperands = new Set([...prefixOperands, ...suffixOperands, ...operandMapping.values()]);
+  const usedOperands = new Set([...targetOperands, ...operandMapping.values()]);
   let maxUsed = 0;
   usedOperands.forEach((op) => {
     const num = parseInt(op, 10);
@@ -349,7 +349,7 @@ export const findSubstitution = function findSubstitutionRecursive(
     return { match: false };
   }
 
-  // Positions are in normalized target (DAG built from it)
+  // Character-based prefix/suffix (kept for fallback; substitution uses DAG structure)
   const prefix = normalizedTarget.substring(0, candidateStart);
   const suffix = normalizedTarget.substring(candidateEnd);
 
@@ -366,12 +366,17 @@ export const findSubstitution = function findSubstitutionRecursive(
       suffix: suffix || undefined,
       operandMapping,
       wasPatternMatch: true,
+      targetDAG,
+      patternDAG,
+      nodeMapping: result.mapping,
     },
   };
 };
 
 /**
- * Helper function to try a substitution and check if it matches
+ * Helper function to try a substitution and check if it matches.
+ * Uses DAG-based substitution when available: prefix/suffix/replacement are merged at the DAG level
+ * so heads and tails connect correctly (no character-position splicing).
  */
 export const trySubstitution = (
   target: string,
@@ -385,47 +390,39 @@ export const trySubstitution = (
   if (!result.match || !result.position) {
     return null;
   }
-  
-  // Convert otherRuleSide if pattern matching was used (DAG-based replacement)
-  let converted = otherRuleSide;
-  if (result.position.wasPatternMatch && result.position.operandMapping) {
-    converted = convertRuleOtherSideWithDAG(
-      otherRuleSide,
-      result.position.operandMapping,
-      result.position.prefix || '',
-      result.position.suffix || '',
-      targetSideForOperands,
-      expectedResult
-    );
-  }
-  
-  // Special handling: if converted is empty (because otherRuleSide was just a comma),
-  // check if we should preserve a comma from the original candidate structure
-  let finalConverted = converted;
-  if (!finalConverted || finalConverted.trim() === '') {
-    const prefix = result.position.prefix || '';
-    const suffix = result.position.suffix || '';
-    const currentResult = prefix + finalConverted + suffix;
-    const normalizedCurrent = normalizeSpacing(currentResult);
-    const normalizedExpected = normalizeSpacing(expectedResult);
-    
-    // If current result doesn't match, and expected ends with comma but current doesn't,
-    // try adding a comma (this handles the case where candidate started with comma)
-    if (normalizedCurrent !== normalizedExpected) {
-      if (normalizedExpected.endsWith(',') && !normalizedCurrent.endsWith(',')) {
-        const withComma = prefix + ',' + suffix;
-        if (normalizeSpacing(withComma) === normalizedExpected) {
-          finalConverted = ',';
-        }
+
+  // DAG-based substitution: merge prefix DAG + replacement DAG + suffix DAG structurally
+  if (
+    result.position.wasPatternMatch &&
+    result.position.operandMapping &&
+    result.position.targetDAG &&
+    result.position.patternDAG &&
+    result.position.nodeMapping
+  ) {
+    try {
+      const substituted = convertRuleOtherSideWithDAG(
+        otherRuleSide,
+        result.position.operandMapping,
+        result.position.targetDAG,
+        result.position.patternDAG,
+        result.position.nodeMapping,
+        targetSideForOperands,
+        expectedResult
+      );
+      if (normalizeSpacing(substituted) === normalizeSpacing(expectedResult)) {
+        return result;
       }
+    } catch {
+      // DAG merge/serialize failed (e.g. structure mismatch); fall through to null
     }
+    return null;
   }
-  
-  // Check if substitution matches expected result
-  const substituted = (result.position.prefix || '') + finalConverted + (result.position.suffix || '');
+
+  // Fallback: string-based (operators only, no operands)
+  let converted = otherRuleSide;
+  const substituted = (result.position.prefix || '') + converted + (result.position.suffix || '');
   if (normalizeSpacing(substituted) === normalizeSpacing(expectedResult)) {
     return result;
   }
-  
   return null;
 };
