@@ -183,8 +183,12 @@ export function vf2ExprSubgraphIsomorphism(
   return { mapping, operandMapping: new Map(varToTarget) };
 }
 
+/** Max backtracking steps before aborting (prevents freeze on complex branch DAGs). */
+const VF2_MAX_STEPS = 50000;
+
 /**
  * Find ALL subgraph isomorphisms. Yields { mapping, operandMapping } for each match.
+ * Aborts after VF2_MAX_STEPS to prevent UI freeze.
  */
 export function* vf2ExprSubgraphIsomorphismAll(
   pattern: DAGStructure<ExprNodeData>,
@@ -208,8 +212,10 @@ export function* vf2ExprSubgraphIsomorphismAll(
   const reverseMapping = new Map<string, string>();
   const varToTarget = new Map<string, string>();
   const targetToVar = new Map<string, string>();
+  let steps = 0;
 
   function feasible(p: string, t: string): boolean {
+    if (++steps > VF2_MAX_STEPS) return false;
     const pNode = pNodeMap.get(p)!;
     const tNode = tNodeMap.get(t)!;
     const pData = pNode.data as ExprNodeData;
@@ -251,6 +257,7 @@ export function* vf2ExprSubgraphIsomorphismAll(
   }
 
   function* search(): Generator<{ mapping: Map<string, string>; operandMapping: Map<string, string> }> {
+    if (steps > VF2_MAX_STEPS) return;
     if (mapping.size === pNodes.length) {
       yield { mapping: new Map(mapping), operandMapping: new Map(varToTarget) };
       return;

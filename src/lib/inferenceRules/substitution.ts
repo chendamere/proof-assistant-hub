@@ -397,8 +397,12 @@ export const trySubstitution = (
   }
 
   // DAG-based: try each match candidate until one produces the expected result
+  // Cap iterations to avoid freeze on complex branch expressions (VF2 can yield exponentially many matches)
+  const maxTrials = targetDAG.nodes.length > 12 ? 32 : 64;
   if (patternDAG.nodes.length > 0) {
+    let trialCount = 0;
     for (const vf2Result of vf2ExprSubgraphIsomorphismAll(patternDAG, targetDAG)) {
+      if (++trialCount > maxTrials) break;
       const tNodeMap = new Map(targetDAG.nodes.map((n) => [n.id, n]));
       let candidateStart = normalizedTarget.length;
       let candidateEnd = 0;

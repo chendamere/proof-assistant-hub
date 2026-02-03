@@ -505,10 +505,16 @@ function processToken(
   }
 }
 
+/** Set to true to enable grammar restrictions. When false, all expressions pass. */
+const GRAMMAR_CHECK_ENABLED = false;
+
 /**
  * Check grammar of an expression
  */
 export function checkGrammar(expression: string): GrammarCheckResult {
+  if (!GRAMMAR_CHECK_ENABLED) {
+    return { isValid: true, errors: [], instantiatedOperands: new Set() };
+  }
   return checkGrammarWithScope(expression, new Set());
 }
 

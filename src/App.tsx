@@ -9,7 +9,6 @@ import Verifier from "./pages/Verifier";
 import ProofStep from "./pages/ProofStep";
 import SubstitutionDAGDemo from "./pages/SubstitutionDAGDemo";
 import Glossary from "./pages/Glossary";
-import Grammar from "./pages/Grammar";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,7 +22,6 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/grammar" element={<Grammar />} />
             <Route path="/verifier" element={<Verifier />} />
             <Route path="/proof-step" element={<ProofStep />} />
             <Route path="/substitution-dag" element={<SubstitutionDAGDemo />} />

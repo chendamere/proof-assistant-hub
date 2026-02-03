@@ -3,11 +3,11 @@ import { Button } from '@/components/ui/button';
 import { SyntaxInput } from '@/components/ui/syntax-input';
 import { Rule, getTypeBadgeClass, axioms } from '@/data/axioms';
 import { theorems } from '@/data/theorems';
-import { checkInferenceRules, MatchPosition } from '@/lib/inferenceRules';
-import { checkGrammar } from '@/lib/grammarChecker';
+import { checkInferenceRules } from '@/lib/inferenceRules';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
-import { Play, Plus, RotateCcw, ChevronRight, AlertCircle, PartyPopper } from 'lucide-react';
+import { Play, Plus, RotateCcw, ChevronRight, ChevronDown, ChevronUp, AlertCircle, PartyPopper } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -23,7 +23,6 @@ interface ApplicableRule {
   rule: Rule;
   direction: 'left-to-right' | 'right-to-left';
   inferenceRule?: string;
-  grammarError?: string;
 }
 
 const ProofVerifierSection: React.FC = () => {
@@ -31,8 +30,6 @@ const ProofVerifierSection: React.FC = () => {
   const [leftSideToProve, setLeftSideToProve] = useState('');
   const [rightSideToProve, setRightSideToProve] = useState('');
   const [isProving, setIsProving] = useState(false);
-  const [leftGrammarError, setLeftGrammarError] = useState<string | null>(null);
-  const [rightGrammarError, setRightGrammarError] = useState<string | null>(null);
   
   // Proof steps
   const [proofSteps, setProofSteps] = useState<ProofStep[]>([]);
@@ -40,11 +37,11 @@ const ProofVerifierSection: React.FC = () => {
   const [applicableRules, setApplicableRules] = useState<ApplicableRule[]>([]);
   const [isSearchingRules, setIsSearchingRules] = useState(false);
   const [isProofComplete, setIsProofComplete] = useState(false);
-  const [currentGrammarError, setCurrentGrammarError] = useState<string | null>(null);
   const confettiTriggeredRef = useRef(false);
   
   // Drag state
   const [isDragOver, setIsDragOver] = useState(false);
+  const [addStepExpanded, setAddStepExpanded] = useState(true);
 
   // Combine axioms and theorems
   const allRules = useMemo(() => [...axioms, ...theorems], []);
@@ -67,93 +64,74 @@ const ProofVerifierSection: React.FC = () => {
   }, [allRules]);
 
 
-  // Search for applicable rules when currentExpression changes
+  // Search for applicable rules when currentExpression changes (debounced for branch expressions)
   useEffect(() => {
-    if (!isProving || !currentExpression.trim() || proofSteps.length === 0) {
+    const trimmed = currentExpression.trim();
+    if (!isProving || !trimmed || proofSteps.length === 0) {
+      setApplicableRules([]);
+      return;
+    }
+    // Skip search on very short input - avoids freeze when goal has branches
+    if (trimmed.length < 4) {
       setApplicableRules([]);
       return;
     }
 
     const previousExpression = proofSteps[proofSteps.length - 1].expression;
-    
+    const targetLeft = previousExpression;
+    const targetRight = currentExpression;
+    const hasBranch = /\\B[lr]?b/.test(previousExpression);
+    let cancelled = false;
     setIsSearchingRules(true);
-    
-    // Use setTimeout to avoid blocking UI
-    setTimeout(() => {
+
+    const runSearch = async () => {
       try {
-        const targetLeft = previousExpression;
-        const targetRight = currentExpression;
-
-        // Check grammar first before checking inference rules
-        const targetLeftGrammar = checkGrammar(targetLeft);
-        if (!targetLeftGrammar.isValid) {
-          const errors = targetLeftGrammar.errors.map(e => e.message).join('; ');
-          setApplicableRules([{
-            rule: { id: 'grammar-error', name: 'Grammar Error', type: 'axiom', category: 'operators', description: '', leftSide: '', rightSide: '' },
-            direction: 'left-to-right',
-            grammarError: `Target left side has grammar errors: ${errors}`
-          }]);
-          return;
-        }
-
-        const targetRightGrammar = checkGrammar(targetRight);
-        if (!targetRightGrammar.isValid) {
-          const errors = targetRightGrammar.errors.map(e => e.message).join('; ');
-          setApplicableRules([{
-            rule: { id: 'grammar-error', name: 'Grammar Error', type: 'axiom', category: 'operators', description: '', leftSide: '', rightSide: '' },
-            direction: 'left-to-right',
-            grammarError: `Target right side has grammar errors: ${errors}`
-          }]);
-          return;
-        }
-
         const foundMatches: ApplicableRule[] = [];
-
-        for (const rule of allRules) {
-          const cached = normalizedRulesCache.get(rule.id);
-          if (!cached) continue;
-
-          // Check left-to-right direction
-          const l2rResult = checkInferenceRules(
-            targetLeft,
-            targetRight,
-            cached.l2r.left,
-            cached.l2r.right
-          );
-
-          if (l2rResult.match) {
-            foundMatches.push({
-              rule,
-              direction: 'left-to-right',
-              inferenceRule: l2rResult.inferenceRule,
-            });
+        const BATCH_SIZE = hasBranch ? 4 : 12;
+        for (let i = 0; i < allRules.length && !cancelled; i += BATCH_SIZE) {
+          const batch = allRules.slice(i, i + BATCH_SIZE);
+          for (const rule of batch) {
+            if (cancelled) return;
+            const cached = normalizedRulesCache.get(rule.id);
+            if (!cached) continue;
+            const l2rResult = checkInferenceRules(targetLeft, targetRight, cached.l2r.left, cached.l2r.right);
+            if (l2rResult.match) {
+              foundMatches.push({ rule, direction: 'left-to-right', inferenceRule: l2rResult.inferenceRule });
+              setApplicableRules([...foundMatches]);
+              return;
+            }
+            const r2lResult = checkInferenceRules(targetLeft, targetRight, cached.r2l.left, cached.r2l.right);
+            if (r2lResult.match) {
+              foundMatches.push({ rule, direction: 'right-to-left', inferenceRule: r2lResult.inferenceRule });
+              setApplicableRules([...foundMatches]);
+              return;
+            }
           }
-
-          // Check right-to-left direction
-          const r2lResult = checkInferenceRules(
-            targetLeft,
-            targetRight,
-            cached.r2l.left,
-            cached.r2l.right
-          );
-
-          if (r2lResult.match) {
-            foundMatches.push({
-              rule,
-              direction: 'right-to-left',
-              inferenceRule: r2lResult.inferenceRule,
-            });
+          if (cancelled) return;
+          setApplicableRules([...foundMatches]);
+          if (i + BATCH_SIZE < allRules.length) {
+            await new Promise((r) => setTimeout(r, hasBranch ? 20 : 0));
           }
         }
-
-        setApplicableRules(foundMatches);
-      } catch (error) {
-        console.error('Error searching for applicable rules:', error);
-        setApplicableRules([]);
       } finally {
-        setIsSearchingRules(false);
+        if (!cancelled) setIsSearchingRules(false);
       }
-    }, 100);
+    };
+
+    const timeoutId = setTimeout(() => {
+      runSearch().catch((e) => {
+        console.error('Error searching for applicable rules:', e);
+        if (!cancelled) {
+          setApplicableRules([]);
+          setIsSearchingRules(false);
+        }
+      });
+    }, hasBranch ? 600 : 350);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timeoutId);
+    };
   }, [currentExpression, isProving, proofSteps, allRules, normalizedRulesCache]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -191,26 +169,6 @@ const ProofVerifierSection: React.FC = () => {
   const startProving = () => {
     if (!leftSideToProve.trim() || !rightSideToProve.trim()) return;
     
-    // Check grammar before starting
-    const leftGrammar = checkGrammar(leftSideToProve);
-    const rightGrammar = checkGrammar(rightSideToProve);
-    
-    if (!leftGrammar.isValid) {
-      const errors = leftGrammar.errors.map(e => e.message).join('; ');
-      setLeftGrammarError(`Grammar errors: ${errors}`);
-      return;
-    } else {
-      setLeftGrammarError(null);
-    }
-    
-    if (!rightGrammar.isValid) {
-      const errors = rightGrammar.errors.map(e => e.message).join('; ');
-      setRightGrammarError(`Grammar errors: ${errors}`);
-      return;
-    } else {
-      setRightGrammarError(null);
-    }
-    
     setIsProving(true);
     setIsProofComplete(false);
     confettiTriggeredRef.current = false;
@@ -226,16 +184,6 @@ const ProofVerifierSection: React.FC = () => {
   const addProofStep = () => {
     if (!currentExpression.trim()) return;
     
-    // Check grammar before adding step
-    const grammar = checkGrammar(currentExpression);
-    if (!grammar.isValid) {
-      const errors = grammar.errors.map(e => e.message).join('; ');
-      setCurrentGrammarError(`Grammar errors: ${errors}`);
-      return;
-    }
-    
-    setCurrentGrammarError(null);
-    
     // Use the first applicable rule as the applied rule, or show a generic message
     const appliedRule = applicableRules.length > 0
       ? `${applicableRules[0].rule.name} (${applicableRules[0].direction === 'left-to-right' ? 'L→R' : 'R→L'}${applicableRules[0].inferenceRule ? `, ${applicableRules[0].inferenceRule}` : ''})`
@@ -250,7 +198,6 @@ const ProofVerifierSection: React.FC = () => {
     setProofSteps([...proofSteps, newStep]);
     setCurrentExpression('');
     setApplicableRules([]);
-    setCurrentGrammarError(null);
   };
 
   const handleReset = () => {
@@ -262,9 +209,6 @@ const ProofVerifierSection: React.FC = () => {
     setProofSteps([]);
     setCurrentExpression('');
     setApplicableRules([]);
-    setLeftGrammarError(null);
-    setRightGrammarError(null);
-    setCurrentGrammarError(null);
   };
 
   // Trigger confetti animation
@@ -325,7 +269,7 @@ const ProofVerifierSection: React.FC = () => {
 
 
   return (
-    <section className="h-full flex flex-col p-4">
+    <section className="h-full flex flex-col min-h-0 overflow-auto p-4">
       {/* Header */}
       <div className="text-center mb-4 flex-shrink-0">
         <h2 className="text-2xl font-bold text-glow mb-1">
@@ -342,7 +286,7 @@ const ProofVerifierSection: React.FC = () => {
       {!isProving ? (
         /* Rule Input Phase */
         <div 
-          className={`bg-card border rounded-lg p-6 flex-1 flex flex-col transition-all duration-200 ${
+          className={`bg-card border rounded-lg p-6 flex-1 flex flex-col min-h-0 overflow-auto transition-all duration-200 ${
             isDragOver ? 'border-primary border-2 border-dashed bg-primary/5' : 'border-border'
           }`}
           onDragOver={handleDragOver}
@@ -362,33 +306,11 @@ const ProofVerifierSection: React.FC = () => {
               <SyntaxInput
                 placeholder=", i \Pu,"
                 value={leftSideToProve}
-                onChange={(value) => {
-                  setLeftSideToProve(value);
-                  // Check grammar on change
-                  if (value.trim()) {
-                    const grammar = checkGrammar(value);
-                    if (!grammar.isValid) {
-                      const errors = grammar.errors.map(e => e.message).join('; ');
-                      setLeftGrammarError(`Grammar errors: ${errors}`);
-                    } else {
-                      setLeftGrammarError(null);
-                    }
-                  } else {
-                    setLeftGrammarError(null);
-                  }
-                }}
+                onChange={setLeftSideToProve}
               />
               <div className="p-3 bg-muted/30 rounded-lg border border-border/50 min-h-[48px] flex items-center">
                 <ExpressionRenderer expression={leftSideToProve} size={20} />
               </div>
-              {leftGrammarError && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription className="text-xs">
-                    {leftGrammarError}
-                  </AlertDescription>
-                </Alert>
-              )}
             </div>
 
             {/* Equivalence Symbol */}
@@ -404,33 +326,11 @@ const ProofVerifierSection: React.FC = () => {
               <SyntaxInput
                 placeholder=", j \Pu,"
                 value={rightSideToProve}
-                onChange={(value) => {
-                  setRightSideToProve(value);
-                  // Check grammar on change
-                  if (value.trim()) {
-                    const grammar = checkGrammar(value);
-                    if (!grammar.isValid) {
-                      const errors = grammar.errors.map(e => e.message).join('; ');
-                      setRightGrammarError(`Grammar errors: ${errors}`);
-                    } else {
-                      setRightGrammarError(null);
-                    }
-                  } else {
-                    setRightGrammarError(null);
-                  }
-                }}
+                onChange={setRightSideToProve}
               />
               <div className="p-3 bg-muted/30 rounded-lg border border-border/50 min-h-[48px] flex items-center">
                 <ExpressionRenderer expression={rightSideToProve} size={20} />
               </div>
-              {rightGrammarError && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription className="text-xs">
-                    {rightGrammarError}
-                  </AlertDescription>
-                </Alert>
-              )}
             </div>
           </div>
 
@@ -438,7 +338,7 @@ const ProofVerifierSection: React.FC = () => {
           <div className="flex justify-center gap-4 mt-6">
             <Button
               onClick={startProving}
-              disabled={!leftSideToProve.trim() || !rightSideToProve.trim() || !!leftGrammarError || !!rightGrammarError}
+              disabled={!leftSideToProve.trim() || !rightSideToProve.trim()}
               className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2"
             >
               <Play className="w-4 h-4" />
@@ -448,7 +348,7 @@ const ProofVerifierSection: React.FC = () => {
         </div>
       ) : (
         /* Proving Phase */
-        <div className="flex-1 flex flex-col gap-4 overflow-hidden">
+        <div className="flex-1 flex flex-col gap-4 min-h-0 overflow-auto">
           {/* Goal Display */}
           <div className="bg-card border border-border rounded-lg p-4 flex-shrink-0">
             <div className="flex items-center justify-between mb-2">
@@ -507,156 +407,125 @@ const ProofVerifierSection: React.FC = () => {
 
           {/* New Step Input - Hide when proof is complete */}
           {!isProofComplete && (
-          <div className="bg-card border border-border rounded-lg p-4 flex-shrink-0">
-            <div className="flex items-center gap-2 mb-3">
-              <ChevronRight className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium">Add Next Step</span>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-xs text-muted-foreground font-mono">Next Expression</label>
-                <SyntaxInput
-                  placeholder="Enter the next expression..."
-                  value={currentExpression}
-                  onChange={(value) => {
-                    setCurrentExpression(value);
-                    // Check grammar on change
-                    if (value.trim()) {
-                      const grammar = checkGrammar(value);
-                      if (!grammar.isValid) {
-                        const errors = grammar.errors.map(e => e.message).join('; ');
-                        setCurrentGrammarError(`Grammar errors: ${errors}`);
-                      } else {
-                        setCurrentGrammarError(null);
-                      }
-                    } else {
-                      setCurrentGrammarError(null);
-                    }
-                  }}
-                  onPaste={(e) => {
-                    e.preventDefault();
-                    const pastedText = e.clipboardData.getData('text');
-                    // Remove all line breaks and replace with space (or nothing)
-                    const singleLineText = pastedText.replace(/\r?\n|\r/g, ' ').replace(/\s+/g, ' ').trim();
-                    setCurrentExpression(singleLineText);
-                    // Check grammar after paste
-                    if (singleLineText.trim()) {
-                      const grammar = checkGrammar(singleLineText);
-                      if (!grammar.isValid) {
-                        const errors = grammar.errors.map(e => e.message).join('; ');
-                        setCurrentGrammarError(`Grammar errors: ${errors}`);
-                      } else {
-                        setCurrentGrammarError(null);
-                      }
-                    } else {
-                      setCurrentGrammarError(null);
-                    }
-                  }}
-                />
-                <div className="p-2 bg-muted/30 rounded border border-border/50 min-h-[40px] flex items-center">
-                  <ExpressionRenderer expression={currentExpression} size={14} />
-                </div>
-                {currentGrammarError && (
-                  <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription className="text-xs">
-                      {currentGrammarError}
-                    </AlertDescription>
-                  </Alert>
-                )}
-              </div>
-
-              {/* Applicable Rules */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs text-muted-foreground font-mono">
-                    Applicable Rules
-                  </label>
-                  {isSearchingRules && (
-                    <span className="text-xs text-muted-foreground">Searching...</span>
-                  )}
-                  {!isSearchingRules && applicableRules.length > 0 && (
-                    <span className="text-xs text-muted-foreground">
-                      {applicableRules.length} rule{applicableRules.length > 1 ? 's' : ''} found
-                    </span>
-                  )}
-                </div>
-                
-                {currentExpression.trim() && !isSearchingRules && applicableRules.length > 0 && applicableRules[0].grammarError && (
-                  <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription className="text-xs">
-                      {applicableRules[0].grammarError}
-                    </AlertDescription>
-                  </Alert>
-                )}
-
-                {currentExpression.trim() && !isSearchingRules && applicableRules.length === 0 && (
-                  <Alert className="border-yellow-500/50 bg-yellow-500/10">
-                    <AlertCircle className="h-4 w-4 text-yellow-500" />
-                    <AlertDescription className="text-yellow-400 text-xs">
-                      No applicable rules found to transform the previous expression to this one.
-                    </AlertDescription>
-                  </Alert>
-                )}
-
-                {!currentExpression.trim() && (
-                  <div className="p-3 bg-muted/30 rounded border border-border/50 text-xs text-muted-foreground text-center">
-                    Enter an expression to see applicable rules
-                  </div>
-                )}
-
-                {applicableRules.length > 0 && !applicableRules[0].grammarError && (
-                  <ScrollArea className="h-[200px] border border-border/50 rounded-lg">
-                    <div className="p-2 space-y-2">
-                      {applicableRules.map((appRule, idx) => (
-                        <div
-                          key={`${appRule.rule.id}-${idx}`}
-                          className="p-2 bg-muted/30 rounded border border-border/50 hover:bg-muted/50 transition-colors"
-                        >
-                          <div className="flex items-center gap-2 mb-1">
-                            <Badge variant="outline" className="text-[10px]">
-                              {appRule.rule.type.charAt(0).toUpperCase()}
-                            </Badge>
-                            <span className="text-xs font-medium">{appRule.rule.name}</span>
-                            <Badge 
-                              variant={appRule.direction === 'left-to-right' ? 'default' : 'secondary'}
-                              className="text-[10px] ml-auto"
-                            >
-                              {appRule.direction === 'left-to-right' ? 'L→R' : 'R→L'}
-                            </Badge>
-                          </div>
-                          <div className="text-[10px] text-muted-foreground font-mono mb-1 flex items-center gap-1">
-                            {appRule.rule.leftSide} <EquivalenceSymbol size={10} /> {appRule.rule.rightSide}
-                          </div>
-                          {appRule.inferenceRule && (
-                            <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/30">
-                              {appRule.inferenceRule}
-                            </Badge>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                )}
-              </div>
-            </div>
-            
-            {(!currentExpression.trim() || applicableRules.length > 0) && (
-              <div className="flex justify-end mt-4">
-                  <Button
-                    onClick={addProofStep}
-                    disabled={!currentExpression.trim() || !!currentGrammarError}
-                    size="sm"
-                    className="gap-2"
+            <Collapsible open={addStepExpanded} onOpenChange={setAddStepExpanded} className="flex-shrink-0">
+              <div className="bg-card border border-border rounded-lg overflow-hidden">
+                <CollapsibleTrigger asChild>
+                  <button
+                    type="button"
+                    className="flex items-center gap-2 w-full p-4 text-left hover:bg-muted/30 transition-colors"
                   >
-                    <Plus className="w-4 h-4" />
-                    Add Step
-                  </Button>
+                    <ChevronRight className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-medium">Add Next Step</span>
+                    {addStepExpanded ? (
+                      <ChevronUp className="w-4 h-4 ml-auto text-muted-foreground" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 ml-auto text-muted-foreground" />
+                    )}
+                  </button>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="px-4 pb-4 pt-0 space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-xs text-muted-foreground font-mono">Next Expression</label>
+                      <SyntaxInput
+                        placeholder="Enter the next expression..."
+                        value={currentExpression}
+                        onChange={setCurrentExpression}
+                        onPaste={(e) => {
+                          e.preventDefault();
+                          const pastedText = e.clipboardData.getData('text');
+                          const singleLineText = pastedText.replace(/\r?\n|\r/g, ' ').replace(/\s+/g, ' ').trim();
+                          setCurrentExpression(singleLineText);
+                        }}
+                      />
+                      <div className="p-2 bg-muted/30 rounded border border-border/50 min-h-[40px] flex items-center">
+                        <ExpressionRenderer expression={currentExpression} size={14} />
+                      </div>
+                    </div>
+
+                    {/* Applicable Rules */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs text-muted-foreground font-mono">
+                          Applicable Rules
+                        </label>
+                        {isSearchingRules && (
+                          <span className="text-xs text-muted-foreground">Searching...</span>
+                        )}
+                        {!isSearchingRules && applicableRules.length > 0 && (
+                          <span className="text-xs text-muted-foreground">
+                            {applicableRules.length} rule{applicableRules.length > 1 ? 's' : ''} found
+                          </span>
+                        )}
+                      </div>
+
+                      {currentExpression.trim() && !isSearchingRules && applicableRules.length === 0 && (
+                        <Alert className="border-yellow-500/50 bg-yellow-500/10">
+                          <AlertCircle className="h-4 w-4 text-yellow-500" />
+                          <AlertDescription className="text-yellow-400 text-xs">
+                            No applicable rules found to transform the previous expression to this one.
+                          </AlertDescription>
+                        </Alert>
+                      )}
+
+                      {!currentExpression.trim() && (
+                        <div className="p-3 bg-muted/30 rounded border border-border/50 text-xs text-muted-foreground text-center">
+                          Enter an expression to see applicable rules
+                        </div>
+                      )}
+
+                      {applicableRules.length > 0 && (
+                        <ScrollArea className="h-[200px] border border-border/50 rounded-lg">
+                          <div className="p-2 space-y-2">
+                            {applicableRules.map((appRule, idx) => (
+                              <div
+                                key={`${appRule.rule.id}-${idx}`}
+                                className="p-2 bg-muted/30 rounded border border-border/50 hover:bg-muted/50 transition-colors"
+                              >
+                                <div className="flex items-center gap-2 mb-1">
+                                  <Badge variant="outline" className="text-[10px]">
+                                    {appRule.rule.type.charAt(0).toUpperCase()}
+                                  </Badge>
+                                  <span className="text-xs font-medium">{appRule.rule.name}</span>
+                                  <Badge
+                                    variant={appRule.direction === 'left-to-right' ? 'default' : 'secondary'}
+                                    className="text-[10px] ml-auto"
+                                  >
+                                    {appRule.direction === 'left-to-right' ? 'L→R' : 'R→L'}
+                                  </Badge>
+                                </div>
+                                <div className="text-[10px] text-muted-foreground font-mono mb-1 flex items-center gap-1">
+                                  {appRule.rule.leftSide} <EquivalenceSymbol size={10} /> {appRule.rule.rightSide}
+                                </div>
+                                {appRule.inferenceRule && (
+                                  <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/30">
+                                    {appRule.inferenceRule}
+                                  </Badge>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </ScrollArea>
+                      )}
+                    </div>
+
+                    {(!currentExpression.trim() || applicableRules.length > 0) && (
+                      <div className="flex justify-end">
+                        <Button
+                          onClick={addProofStep}
+                          disabled={!currentExpression.trim()}
+                          size="sm"
+                          className="gap-2"
+                        >
+                          <Plus className="w-4 h-4" />
+                          Add Step
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </CollapsibleContent>
               </div>
-            )}
-          </div>
+            </Collapsible>
           )}
         </div>
       )}

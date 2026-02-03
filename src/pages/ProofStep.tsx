@@ -749,41 +749,11 @@ const ProofStep: React.FC = () => {
                           <div className="text-xs font-medium text-muted-foreground mb-1">
                             {step.rule.name}
                           </div>
-                          <div className="flex items-center gap-2 text-xs font-mono mb-2">
+                          <div className="flex items-center gap-2 text-xs font-mono">
                             <span className="text-muted-foreground">{step.rule.leftSide}</span>
                             <EquivalenceSymbol size={14} />
                             <span className="text-muted-foreground">{step.rule.rightSide}</span>
                           </div>
-                          <div className="flex items-center gap-2 text-xs font-mono">
-                            <span className="text-foreground">Normalized:</span>
-                            <span className="text-primary">{step.normalized.left}</span>
-                            <EquivalenceSymbol size={14} />
-                            <span className="text-primary">{step.normalized.right}</span>
-                          </div>
-                          {/* Show substitution context if Equivalent Substitution is used */}
-                          {step.inferenceRule === 'Equivalent Substitution' && step.matchPosition && 
-                           (step.matchPosition.prefix || step.matchPosition.suffix) && (
-                            <div className="mt-2 p-2 bg-primary/5 rounded border border-primary/20">
-                              <div className="text-xs text-muted-foreground mb-1 font-semibold">Substitution Context (M·A·N):</div>
-                              <div className="flex items-center gap-2 text-xs font-mono">
-                                {step.matchPosition.prefix && (
-                                  <>
-                                    <span className="text-muted-foreground">M =</span>
-                                    <code className="text-foreground bg-muted/30 px-1.5 py-0.5 rounded">{step.matchPosition.prefix}</code>
-                                  </>
-                                )}
-                                {step.matchPosition.prefix && step.matchPosition.suffix && (
-                                  <span className="text-primary">·</span>
-                                )}
-                                {step.matchPosition.suffix && (
-                                  <>
-                                    <span className="text-muted-foreground">N =</span>
-                                    <code className="text-foreground bg-muted/30 px-1.5 py-0.5 rounded">{step.matchPosition.suffix}</code>
-                                  </>
-                                )}
-                              </div>
-                            </div>
-                          )}
                         </div>
                       ))}
                     </div>
