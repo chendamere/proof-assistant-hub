@@ -6,7 +6,7 @@
 
 import { MatchPosition } from './types';
 import { normalizeSpacing, extractOperandTokens } from './utils';
-import { exprToDAG, vf2ExprSubgraphIsomorphism } from '../dag';
+import { exprToDAG, dagToExpr, vf2ExprSubgraphIsomorphism } from '../dag';
 
 /**
  * Convert ruleOtherSide using operand mapping
@@ -176,6 +176,88 @@ export const convertRuleOtherSide = (
 };
 
 /**
+ * Convert ruleOtherSide using DAG: build DAG from other side, apply operand mapping, convert back.
+ * Replaces the sub-DAG in the target with the other side as a DAG (preserves branch structure).
+ */
+function convertRuleOtherSideWithDAG(
+  ruleOtherSide: string,
+  operandMapping: Map<string, string>,
+  prefix: string,
+  suffix: string,
+  targetSide: string,
+  expectedResult?: string
+): string {
+  const extractOperandsFromText = (text: string): Set<string> => {
+    const operands = new Set<string>();
+    const numberPattern = /\b(\d+)\b/g;
+    let match;
+    while ((match = numberPattern.exec(text)) !== null) operands.add(match[1]);
+    return operands;
+  };
+
+  const prefixOperands = extractOperandsFromText(prefix);
+  const suffixOperands = extractOperandsFromText(suffix);
+  const targetOperands = extractOperandsFromText(targetSide);
+  const expectedOperands = expectedResult ? extractOperandsFromText(expectedResult) : new Set<string>();
+  const existingOperands = new Set([...prefixOperands, ...suffixOperands, ...targetOperands, ...expectedOperands]);
+
+  const ruleOtherTokens = extractOperandTokens(ruleOtherSide);
+  const unmappedTokens = ruleOtherTokens.filter((t) => !operandMapping.has(t.token));
+
+  const replacementDAG = exprToDAG(normalizeSpacing(ruleOtherSide));
+
+  const tryConversion = (mapping: Map<string, string>): string => {
+    let converted = dagToExpr(replacementDAG, mapping);
+    // Strip outer commas to fit between prefix/suffix (match region is inner content)
+    converted = converted.replace(/^,\s*/, '').replace(/\s*,$/, '').trim();
+    const isJustComma = converted === '';
+    return isJustComma ? '' : converted;
+  };
+
+  const testMatch = (mapping: Map<string, string>): boolean => {
+    const converted = tryConversion(mapping);
+    const substituted = prefix + converted + suffix;
+    return normalizeSpacing(substituted) === normalizeSpacing(expectedResult ?? '');
+  };
+
+  if (unmappedTokens.length > 0 && expectedResult) {
+    const tryAssignExisting = (tokenIdx: number, mapping: Map<string, string>): string | null => {
+      if (tokenIdx >= unmappedTokens.length) {
+        return testMatch(mapping) ? tryConversion(mapping) : null;
+      }
+      const token = unmappedTokens[tokenIdx];
+      if (mapping.has(token.token)) {
+        return tryAssignExisting(tokenIdx + 1, mapping);
+      }
+      for (const existingOp of existingOperands) {
+        const nextMap = new Map(mapping);
+        nextMap.set(token.token, existingOp);
+        const result = tryAssignExisting(tokenIdx + 1, nextMap);
+        if (result !== null) return result;
+      }
+      return null;
+    };
+    const result = tryAssignExisting(0, new Map(operandMapping));
+    if (result !== null) return result;
+  }
+
+  const usedOperands = new Set([...prefixOperands, ...suffixOperands, ...operandMapping.values()]);
+  let maxUsed = 0;
+  usedOperands.forEach((op) => {
+    const num = parseInt(op, 10);
+    if (!isNaN(num) && num > maxUsed) maxUsed = num;
+  });
+  let nextUnused = maxUsed + 1;
+  const fullMapping = new Map(operandMapping);
+  for (const t of ruleOtherTokens) {
+    if (!fullMapping.has(t.token)) {
+      fullMapping.set(t.token, (nextUnused++).toString());
+    }
+  }
+  return tryConversion(fullMapping);
+}
+
+/**
  * Find substitution match in target expression using DAG isomorphism.
  * Rule applicability after operand normalization is equivalent to DAG isomorphism:
  * the rule matches if its expression DAG is isomorphic to a subgraph of the target's DAG.
@@ -304,10 +386,10 @@ export const trySubstitution = (
     return null;
   }
   
-  // Convert otherRuleSide if pattern matching was used
+  // Convert otherRuleSide if pattern matching was used (DAG-based replacement)
   let converted = otherRuleSide;
   if (result.position.wasPatternMatch && result.position.operandMapping) {
-    converted = convertRuleOtherSide(
+    converted = convertRuleOtherSideWithDAG(
       otherRuleSide,
       result.position.operandMapping,
       result.position.prefix || '',

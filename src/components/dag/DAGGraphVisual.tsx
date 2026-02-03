@@ -69,6 +69,46 @@ function computeLayout(structure: DAGStructure<ExprNodeData>): Map<string, NodeP
     structure.nodes.filter((n) => (n.data as ExprNodeData)?.op?.endsWith(':tail')).map((n) => n.id)
   );
 
+  /** Nodes that can reach a tail (for finding Brb arms) */
+  function reachableTails(id: string): Set<string> {
+    const hits = new Set<string>();
+    const stack = [id];
+    const seen = new Set(stack);
+    while (stack.length) {
+      const cur = stack.pop()!;
+      if (tailIds.has(cur)) hits.add(cur);
+      for (const c of outgoing.get(cur) ?? []) {
+        if (!seen.has(c)) {
+          seen.add(c);
+          stack.push(c);
+        }
+      }
+    }
+    return hits;
+  }
+
+  /** Is this node a Brb fork? (has 2 children that both reach a common tail) */
+  function isBrbFork(nodeId: string): boolean {
+    const ch = outgoing.get(nodeId) ?? [];
+    if (ch.length < 2) return false;
+    const tails0 = reachableTails(ch[0]);
+    const tails1 = reachableTails(ch[1]);
+    for (const t of tails0) {
+      if (tails1.has(t)) return true;
+    }
+    return false;
+  }
+
+  /** Do these two roots form a Brb? (both reach the same tail) */
+  function isBrbDualRoots(r0: string, r1: string): boolean {
+    const tails0 = reachableTails(r0);
+    const tails1 = reachableTails(r1);
+    for (const t of tails0) {
+      if (tails1.has(t)) return true;
+    }
+    return false;
+  }
+
   function visit(id: string, path: string) {
     if (visited.has(id)) return;
     visited.add(id);
@@ -80,7 +120,7 @@ function computeLayout(structure: DAGStructure<ExprNodeData>): Map<string, NodeP
     if (tailIds.has(id)) {
       branchPath.set(id, path ? path.slice(0, -1) : '');
       children.forEach((c) => visit(c, branchPath.get(id)!));
-    } else if (op.endsWith(':cond') && children.length >= 2) {
+    } else if ((op.includes(':cond') || isBrbFork(id)) && children.length >= 2) {
       branchPath.set(id, path);
       const [topChild, botChild] = children;
       visit(topChild, path + 't');
@@ -92,7 +132,12 @@ function computeLayout(structure: DAGStructure<ExprNodeData>): Map<string, NodeP
     }
   }
 
-  roots.forEach((r) => visit(r, ''));
+  if (roots.length === 2 && isBrbDualRoots(roots[0], roots[1])) {
+    visit(roots[0], 't');
+    visit(roots[1], 'b');
+  } else {
+    roots.forEach((r) => visit(r, ''));
+  }
 
   /** Convert path to x-ratio in [0,1]: ""=0.5, "t"=0.25, "b"=0.75, "tt"=0.125, etc. */
   function pathToXRatio(path: string): number {

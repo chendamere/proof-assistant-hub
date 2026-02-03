@@ -88,15 +88,31 @@ function extractOperations(expr: string): Array<{ op: string; operands: string[]
   return ops;
 }
 
+/** Parse a condition like "i \\Oe j" into { op: "\\Oe", operands: ["i","j"] }. Returns null if no op found. */
+function parseConditionOp(cond: string): { op: string; operands: string[] } | null {
+  const ops = extractOperations(cond.trim());
+  if (ops.length === 0) return null;
+  const first = ops[0];
+  return { op: first.op, operands: [...first.operands] };
+}
+
 /** Check if expression contains branch operators */
 function hasBranch(expr: string): boolean {
   return /\\B[lr]b|\\Bb/.test(expr);
 }
 
-/** Parse \Bb{cond}{top}{bottom}, \Blb{cond}{top}{bottom}, or \Brb{top}{bottom} - only when expr is solely a branch */
+/** Parse \Bb{cond}{top}{bottom}, \Blb{cond}{top}{bottom}, or \Brb{top}{bottom}. Returns content and end positions. */
 function parseBranchAtStart(
   expr: string
-): { kind: 'Bb' | 'Blb' | 'Brb'; cond?: string; top: string; bottom: string } | null {
+): {
+  kind: 'Bb' | 'Blb' | 'Brb';
+  cond?: string;
+  top: string;
+  bottom: string;
+  condEnd?: number;
+  topEnd?: number;
+  bottomEnd: number;
+} | null {
   const trimmed = expr.trim();
   const bb = trimmed.match(/^[\s,]*\\Bb\s*\{/);
   const blb = trimmed.match(/^[\s,]*\\Blb\s*\{/);
@@ -121,7 +137,15 @@ function parseBranchAtStart(
     pos = topRes.end;
     const bottomRes = parseOneBraced(trimmed, pos);
     if (!bottomRes) return null;
-    return { kind, cond: condRes.content, top: topRes.content, bottom: bottomRes.content };
+    return {
+      kind,
+      cond: condRes.content,
+      top: topRes.content,
+      bottom: bottomRes.content,
+      condEnd: condRes.end,
+      topEnd: topRes.end,
+      bottomEnd: bottomRes.end,
+    };
   }
 
   const topRes = parseOneBraced(trimmed, pos);
@@ -129,62 +153,145 @@ function parseBranchAtStart(
   pos = topRes.end;
   const bottomRes = parseOneBraced(trimmed, pos);
   if (!bottomRes) return null;
-  return { kind, top: topRes.content, bottom: bottomRes.content };
+  return { kind, top: topRes.content, bottom: bottomRes.content, topEnd: topRes.end, bottomEnd: bottomRes.end };
 }
 
-/** Split expression by top-level commas (not inside braces). */
-function splitSequence(expr: string): string[] {
-  const items: string[] = [];
+/** Split expression by top-level commas (not inside braces). Returns [item, startIndex] pairs. */
+function splitSequence(expr: string): Array<{ item: string; start: number }> {
+  const result: Array<{ item: string; start: number }> = [];
   let depth = 0;
   let start = 0;
   for (let i = 0; i < expr.length; i++) {
     if (expr[i] === '{') depth++;
     else if (expr[i] === '}') depth--;
     else if (expr[i] === ',' && depth === 0) {
-      items.push(expr.substring(start, i));
+      result.push({ item: expr.substring(start, i), start });
       start = i + 1;
     }
   }
-  items.push(expr.substring(start));
-  return items;
+  result.push({ item: expr.substring(start), start });
+  return result;
 }
 
 /** Result of building a sub-DAG: first and last node ids for chaining. */
-type BuildResult = { firstId: string; lastId: string } | null;
+type BuildResult = {
+  firstId?: string;
+  firstIds?: string[];
+  lastId?: string;
+  lastIds?: string[];
+} | null;
 
-/** Build a single item: branch or ops. */
+/** Build a single item: branch or ops. offset = start index of item in full expression (for start/end). */
 function buildItem(
   item: string,
   nodes: DAGNode<ExprNodeData>[],
   edges: DAGEdge[],
-  nextId: { n: number }
+  nextId: { n: number },
+  offset = 0
 ): BuildResult {
   const trimmed = item.trim();
   if (!trimmed) return null;
+  const trimStart = item.search(/\S/);
+  const trimmedOffset = offset + (trimStart >= 0 ? trimStart : 0);
 
   const branch = parseBranchAtStart(trimmed);
   if (branch) {
     const opFull = branch.kind === 'Bb' ? '\\Bb' : branch.kind === 'Blb' ? '\\Blb' : '\\Brb';
 
+    if (branch.kind === 'Brb') {
+      const topBracePos = trimmed.indexOf('{');
+      const topRes = topBracePos >= 0 ? parseOneBraced(trimmed, topBracePos) : null;
+      const botRes = topRes ? parseOneBraced(trimmed, topRes.end) : null;
+      const topOffset = topRes ? trimmedOffset + topBracePos + 1 : trimmedOffset;
+      const botOffset = topRes && botRes ? trimmedOffset + topRes.end + 1 : trimmedOffset;
+      const tailId = `n${nextId.n++}`;
+      nodes.push({
+        id: tailId,
+        data: { op: `${opFull}:tail`, operands: [], start: trimmedOffset, end: trimmedOffset + trimmed.length },
+      });
+
+      const topResult = buildItem(branch.top, nodes, edges, nextId, topOffset);
+      const botResult = buildItem(branch.bottom, nodes, edges, nextId, botOffset);
+
+      const firstIds: string[] = [];
+      if (topResult) {
+        firstIds.push(topResult.firstId!);
+        edges.push({ from: topResult.lastId!, to: tailId });
+      }
+      if (botResult) {
+        firstIds.push(botResult.firstId!);
+        edges.push({ from: botResult.lastId!, to: tailId });
+      }
+      if (firstIds.length === 0) firstIds.push(tailId);
+
+      return { firstIds, lastId: tailId };
+    }
+
+    if (branch.kind === 'Blb') {
+      const topOffset = branch.condEnd != null ? trimmedOffset + branch.condEnd + 1 : trimmedOffset;
+      const botOffset = branch.topEnd != null ? trimmedOffset + branch.topEnd + 1 : trimmedOffset;
+      const condHeadId = `n${nextId.n++}`;
+      const condParsed = branch.cond ? parseConditionOp(branch.cond) : null;
+      const condOp = condParsed
+        ? `${opFull}:cond:${condParsed.op}`
+        : `${opFull}:cond`;
+      const condOperands = condParsed ? condParsed.operands : branch.cond ? [branch.cond] : [];
+      nodes.push({
+        id: condHeadId,
+        data: { op: condOp, operands: condOperands, start: trimmedOffset, end: branch.condEnd ?? trimmedOffset },
+      });
+
+      const lastIds: string[] = [];
+      const topResult = buildItem(branch.top, nodes, edges, nextId, topOffset);
+      if (topResult) {
+        edges.push({ from: condHeadId, to: topResult.firstId! });
+        lastIds.push(topResult.lastId!);
+      } else {
+        lastIds.push(condHeadId);
+      }
+      const botResult = buildItem(branch.bottom, nodes, edges, nextId, botOffset);
+      if (botResult) {
+        edges.push({ from: condHeadId, to: botResult.firstId! });
+        lastIds.push(botResult.lastId!);
+      } else if (!topResult) {
+        lastIds.pop(); // already pushed condHeadId for empty top
+        lastIds.push(condHeadId);
+      }
+
+      return { firstId: condHeadId, lastIds };
+    }
+
+    // Bb: cond head + tail, both arms converge
+    const topOffset = branch.condEnd != null ? trimmedOffset + branch.condEnd + 1 : trimmedOffset;
+    const botOffset = branch.topEnd != null ? trimmedOffset + branch.topEnd + 1 : trimmedOffset;
     const condHeadId = `n${nextId.n++}`;
-    const condOperands = branch.cond ? [branch.cond] : [];
-    nodes.push({ id: condHeadId, data: { op: `${opFull}:cond`, operands: condOperands } });
+    const condParsed = branch.cond ? parseConditionOp(branch.cond) : null;
+    const condOp = condParsed
+      ? `${opFull}:cond:${condParsed.op}`
+      : `${opFull}:cond`;
+    const condOperands = condParsed ? condParsed.operands : branch.cond ? [branch.cond] : [];
+    nodes.push({
+      id: condHeadId,
+      data: { op: condOp, operands: condOperands, start: trimmedOffset, end: branch.condEnd ?? trimmedOffset },
+    });
 
     const tailId = `n${nextId.n++}`;
-    nodes.push({ id: tailId, data: { op: `${opFull}:tail`, operands: [] } });
+    nodes.push({
+      id: tailId,
+      data: { op: `${opFull}:tail`, operands: [], start: trimmedOffset, end: trimmedOffset + trimmed.length },
+    });
 
-    const topResult = buildItem(branch.top, nodes, edges, nextId);
+    const topResult = buildItem(branch.top, nodes, edges, nextId, topOffset);
     if (topResult) {
-      edges.push({ from: condHeadId, to: topResult.firstId });
-      edges.push({ from: topResult.lastId, to: tailId });
+      edges.push({ from: condHeadId, to: topResult.firstId! });
+      edges.push({ from: topResult.lastId!, to: tailId });
     } else {
       edges.push({ from: condHeadId, to: tailId });
     }
-
-    const botResult = buildItem(branch.bottom, nodes, edges, nextId);
+    const botResult = buildItem(branch.bottom, nodes, edges, nextId, botOffset);
     if (botResult) {
-      edges.push({ from: condHeadId, to: botResult.firstId });
-      edges.push({ from: botResult.lastId, to: tailId });
+      edges.push({ from: condHeadId, to: botResult.firstId! });
+      edges.push({ from: botResult.lastId!, to: tailId });
     } else {
       edges.push({ from: condHeadId, to: tailId });
     }
@@ -200,7 +307,12 @@ function buildItem(
   for (let i = 0; i < ops.length; i++) {
     const o = ops[i];
     const nodeId = `n${nextId.n++}`;
-    const data: ExprNodeData = { op: o.op, operands: [...o.operands], start: o.start, end: o.end };
+    const data: ExprNodeData = {
+      op: o.op,
+      operands: [...o.operands],
+      start: o.start + trimmedOffset,
+      end: o.end + trimmedOffset,
+    };
     nodes.push({ id: nodeId, data });
     if (i === 0) firstId = nodeId;
     lastId = nodeId;
@@ -211,6 +323,17 @@ function buildItem(
   return firstId && lastId ? { firstId, lastId } : null;
 }
 
+function chain(from: BuildResult, to: BuildResult, edges: DAGEdge[]): void {
+  if (!from || !to) return;
+  const fromIds = from.lastIds ?? (from.lastId ? [from.lastId] : []);
+  const toIds = to.firstIds ?? (to.firstId ? [to.firstId] : []);
+  for (const fid of fromIds) {
+    for (const tid of toIds) {
+      edges.push({ from: fid, to: tid });
+    }
+  }
+}
+
 /** Recursively build DAG. Splits by top-level commas so branches are isolated. */
 function buildDAGRec(
   expr: string,
@@ -218,15 +341,13 @@ function buildDAGRec(
   edges: DAGEdge[],
   nextId: { n: number }
 ): BuildResult {
-  const items = splitSequence(expr.trim());
+  const parts = splitSequence(expr.trim());
   let prev: BuildResult = null;
 
-  for (const item of items) {
-    const result = buildItem(item, nodes, edges, nextId);
+  for (const { item, start } of parts) {
+    const result = buildItem(item, nodes, edges, nextId, start);
     if (result) {
-      if (prev) {
-        edges.push({ from: prev.lastId, to: result.firstId });
-      }
+      if (prev) chain(prev, result, edges);
       prev = result;
     }
   }

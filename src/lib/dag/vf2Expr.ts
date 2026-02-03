@@ -91,33 +91,33 @@ export function vf2ExprSubgraphIsomorphism(
       return false;
     }
 
-    const pOut = pAdj.outgoing.get(p)?.size ?? 0;
-    const pIn = pAdj.incoming.get(p)?.size ?? 0;
-    const tOut = tAdj.outgoing.get(t)?.size ?? 0;
-    const tIn = tAdj.incoming.get(t)?.size ?? 0;
-    const isRoot = pIn === 0;
-    const isLeaf = pOut === 0;
-    if (isRoot && pOut !== tOut) {
-      varToTarget.clear();
-      targetToVar.clear();
-      savedVar.forEach((v, k) => varToTarget.set(k, v));
-      savedTarget.forEach((v, k) => targetToVar.set(k, v));
-      return false;
-    }
-    if (isLeaf && pIn !== tIn) {
-      varToTarget.clear();
-      targetToVar.clear();
-      savedVar.forEach((v, k) => varToTarget.set(k, v));
-      savedTarget.forEach((v, k) => targetToVar.set(k, v));
-      return false;
-    }
-    if (!isRoot && !isLeaf && (pOut !== tOut || pIn !== tIn)) {
-      varToTarget.clear();
-      targetToVar.clear();
-      savedVar.forEach((v, k) => varToTarget.set(k, v));
-      savedTarget.forEach((v, k) => targetToVar.set(k, v));
-      return false;
-    }
+    // const pOut = pAdj.outgoing.get(p)?.size ?? 0;
+    // const pIn = pAdj.incoming.get(p)?.size ?? 0;
+    // const tOut = tAdj.outgoing.get(t)?.size ?? 0;
+    // const tIn = tAdj.incoming.get(t)?.size ?? 0;
+    // const isRoot = pIn === 0;
+    // const isLeaf = pOut === 0;
+    // if (isRoot && pOut !== tOut) {
+    //   varToTarget.clear();
+    //   targetToVar.clear();
+    //   savedVar.forEach((v, k) => varToTarget.set(k, v));
+    //   savedTarget.forEach((v, k) => targetToVar.set(k, v));
+    //   return false;
+    // }
+    // if (isLeaf && pIn !== tIn) {
+    //   varToTarget.clear();
+    //   targetToVar.clear();
+    //   savedVar.forEach((v, k) => varToTarget.set(k, v));
+    //   savedTarget.forEach((v, k) => targetToVar.set(k, v));
+    //   return false;
+    // }
+    // if (!isRoot && !isLeaf && (pOut !== tOut || pIn !== tIn)) {
+    //   varToTarget.clear();
+    //   targetToVar.clear();
+    //   savedVar.forEach((v, k) => varToTarget.set(k, v));
+    //   savedTarget.forEach((v, k) => targetToVar.set(k, v));
+    //   return false;
+    // }
 
     for (const p2 of pAdj.outgoing.get(p) ?? []) {
       if (mapping.has(p2)) {
