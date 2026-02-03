@@ -54,17 +54,6 @@ export const checkInferenceRules = (
     };
   }
 
-  if (targetLeft === ruleLeft && targetRight === ruleRight) {
-    return {
-      match: true,
-      inferenceRule: 'Exact Match',
-      matchPosition: {
-        side: 'both',
-        description: 'Both sides match exactly'
-      }
-    };
-  }
-
   for (const infRule of InferenceRules) {
     const result = infRule.check(targetLeft, targetRight, ruleLeft, ruleRight);
     if (result.match) {

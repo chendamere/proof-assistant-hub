@@ -216,5 +216,12 @@ export function substituteInDAG(
     }
   }
 
+  // Boundary edges: prefix -> suffix (e.g. empty branch arm: cond directly to tail)
+  for (const e of targetDAG.edges) {
+    if (prefixSet.has(e.from) && suffixSet.has(e.to)) {
+      mergedEdges.push({ from: e.from, to: e.to });
+    }
+  }
+
   return { nodes: mergedNodes, edges: mergedEdges };
 }

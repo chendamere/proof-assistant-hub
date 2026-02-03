@@ -7,7 +7,7 @@
 import type { DAGStructure, ExprNodeData } from '../dag';
 import { MatchPosition } from './types';
 import { normalizeSpacing, extractOperandTokens } from './utils';
-import { exprToDAG, dagToExpr, vf2ExprSubgraphIsomorphism, substituteInDAG } from '../dag';
+import { exprToDAG, dagToExpr, vf2ExprSubgraphIsomorphism, vf2ExprSubgraphIsomorphismAll, substituteInDAG } from '../dag';
 
 /**
  * Convert ruleOtherSide using operand mapping
@@ -375,6 +375,7 @@ export const findSubstitution = function findSubstitutionRecursive(
 
 /**
  * Helper function to try a substitution and check if it matches.
+ * Tries all match candidates (multiple subexpressions can match) until one produces the expected result.
  * Uses DAG-based substitution when available: prefix/suffix/replacement are merged at the DAG level
  * so heads and tails connect correctly (no character-position splicing).
  */
@@ -386,39 +387,69 @@ export const trySubstitution = (
   targetSideForOperands: string,
   side: 'left' | 'right'
 ) => {
-  const result = findSubstitution(target, ruleSide, side);
-  if (!result.match || !result.position) {
+  const normalizedTarget = normalizeSpacing(target);
+  const normalizedRule = normalizeSpacing(ruleSide);
+  const patternDAG = exprToDAG(normalizedRule);
+  const targetDAG = exprToDAG(normalizedTarget);
+
+  if (patternDAG.nodes.length > targetDAG.nodes.length) {
     return null;
   }
 
-  // DAG-based substitution: merge prefix DAG + replacement DAG + suffix DAG structurally
-  if (
-    result.position.wasPatternMatch &&
-    result.position.operandMapping &&
-    result.position.targetDAG &&
-    result.position.patternDAG &&
-    result.position.nodeMapping
-  ) {
-    try {
-      const substituted = convertRuleOtherSideWithDAG(
-        otherRuleSide,
-        result.position.operandMapping,
-        result.position.targetDAG,
-        result.position.patternDAG,
-        result.position.nodeMapping,
-        targetSideForOperands,
-        expectedResult
-      );
-      if (normalizeSpacing(substituted) === normalizeSpacing(expectedResult)) {
-        return result;
+  // DAG-based: try each match candidate until one produces the expected result
+  if (patternDAG.nodes.length > 0) {
+    for (const vf2Result of vf2ExprSubgraphIsomorphismAll(patternDAG, targetDAG)) {
+      const tNodeMap = new Map(targetDAG.nodes.map((n) => [n.id, n]));
+      let candidateStart = normalizedTarget.length;
+      let candidateEnd = 0;
+      for (const targetId of vf2Result.mapping.values()) {
+        const node = tNodeMap.get(targetId);
+        const data = node?.data as { start?: number; end?: number } | undefined;
+        if (data?.start != null) candidateStart = Math.min(candidateStart, data.start);
+        if (data?.end != null) candidateEnd = Math.max(candidateEnd, data.end);
       }
-    } catch {
-      // DAG merge/serialize failed (e.g. structure mismatch); fall through to null
+      if (candidateStart >= candidateEnd) continue;
+
+      const operandMapping = vf2Result.operandMapping.size > 0 ? vf2Result.operandMapping : undefined;
+      if (!operandMapping) continue;
+
+      try {
+        const substituted = convertRuleOtherSideWithDAG(
+          otherRuleSide,
+          operandMapping,
+          targetDAG,
+          patternDAG,
+          vf2Result.mapping,
+          targetSideForOperands,
+          expectedResult
+        );
+        if (normalizeSpacing(substituted) === normalizeSpacing(expectedResult)) {
+          return {
+            match: true,
+            position: {
+              side,
+              position: candidateStart,
+              description: `Rule found (DAG isomorphism) in ${side} side`,
+              prefix: normalizedTarget.substring(0, candidateStart) || undefined,
+              suffix: normalizedTarget.substring(candidateEnd) || undefined,
+              operandMapping,
+              wasPatternMatch: true,
+              targetDAG,
+              patternDAG,
+              nodeMapping: vf2Result.mapping,
+            },
+          };
+        }
+      } catch {
+        // DAG merge/serialize failed; try next match
+      }
     }
-    return null;
   }
 
-  // Fallback: string-based (operators only, no operands)
+  // Fallback: try findSubstitution for non-DAG cases (operators only, no operands)
+  const result = findSubstitution(target, ruleSide, side);
+  if (!result.match || !result.position) return null;
+  if (result.position.wasPatternMatch) return null; // already tried above
   let converted = otherRuleSide;
   const substituted = (result.position.prefix || '') + converted + (result.position.suffix || '');
   if (normalizeSpacing(substituted) === normalizeSpacing(expectedResult)) {

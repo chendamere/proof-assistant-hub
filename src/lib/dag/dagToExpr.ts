@@ -146,6 +146,7 @@ export function dagToExpr(
     return { parts, nextId: cur };
   }
 
+  /** Serialize ops in a chain; returns [] if arm starts with cond/tail. */
   function serializeArm(startId: string): string[] {
     const parts: string[] = [];
     let cur: string | null = startId;
@@ -163,6 +164,32 @@ export function dagToExpr(
       cur = next[0];
     }
     return parts;
+  }
+
+  /** Serialize arm content: either ops (comma-separated) or a nested branch. Returns string for braced content. */
+  function serializeArmContent(startId: string): string {
+    const node = nodeMap.get(startId);
+    const data = node?.data as ExprNodeData | undefined;
+    const op = data?.op ?? '';
+    if (op.endsWith(':tail')) return ','; // empty arm
+    if (op.includes(':cond') && (outgoing.get(startId)?.length ?? 0) >= 1) {
+      const children = outgoing.get(startId) ?? [];
+      const hasTail = children.length >= 2 ? armsLeadToTail(children) : reachesTail(children[0]);
+      let kind: 'Bb' | 'Blb' | 'Brb' = hasTail ? 'Bb' : 'Blb';
+      const tailKind = getReachableTailBranchKind(children);
+      if (tailKind) kind = tailKind;
+      else {
+        const condBranchKind = (data as ExprNodeData & { branchKind?: 'Bb' | 'Blb' | 'Brb' })?.branchKind;
+        if (condBranchKind) kind = condBranchKind;
+      }
+      const cond = formatCond(data!, operandMapping);
+      const topStr = children[0] ? serializeArmContent(children[0]) : ',';
+      const botStr = children[1] ? serializeArmContent(children[1]) : ',';
+      const inner = `\\${kind}{${cond}}{${topStr}}{${botStr}}`;
+      return ',' + inner + ',';
+    }
+    const parts = serializeArm(startId);
+    return parts.length ? ',' + parts.join(', ') + ',' : ',';
   }
 
   function processFrom(id: string): string[] {
@@ -191,10 +218,8 @@ export function dagToExpr(
         if (condBranchKind) kind = condBranchKind;
       }
       const cond = formatCond(data!, operandMapping);
-      const topParts = children[0] ? serializeArm(children[0]) : [];
-      const botParts = children[1] ? serializeArm(children[1]) : [];
-      const topStr = topParts.length ? ',' + topParts.join(', ') + ',' : ',';
-      const botStr = botParts.length ? ',' + botParts.join(', ') + ',' : ',';
+      const topStr = children[0] ? serializeArmContent(children[0]) : ',';
+      const botStr = children[1] ? serializeArmContent(children[1]) : ',';
       itemParts.push(`, \\${kind}{${cond}}{${topStr}}{${botStr}}`);
       if (kind === 'Bb' && children[0]) {
         const tailId = (outgoing.get(children[0]) ?? []).find(

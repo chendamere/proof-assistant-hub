@@ -132,6 +132,14 @@ const TRY_SUB_EXAMPLES: TrySubExample[] = [
     ruleRight: ', \\Brb{,c \\Od e, f \\Oc e,}{,},',
     description: 'Substitute inside branch top arm: swap j\\Oc k with k\\Oc j.',
   },
+  {
+    name: 'Branch arm swap4',
+    targetLeft: ', \\Bb{a \\Oe b}{, \\Bb{a \\Oe b}{,c \\Od e, e \\Oc f,}{,},}{,},',
+    targetRight: ', \\Bb{a \\Oe b}{, \\Bb{a \\Oe b}{,c \\Od e, f \\Oc e,}{,},}{,},',
+    ruleLeft: ', \\Brb{,c \\Od e, e \\Oc f,}{,},',
+    ruleRight: ', \\Brb{,c \\Od e, f \\Oc e,}{,},',
+    description: 'Substitute inside branch top arm: swap j\\Oc k with k\\Oc j.',
+  },
 ];
 
 const DEMO_TARGET = DAG_EXAMPLES[0].target;

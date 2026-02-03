@@ -8,81 +8,81 @@
  */
 
 import { InferenceRule } from './types';
-import { findSubstitution, trySubstitution } from './substitution';
+import { trySubstitution } from './substitution';
 
 export const InferenceRules: InferenceRule[] = [
-  {
-    name: 'Equivalent Commutativity',
-    description: 'A ⟺ B implies B ⟺ A - Exact match (reversed)',
-    check: (targetLeft, targetRight, ruleLeft, ruleRight) => {
-      // Check if target matches rule in reverse
-      if (targetLeft === ruleRight && targetRight === ruleLeft) {
-        return {
-          match: true,
-          position: {
-            side: 'both',
-            description: 'Both sides match in reverse order'
-          }
-        };
-      }
-      return { match: false };
-    },
-  },
-  {
-    name: 'Equivalent Transitivity',
-    description: 'A ⟺ B and B ⟺ C implies A ⟺ C - Chain through common side',
-    check: (targetLeft, targetRight, ruleLeft, ruleRight) => {
-      // If target left matches rule left, check if target right matches rule right exactly
-      if (targetLeft === ruleLeft) {
-        if (targetRight === ruleRight) {
-          return {
-            match: true,
-            position: {
-              side: 'both',
-              description: 'Left sides match, right sides match exactly'
-            }
-          };
-        }
-      }
-      // If target left matches rule right, check if target right matches rule left exactly
-      if (targetLeft === ruleRight) {
-        if (targetRight === ruleLeft) {
-          return {
-            match: true,
-            position: {
-              side: 'both',
-              description: 'Target left matches rule right, target right matches rule left exactly'
-            }
-          };
-        }
-      }
-      // If target right matches rule left, check if target left matches rule right exactly
-      if (targetRight === ruleLeft) {
-        if (targetLeft === ruleRight) {
-          return {
-            match: true,
-            position: {
-              side: 'both',
-              description: 'Target right matches rule left, target left matches rule right exactly'
-            }
-          };
-        }
-      }
-      // If target right matches rule right, check if target left matches rule left exactly
-      if (targetRight === ruleRight) {
-        if (targetLeft === ruleLeft) {
-          return {
-            match: true,
-            position: {
-              side: 'both',
-              description: 'Right sides match, left sides match exactly'
-            }
-          };
-        }
-      }
-      return { match: false };
-    },
-  },
+  // {
+  //   name: 'Equivalent Commutativity',
+  //   description: 'A ⟺ B implies B ⟺ A - Exact match (reversed)',
+  //   check: (targetLeft, targetRight, ruleLeft, ruleRight) => {
+  //     // Check if target matches rule in reverse
+  //     if (targetLeft === ruleRight && targetRight === ruleLeft) {
+  //       return {
+  //         match: true,
+  //         position: {
+  //           side: 'both',
+  //           description: 'Both sides match in reverse order'
+  //         }
+  //       };
+  //     }
+  //     return { match: false };
+  //   },
+  // },
+  // {
+  //   name: 'Equivalent Transitivity',
+  //   description: 'A ⟺ B and B ⟺ C implies A ⟺ C - Chain through common side',
+  //   check: (targetLeft, targetRight, ruleLeft, ruleRight) => {
+  //     // If target left matches rule left, check if target right matches rule right exactly
+  //     if (targetLeft === ruleLeft) {
+  //       if (targetRight === ruleRight) {
+  //         return {
+  //           match: true,
+  //           position: {
+  //             side: 'both',
+  //             description: 'Left sides match, right sides match exactly'
+  //           }
+  //         };
+  //       }
+  //     }
+  //     // If target left matches rule right, check if target right matches rule left exactly
+  //     if (targetLeft === ruleRight) {
+  //       if (targetRight === ruleLeft) {
+  //         return {
+  //           match: true,
+  //           position: {
+  //             side: 'both',
+  //             description: 'Target left matches rule right, target right matches rule left exactly'
+  //           }
+  //         };
+  //       }
+  //     }
+  //     // If target right matches rule left, check if target left matches rule right exactly
+  //     if (targetRight === ruleLeft) {
+  //       if (targetLeft === ruleRight) {
+  //         return {
+  //           match: true,
+  //           position: {
+  //             side: 'both',
+  //             description: 'Target right matches rule left, target left matches rule right exactly'
+  //           }
+  //         };
+  //       }
+  //     }
+  //     // If target right matches rule right, check if target left matches rule left exactly
+  //     if (targetRight === ruleRight) {
+  //       if (targetLeft === ruleLeft) {
+  //         return {
+  //           match: true,
+  //           position: {
+  //             side: 'both',
+  //             description: 'Right sides match, left sides match exactly'
+  //           }
+  //         };
+  //       }
+  //     }
+  //     return { match: false };
+  //   },
+  // },
   {
     name: 'Equivalent Substitution',
     description: 'A ⟺ B allows inserting A with B in any context M·A·N ⟺ M·B·N',

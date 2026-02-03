@@ -182,3 +182,97 @@ export function vf2ExprSubgraphIsomorphism(
   // operandMapping: rule operand (e.g. "i", "m") -> target operand (e.g. "1", "2")
   return { mapping, operandMapping: new Map(varToTarget) };
 }
+
+/**
+ * Find ALL subgraph isomorphisms. Yields { mapping, operandMapping } for each match.
+ */
+export function* vf2ExprSubgraphIsomorphismAll(
+  pattern: DAGStructure<ExprNodeData>,
+  target: DAGStructure<ExprNodeData>
+): Generator<{ mapping: Map<string, string>; operandMapping: Map<string, string> }> {
+  const pNodes = pattern.nodes.map((n) => n.id);
+  const tNodes = target.nodes.map((n) => n.id);
+
+  if (pNodes.length === 0) {
+    yield { mapping: new Map(), operandMapping: new Map() };
+    return;
+  }
+  if (pNodes.length > tNodes.length) return;
+
+  const pAdj = buildAdjacency(pattern);
+  const tAdj = buildAdjacency(target);
+  const pNodeMap = new Map(pattern.nodes.map((n) => [n.id, n]));
+  const tNodeMap = new Map(target.nodes.map((n) => [n.id, n]));
+
+  const mapping = new Map<string, string>();
+  const reverseMapping = new Map<string, string>();
+  const varToTarget = new Map<string, string>();
+  const targetToVar = new Map<string, string>();
+
+  function feasible(p: string, t: string): boolean {
+    const pNode = pNodeMap.get(p)!;
+    const tNode = tNodeMap.get(t)!;
+    const pData = pNode.data as ExprNodeData;
+    const tData = tNode.data as ExprNodeData;
+    const savedVar = new Map(varToTarget);
+    const savedTarget = new Map(targetToVar);
+    if (!exprDataMatches(pData, tData, varToTarget, targetToVar)) {
+      varToTarget.clear();
+      targetToVar.clear();
+      savedVar.forEach((v, k) => varToTarget.set(k, v));
+      savedTarget.forEach((v, k) => targetToVar.set(k, v));
+      return false;
+    }
+    for (const p2 of pAdj.outgoing.get(p) ?? []) {
+      if (mapping.has(p2)) {
+        const t2 = mapping.get(p2)!;
+        if (!tAdj.outgoing.get(t)?.has(t2)) {
+          varToTarget.clear();
+          targetToVar.clear();
+          savedVar.forEach((v, k) => varToTarget.set(k, v));
+          savedTarget.forEach((v, k) => targetToVar.set(k, v));
+          return false;
+        }
+      }
+    }
+    for (const p1 of pAdj.incoming.get(p) ?? []) {
+      if (mapping.has(p1)) {
+        const t1 = mapping.get(p1)!;
+        if (!tAdj.incoming.get(t)?.has(t1)) {
+          varToTarget.clear();
+          targetToVar.clear();
+          savedVar.forEach((v, k) => varToTarget.set(k, v));
+          savedTarget.forEach((v, k) => targetToVar.set(k, v));
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  function* search(): Generator<{ mapping: Map<string, string>; operandMapping: Map<string, string> }> {
+    if (mapping.size === pNodes.length) {
+      yield { mapping: new Map(mapping), operandMapping: new Map(varToTarget) };
+      return;
+    }
+    const p = pNodes.find((id) => !mapping.has(id))!;
+    const usedTargets = new Set(mapping.values());
+    for (const t of tNodes) {
+      if (usedTargets.has(t)) continue;
+      const savedVar = new Map(varToTarget);
+      const savedTarget = new Map(targetToVar);
+      if (!feasible(p, t)) continue;
+      mapping.set(p, t);
+      reverseMapping.set(t, p);
+      yield* search();
+      mapping.delete(p);
+      reverseMapping.delete(t);
+      varToTarget.clear();
+      targetToVar.clear();
+      savedVar.forEach((v, k) => varToTarget.set(k, v));
+      savedTarget.forEach((v, k) => targetToVar.set(k, v));
+    }
+  }
+
+  yield* search();
+}

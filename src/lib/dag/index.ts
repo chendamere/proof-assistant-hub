@@ -6,5 +6,5 @@ export type { DAGNode, DAGEdge, DAGStructure, DAGValidationResult, ExprNodeData 
 export { exprToDAG } from './exprToDAG';
 export { dagToExpr } from './dagToExpr';
 export { vf2SubgraphIsomorphism, isSubgraphIsomorphic } from './vf2';
-export { vf2ExprSubgraphIsomorphism } from './vf2Expr';
+export { vf2ExprSubgraphIsomorphism, vf2ExprSubgraphIsomorphismAll } from './vf2Expr';
 export { substituteInDAG } from './dagSubstitute';
