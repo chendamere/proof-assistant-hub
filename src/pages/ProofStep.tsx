@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
-import { normalizeRule } from '@/lib/operandNormalizer';
 import { checkInferenceRules, MatchPosition } from '@/lib/inferenceRules';
 import { checkGrammar } from '@/lib/grammarChecker';
 import { axioms, Rule } from '@/data/axioms';
@@ -79,24 +78,12 @@ const ProofStep: React.FC = () => {
       r2l: { left: string; right: string };
     }>();
     
-    // Process in batches to avoid blocking the UI
+    // Cache rule sides (both directions) - no integer conversion; VF2 handles operand mapping
     allRules.forEach(rule => {
-      try {
-        const l2r = normalizeRule(rule.leftSide, rule.rightSide);
-        const r2l = normalizeRule(rule.rightSide, rule.leftSide);
-        cache.set(rule.id, {
-          l2r: {
-            left: l2r.left.integerExpression,
-            right: l2r.right.integerExpression
-          },
-          r2l: {
-            left: r2l.left.integerExpression,
-            right: r2l.right.integerExpression
-          }
-        });
-      } catch (error) {
-        console.warn(`Failed to normalize rule ${rule.id}:`, error);
-      }
+      cache.set(rule.id, {
+        l2r: { left: rule.leftSide, right: rule.rightSide },
+        r2l: { left: rule.rightSide, right: rule.leftSide },
+      });
     });
     
     return cache;
@@ -143,16 +130,16 @@ const ProofStep: React.FC = () => {
   const checkRule = (
     rule: Rule,
     cached: { l2r: { left: string; right: string }; r2l: { left: string; right: string } },
-    targetIntegerLeft: string,
-    targetIntegerRight: string,
+    targetLeft: string,
+    targetRight: string,
     stepNumber: number
   ): { steps: ProofStep[]; match: boolean; matchStep?: ProofStep } => {
     const steps: ProofStep[] = [];
 
-    // Try left-to-right normalization (use cache)
+    // Try left-to-right direction (use cache)
     const checkResultL2R = checkInferenceRules(
-      targetIntegerLeft,
-      targetIntegerRight,
+      targetLeft,
+      targetRight,
       cached.l2r.left,
       cached.l2r.right
     );
@@ -178,10 +165,10 @@ const ProofStep: React.FC = () => {
       return { steps, match: true, matchStep: stepL2R };
     }
 
-    // Try right-to-left normalization (use cache)
+    // Try right-to-left direction (use cache)
     const checkResultR2L = checkInferenceRules(
-      targetIntegerLeft,
-      targetIntegerRight,
+      targetLeft,
+      targetRight,
       cached.r2l.left,
       cached.r2l.right
     );
@@ -243,10 +230,8 @@ const ProofStep: React.FC = () => {
     // Start timing
     const startTime = performance.now();
 
-    // Normalize the target rule (rule to prove) - only once
-    const targetNormalized = normalizeRule(startExpression, endExpression);
-    const targetIntegerLeft = targetNormalized.left.integerExpression;
-    const targetIntegerRight = targetNormalized.right.integerExpression;
+    const targetLeft = startExpression;
+    const targetRight = endExpression;
 
     const steps: ProofStep[] = [];
     const PARALLEL_BATCH_SIZE = 10; // Number of rules to check in parallel
@@ -254,7 +239,7 @@ const ProofStep: React.FC = () => {
     const YIELD_INTERVAL = 5; // Yield control every 5 batches to keep UI responsive
 
     // Quick pre-check: if target is empty, skip immediately
-    if (!targetIntegerLeft || !targetIntegerRight) {
+    if (!targetLeft || !targetRight) {
       const endTime = performance.now();
       setElapsedTime(endTime - startTime);
       setIsTrue(false);
@@ -292,7 +277,7 @@ const ProofStep: React.FC = () => {
           // We'll adjust these after parallel processing to ensure sequential numbering
           const ruleFirstStep = stepNumber + (batchIndex * 2);
           
-          const result = checkRule(rule, cached, targetIntegerLeft, targetIntegerRight, ruleFirstStep);
+          const result = checkRule(rule, cached, targetLeft, targetRight, ruleFirstStep);
           return { ...result, ruleIndex: i + batchIndex };
         })
       );
@@ -656,35 +641,26 @@ const ProofStep: React.FC = () => {
                     <code className="text-xs text-muted-foreground font-mono">{endExpression}</code>
                   </div>
                 </div>
-                {/* Normalized Expression */}
-                {(() => {
-                  try {
-                    const normalized = normalizeRule(startExpression, endExpression);
-                    return (
-                      <div className="flex items-center justify-center gap-4 p-4 bg-primary/5 rounded-lg border border-primary/20">
-                        <div className="flex-1 text-center">
-                          <div className="mb-2">
-                            <ExpressionRenderer expression={normalized.left.originalExpression} size={20} />
-                          </div>
-                          <code className="text-xs text-primary font-mono">
-                            {normalized.left.integerExpression}
-                          </code>
-                        </div>
-                        <EquivalenceSymbol size={32} />
-                        <div className="flex-1 text-center">
-                          <div className="mb-2">
-                            <ExpressionRenderer expression={normalized.right.originalExpression} size={20} />
-                          </div>
-                          <code className="text-xs text-primary font-mono">
-                            {normalized.right.integerExpression}
-                          </code>
-                        </div>
-                      </div>
-                    );
-                  } catch (error) {
-                    return null;
-                  }
-                })()}
+                {/* Expression to prove */}
+                <div className="flex items-center justify-center gap-4 p-4 bg-primary/5 rounded-lg border border-primary/20">
+                  <div className="flex-1 text-center">
+                    <div className="mb-2">
+                      <ExpressionRenderer expression={startExpression} size={20} />
+                    </div>
+                    <code className="text-xs text-primary font-mono">
+                      {startExpression}
+                    </code>
+                  </div>
+                  <EquivalenceSymbol size={32} />
+                  <div className="flex-1 text-center">
+                    <div className="mb-2">
+                      <ExpressionRenderer expression={endExpression} size={20} />
+                    </div>
+                    <code className="text-xs text-primary font-mono">
+                      {endExpression}
+                    </code>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 

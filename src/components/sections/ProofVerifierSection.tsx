@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { SyntaxInput } from '@/components/ui/syntax-input';
 import { Rule, getTypeBadgeClass, axioms } from '@/data/axioms';
 import { theorems } from '@/data/theorems';
-import { normalizeRule, normalizeOperands } from '@/lib/operandNormalizer';
 import { checkInferenceRules, MatchPosition } from '@/lib/inferenceRules';
 import { checkGrammar } from '@/lib/grammarChecker';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
@@ -50,7 +49,7 @@ const ProofVerifierSection: React.FC = () => {
   // Combine axioms and theorems
   const allRules = useMemo(() => [...axioms, ...theorems], []);
 
-  // Pre-normalize and cache all rules (both directions)
+  // Cache rule sides (both directions) - no integer conversion; VF2 handles operand mapping
   const normalizedRulesCache = useMemo(() => {
     const cache = new Map<string, {
       l2r: { left: string; right: string };
@@ -58,22 +57,10 @@ const ProofVerifierSection: React.FC = () => {
     }>();
     
     allRules.forEach(rule => {
-      try {
-        const l2r = normalizeRule(rule.leftSide, rule.rightSide);
-        const r2l = normalizeRule(rule.rightSide, rule.leftSide);
-        cache.set(rule.id, {
-          l2r: {
-            left: l2r.left.integerExpression,
-            right: l2r.right.integerExpression
-          },
-          r2l: {
-            left: r2l.left.integerExpression,
-            right: r2l.right.integerExpression
-          }
-        });
-      } catch (error) {
-        console.warn(`Failed to normalize rule ${rule.id}:`, error);
-      }
+      cache.set(rule.id, {
+        l2r: { left: rule.leftSide, right: rule.rightSide },
+        r2l: { left: rule.rightSide, right: rule.leftSide },
+      });
     });
     
     return cache;
@@ -94,9 +81,8 @@ const ProofVerifierSection: React.FC = () => {
     // Use setTimeout to avoid blocking UI
     setTimeout(() => {
       try {
-        const targetNormalized = normalizeRule(previousExpression, currentExpression);
-        const targetLeft = targetNormalized.left.integerExpression;
-        const targetRight = targetNormalized.right.integerExpression;
+        const targetLeft = previousExpression;
+        const targetRight = currentExpression;
 
         // Check grammar first before checking inference rules
         const targetLeftGrammar = checkGrammar(targetLeft);

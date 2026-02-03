@@ -26,6 +26,16 @@ function buildAdjacency(structure: DAGStructure): {
   return { outgoing, incoming };
 }
 
+/**
+ * Normalize branch structural op for comparison.
+ * Bb, Blb, Brb are interchangeable for structural roles: cond nodes and tail nodes.
+ * e.g. \Bb:cond:\Oe matches \Blb:cond:\Oe; \Bb:tail matches \Brb:tail.
+ */
+function normalizeBranchOp(op: string): string {
+  const m = op.match(/^\\B[lr]?b(:cond(?::\S+)?|:tail)$/);
+  return m ? m[1] : op;
+}
+
 /** Pattern operands bind to target operands. One-to-one: each rule operand -> unique target operand, each target operand -> at most one rule operand. */
 function exprDataMatches(
   pData: ExprNodeData,
@@ -33,7 +43,9 @@ function exprDataMatches(
   varToTarget: Map<string, string>,
   targetToVar: Map<string, string>
 ): boolean {
-  if (pData.op !== tData.op) return false;
+  const pOpNorm = normalizeBranchOp(pData.op);
+  const tOpNorm = normalizeBranchOp(tData.op);
+  if (pOpNorm !== tOpNorm) return false;
   if (pData.operands.length !== tData.operands.length) return false;
 
   for (let i = 0; i < pData.operands.length; i++) {

@@ -22,22 +22,21 @@ export { generateSubexpressions } from './subexpressions';
 export { formatBranchTree, logBranchTree } from './branchTreeFormat';
 
 /**
- * Check if a normalized rule matches the target using inference rules
- * 
- * @param targetIntegerLeft - Normalized integer expression of target left side
- * @param targetIntegerRight - Normalized integer expression of target right side
- * @param ruleIntegerLeft - Normalized integer expression of rule left side
- * @param ruleIntegerRight - Normalized integer expression of rule right side
- * @returns Object with match status, inference rule name, and match position
+ * Check if a rule matches the target using inference rules.
+ * Operand mapping is handled by VF2 during substitution; no pre-normalization to integers needed.
+ *
+ * @param targetLeft - Target left expression
+ * @param targetRight - Target right expression
+ * @param ruleLeft - Rule left expression
+ * @param ruleRight - Rule right expression
  */
 export const checkInferenceRules = (
-  targetIntegerLeft: string,
-  targetIntegerRight: string,
-  ruleIntegerLeft: string,
-  ruleIntegerRight: string
+  targetLeft: string,
+  targetRight: string,
+  ruleLeft: string,
+  ruleRight: string
 ): { match: boolean; inferenceRule?: string; matchPosition?: MatchPosition; grammarError?: string } => {
-  // First, check grammar for target expressions
-  const targetLeftGrammar = checkGrammar(targetIntegerLeft);
+  const targetLeftGrammar = checkGrammar(targetLeft);
   if (!targetLeftGrammar.isValid) {
     const errors = targetLeftGrammar.errors.map(e => e.message).join('; ');
     return {
@@ -46,7 +45,7 @@ export const checkInferenceRules = (
     };
   }
 
-  const targetRightGrammar = checkGrammar(targetIntegerRight);
+  const targetRightGrammar = checkGrammar(targetRight);
   if (!targetRightGrammar.isValid) {
     const errors = targetRightGrammar.errors.map(e => e.message).join('; ');
     return {
@@ -55,8 +54,7 @@ export const checkInferenceRules = (
     };
   }
 
-  // Try exact match first (fastest check)
-  if (targetIntegerLeft === ruleIntegerLeft && targetIntegerRight === ruleIntegerRight) {
+  if (targetLeft === ruleLeft && targetRight === ruleRight) {
     return {
       match: true,
       inferenceRule: 'Exact Match',
@@ -67,9 +65,8 @@ export const checkInferenceRules = (
     };
   }
 
-  // Try each inference rule (ordered by likelihood/fastest checks first)
   for (const infRule of InferenceRules) {
-    const result = infRule.check(targetIntegerLeft, targetIntegerRight, ruleIntegerLeft, ruleIntegerRight);
+    const result = infRule.check(targetLeft, targetRight, ruleLeft, ruleRight);
     if (result.match) {
       return {
         match: true,
