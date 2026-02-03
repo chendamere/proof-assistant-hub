@@ -19,6 +19,7 @@ interface NodePosition {
 function computeLayout(structure: DAGStructure<ExprNodeData>): Map<string, NodePosition> {
   const positions = new Map<string, NodePosition>();
   const nodeIds = new Set(structure.nodes.map((n) => n.id));
+  const nodeMap = new Map(structure.nodes.map((n) => [n.id, n]));
   const outgoing = new Map<string, string[]>();
   const incoming = new Map<string, string[]>();
 
@@ -61,32 +62,85 @@ function computeLayout(structure: DAGStructure<ExprNodeData>): Map<string, NodeP
     getLayer(n.id);
   }
 
+  /** Branch path: "" = center, "t" = top, "b" = bot, "tt" = top-of-top, etc. */
+  const branchPath = new Map<string, string>();
+  const visited = new Set<string>();
+  const tailIds = new Set(
+    structure.nodes.filter((n) => (n.data as ExprNodeData)?.op?.endsWith(':tail')).map((n) => n.id)
+  );
+
+  function visit(id: string, path: string) {
+    if (visited.has(id)) return;
+    visited.add(id);
+
+    const node = nodeMap.get(id);
+    const op = (node?.data as ExprNodeData)?.op ?? '';
+    const children = outgoing.get(id) ?? [];
+
+    if (tailIds.has(id)) {
+      branchPath.set(id, path ? path.slice(0, -1) : '');
+      children.forEach((c) => visit(c, branchPath.get(id)!));
+    } else if (op.endsWith(':cond') && children.length >= 2) {
+      branchPath.set(id, path);
+      const [topChild, botChild] = children;
+      visit(topChild, path + 't');
+      visit(botChild, path + 'b');
+      children.filter((c) => c !== topChild && c !== botChild).forEach((c) => visit(c, path));
+    } else {
+      branchPath.set(id, path);
+      children.forEach((c) => visit(c, path));
+    }
+  }
+
+  roots.forEach((r) => visit(r, ''));
+
+  /** Convert path to x-ratio in [0,1]: ""=0.5, "t"=0.25, "b"=0.75, "tt"=0.125, etc. */
+  function pathToXRatio(path: string): number {
+    let lo = 0;
+    let hi = 1;
+    for (const ch of path) {
+      const mid = (lo + hi) / 2;
+      if (ch === 't') hi = mid;
+      else lo = mid;
+    }
+    return (lo + hi) / 2;
+  }
+
   const byLayer = new Map<number, string[]>();
   for (const [id, layer] of layers) {
     const list = byLayer.get(layer) ?? [];
     list.push(id);
     byLayer.set(layer, list);
   }
+
   for (const list of byLayer.values()) {
-    list.sort();
+    list.sort((a, b) => {
+      const ra = pathToXRatio(branchPath.get(a) ?? '');
+      const rb = pathToXRatio(branchPath.get(b) ?? '');
+      if (ra !== rb) return ra - rb;
+      return a.localeCompare(b);
+    });
   }
 
   const maxLayer = Math.max(...layers.values(), 0);
-  const layerCounts = [...Array(maxLayer + 1)].map((_, i) => (byLayer.get(i) ?? []).length);
-  const maxNodesInLayer = Math.max(...layerCounts, 1);
-
-  const totalWidth = Math.max(maxNodesInLayer * (NODE_WIDTH + HORIZONTAL_GAP) - HORIZONTAL_GAP, NODE_WIDTH);
-  const totalHeight = (maxLayer + 1) * (NODE_HEIGHT + VERTICAL_GAP) - VERTICAL_GAP;
+  const SPREAD = 400;
 
   for (let layer = 0; layer <= maxLayer; layer++) {
     const ids = byLayer.get(layer) ?? [];
-    const layerWidth = ids.length * (NODE_WIDTH + HORIZONTAL_GAP) - HORIZONTAL_GAP;
-    const startX = (totalWidth - layerWidth) / 2 + NODE_WIDTH / 2 + HORIZONTAL_GAP / 2;
     ids.forEach((id, i) => {
-      const x = startX + i * (NODE_WIDTH + HORIZONTAL_GAP);
+      const path = branchPath.get(id) ?? '';
+      const ratio = pathToXRatio(path);
+      const x = ratio * SPREAD - SPREAD / 2;
       const y = layer * (NODE_HEIGHT + VERTICAL_GAP) + NODE_HEIGHT / 2;
       positions.set(id, { x, y });
     });
+  }
+
+  const allX = [...positions.values()].map((p) => p.x);
+  const minX = Math.min(...allX, 0);
+  const translateX = -minX + NODE_WIDTH;
+  for (const [id, pos] of positions) {
+    positions.set(id, { x: pos.x + translateX, y: pos.y });
   }
 
   return positions;

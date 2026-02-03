@@ -132,64 +132,64 @@ function parseBranchAtStart(
   return { kind, top: topRes.content, bottom: bottomRes.content };
 }
 
+/** Split expression by top-level commas (not inside braces). */
+function splitSequence(expr: string): string[] {
+  const items: string[] = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < expr.length; i++) {
+    if (expr[i] === '{') depth++;
+    else if (expr[i] === '}') depth--;
+    else if (expr[i] === ',' && depth === 0) {
+      items.push(expr.substring(start, i));
+      start = i + 1;
+    }
+  }
+  items.push(expr.substring(start));
+  return items;
+}
+
 /** Result of building a sub-DAG: first and last node ids for chaining. */
 type BuildResult = { firstId: string; lastId: string } | null;
 
-/** Recursively build DAG. Returns { firstId, lastId } for chaining. */
-function buildDAGRec(
-  expr: string,
+/** Build a single item: branch or ops. */
+function buildItem(
+  item: string,
   nodes: DAGNode<ExprNodeData>[],
   edges: DAGEdge[],
   nextId: { n: number }
 ): BuildResult {
-  const trimmed = expr.trim();
+  const trimmed = item.trim();
   if (!trimmed) return null;
 
   const branch = parseBranchAtStart(trimmed);
   if (branch) {
     const opFull = branch.kind === 'Bb' ? '\\Bb' : branch.kind === 'Blb' ? '\\Blb' : '\\Brb';
 
-    // 1. Bb node (first node) - operator only
-    const bbNodeId = `n${nextId.n++}`;
-    nodes.push({ id: bbNodeId, data: { op: opFull, operands: [] } });
-
-    // 2. Cond head - condition as data, Bb node points here
     const condHeadId = `n${nextId.n++}`;
     const condOperands = branch.cond ? [branch.cond] : [];
     nodes.push({ id: condHeadId, data: { op: `${opFull}:cond`, operands: condOperands } });
-    edges.push({ from: bbNodeId, to: condHeadId });
 
-    // 3. Top head and bot head - cond head points to both
-    const topHeadId = `n${nextId.n++}`;
-    const botHeadId = `n${nextId.n++}`;
-    nodes.push({ id: topHeadId, data: { op: `${opFull}:top`, operands: [] } });
-    nodes.push({ id: botHeadId, data: { op: `${opFull}:bot`, operands: [] } });
-    edges.push({ from: condHeadId, to: topHeadId });
-    edges.push({ from: condHeadId, to: botHeadId });
-
-    // 4. Tail node - both arms converge here
     const tailId = `n${nextId.n++}`;
     nodes.push({ id: tailId, data: { op: `${opFull}:tail`, operands: [] } });
 
-    // 5. Build top arm: top_head -> first_op -> ... -> last_op -> tail
-    const topResult = buildDAGRec(branch.top, nodes, edges, nextId);
+    const topResult = buildItem(branch.top, nodes, edges, nextId);
     if (topResult) {
-      edges.push({ from: topHeadId, to: topResult.firstId });
+      edges.push({ from: condHeadId, to: topResult.firstId });
       edges.push({ from: topResult.lastId, to: tailId });
     } else {
-      edges.push({ from: topHeadId, to: tailId });
+      edges.push({ from: condHeadId, to: tailId });
     }
 
-    // 6. Build bottom arm: bot_head -> first_op -> ... -> last_op -> tail
-    const botResult = buildDAGRec(branch.bottom, nodes, edges, nextId);
+    const botResult = buildItem(branch.bottom, nodes, edges, nextId);
     if (botResult) {
-      edges.push({ from: botHeadId, to: botResult.firstId });
+      edges.push({ from: condHeadId, to: botResult.firstId });
       edges.push({ from: botResult.lastId, to: tailId });
     } else {
-      edges.push({ from: botHeadId, to: tailId });
+      edges.push({ from: condHeadId, to: tailId });
     }
 
-    return { firstId: bbNodeId, lastId: tailId };
+    return { firstId: condHeadId, lastId: tailId };
   }
 
   const ops = extractOperations(trimmed);
@@ -209,6 +209,29 @@ function buildDAGRec(
     }
   }
   return firstId && lastId ? { firstId, lastId } : null;
+}
+
+/** Recursively build DAG. Splits by top-level commas so branches are isolated. */
+function buildDAGRec(
+  expr: string,
+  nodes: DAGNode<ExprNodeData>[],
+  edges: DAGEdge[],
+  nextId: { n: number }
+): BuildResult {
+  const items = splitSequence(expr.trim());
+  let prev: BuildResult = null;
+
+  for (const item of items) {
+    const result = buildItem(item, nodes, edges, nextId);
+    if (result) {
+      if (prev) {
+        edges.push({ from: prev.lastId, to: result.firstId });
+      }
+      prev = result;
+    }
+  }
+
+  return prev;
 }
 
 /**

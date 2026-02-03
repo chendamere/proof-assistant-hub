@@ -15,13 +15,65 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
-const DEMO_TARGET = ',i \\Op, \\Bb{i \\Oe j}{,i \\Op, }{, i \\Op, },';
-const DEMO_RULE = ', \\Bb{i \\Oe j}{,i \\Op, }{, i \\Op, },';
+interface DAGExample {
+  name: string;
+  rule: string;
+  target: string;
+}
+
+const DAG_EXAMPLES: DAGExample[] = [
+  {
+    name: 'Branch only',
+    rule: ', \\Bb{i \\Oe j}{,i \\Op, }{, i \\Op, },',
+    target: ', \\Bb{i \\Oe j}{,i \\Op, }{, i \\Op, },',
+  },
+  {
+    name: 'Op before branch',
+    rule: ', 1 \\Oc 2, \\Bb{i \\Oe j}{,i \\Op, }{, i \\Op, },',
+    target: ', 1 \\Oc 2, \\Bb{i \\Oe j}{,i \\Op, }{, i \\Op, },',
+  },
+  {
+    name: 'Op after branch',
+    rule: ', \\Bb{i \\Oe j}{,i \\Op, }{, i \\Op, }, 1 \\Oc 2',
+    target: ', \\Bb{i \\Oe j}{,i \\Op, }{, i \\Op, }, 1 \\Oc 2',
+  },
+  {
+    name: 'Op + branch + op',
+    rule: ', 1 \\Oc 2, \\Bb{i \\Oe j}{,i \\Op, }{, i \\Op, }, 2 \\Od 3',
+    target: ', 1 \\Oc 2, \\Bb{i \\Oe j}{,i \\Op, }{, i \\Op, }, 2 \\Od 3',
+  },
+  {
+    name: 'Copy-release pattern',
+    rule: ', i \\Oc m, m \\Os,',
+    target: ', 1 \\Oc 2, 2 \\Os,',
+  },
+  {
+    name: 'Simple ops chain',
+    rule: ', i \\Od j, j \\Oc k,',
+    target: ', 1 \\Od 2, 2 \\Oc 3,',
+  },
+  {
+    name: 'i Op with branch (rule)',
+    rule: ', i \\Op, \\Bb{i \\Oe j}{,i \\Op, }{, i \\Op, },',
+    target: ', 1 \\Op, \\Bb{1 \\Oe 2}{,1 \\Op, }{, 1 \\Op, },',
+  },
+];
+
+const DEMO_TARGET = DAG_EXAMPLES[0].target;
+const DEMO_RULE = DAG_EXAMPLES[0].rule;
 
 export default function SubstitutionDAGDemo() {
   const [targetExpr, setTargetExpr] = useState(DEMO_TARGET);
   const [ruleExpr, setRuleExpr] = useState(DEMO_RULE);
+  const [selectedExample, setSelectedExample] = useState<string>(DAG_EXAMPLES[0].name);
 
   const normalizedTarget = normalizeSpacing(targetExpr);
   const patternDAG = exprToDAG(ruleExpr);
@@ -31,10 +83,8 @@ export default function SubstitutionDAGDemo() {
   const subResult = findSubst(normalizedTarget, ruleExpr, 'left');
   const matchFound = subResult.match;
 
-  // For display: try DAG on a candidate substring
-  const candidate = ', 1 \\Oc 2, 2 \\Os,'; // typical candidate
-  const candidateDAG = exprToDAG(candidate);
-  const vf2Result = vf2ExprSubgraphIsomorphism(patternDAG, candidateDAG);
+  // Check if rule DAG is isomorphic to (subgraph of) target DAG
+  const vf2Result = vf2ExprSubgraphIsomorphism(patternDAG, targetDAG);
 
   return (
     <div className="min-h-screen gradient-bg">
@@ -47,6 +97,31 @@ export default function SubstitutionDAGDemo() {
           Rule applicability after operand normalization is equivalent to DAG isomorphism.
           Expressions are converted to DAGs with operations as nodes; Bb, Blb, Brb have two outgoing edges.
         </p>
+        <div className="mt-4 flex items-center gap-4">
+          <Label htmlFor="example-select" className="shrink-0">Load example:</Label>
+          <Select
+            value={selectedExample}
+            onValueChange={(value) => {
+              const ex = DAG_EXAMPLES.find((e) => e.name === value);
+              if (ex) {
+                setSelectedExample(ex.name);
+                setRuleExpr(ex.rule);
+                setTargetExpr(ex.target);
+              }
+            }}
+          >
+            <SelectTrigger id="example-select" className="w-[280px]">
+              <SelectValue placeholder="Choose an example..." />
+            </SelectTrigger>
+            <SelectContent>
+              {DAG_EXAMPLES.map((ex) => (
+                <SelectItem key={ex.name} value={ex.name}>
+                  {ex.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -109,7 +184,7 @@ export default function SubstitutionDAGDemo() {
         <CardHeader>
           <CardTitle>VF2 Isomorphism Result</CardTitle>
           <CardDescription>
-            Pattern &quot;, i \Oc m, m \Os,&quot; vs candidate &quot;, 1 \Oc 2, 2 \Os,&quot;
+            Rule DAG vs Target DAG — isomorphic when rule structure matches target
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
