@@ -16,7 +16,7 @@ export const InferenceRules: InferenceRule[] = [
   {
     name: 'Equivalent Commutativity',
     description: 'A ⟺ B implies B ⟺ A - Exact match (reversed)',
-    check: (targetLeft, targetRight, ruleLeft, ruleRight) => {
+    check: (targetLeft, targetRight, ruleLeft, ruleRight, _context) => {
       const targetNorm = normalizeRuleOperands(targetLeft, targetRight);
       const ruleNorm = normalizeRuleOperands(ruleLeft, ruleRight);
       const tL = normalizeSpacing(targetNorm.left.integerExpression);
@@ -39,7 +39,7 @@ export const InferenceRules: InferenceRule[] = [
   {
     name: 'Equivalent Transitivity',
     description: 'A ⟺ B and B ⟺ C implies A ⟺ C - Chain through common side',
-    check: (targetLeft, targetRight, ruleLeft, ruleRight) => {
+    check: (targetLeft, targetRight, ruleLeft, ruleRight, _context) => {
       const targetNorm = normalizeRuleOperands(targetLeft, targetRight);
       const ruleNorm = normalizeRuleOperands(ruleLeft, ruleRight);
       const tL = normalizeSpacing(targetNorm.left.integerExpression);
@@ -100,25 +100,20 @@ export const InferenceRules: InferenceRule[] = [
   {
     name: 'Equivalent Substitution',
     description: 'A ⟺ B allows inserting A with B in any context M·A·N ⟺ M·B·N',
-    check: (targetLeft, targetRight, ruleLeft, ruleRight) => {
-      // Strategy: Operand-Aligned Pattern Matching with Pattern Recognition
-      // Extract operand patterns and match patterns rather than exact numbers to handle
-      // separately normalized expressions
-      
-      // Check both sides for substitution
-      // Note: targetLeft, targetRight, ruleLeft, ruleRight are already integer expressions
-      
+    check: (targetLeft, targetRight, ruleLeft, ruleRight, context) => {
+      const stepCounter = context?.stepCounter;
+
       // Try all 4 substitution directions
-      let result = trySubstitution(targetLeft, ruleLeft, ruleRight, targetRight, targetLeft, 'left');
+      let result = trySubstitution(targetLeft, ruleLeft, ruleRight, targetRight, targetLeft, 'left', stepCounter);
       if (result) return result;
-      
-      result = trySubstitution(targetLeft, ruleRight, ruleLeft, targetRight, targetLeft, 'left');
+
+      result = trySubstitution(targetLeft, ruleRight, ruleLeft, targetRight, targetLeft, 'left', stepCounter);
       if (result) return result;
-      
-      result = trySubstitution(targetRight, ruleLeft, ruleRight, targetLeft, targetRight, 'right');
+
+      result = trySubstitution(targetRight, ruleLeft, ruleRight, targetLeft, targetRight, 'right', stepCounter);
       if (result) return result;
-      
-      result = trySubstitution(targetRight, ruleRight, ruleLeft, targetLeft, targetRight, 'right');
+
+      result = trySubstitution(targetRight, ruleRight, ruleLeft, targetLeft, targetRight, 'right', stepCounter);
       if (result) return result;
 
       return { match: false };

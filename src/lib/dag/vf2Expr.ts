@@ -186,14 +186,21 @@ export function vf2ExprSubgraphIsomorphism(
 /** Max backtracking steps before aborting (prevents freeze on complex branch DAGs). */
 const VF2_MAX_STEPS = 50000;
 
+export interface Vf2Options {
+  stepCounter?: { count: number };
+}
+
 /**
  * Find ALL subgraph isomorphisms. Yields { mapping, operandMapping } for each match.
  * Aborts after VF2_MAX_STEPS to prevent UI freeze.
+ * Optional stepCounter: mutates .count with VF2 backtracking steps (for debugging).
  */
 export function* vf2ExprSubgraphIsomorphismAll(
   pattern: DAGStructure<ExprNodeData>,
-  target: DAGStructure<ExprNodeData>
+  target: DAGStructure<ExprNodeData>,
+  options?: Vf2Options
 ): Generator<{ mapping: Map<string, string>; operandMapping: Map<string, string> }> {
+  const stepCounter = options?.stepCounter;
   const pNodes = pattern.nodes.map((n) => n.id);
   const tNodes = target.nodes.map((n) => n.id);
 
@@ -216,6 +223,7 @@ export function* vf2ExprSubgraphIsomorphismAll(
 
   function feasible(p: string, t: string): boolean {
     if (++steps > VF2_MAX_STEPS) return false;
+    if (stepCounter) stepCounter.count = steps;
     const pNode = pNodeMap.get(p)!;
     const tNode = tNodeMap.get(t)!;
     const pData = pNode.data as ExprNodeData;
@@ -258,6 +266,7 @@ export function* vf2ExprSubgraphIsomorphismAll(
 
   function* search(): Generator<{ mapping: Map<string, string>; operandMapping: Map<string, string> }> {
     if (steps > VF2_MAX_STEPS) return;
+    if (stepCounter) stepCounter.count = steps;
     if (mapping.size === pNodes.length) {
       yield { mapping: new Map(mapping), operandMapping: new Map(varToTarget) };
       return;

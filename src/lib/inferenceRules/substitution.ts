@@ -385,7 +385,8 @@ export const trySubstitution = (
   otherRuleSide: string,
   expectedResult: string,
   targetSideForOperands: string,
-  side: 'left' | 'right'
+  side: 'left' | 'right',
+  stepCounter?: { count: number }
 ) => {
   const normalizedTarget = normalizeSpacing(target);
   const normalizedRule = normalizeSpacing(ruleSide);
@@ -401,7 +402,9 @@ export const trySubstitution = (
   const maxTrials = targetDAG.nodes.length > 12 ? 32 : 64;
   if (patternDAG.nodes.length > 0) {
     let trialCount = 0;
-    for (const vf2Result of vf2ExprSubgraphIsomorphismAll(patternDAG, targetDAG)) {
+    const sc = stepCounter ?? { count: 0 };
+    if (stepCounter) stepCounter.count = 0;
+    for (const vf2Result of vf2ExprSubgraphIsomorphismAll(patternDAG, targetDAG, { stepCounter: sc })) {
       if (++trialCount > maxTrials) break;
       const tNodeMap = new Map(targetDAG.nodes.map((n) => [n.id, n]));
       let candidateStart = normalizedTarget.length;

@@ -9,6 +9,7 @@ import Verifier from "./pages/Verifier";
 import ProofStep from "./pages/ProofStep";
 import SubstitutionDAGDemo from "./pages/SubstitutionDAGDemo";
 import Glossary from "./pages/Glossary";
+import ProofSteps from "./pages/ProofSteps";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/proof-step" element={<ProofStep />} />
             <Route path="/substitution-dag" element={<SubstitutionDAGDemo />} />
             <Route path="/glossary" element={<Glossary />} />
+            <Route path="/proof-steps" element={<ProofSteps />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

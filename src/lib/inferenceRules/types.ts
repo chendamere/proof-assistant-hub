@@ -18,6 +18,10 @@ export interface MatchPosition {
   nodeMapping?: Map<string, string>; // patternNodeId -> targetNodeId (VF2 result)
 }
 
+export interface InferenceRuleContext {
+  stepCounter?: { count: number };
+}
+
 export interface InferenceRule {
   name: string;
   description: string;
@@ -25,6 +29,7 @@ export interface InferenceRule {
     targetLeft: string,
     targetRight: string,
     ruleLeft: string,
-    ruleRight: string
+    ruleRight: string,
+    context?: InferenceRuleContext
   ) => { match: boolean; position?: MatchPosition };
 }
