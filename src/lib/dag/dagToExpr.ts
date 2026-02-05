@@ -204,9 +204,15 @@ export function dagToExpr(
       return [...(outgoing.get(id) ?? [])];
     }
 
-    if (op.includes(':cond') && (outgoing.get(id)?.length ?? 0) >= 1) {
+    if (op.includes(':cond')) {
       visited.add(id);
       const children = outgoing.get(id) ?? [];
+      if (children.length < 1) {
+        // Cond with no arms (malformed or empty branch) - serialize as empty
+        const kind = (data as ExprNodeData & { branchKind?: 'Bb' | 'Blb' | 'Brb' })?.branchKind ?? 'Blb';
+        itemParts.push(`, \\${kind}{${formatCond(data!, operandMapping)}}{,}{,}`);
+        return [];
+      }
       const hasTail = children.length >= 2 ? armsLeadToTail(children) : reachesTail(children[0]);
       let kind: 'Bb' | 'Blb' | 'Brb' = hasTail ? 'Bb' : 'Blb';
       // Prefer tail's branchKind (target context when substituting Blb in Bb) over cond's

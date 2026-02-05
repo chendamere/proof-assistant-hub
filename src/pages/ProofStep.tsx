@@ -93,27 +93,27 @@ const ProofStep: React.FC = () => {
   const matchedStepRef = useRef<HTMLDivElement | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
-  // Check grammar on initial load
-  useEffect(() => {
-    if (startExpression.trim()) {
-      const grammar = checkGrammar(startExpression);
-      if (!grammar.isValid) {
-        const errors = grammar.errors.map(e => e.message).join('; ');
-        setStartGrammarError(`Grammar errors: ${errors}`);
-      } else {
-        setStartGrammarError(null);
-      }
-    }
-    if (endExpression.trim()) {
-      const grammar = checkGrammar(endExpression);
-      if (!grammar.isValid) {
-        const errors = grammar.errors.map(e => e.message).join('; ');
-        setEndGrammarError(`Grammar errors: ${errors}`);
-      } else {
-        setEndGrammarError(null);
-      }
-    }
-  }, []); // Only run on mount
+  // // Check grammar on initial load
+  // useEffect(() => {
+  //   if (startExpression.trim()) {
+  //     const grammar = checkGrammar(startExpression);
+  //     if (!grammar.isValid) {
+  //       const errors = grammar.errors.map(e => e.message).join('; ');
+  //       setStartGrammarError(`Grammar errors: ${errors}`);
+  //     } else {
+  //       setStartGrammarError(null);
+  //     }
+  //   }
+  //   if (endExpression.trim()) {
+  //     const grammar = checkGrammar(endExpression);
+  //     if (!grammar.isValid) {
+  //       const errors = grammar.errors.map(e => e.message).join('; ');
+  //       setEndGrammarError(`Grammar errors: ${errors}`);
+  //     } else {
+  //       setEndGrammarError(null);
+  //     }
+  //   }
+  // }, []); // Only run on mount
 
   // Handle rule selection
   const handleSelectRule = (ruleId: string) => {
@@ -200,24 +200,24 @@ const ProofStep: React.FC = () => {
   // Perform proof step with parallel processing
   const performProof = async () => {
     // Check grammar first
-    const startGrammar = checkGrammar(startExpression);
-    const endGrammar = checkGrammar(endExpression);
+    // const startGrammar = checkGrammar(startExpression);
+    // const endGrammar = checkGrammar(endExpression);
     
-    if (!startGrammar.isValid) {
-      const errors = startGrammar.errors.map(e => e.message).join('; ');
-      setStartGrammarError(`Grammar errors: ${errors}`);
-      return;
-    } else {
-      setStartGrammarError(null);
-    }
+    // if (!startGrammar.isValid) {
+    //   const errors = startGrammar.errors.map(e => e.message).join('; ');
+    //   setStartGrammarError(`Grammar errors: ${errors}`);
+    //   return;
+    // } else {
+    //   setStartGrammarError(null);
+    // }
     
-    if (!endGrammar.isValid) {
-      const errors = endGrammar.errors.map(e => e.message).join('; ');
-      setEndGrammarError(`Grammar errors: ${errors}`);
-      return;
-    } else {
-      setEndGrammarError(null);
-    }
+    // if (!endGrammar.isValid) {
+    //   const errors = endGrammar.errors.map(e => e.message).join('; ');
+    //   setEndGrammarError(`Grammar errors: ${errors}`);
+    //   return;
+    // } else {
+    //   setEndGrammarError(null);
+    // }
     
     setIsProving(true);
     setProofSteps([]);

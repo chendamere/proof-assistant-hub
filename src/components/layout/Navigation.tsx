@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, CheckSquare, GitBranch, Book, Network, ListChecks } from 'lucide-react';
+import { BookOpen, CheckSquare, GitBranch, Book, Network, Layers, ListOrdered } from 'lucide-react';
 
 interface NavItem {
   path: string;
@@ -14,9 +14,10 @@ const Navigation: React.FC = () => {
   const navItems: NavItem[] = [
     { path: '/', label: 'Introduction', icon: <BookOpen className="w-4 h-4" /> },
     { path: '/substitution-dag', label: 'Substitution DAG', icon: <Network className="w-4 h-4" /> },
+    { path: '/substitution-example', label: 'Substitution Example', icon: <Layers className="w-4 h-4" /> },
     { path: '/glossary', label: 'Glossary', icon: <Book className="w-4 h-4" /> },
-    { path: '/proof-steps', label: 'Proof Steps', icon: <ListChecks className="w-4 h-4" /> },
     { path: '/proof-step', label: 'Proof Step', icon: <GitBranch className="w-4 h-4" /> },
+    { path: '/proof-steps', label: 'Proof Steps', icon: <ListOrdered className="w-4 h-4" /> },
     { path: '/verifier', label: 'Verifier', icon: <CheckSquare className="w-4 h-4" /> }
   ];
 

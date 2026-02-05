@@ -9,14 +9,39 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { checkInferenceRules, CheckInferenceRulesOptions } from '@/lib/inferenceRules';
 import { axioms, Rule } from '@/data/axioms';
 import { theorems } from '@/data/theorems';
 import { Button } from '@/components/ui/button';
-import { Search, ChevronDown, ChevronRight, FileText, ListOrdered, CheckCircle2, Play, Check, X } from 'lucide-react';
+import { Search, ChevronDown, ChevronRight, FileText, ListOrdered, CheckCircle2, Check, X } from 'lucide-react';
 
 type ProofStepsTable = Record<string, string[]>;
+
+/** Chapter order and book indices from "The Way of Machine Thinking" (Volume 1). */
+const CHAPTER_ORDER: string[] = [
+  'axioms', 'relationships', 'Theorems_of_Node_Null_Comparison',
+  'Theorems_of_Identical_Node_Comparison', 'Rules_of_Empty_Branch_Function',
+  'Swap_Theorems_of_Same_Operand', 'Theorems_of_Operators_and_Relationships',
+  'Next_Order_Induction', 'Recursive_Function_R', 'Previous_Order_Induction',
+  'Recursive_Function_R_Prev', 'Rules_of_Node_Ring', 'Rules_of_Node_Connectivity',
+  'Rules_of_Node_Continuity', 'Rules_of_Relationship_of_Subnode',
+  'Tree_Order_Induction', 'Recursive_Function_Rc', 'Rules_of_Number_Equal_Relationship',
+  'Rules_of_Number_More_Less_Than', 'Rules_of_Assign_Operator_Temp_Space',
+  'Axioms_of_Assign_Operator', 'Theorems_of_Insert_Node_Function',
+  'Theorems_of_Delete_Node_Function', 'Theorems_of_Assign_Operator',
+  'Function_Cpo', 'Recursive_Function_Rcpo', 'Addition', 'Recursive_Function_Rcpm',
+  'Multiplication', 'Paradox',
+];
+/** Book chapter indices (3, 4, 6, 7, ... 32, then appendix). */
+const CHAPTER_INDICES: number[] = [
+  3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+  25, 26, 27, 28, 29, 30, 31, 32, 99, // 99 = Paradox (appendix)
+];
+
+function getChapterIndex(filename: string): number {
+  const i = CHAPTER_ORDER.indexOf(filename);
+  return i >= 0 ? CHAPTER_INDICES[i] ?? 999 : 999;
+}
 
 interface TheoremWithSteps {
   key: string;
@@ -31,30 +56,6 @@ interface VerificationResult {
   total: number;
 }
 
-function verifyTransition(
-  targetLeft: string,
-  targetRight: string,
-  axioms: Rule[],
-  theorems: Rule[],
-  cache: Map<string, { l2r: { left: string; right: string }; r2l: { left: string; right: string } }>,
-  options?: CheckInferenceRulesOptions
-): boolean {
-  const tryRule = (rule: Rule) => {
-    const cached = cache.get(rule.id);
-    if (!cached) return false;
-    if (checkInferenceRules(targetLeft, targetRight, cached.l2r.left, cached.l2r.right, options).match) return true;
-    if (checkInferenceRules(targetLeft, targetRight, cached.r2l.left, cached.r2l.right, options).match) return true;
-    return false;
-  };
-  for (const rule of axioms) {
-    if (tryRule(rule)) return true;
-  }
-  for (const rule of theorems) {
-    if (tryRule(rule)) return true;
-  }
-  return false;
-}
-
 function verifyTransitionWithLogging(
   targetLeft: string,
   targetRight: string,
@@ -63,44 +64,35 @@ function verifyTransitionWithLogging(
   cache: Map<string, { l2r: { left: string; right: string }; r2l: { left: string; right: string } }>,
   transitionLabel: string
 ): boolean {
-  const totalRules = axioms.length + theorems.length;
-  console.group(`[Check step] ${transitionLabel}`);
-  console.log(`Considering ${axioms.length} axioms and ${theorems.length} theorems (${totalRules} total)`);
   let totalVf2Steps = 0;
   const options: CheckInferenceRulesOptions = {
     onProgress: (info) => {
       if (info.vf2Steps != null) totalVf2Steps += info.vf2Steps;
       if (info.inferenceRule === 'Equivalent Substitution' && info.vf2Steps != null && info.vf2Steps > 0) {
-        console.log(`    → Substitution tried: ${info.vf2Steps} VF2 steps`);
+        // console.log(`    → Substitution tried: ${info.vf2Steps} VF2 steps`);
       }
     },
   };
-  const tryRule = (rule: Rule, isAxiom: boolean) => {
+  const tryRule = (rule: Rule) => {
     const cached = cache.get(rule.id);
     if (!cached) return false;
-    const ruleType = isAxiom ? 'axiom' : 'theorem';
-    console.log(`  Trying ${ruleType} "${rule.id}" (l2r)...`);
     if (checkInferenceRules(targetLeft, targetRight, cached.l2r.left, cached.l2r.right, options).match) return true;
-    console.log(`  Trying ${ruleType} "${rule.id}" (r2l)...`);
-    if (checkInferenceRules(targetLeft, targetRight, cached.r2l.left, cached.r2l.right, options).match) return true;
+    // if (checkInferenceRules(targetLeft, targetRight, cached.r2l.left, cached.r2l.right, options).match) return true;
     return false;
   };
+
   for (const rule of axioms) {
-    if (tryRule(rule, true)) {
-      console.log(`Total VF2 substitution steps: ${totalVf2Steps}`);
-      console.groupEnd();
+    if (tryRule(rule)) {
       return true;
     }
   }
-  for (const rule of theorems) {
-    if (tryRule(rule, false)) {
-      console.log(`Total VF2 substitution steps: ${totalVf2Steps}`);
-      console.groupEnd();
-      return true;
-    }
-  }
-  console.log(`Total VF2 substitution steps: ${totalVf2Steps}`);
-  console.groupEnd();
+  // for (const rule of theorems) {
+  //   if (tryRule(rule, false)) {
+  //     console.log(`Total VF2 substitution steps: ${totalVf2Steps}`);
+  //     console.groupEnd();
+  //     return true;
+  //   }
+  // }
   return false;
 }
 
@@ -121,11 +113,7 @@ const ProofSteps: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [chapter, setChapter] = useState<string>('Theorems_of_Identical_Node_Comparison');
-  const [tab, setTab] = useState<'all' | 'verified'>('all');
   const [verificationResults, setVerificationResults] = useState<Record<string, VerificationResult>>({});
-  const [verificationProgress, setVerificationProgress] = useState<number | null>(null);
-  const [verificationStarted, setVerificationStarted] = useState(false);
-  const [singleProofVerifying, setSingleProofVerifying] = useState<string | null>(null);
   const [transitionVerifying, setTransitionVerifying] = useState<string | null>(null);
   const [transitionResults, setTransitionResults] = useState<Record<string, Record<number, boolean>>>({});
 
@@ -152,17 +140,9 @@ const ProofSteps: React.FC = () => {
       })
       .catch((err) => {
         setError(err.message || 'Could not load proof steps. Run: node scripts/extract-proof-steps.js');
+        console.error('error loading proof steps data:', err);
       })
       .finally(() => setLoading(false));
-  }, []);
-
-  const runVerification = React.useCallback(() => {
-    if (!table || verificationStarted) return;
-    setVerificationStarted(true);
-  }, [table, verificationStarted]);
-
-  const verifySingleProof = React.useCallback((key: string) => {
-    setSingleProofVerifying(key);
   }, []);
 
   const verifySingleTransition = React.useCallback(
@@ -203,124 +183,8 @@ const ProofSteps: React.FC = () => {
 
   useEffect(() => {
     setVerificationResults({});
-    setVerificationProgress(null);
-    setVerificationStarted(false);
     setTransitionResults({});
   }, [chapter]);
-
-  const entriesToVerify = React.useMemo(() => {
-    if (!table) return [];
-    return Object.entries(table).filter(([key, steps]) => {
-      if (steps.length === 0) return false;
-      if (chapter === 'all') return true;
-      const { filename } = parseKey(key);
-      return filename === chapter;
-    });
-  }, [table, chapter]);
-
-  const transitionsToVerify = React.useMemo(() => {
-    const work: { key: string; left: string; right: string }[] = [];
-    for (const [key, steps] of entriesToVerify) {
-      for (let i = 0; i < steps.length - 1; i++) {
-        work.push({ key, left: steps[i], right: steps[i + 1] });
-      }
-    }
-    return work;
-  }, [entriesToVerify]);
-
-  useEffect(() => {
-    if (!table || !verificationStarted) return;
-    const work = transitionsToVerify;
-    const total = work.length;
-    if (total === 0) {
-      setVerificationProgress(null);
-      return;
-    }
-    setVerificationProgress(0);
-    let idx = 0;
-    let cancelled = false;
-
-    const processOne = () => {
-      if (cancelled || idx >= total) {
-        setVerificationProgress(null);
-        return;
-      }
-      const { key, left, right } = work[idx];
-      const matched = verifyTransition(left, right, axioms, theorems, normalizedRulesCache);
-      setVerificationResults((prev) => {
-        const current = prev[key] ?? { passed: 0, total: 0 };
-        return {
-          ...prev,
-          [key]: {
-            passed: current.passed + (matched ? 1 : 0),
-            total: current.total + 1,
-          },
-        };
-      });
-      setVerificationProgress(idx + 1);
-      idx++;
-      const schedule =
-        typeof requestIdleCallback !== 'undefined'
-          ? () => requestIdleCallback(() => processOne(), { timeout: 50 })
-          : () => setTimeout(processOne, 16);
-      if (idx < total) schedule();
-      else setVerificationProgress(null);
-    };
-
-    const startId = setTimeout(processOne, 100);
-    return () => {
-      cancelled = true;
-      clearTimeout(startId);
-    };
-  }, [table, verificationStarted, transitionsToVerify, axioms, theorems, normalizedRulesCache]);
-
-  useEffect(() => {
-    if (!table || !singleProofVerifying) return;
-    const steps = table[singleProofVerifying];
-    if (!steps || steps.length < 2) {
-      setSingleProofVerifying(null);
-      return;
-    }
-    const work: { left: string; right: string }[] = [];
-    for (let i = 0; i < steps.length - 1; i++) {
-      work.push({ left: steps[i], right: steps[i + 1] });
-    }
-    const key = singleProofVerifying;
-    let idx = 0;
-    let cancelled = false;
-
-    const processOne = () => {
-      if (cancelled || idx >= work.length) {
-        setSingleProofVerifying(null);
-        return;
-      }
-      const { left, right } = work[idx];
-      const matched = verifyTransition(left, right, axioms, theorems, normalizedRulesCache);
-      setVerificationResults((prev) => {
-        const current = prev[key] ?? { passed: 0, total: 0 };
-        return {
-          ...prev,
-          [key]: {
-            passed: current.passed + (matched ? 1 : 0),
-            total: current.total + 1,
-          },
-        };
-      });
-      idx++;
-      const schedule =
-        typeof requestIdleCallback !== 'undefined'
-          ? () => requestIdleCallback(() => processOne(), { timeout: 50 })
-          : () => setTimeout(processOne, 16);
-      if (idx < work.length) schedule();
-      else setSingleProofVerifying(null);
-    };
-
-    const startId = setTimeout(processOne, 100);
-    return () => {
-      cancelled = true;
-      clearTimeout(startId);
-    };
-  }, [table, singleProofVerifying, axioms, theorems, normalizedRulesCache]);
 
   const theoremsWithSteps: TheoremWithSteps[] = React.useMemo(() => {
     if (!table) return [];
@@ -331,24 +195,19 @@ const ProofSteps: React.FC = () => {
         return { key, filename, index, ruleStr, steps };
       })
       .sort((a, b) => {
-        const cmp = a.filename.localeCompare(b.filename);
-        return cmp !== 0 ? cmp : a.index - b.index;
+        const cmp = getChapterIndex(a.filename) - getChapterIndex(b.filename);
+        if (cmp !== 0) return cmp;
+        return a.index - b.index;
       });
   }, [table]);
 
   const chapters = React.useMemo(() => {
     const set = new Set(theoremsWithSteps.map((t) => t.filename));
-    return Array.from(set).sort();
+    return Array.from(set).sort((a, b) => getChapterIndex(a) - getChapterIndex(b));
   }, [theoremsWithSteps]);
 
   const filtered = React.useMemo(() => {
     let list = theoremsWithSteps;
-    if (tab === 'verified') {
-      list = list.filter((t) => {
-        const v = verificationResults[t.key];
-        return v && v.total > 0 && v.passed === v.total;
-      });
-    }
     if (chapter !== 'all') {
       list = list.filter((t) => t.filename === chapter);
     }
@@ -361,14 +220,7 @@ const ProofSteps: React.FC = () => {
       );
     }
     return list;
-  }, [theoremsWithSteps, chapter, search, tab, verificationResults]);
-
-  const fullyVerifiedCount = useMemo(() => {
-    return theoremsWithSteps.filter((t) => {
-      const v = verificationResults[t.key];
-      return v && v.total > 0 && v.passed === v.total;
-    }).length;
-  }, [theoremsWithSteps, verificationResults]);
+  }, [theoremsWithSteps, chapter, search]);
 
   if (loading) {
     return (
@@ -411,35 +263,13 @@ const ProofSteps: React.FC = () => {
       <main className="flex-1 pt-24 pb-12 px-6">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h1 className="text-2xl font-semibold text-foreground mb-1">
-                  Theorems with Proof Steps
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  {theoremsWithSteps.length} theorems have proofs extracted from the LaTeX sources
-{verificationProgress !== null && (
-                <span className="ml-2 text-primary"> · Verifying {verificationProgress}/{transitionsToVerify.length} transitions...</span>
-              )}
-                </p>
-              </div>
-              {!verificationStarted && entriesToVerify.length > 0 && (
-                <Button variant="outline" size="sm" onClick={runVerification} className="gap-2">
-                  <Play className="w-4 h-4" />
-                  Verify proofs ({entriesToVerify.length})
-                </Button>
-              )}
-            </div>
+            <h1 className="text-2xl font-semibold text-foreground mb-1">
+              Theorems with Proof Steps
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {theoremsWithSteps.length} theorems have proofs extracted from the LaTeX sources. Use &quot;Check step&quot; to verify each transition.
+            </p>
           </div>
-
-          <Tabs value={tab} onValueChange={(v) => setTab(v as 'all' | 'verified')} className="mb-6">
-            <TabsList>
-              <TabsTrigger value="all">All proofs</TabsTrigger>
-              <TabsTrigger value="verified">
-                Fully verified {verificationStarted ? `(${fullyVerifiedCount})` : ''}
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
 
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
             <div className="relative flex-1">
@@ -459,7 +289,7 @@ const ProofSteps: React.FC = () => {
                 <SelectItem value="all">All chapters</SelectItem>
                 {chapters.map((ch) => (
                   <SelectItem key={ch} value={ch}>
-                    {ch}
+                    {getChapterIndex(ch) < 99 ? `${getChapterIndex(ch)}. ` : ''}{ch}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -473,8 +303,6 @@ const ProofSteps: React.FC = () => {
                   key={t.key}
                   theorem={t}
                   verification={verificationResults[t.key]}
-                  onVerifyProof={verifySingleProof}
-                  isVerifying={singleProofVerifying === t.key}
                   onVerifyTransition={verifySingleTransition}
                   transitionVerifying={transitionVerifying}
                   transitionResults={transitionResults[t.key]}
@@ -482,9 +310,7 @@ const ProofSteps: React.FC = () => {
               ))}
               {filtered.length === 0 && (
                 <p className="text-muted-foreground py-8 text-center">
-                  {tab === 'verified' && !verificationStarted
-                    ? 'Click "Verify proofs" to check which proofs pass all inference steps.'
-                    : 'No theorems match your search'}
+                  No theorems match your search
                 </p>
               )}
             </div>
@@ -499,16 +325,12 @@ const ProofSteps: React.FC = () => {
 function TheoremCard({
   theorem,
   verification,
-  onVerifyProof,
-  isVerifying,
   onVerifyTransition,
   transitionVerifying,
   transitionResults = {},
 }: {
   theorem: TheoremWithSteps;
   verification?: VerificationResult;
-  onVerifyProof?: (key: string) => void;
-  isVerifying?: boolean;
   onVerifyTransition?: (key: string, transitionIndex: number) => void;
   transitionVerifying?: string | null;
   transitionResults?: Record<number, boolean>;
@@ -573,29 +395,7 @@ function TheoremCard({
         </CardHeader>
         <CollapsibleContent>
           <CardContent className="pt-0 px-4 pb-4">
-            <div className="border-t border-border pt-3 space-y-3">
-              {onVerifyProof && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onVerifyProof(theorem.key);
-                  }}
-                  disabled={isVerifying}
-                  className="gap-2"
-                >
-                  {isVerifying ? (
-                    <>Verifying...</>
-                  ) : (
-                    <>
-                      <Check className="w-4 h-4" />
-                      Verify Proof
-                    </>
-                  )}
-                </Button>
-              )}
-              <div className="space-y-1">
+            <div className="border-t border-border pt-3 space-y-1">
               {theorem.steps.map((step, i) => (
                 <React.Fragment key={i}>
                   {i > 0 && onVerifyTransition && (
@@ -639,7 +439,6 @@ function TheoremCard({
                   </div>
                 </React.Fragment>
               ))}
-              </div>
             </div>
           </CardContent>
         </CollapsibleContent>

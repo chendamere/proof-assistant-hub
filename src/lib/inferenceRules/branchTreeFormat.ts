@@ -109,11 +109,8 @@ export function formatBranchTree(expr: string, indent = ''): string {
 /**
  * Log an expression to console with tree display when it contains branches.
  * Use for debugging: logBranchTree(expr)
+ * (No-op when console logging is disabled.)
  */
-export function logBranchTree(expr: string): void {
-  if (/\\B[lr]b|\\Bb/.test(expr)) {
-    console.log(formatBranchTree(expr));
-  } else {
-    console.log(expr);
-  }
+export function logBranchTree(_expr: string): void {
+  // No-op; use formatBranchTree(expr) if you need the formatted string.
 }

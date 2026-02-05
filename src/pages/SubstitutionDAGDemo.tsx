@@ -4,11 +4,12 @@
  * after operand normalization is equivalent to DAG isomorphism.
  */
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import { exprToDAG, vf2ExprSubgraphIsomorphism } from '@/lib/dag';
-import { findSubstitution as findSubst, trySubstitution } from '@/lib/inferenceRules/substitution';
+import { findSubstitution as findSubst } from '@/lib/inferenceRules/substitution';
+import { trySubstitutionWorker } from '@/lib/substitutionWorkerClient';
 import { normalizeSpacing } from '@/lib/inferenceRules/utils';
 import { DAGGraphVisual } from '@/components/dag/DAGGraphVisual';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -140,45 +141,87 @@ const TRY_SUB_EXAMPLES: TrySubExample[] = [
     ruleRight: ', \\Brb{,c \\Od e, f \\Oc e,}{,},',
     description: 'Substitute inside branch top arm: swap j\\Oc k with k\\Oc j.',
   },
+  
+  {
+    name: 'Branch arm swap5',
+    targetLeft: ', a \\Od b, \\Blb{c \\Oe d}{,}{,},',
+    targetRight: ', \\Blb{c \\Oe d}{,a \\Od b,}{,a \\Od b,},',
+    ruleLeft: ',i \\Od m, \\Blb{j \\Oe t}{,}{,},',
+    ruleRight: ', \\Blb{j \\Oe t}{,i \\Od m,}{,i \\Od m,},',
+    description: 'Substitute inside branch top arm: swap j\\Oc k with k\\Oc j.',
+  },
 ];
 
 const DEMO_TARGET = DAG_EXAMPLES[0].target;
 const DEMO_RULE = DAG_EXAMPLES[0].rule;
 
-function safeTrySubstitution(
-  target: string,
-  ruleSide: string,
-  otherRuleSide: string,
-  expectedResult: string,
-  targetSideForOperands: string,
-  side: 'left' | 'right'
-) {
-  try {
-    return trySubstitution(target, ruleSide, otherRuleSide, expectedResult, targetSideForOperands, side);
-  } catch {
-    return null;
-  }
-}
-
 function TrySubstitutionSection() {
   const [selected, setSelected] = useState(TRY_SUB_EXAMPLES[0].name);
   const ex = TRY_SUB_EXAMPLES.find((e) => e.name === selected) ?? TRY_SUB_EXAMPLES[0];
+  const [loading, setLoading] = useState(true);
+  const [results, setResults] = useState<{
+    leftRuleLeft: Awaited<ReturnType<typeof trySubstitutionWorker>>;
+    leftRuleRight: Awaited<ReturnType<typeof trySubstitutionWorker>>;
+    rightRuleLeft: Awaited<ReturnType<typeof trySubstitutionWorker>>;
+    rightRuleRight: Awaited<ReturnType<typeof trySubstitutionWorker>>;
+  } | null>(null);
 
-  const results = {
-    leftRuleLeft: safeTrySubstitution(ex.targetLeft, ex.ruleLeft, ex.ruleRight, ex.targetRight, ex.targetLeft, 'left'),
-    leftRuleRight: safeTrySubstitution(ex.targetLeft, ex.ruleRight, ex.ruleLeft, ex.targetRight, ex.targetLeft, 'left'),
-    rightRuleLeft: safeTrySubstitution(ex.targetRight, ex.ruleLeft, ex.ruleRight, ex.targetLeft, ex.targetRight, 'right'),
-    rightRuleRight: safeTrySubstitution(ex.targetRight, ex.ruleRight, ex.ruleLeft, ex.targetLeft, ex.targetRight, 'right'),
-  };
-  const matchResult = results.leftRuleLeft ?? results.leftRuleRight ?? results.rightRuleLeft ?? results.rightRuleRight;
+  const runSubstitutions = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [leftRuleLeft, leftRuleRight, rightRuleLeft, rightRuleRight] = await Promise.all([
+        trySubstitutionWorker({
+          target: ex.targetLeft,
+          ruleSide: ex.ruleLeft,
+          otherRuleSide: ex.ruleRight,
+          expectedResult: ex.targetRight,
+          targetSideForOperands: ex.targetLeft,
+          side: 'left',
+        }).catch(() => null),
+        trySubstitutionWorker({
+          target: ex.targetLeft,
+          ruleSide: ex.ruleRight,
+          otherRuleSide: ex.ruleLeft,
+          expectedResult: ex.targetRight,
+          targetSideForOperands: ex.targetLeft,
+          side: 'left',
+        }).catch(() => null),
+        trySubstitutionWorker({
+          target: ex.targetRight,
+          ruleSide: ex.ruleLeft,
+          otherRuleSide: ex.ruleRight,
+          expectedResult: ex.targetLeft,
+          targetSideForOperands: ex.targetRight,
+          side: 'right',
+        }).catch(() => null),
+        trySubstitutionWorker({
+          target: ex.targetRight,
+          ruleSide: ex.ruleRight,
+          otherRuleSide: ex.ruleLeft,
+          expectedResult: ex.targetLeft,
+          targetSideForOperands: ex.targetRight,
+          side: 'right',
+        }).catch(() => null),
+      ]);
+      setResults({ leftRuleLeft, leftRuleRight, rightRuleLeft, rightRuleRight });
+    } finally {
+      setLoading(false);
+    }
+  }, [ex.targetLeft, ex.targetRight, ex.ruleLeft, ex.ruleRight]);
+
+  useEffect(() => {
+    runSubstitutions();
+  }, [runSubstitutions]);
+
+  const matchResult = results?.leftRuleLeft ?? results?.leftRuleRight ?? results?.rightRuleLeft ?? results?.rightRuleRight ?? null;
   const matchDirection =
-    results.leftRuleLeft
+    results?.leftRuleLeft
       ? 'targetLeft: ruleLeft→ruleRight'
-      : results.leftRuleRight
+      : results?.leftRuleRight
         ? 'targetLeft: ruleRight→ruleLeft'
-        : results.rightRuleLeft
+        : results?.rightRuleLeft
           ? 'targetRight: ruleLeft→ruleRight'
-          : results.rightRuleRight
+          : results?.rightRuleRight
             ? 'targetRight: ruleRight→ruleLeft'
             : null;
 
@@ -220,8 +263,8 @@ function TrySubstitutionSection() {
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-4">
-          <Badge variant={matchResult ? 'default' : 'secondary'}>
-            {matchResult ? 'Match found' : 'No match'}
+          <Badge variant={loading ? 'outline' : matchResult ? 'default' : 'secondary'}>
+            {loading ? 'Computing...' : matchResult ? 'Match found' : 'No match'}
           </Badge>
           {matchDirection && (
             <span className="text-sm text-muted-foreground">
@@ -239,10 +282,10 @@ function TrySubstitutionSection() {
         <div className="rounded-md border bg-muted/30 p-3 text-xs font-mono">
           <p className="font-semibold mb-2">Tried directions:</p>
           <ul className="space-y-1 text-muted-foreground">
-            <li>targetLeft, replace ruleLeft→ruleRight: {results.leftRuleLeft ? '✓' : '—'}</li>
-            <li>targetLeft, replace ruleRight→ruleLeft: {results.leftRuleRight ? '✓' : '—'}</li>
-            <li>targetRight, replace ruleLeft→ruleRight: {results.rightRuleLeft ? '✓' : '—'}</li>
-            <li>targetRight, replace ruleRight→ruleLeft: {results.rightRuleRight ? '✓' : '—'}</li>
+            <li>targetLeft, replace ruleLeft→ruleRight: {results?.leftRuleLeft ? '✓' : '—'}</li>
+            <li>targetLeft, replace ruleRight→ruleLeft: {results?.leftRuleRight ? '✓' : '—'}</li>
+            <li>targetRight, replace ruleLeft→ruleRight: {results?.rightRuleLeft ? '✓' : '—'}</li>
+            <li>targetRight, replace ruleRight→ruleLeft: {results?.rightRuleRight ? '✓' : '—'}</li>
           </ul>
         </div>
       </CardContent>

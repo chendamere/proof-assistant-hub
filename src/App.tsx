@@ -7,9 +7,10 @@ import { PanelProvider } from "@/contexts/PanelContext";
 import Index from "./pages/Index";
 import Verifier from "./pages/Verifier";
 import ProofStep from "./pages/ProofStep";
-import SubstitutionDAGDemo from "./pages/SubstitutionDAGDemo";
-import Glossary from "./pages/Glossary";
 import ProofSteps from "./pages/ProofSteps";
+import SubstitutionDAGDemo from "./pages/SubstitutionDAGDemo";
+import SubstitutionExample from "./pages/SubstitutionExample";
+import Glossary from "./pages/Glossary";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,9 +26,10 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/verifier" element={<Verifier />} />
             <Route path="/proof-step" element={<ProofStep />} />
-            <Route path="/substitution-dag" element={<SubstitutionDAGDemo />} />
-            <Route path="/glossary" element={<Glossary />} />
             <Route path="/proof-steps" element={<ProofSteps />} />
+            <Route path="/substitution-dag" element={<SubstitutionDAGDemo />} />
+            <Route path="/substitution-example" element={<SubstitutionExample />} />
+            <Route path="/glossary" element={<Glossary />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

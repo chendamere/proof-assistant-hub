@@ -209,7 +209,6 @@ function convertRuleOtherSideWithDAG(
   const unmappedTokens = ruleOtherTokens.filter((t) => !operandMapping.has(t.token));
 
   const replacementDAG = exprToDAG(normalizeSpacing(ruleOtherSide));
-
   const tryConversion = (mapping: Map<string, string>): string => {
     const merged = substituteInDAG(targetDAG, patternDAG, replacementDAG, nodeMapping, mapping);
     return dagToExpr(merged);
@@ -240,7 +239,6 @@ function convertRuleOtherSideWithDAG(
     const result = tryAssignExisting(0, new Map(operandMapping));
     if (result !== null) return result;
   }
-
   const usedOperands = new Set([...targetOperands, ...operandMapping.values()]);
   let maxUsed = 0;
   usedOperands.forEach((op) => {
@@ -398,7 +396,6 @@ export const trySubstitution = (
   }
 
   // DAG-based: try each match candidate until one produces the expected result
-  // Cap iterations to avoid freeze on complex branch expressions (VF2 can yield exponentially many matches)
   const maxTrials = targetDAG.nodes.length > 12 ? 32 : 64;
   if (patternDAG.nodes.length > 0) {
     let trialCount = 0;
@@ -433,6 +430,7 @@ export const trySubstitution = (
         if (normalizeSpacing(substituted) === normalizeSpacing(expectedResult)) {
           return {
             match: true,
+            reconstructedExpr: substituted,
             position: {
               side,
               position: candidateStart,
@@ -448,7 +446,7 @@ export const trySubstitution = (
           };
         }
       } catch {
-        // DAG merge/serialize failed; try next match
+        continue;
       }
     }
   }
@@ -456,11 +454,11 @@ export const trySubstitution = (
   // Fallback: try findSubstitution for non-DAG cases (operators only, no operands)
   const result = findSubstitution(target, ruleSide, side);
   if (!result.match || !result.position) return null;
-  if (result.position.wasPatternMatch) return null; // already tried above
+  if (result.position.wasPatternMatch) return null;
   let converted = otherRuleSide;
   const substituted = (result.position.prefix || '') + converted + (result.position.suffix || '');
   if (normalizeSpacing(substituted) === normalizeSpacing(expectedResult)) {
-    return result;
+    return { ...result, reconstructedExpr: substituted };
   }
   return null;
 };

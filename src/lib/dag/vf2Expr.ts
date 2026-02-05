@@ -184,7 +184,7 @@ export function vf2ExprSubgraphIsomorphism(
 }
 
 /** Max backtracking steps before aborting (prevents freeze on complex branch DAGs). */
-const VF2_MAX_STEPS = 50000;
+const VF2_MAX_STEPS = 10000000;
 
 export interface Vf2Options {
   stepCounter?: { count: number };
