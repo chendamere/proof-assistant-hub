@@ -34,7 +34,3 @@ This allows matching expressions with the same structure even when they were nor
 ## Documents
 
 - **[ALGORITHMS.md](./ALGORITHMS.md)** - Primary functions and algorithms (expression parsing, rule inference, DAG substitution)
-- **[WALKTHROUGH.md](./WALKTHROUGH.md)** - Detailed walkthrough of a substitution case showing the problem and solution
-- **[EFFICIENCY_ANALYSIS.md](./EFFICIENCY_ANALYSIS.md)** - Comparison of different approaches and why pattern matching is optimal
-- **[SCALABILITY_ANALYSIS.md](./SCALABILITY_ANALYSIS.md)** - Performance analysis with thousands of operands
-- **[NORMALIZATION_NEEDED.md](./NORMALIZATION_NEEDED.md)** - Explanation of why normalization is still essential (pattern matching complements it, doesn't replace it)

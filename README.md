@@ -14,6 +14,5 @@ See **[docs/ALGORITHMS.md](docs/ALGORITHMS.md)** for detailed documentation of t
 
 ## Quick Links
 
-- [Pattern Matching Walkthrough](docs/README.md) – Why pattern matching is needed and how it works
-- [Efficiency Analysis](docs/EFFICIENCY_ANALYSIS.md) – Performance considerations
+- [Pattern Matching](docs/README.md) – Why pattern matching is needed and how it works
 - [Algorithms Reference](docs/ALGORITHMS.md) – Full algorithm documentation
