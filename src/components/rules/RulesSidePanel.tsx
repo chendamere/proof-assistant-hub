@@ -47,33 +47,33 @@ const DraggableRuleCard: React.FC<DraggableRuleCardProps> = React.memo(({ rule }
   );
 
   return (
-    <div className="group bg-card border border-border rounded-lg p-3 min-h-0 overflow-visible h-auto">
-      <div className="flex items-center gap-2 mb-2">
-        <span className={`text-xs px-1.5 py-0.5 rounded font-mono ${getTypeBadgeClass(rule.type)}`}>
+    <div className="group bg-card border border-border rounded-lg p-3 min-h-0 overflow-hidden">
+      <div className="flex items-center gap-2 mb-2 min-w-0">
+        <span className={`text-xs px-1.5 py-0.5 rounded font-mono flex-shrink-0 ${getTypeBadgeClass(rule.type)}`}>
           {rule.type.charAt(0).toUpperCase()}
         </span>
-        <span className="text-xs text-foreground font-medium truncate">{rule.name}</span>
+        <span className="text-xs text-foreground font-medium truncate min-w-0">{rule.name}</span>
       </div>
 
-      <div className="flex items-center gap-1 mb-2">
+      <div className="grid grid-cols-[1fr_auto_1fr] gap-1 mb-2 min-w-0 items-stretch">
         <div
           draggable
           onDragStart={handleLeftDragStart}
-          className="flex-1 min-w-0 cursor-grab active:cursor-grabbing rounded border border-dashed border-border hover:border-primary/50 p-1.5 select-none"
+          className="min-w-0 cursor-grab active:cursor-grabbing rounded border border-dashed border-border hover:border-primary/50 p-1.5 select-none overflow-hidden"
           title="Drag left expression to Debug workbench"
         >
-          <div className="text-sm overflow-x-auto">
+          <div className="text-sm overflow-x-auto overflow-y-hidden min-h-[1.5rem]">
             <ExpressionRenderer expression={rule.leftSide} size={12} />
           </div>
         </div>
-        <EquivalenceSymbol size={12} className="flex-shrink-0 text-muted-foreground" />
+        <EquivalenceSymbol size={12} className="flex-shrink-0 text-muted-foreground self-center" />
         <div
           draggable
           onDragStart={handleRightDragStart}
-          className="flex-1 min-w-0 cursor-grab active:cursor-grabbing rounded border border-dashed border-border hover:border-primary/50 p-1.5 select-none"
+          className="min-w-0 cursor-grab active:cursor-grabbing rounded border border-dashed border-border hover:border-primary/50 p-1.5 select-none overflow-hidden"
           title="Drag right expression to Debug workbench"
         >
-          <div className="text-sm overflow-x-auto">
+          <div className="text-sm overflow-x-auto overflow-y-hidden min-h-[1.5rem]">
             <ExpressionRenderer expression={rule.rightSide} size={12} />
           </div>
         </div>
@@ -313,8 +313,8 @@ export const RulesSidePanel: React.FC = () => {
         </div>
 
         {/* Rules List */}
-        <ScrollArea ref={scrollAreaRef} className="h-[calc(100vh-280px)]">
-          <div className="p-4 space-y-2">
+        <ScrollArea ref={scrollAreaRef} className="h-[calc(100vh-280px)] min-w-0">
+          <div className="p-4 space-y-2 min-w-0">
             {isLoadingTheorems && (
               <div className="text-center py-4 text-muted-foreground text-sm">
                 Loading theorems...

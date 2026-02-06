@@ -97,25 +97,27 @@ interface Token {
   value: string;
   operatorSrc?: string;
   branchData?: {
-    type: 'Bb' | 'Blb' | 'Br' | 'Bls' | 'Brs';
+    type: 'Bb' | 'Blb' | 'Br' | 'Brb' | 'Bls' | 'Brs';
     condition: string;
     branch1: string;
     branch2: string;
   };
 }
 
-// Parse branch expressions like \Bb{condition}{branch1}{branch2}
+// Parse branch expressions: \Bb{cond}{b1}{b2}, \Blb{cond}{b1}{b2}, \Brb{b1}{b2}, \Brs{b1}{b2}
 const parseBranchExpression = (expr: string): { match: boolean; branchData?: Token['branchData']; remaining: string } => {
-  // Match branch patterns: \Bb, \Bs (same as \Bb), \Blb, \Br, \Bls, \Brs
-  const branchPatterns = ['\\Bb', '\\Bs', '\\Blb', '\\Br', '\\Bls', '\\Brs'];
+  // Longest first so \Brs matches before \Br, \Bls before \Bl
+  const branchPatterns = ['\\Blb', '\\Bls', '\\Brb', '\\Brs', '\\Bb', '\\Bs', '\\Br'];
   
   for (const pattern of branchPatterns) {
     if (expr.startsWith(pattern)) {
       let remaining = expr.slice(pattern.length);
-      
-      // Parse three brace groups
+      const rawType = pattern.slice(1);
+      // Brb, Brs, Br: 2 braces (no condition). Bb, Bs, Blb, Bls: 3 braces (cond, b1, b2)
+      const braceCount = (rawType === 'Brb' || rawType === 'Brs' || rawType === 'Br') ? 2 : 3;
       const braces: string[] = [];
-      for (let i = 0; i < 3; i++) {
+      
+      for (let i = 0; i < braceCount; i++) {
         if (!remaining.startsWith('{')) {
           return { match: false, remaining: expr };
         }
@@ -146,14 +148,14 @@ const parseBranchExpression = (expr: string): { match: boolean; branchData?: Tok
         remaining = remaining.slice(j + 1);
       }
       
-      const rawType = pattern.slice(1);
+      const type = (rawType === 'Bs' ? 'Bb' : rawType) as 'Bb' | 'Blb' | 'Br' | 'Brb' | 'Bls' | 'Brs';
       return {
         match: true,
         branchData: {
-          type: (rawType === 'Bs' ? 'Bb' : rawType) as 'Bb' | 'Blb' | 'Br' | 'Bls' | 'Brs',
-          condition: braces[0],
-          branch1: braces[1],
-          branch2: braces[2],
+          type,
+          condition: braceCount === 3 ? braces[0] : '',
+          branch1: braceCount === 3 ? braces[1] : braces[0],
+          branch2: braceCount === 3 ? braces[2] : braces[1],
         },
         remaining,
       };
@@ -250,7 +252,7 @@ const BranchRenderer: React.FC<{
   
   // Helper function to check if content contains nested branches
   const hasNestedBranches = React.useCallback((content: string): boolean => {
-    const branchPatterns = ['\\Bb', '\\Bs', '\\Blb', '\\Br', '\\Bls', '\\Brs'];
+    const branchPatterns = ['\\Bb', '\\Bs', '\\Blb', '\\Br', '\\Brb', '\\Bls', '\\Brs'];
     return branchPatterns.some(pattern => content.includes(pattern));
   }, []);
   
@@ -325,7 +327,7 @@ const BranchRenderer: React.FC<{
   
   // Determine which brackets to show based on type
   const showLeftBracket = type === 'Bb' || type === 'Blb' || type === 'Bls';
-  const showRightBracket = type === 'Bb' || type === 'Br' || type === 'Brs';
+  const showRightBracket = type === 'Bb' || type === 'Br' || type === 'Brb' || type === 'Brs';
   
   // Border styles for brackets using CSS
   const leftBracketClass = "border-l border-t border-b border-foreground";

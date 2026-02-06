@@ -129,14 +129,14 @@ function parseConditionOp(cond: string): { op: string; operands: string[] } | nu
 
 /** Check if expression contains branch operators */
 function hasBranch(expr: string): boolean {
-  return /\\B[lr]b|\\B[bs]/.test(expr);
+  return /\\B[lr]b|\\Brs|\\B[bs]/.test(expr);
 }
 
-/** Parse \Bb{cond}{top}{bottom}, \Bs{cond}{top}{bottom}, \Blb{cond}{top}{bottom}, or \Brb{top}{bottom}. Returns content and end positions. \Bs is treated as \Bb. */
+/** Parse \Bb{cond}{top}{bottom}, \Bs{cond}{top}{bottom}, \Blb{cond}{top}{bottom}, \Brb{top}{bottom}, or \Brs{top}{bottom}. \Bs is treated as \Bb. \Brs is treated as \Brb. */
 function parseBranchAtStart(
   expr: string
 ): {
-  kind: 'Bb' | 'Blb' | 'Brb';
+  kind: 'Bb' | 'Blb' | 'Brb' | 'Brs';
   cond?: string;
   top: string;
   bottom: string;
@@ -149,12 +149,14 @@ function parseBranchAtStart(
   const bs = trimmed.match(/^[\s,]*\\Bs\s*\{/);
   const blb = trimmed.match(/^[\s,]*\\Blb\s*\{/);
   const brb = trimmed.match(/^[\s,]*\\Brb\s*\{/);
+  const brs = trimmed.match(/^[\s,]*\\Brs\s*\{/);
 
-  const candidates: { m: RegExpMatchArray; kind: 'Bb' | 'Blb' | 'Brb' }[] = [];
+  const candidates: { m: RegExpMatchArray; kind: 'Bb' | 'Blb' | 'Brb' | 'Brs' }[] = [];
   if (bb) candidates.push({ m: bb, kind: 'Bb' });
   if (bs) candidates.push({ m: bs, kind: 'Bb' });
   if (blb) candidates.push({ m: blb, kind: 'Blb' });
   if (brb) candidates.push({ m: brb, kind: 'Brb' });
+  if (brs) candidates.push({ m: brs, kind: 'Brs' });
   if (candidates.length === 0) return null;
 
   candidates.sort((a, b) => a.m.index! - b.m.index!);
@@ -229,7 +231,7 @@ function buildItem(
 
   const branch = parseBranchAtStart(trimmed);
   if (branch) {
-    if (branch.kind === 'Brb') {
+    if (branch.kind === 'Brb' || branch.kind === 'Brs') {
       const topBracePos = trimmed.indexOf('{');
       const topRes = topBracePos >= 0 ? parseOneBraced(trimmed, topBracePos) : null;
       const botRes = topRes ? parseOneBraced(trimmed, topRes.end) : null;
@@ -238,7 +240,7 @@ function buildItem(
       const tailId = `n${nextId.n++}`;
       nodes.push({
         id: tailId,
-        data: { op: ':tail', operands: [], start: trimmedOffset, end: trimmedOffset + trimmed.length, branchKind: 'Brb' },
+        data: { op: ':tail', operands: [], start: trimmedOffset, end: trimmedOffset + trimmed.length, branchKind: branch.kind },
       });
 
       const topResult = buildItem(branch.top, nodes, edges, nextId, topOffset);

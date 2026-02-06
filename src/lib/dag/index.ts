@@ -8,3 +8,4 @@ export { dagToExpr } from './dagToExpr';
 export { vf2SubgraphIsomorphism, isSubgraphIsomorphic } from './vf2';
 export { vf2ExprSubgraphIsomorphism, vf2ExprSubgraphIsomorphismAll } from './vf2Expr';
 export { substituteInDAG } from './dagSubstitute';
+export { extractSubgraphFromNode, augmentTargetDAGForTcMatching } from './utils';

@@ -6,7 +6,7 @@
 type BranchInfo =
   | { kind: 'Bb'; cond: string; top: string; bottom: string; start: number; end: number }
   | { kind: 'Blb'; cond: string; top: string; bottom: string; start: number; end: number }
-  | { kind: 'Brb'; top: string; bottom: string; start: number; end: number };
+  | { kind: 'Brb' | 'Brs'; top: string; bottom: string; start: number; end: number };
 
 function parseOneBraced(expr: string, pos: number): { content: string; end: number } | null {
   if (expr[pos] !== '{') return null;
@@ -29,12 +29,14 @@ function findFirstBranch(expr: string): BranchInfo | null {
   const bs = expr.match(/\\Bs\s*\{/);
   const blb = expr.match(/\\Blb\s*\{/);
   const brb = expr.match(/\\Brb\s*\{/);
+  const brs = expr.match(/\\Brs\s*\{/);
 
-  const candidates: { m: RegExpMatchArray; kind: 'Bb' | 'Blb' | 'Brb' }[] = [];
+  const candidates: { m: RegExpMatchArray; kind: 'Bb' | 'Blb' | 'Brb' | 'Brs' }[] = [];
   if (bb) candidates.push({ m: bb, kind: 'Bb' });
   if (bs) candidates.push({ m: bs, kind: 'Bb' });
   if (blb) candidates.push({ m: blb, kind: 'Blb' });
   if (brb) candidates.push({ m: brb, kind: 'Brb' });
+  if (brs) candidates.push({ m: brs, kind: 'Brs' });
 
   if (candidates.length === 0) return null;
   candidates.sort((a, b) => a.m.index! - b.m.index!);
@@ -71,7 +73,7 @@ function findFirstBranch(expr: string): BranchInfo | null {
   pos = topRes.end;
   const bottomRes = parseOneBraced(expr, pos);
   if (!bottomRes) return null;
-  return { kind: 'Brb', top: topRes.content, bottom: bottomRes.content, start, end: bottomRes.end };
+  return { kind, top: topRes.content, bottom: bottomRes.content, start, end: bottomRes.end };
 }
 
 /**
@@ -85,7 +87,7 @@ export function formatBranchTree(expr: string, indent = ''): string {
   const prefix = expr.substring(0, branch.start);
   const suffix = expr.substring(branch.end);
 
-  const branchLabel = branch.kind === 'Bb' ? `\\Bb{${branch.cond}}` : branch.kind === 'Blb' ? `\\Blb{${branch.cond}}` : '\\Brb';
+  const branchLabel = branch.kind === 'Bb' ? `\\Bb{${branch.cond}}` : branch.kind === 'Blb' ? `\\Blb{${branch.cond}}` : branch.kind === 'Brs' ? '\\Brs' : '\\Brb';
   const topTree = formatBranchTree(branch.top, '  ');
   const bottomTree = formatBranchTree(branch.bottom, '  ');
 

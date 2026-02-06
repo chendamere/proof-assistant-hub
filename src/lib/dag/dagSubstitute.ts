@@ -87,7 +87,7 @@ export function substituteInDAG(
     const matchedTargetId = replacementToTarget.get(newReplId);
     if (matchedTargetId) {
       const tNode = tNodeMap.get(matchedTargetId);
-      const tData = tNode?.data as (ExprNodeData & { branchKind?: 'Bb' | 'Blb' | 'Brb' }) | undefined;
+      const tData = tNode?.data as (ExprNodeData & { branchKind?: 'Bb' | 'Blb' | 'Brb' | 'Brs' }) | undefined;
       if (tData?.branchKind && (rData.op.endsWith(':tail') || rData.op.includes(':cond'))) {
         data.branchKind = tData.branchKind;
       }

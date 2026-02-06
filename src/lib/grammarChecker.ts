@@ -235,10 +235,9 @@ function extractBranchRanges(expression: string): {
     }
     
     // Determine structure based on operator type
-    // Bb and Blb: first branch is condition, then 2 actual branches
-    // Br: no condition, just 2 branches
-    // Bls and Brs: similar to Bb/Blb (condition + branches)
-    const hasCondition = (operator === 'Bb' || operator === 'Bs' || operator === 'Blb' || operator === 'Bls' || operator === 'Brs');
+    // Bb, Blb, Bls: first branch is condition, then 2 actual branches
+    // Br, Brb, Brs: no condition, just 2 branches
+    const hasCondition = (operator === 'Bb' || operator === 'Bs' || operator === 'Blb' || operator === 'Bls');
     
     if (hasCondition && allBranches.length >= 3) {
       // First branch is condition, rest are actual branches
@@ -289,8 +288,8 @@ function checkGrammarWithScope(expression: string, inheritedOperands: Set<string
   const { ranges: branchRanges, operator: branchOperatorType, hasCondition } = extractBranchRanges(expression);
   
   // Extract branch contents for recursive checking
-  // For operators with conditions (Bb, Blb, Bls, Brs): skip condition, use actual branches
-  // For operators without conditions (Br): use all branches
+  // For operators with conditions (Bb, Blb, Bls): skip condition, use actual branches
+  // For operators without conditions (Br, Brb, Brs): use all branches
   const branchContents: Array<{ content: string; range: { start: number; end: number } }> = [];
   const actualBranchRanges: Array<{ start: number; end: number }> = [];
   
@@ -318,8 +317,8 @@ function checkGrammarWithScope(expression: string, inheritedOperands: Set<string
   }
   
   // If we found a branch operator, check each branch independently
-  // For Bb/Blb/Bls/Brs: we need at least 2 actual branches (condition + 2 branches = 3 total)
-  // For Br: we need at least 2 branches (no condition = 2 total)
+  // For Bb/Blb/Bls: we need at least 2 actual branches (condition + 2 branches = 3 total)
+  // For Br/Brb/Brs: we need at least 2 branches (no condition = 2 total)
   const expectedBranchCount = hasCondition ? 2 : 2; // Both cases need 2 actual branches
   if (branchOperatorToken && branchContents.length >= expectedBranchCount) {
     // First, process tokens that appear BEFORE the branch operator

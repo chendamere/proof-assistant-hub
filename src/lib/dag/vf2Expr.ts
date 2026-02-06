@@ -23,6 +23,33 @@ function exprDataMatches(
   varToTarget: Map<string, string>,
   targetToVar: Map<string, string>
 ): boolean {
+  // \Tc operand maps to one or more operations (including branch); match any target node
+  if (pData.op === '\\Tc') {
+    if (pData.operands.length !== 1) return false;
+    const tcOp = pData.operands[0];
+    if (varToTarget.has(tcOp)) return true;
+    varToTarget.set(tcOp, tData.operands[0] ?? '');
+    return true;
+  }
+
+  // \Oe (equals) compatible with \Pu (defined): only first operand must match
+  // Pattern i \Oe j can match target i \Pu (i defined implies i \Oe i)
+  const pHasOe = pData.op.includes('Oe') && !pData.op.includes('nOe');
+  const tHasPu = tData.op.includes('Pu') && !tData.op.includes('nPu');
+  if (pHasOe && tHasPu) {
+    if (pData.operands.length < 1 || tData.operands.length < 1) return false;
+    const pOp = pData.operands[0];
+    const tOp = tData.operands[0];
+    if (varToTarget.has(pOp)) {
+      if (varToTarget.get(pOp) !== tOp) return false;
+    } else {
+      if (targetToVar.has(tOp) && targetToVar.get(tOp) !== pOp) return false;
+      varToTarget.set(pOp, tOp);
+      targetToVar.set(tOp, pOp);
+    }
+    return true;
+  }
+
   const pOpNorm = normalizeBranchOp(pData.op);
   const tOpNorm = normalizeBranchOp(tData.op);
   if (pOpNorm !== tOpNorm) return false;

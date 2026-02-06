@@ -47,6 +47,8 @@ const operatorPatterns = [
   // Branch operators (\Bs treated same as \Bb)
   { pattern: /\\B[bs]/g, className: 'text-pink-400' },
   { pattern: /\\Blb/g, className: 'text-pink-400' },
+  { pattern: /\\Brb/g, className: 'text-pink-400' },
+  { pattern: /\\Brs/g, className: 'text-pink-400' },
   { pattern: /\\Br/g, className: 'text-pink-400' },
   
   // Functions

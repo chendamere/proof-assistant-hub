@@ -159,9 +159,9 @@ function isRedundantDelimiterOnly(s: string): boolean {
   return /^[\s,]+$/.test(s) && s !== ',';
 }
 
-/** Content within an arm that precedes the first nested branch (\\Bb, \\Blb, \\Brb), if any. */
+/** Content within an arm that precedes the first nested branch (\\Bb, \\Blb, \\Brb, \\Brs), if any. */
 function armContentBeforeFirstBranch(arm: string): string {
-  const m = arm.match(/\\(?:Bb|Bs|Blb|Brb)\s*\{/);
+  const m = arm.match(/\\(?:Bb|Bs|Blb|Brb|Brs)\s*\{/);
   if (!m || m.index == null) return arm;
   return arm.substring(0, m.index);
 }
@@ -295,8 +295,8 @@ export function generateSubexpressions(expression: string): string[] {
           for (let pb = 0; pb <= nBottom; pb++) {
             const topPart = branchPrefix(topItems, pt);
             const bottomPart = branchPrefix(bottomItems, pb);
-            if (topPart.includes('\\Bb') || topPart.includes('\\Bs') || topPart.includes('\\Blb') || topPart.includes('\\Brb') ||
-                bottomPart.includes('\\Bb') || bottomPart.includes('\\Bs') || bottomPart.includes('\\Blb') || bottomPart.includes('\\Brb')) continue;
+            if (topPart.includes('\\Bb') || topPart.includes('\\Bs') || topPart.includes('\\Blb') || topPart.includes('\\Brb') || topPart.includes('\\Brs') ||
+                bottomPart.includes('\\Bb') || bottomPart.includes('\\Bs') || bottomPart.includes('\\Blb') || bottomPart.includes('\\Brb') || bottomPart.includes('\\Brs')) continue;
             const isEmptyBlb = pt === 0 && pb === 0;
             if (isEmptyBlb && s.length > 0) continue;
             const blb = `\\Blb{${bb.cond}}{${topPart}}{${bottomPart}}`;
@@ -352,19 +352,20 @@ export function generateSubexpressions(expression: string): string[] {
     };
 
     const hasBbOrBs = (s: string) => /\\B[bs]/.test(s);
+    const hasBrbOrBrs = (s: string) => /\\Br[bs]/.test(s);
     if (hasBbOrBs(bb.top)) {
       const topBb = parseBb(bb.top);
       if (topBb) {
         const subTop = generateSubexpressions(bb.top);
         for (const st of subTop) {
           if (st !== bb.top) {
-            if (st.includes('\\Brb') && !st.includes('\\Blb') && !hasBbOrBs(st)) {
+            if (hasBrbOrBrs(st) && !st.includes('\\Blb') && !hasBbOrBs(st)) {
               addRecursive(`\\Brb{${st}}{${bb.bottom}}`, true, false);
-            } else if (!st.includes('\\Blb') && !st.includes('\\Brb')) {
+            } else if (!st.includes('\\Blb') && !hasBrbOrBrs(st)) {
               addRecursive(`\\Bb{${bb.cond}}{${st}}{${bb.bottom}}`, false, false);
             }
             // Blb->Blb, Blb->Bb: outer \Blb with inner \Blb or \Bb; skip if content before inner branch is delimiter-only
-            if ((st.includes('\\Blb') || hasBbOrBs(st)) && !st.includes('\\Brb') && !outerBlbArmInvalid(st)) {
+            if ((st.includes('\\Blb') || hasBbOrBs(st)) && !hasBrbOrBrs(st) && !outerBlbArmInvalid(st)) {
               addRecursive(`\\Blb{${bb.cond}}{${st}}{${bb.bottom}}`, false, true);
             }
           }
@@ -377,13 +378,13 @@ export function generateSubexpressions(expression: string): string[] {
         const subBottom = generateSubexpressions(bb.bottom);
         for (const sb of subBottom) {
           if (sb !== bb.bottom) {
-            if (sb.includes('\\Brb') && !sb.includes('\\Blb') && !hasBbOrBs(sb)) {
+            if (hasBrbOrBrs(sb) && !sb.includes('\\Blb') && !hasBbOrBs(sb)) {
               addRecursive(`\\Brb{${bb.top}}{${sb}}`, true, false);
-            } else if (!sb.includes('\\Blb') && !sb.includes('\\Brb')) {
+            } else if (!sb.includes('\\Blb') && !hasBrbOrBrs(sb)) {
               addRecursive(`\\Bb{${bb.cond}}{${bb.top}}{${sb}}`, false, false);
             }
             // Blb->Blb, Blb->Bb: outer \Blb with inner \Blb or \Bb; skip if content before inner branch is delimiter-only
-            if ((sb.includes('\\Blb') || hasBbOrBs(sb)) && !sb.includes('\\Brb') && !outerBlbArmInvalid(sb)) {
+            if ((sb.includes('\\Blb') || hasBbOrBs(sb)) && !hasBrbOrBrs(sb) && !outerBlbArmInvalid(sb)) {
               addRecursive(`\\Blb{${bb.cond}}{${bb.top}}{${sb}}`, false, true);
             }
           }

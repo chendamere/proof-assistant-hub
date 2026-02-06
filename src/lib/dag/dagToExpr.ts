@@ -10,6 +10,8 @@ function formatOp(data: ExprNodeData, subst?: Map<string, string>): string {
   const op = data.op;
   if (op.endsWith(':tail') || op.includes(':cond')) return '';
   const ops = (data.operands ?? []).map((o) => subst?.get(o) ?? o);
+  // \Tc operand maps to one or more operations (including branch): output the expression, not "operand \Tc"
+  if (op === '\\Tc' && ops.length === 1) return ops[0];
   if (ops.length >= 2) return `${ops[0]} ${op} ${ops[1]}`;
   if (ops.length === 1) return `${ops[0]} ${op}`;
   return op;
@@ -202,7 +204,7 @@ export function dagToExpr(
     return nextIds;
   }
 
-  // Brb: two roots that both lead to the same tail (no cond node)
+  // Brb/Brs: two roots that both lead to the same tail (no cond node)
   let worklist = [...roots];
   if (roots.length === 2 && isBrbDualRoots(roots[0], roots[1])) {
     const [r0, r1] = roots;
@@ -212,7 +214,9 @@ export function dagToExpr(
     const botParts = serializeChainUntilBranch(r1).parts;
     const topStr = topParts.length ? ',' + topParts.join(', ') + ',' : '';
     const botStr = botParts.length ? ',' + botParts.join(', ') + ',' : '';
-    itemParts.push(`, \\Brb{${topStr}}{${botStr}}`);
+    const tailKind = getReachableTailBranchKind([r0, r1]);
+    const brOp = tailKind === 'Brs' ? 'Brs' : 'Brb';
+    itemParts.push(`, \\${brOp}{${topStr}}{${botStr}}`);
     const tailId = (outgoing.get(r0) ?? []).find(
       (c) => (nodeMap.get(c)?.data as ExprNodeData)?.op?.endsWith(':tail')
     );

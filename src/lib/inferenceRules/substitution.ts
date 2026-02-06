@@ -7,7 +7,7 @@
 import type { DAGStructure, ExprNodeData } from '../dag';
 import { MatchPosition } from './types';
 import { normalizeSpacing, extractOperandTokens } from './utils';
-import { exprToDAG, dagToExpr, vf2ExprSubgraphIsomorphism, vf2ExprSubgraphIsomorphismAll, substituteInDAG } from '../dag';
+import { exprToDAG, dagToExpr, vf2ExprSubgraphIsomorphism, vf2ExprSubgraphIsomorphismAll, substituteInDAG, extractSubgraphFromNode, augmentTargetDAGForTcMatching } from '../dag';
 
 /**
  * Convert ruleOtherSide using operand mapping
@@ -130,40 +130,98 @@ function convertRuleOtherSideWithDAG(
   targetSide: string,
   expectedResult?: string
 ): string {
+  const mapping = resolveTcOperandMapping(patternDAG, targetDAG, nodeMapping, new Map(operandMapping));
   const targetOperands = extractOperandsFromText(targetSide);
   const expectedOperands = expectedResult ? extractOperandsFromText(expectedResult) : new Set<string>();
   const existingOperands = new Set([...targetOperands, ...expectedOperands]);
 
+  // Expand \Tc in pattern before converting to node; one Tc can map to empty operation
+  const expandedRuleOtherSide = expandTcInRuleSide(ruleOtherSide, mapping, patternDAG);
   const ruleOtherTokens = extractOperandTokens(ruleOtherSide);
-  const replacementDAG = exprToDAG(normalizeSpacing(ruleOtherSide));
-  const tryConversion = (mapping: Map<string, string>): string => {
-    const merged = substituteInDAG(targetDAG, patternDAG, replacementDAG, nodeMapping, mapping);
+  const replacementDAG = exprToDAG(normalizeSpacing(expandedRuleOtherSide));
+  const tryConversion = (m: Map<string, string>): string => {
+    const merged = substituteInDAG(targetDAG, patternDAG, replacementDAG, nodeMapping, m);
     return dagToExpr(merged);
   };
 
-  const mapping =
+  const resolvedMapping =
     expectedResult &&
-    resolveOperandMapping(ruleOtherTokens, operandMapping, existingOperands, (m) => {
+    resolveOperandMapping(ruleOtherTokens, mapping, existingOperands, (m) => {
       const substituted = tryConversion(m);
       return normalizeSpacing(substituted) === normalizeSpacing(expectedResult);
     });
 
-  if (mapping) return tryConversion(mapping);
+  if (resolvedMapping) return tryConversion(resolvedMapping);
 
-  const usedOperands = new Set([...targetOperands, ...operandMapping.values()]);
+  const usedOperands = new Set([...targetOperands, ...mapping.values()]);
   let maxUsed = 0;
   usedOperands.forEach((op) => {
     const n = parseInt(op, 10);
     if (!isNaN(n) && n > maxUsed) maxUsed = n;
   });
   let nextUnused = maxUsed + 1;
-  const fallbackMapping = new Map(operandMapping);
+  const fallbackMapping = new Map(mapping);
   for (const t of ruleOtherTokens) {
     if (!fallbackMapping.has(t.token)) {
       fallbackMapping.set(t.token, (nextUnused++).toString());
     }
   }
   return tryConversion(fallbackMapping);
+}
+
+/**
+ * For each pattern node with op \Tc, the operand maps to the expression (one or more ops including branch)
+ * at the matched target node. Augment operandMapping with these Tc operand -> expression entries.
+ * Empty target arms (e.g. tail node) map to ',' (empty operation).
+ */
+function resolveTcOperandMapping(
+  patternDAG: DAGStructure<ExprNodeData>,
+  targetDAG: DAGStructure<ExprNodeData>,
+  nodeMapping: Map<string, string>,
+  operandMapping: Map<string, string>
+): Map<string, string> {
+  const result = new Map(operandMapping);
+  const pNodeMap = new Map(patternDAG.nodes.map((n) => [n.id, n]));
+  const tNodeMap = new Map(targetDAG.nodes.map((n) => [n.id, n]));
+  for (const [pId, tId] of nodeMapping) {
+    const pNode = pNodeMap.get(pId);
+    const pData = pNode?.data as ExprNodeData | undefined;
+    if (pData?.op !== '\\Tc' || !pData.operands?.length) continue;
+    const tcOperand = pData.operands[0];
+    const tNode = tNodeMap.get(tId);
+    const tData = tNode?.data as ExprNodeData | undefined;
+    // Target tail (empty arm): map to empty operation directly
+    if (tData?.op?.endsWith?.(':tail')) {
+      result.set(tcOperand, ',');
+      continue;
+    }
+    const subgraph = extractSubgraphFromNode(targetDAG, tId);
+    if (subgraph.nodes.length === 0) continue;
+    const expr = dagToExpr(subgraph);
+    const trimmed = expr.replace(/^,\s*|\s*,$/g, '').trim();
+    result.set(tcOperand, trimmed ? `,${trimmed},` : ',');
+  }
+  return result;
+}
+
+/**
+ * Expand \Tc placeholders in ruleOtherSide with resolved expressions before converting to DAG.
+ * Replaces each ,\Tc c_X, with the mapped expression (including empty ',' for empty arms).
+ */
+function expandTcInRuleSide(ruleOtherSide: string, tcMapping: Map<string, string>, patternDAG: DAGStructure<ExprNodeData>): string {
+  let expanded = ruleOtherSide;
+  // Replace Tc operands in reverse order of length so c_10 before c_1
+  const tcOperands = [...patternDAG.nodes]
+    .filter((n) => (n.data as ExprNodeData)?.op === '\\Tc' && (n.data as ExprNodeData)?.operands?.length)
+    .map((n) => (n.data as ExprNodeData).operands![0])
+    .filter((op) => tcMapping.has(op))
+    .sort((a, b) => b.length - a.length);
+  for (const op of tcOperands) {
+    const value = tcMapping.get(op)!;
+    const re = new RegExp(`,\\s*\\\\Tc\\s+${op.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*,`, 'g');
+    expanded = expanded.replace(re, value);
+  }
+  return expanded;
 }
 
 /**
@@ -232,8 +290,11 @@ export const findSubstitution = function findSubstitutionRecursive(
 
   // DAG isomorphism: single pass on full target. Rule DAG uses original operands (i, m, j).
   const patternDAG = exprToDAG(normalizedRule);
-  const targetDAG = exprToDAG(normalizedTarget);
-
+  let targetDAG = exprToDAG(normalizedTarget);
+  const hasTc = patternDAG.nodes.some((n) => (n.data as ExprNodeData)?.op === '\\Tc');
+  if (hasTc && patternDAG.nodes.length > targetDAG.nodes.length) {
+    targetDAG = augmentTargetDAGForTcMatching(targetDAG) as DAGStructure<ExprNodeData>;
+  }
   if (patternDAG.nodes.length === 0 || patternDAG.nodes.length > targetDAG.nodes.length) {
     return { match: false };
   }
@@ -314,7 +375,11 @@ export const trySubstitution = (
   const normalizedTarget = normalizeSpacing(target);
   const normalizedRule = normalizeSpacing(ruleSide);
   const patternDAG = exprToDAG(normalizedRule);
-  const targetDAG = exprToDAG(normalizedTarget);
+  let targetDAG = exprToDAG(normalizedTarget);
+  const hasTc = patternDAG.nodes.some((n) => (n.data as ExprNodeData)?.op === '\\Tc');
+  if (hasTc && patternDAG.nodes.length > targetDAG.nodes.length) {
+    targetDAG = augmentTargetDAGForTcMatching(targetDAG) as DAGStructure<ExprNodeData>;
+  }
 
   // Normalize expected for comparison (roundtrip through parser strips if(...) from conditions)
   let normalizedExpected = normalizeSpacing(expectedResult);
