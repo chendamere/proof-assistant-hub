@@ -54,9 +54,9 @@ function branchSuffix(items: string[], k: number): string {
   return ', ' + suffixItems.join(',') + ',';
 }
 
-/** Parse \Bb{cond}{top}{bottom} - returns null if not found */
+/** Parse \Bb{cond}{top}{bottom} or \Bs{cond}{top}{bottom} - returns null if not found. \Bs is treated as \Bb. */
 function parseBb(expr: string): { cond: string; top: string; bottom: string; full: string; start: number; end: number } | null {
-  const match = expr.match(/\\Bb\s*\{/);
+  const match = expr.match(/\\B[bs]\s*\{/);
   if (!match) return null;
 
   const start = match.index!;
@@ -161,7 +161,7 @@ function isRedundantDelimiterOnly(s: string): boolean {
 
 /** Content within an arm that precedes the first nested branch (\\Bb, \\Blb, \\Brb), if any. */
 function armContentBeforeFirstBranch(arm: string): string {
-  const m = arm.match(/\\(?:Bb|Blb|Brb)\s*\{/);
+  const m = arm.match(/\\(?:Bb|Bs|Blb|Brb)\s*\{/);
   if (!m || m.index == null) return arm;
   return arm.substring(0, m.index);
 }
@@ -272,11 +272,11 @@ export function generateSubexpressions(expression: string): string[] {
     fallbackPrefixes.forEach((p) => addResult(p));
 
     // Recursively process the content before/after in case there are more branches
-    if (prefix.includes('\\Bb')) {
+    if (/\\B[bs]/.test(prefix)) {
       const leftBb = parseBb(prefix);
       if (leftBb) process(prefix);
     }
-    if (suffix.includes('\\Bb')) {
+    if (/\\B[bs]/.test(suffix)) {
       const rightBb = parseBb(suffix);
       if (rightBb) process(suffix);
     }
@@ -295,8 +295,8 @@ export function generateSubexpressions(expression: string): string[] {
           for (let pb = 0; pb <= nBottom; pb++) {
             const topPart = branchPrefix(topItems, pt);
             const bottomPart = branchPrefix(bottomItems, pb);
-            if (topPart.includes('\\Bb') || topPart.includes('\\Blb') || topPart.includes('\\Brb') ||
-                bottomPart.includes('\\Bb') || bottomPart.includes('\\Blb') || bottomPart.includes('\\Brb')) continue;
+            if (topPart.includes('\\Bb') || topPart.includes('\\Bs') || topPart.includes('\\Blb') || topPart.includes('\\Brb') ||
+                bottomPart.includes('\\Bb') || bottomPart.includes('\\Bs') || bottomPart.includes('\\Blb') || bottomPart.includes('\\Brb')) continue;
             const isEmptyBlb = pt === 0 && pb === 0;
             if (isEmptyBlb && s.length > 0) continue;
             const blb = `\\Blb{${bb.cond}}{${topPart}}{${bottomPart}}`;
@@ -351,38 +351,39 @@ export function generateSubexpressions(expression: string): string[] {
       }
     };
 
-    if (bb.top.includes('\\Bb')) {
+    const hasBbOrBs = (s: string) => /\\B[bs]/.test(s);
+    if (hasBbOrBs(bb.top)) {
       const topBb = parseBb(bb.top);
       if (topBb) {
         const subTop = generateSubexpressions(bb.top);
         for (const st of subTop) {
           if (st !== bb.top) {
-            if (st.includes('\\Brb') && !st.includes('\\Blb') && !st.includes('\\Bb')) {
+            if (st.includes('\\Brb') && !st.includes('\\Blb') && !hasBbOrBs(st)) {
               addRecursive(`\\Brb{${st}}{${bb.bottom}}`, true, false);
             } else if (!st.includes('\\Blb') && !st.includes('\\Brb')) {
               addRecursive(`\\Bb{${bb.cond}}{${st}}{${bb.bottom}}`, false, false);
             }
             // Blb->Blb, Blb->Bb: outer \Blb with inner \Blb or \Bb; skip if content before inner branch is delimiter-only
-            if ((st.includes('\\Blb') || st.includes('\\Bb')) && !st.includes('\\Brb') && !outerBlbArmInvalid(st)) {
+            if ((st.includes('\\Blb') || hasBbOrBs(st)) && !st.includes('\\Brb') && !outerBlbArmInvalid(st)) {
               addRecursive(`\\Blb{${bb.cond}}{${st}}{${bb.bottom}}`, false, true);
             }
           }
         }
       }
     }
-    if (bb.bottom.includes('\\Bb')) {
+    if (hasBbOrBs(bb.bottom)) {
       const bottomBb = parseBb(bb.bottom);
       if (bottomBb) {
         const subBottom = generateSubexpressions(bb.bottom);
         for (const sb of subBottom) {
           if (sb !== bb.bottom) {
-            if (sb.includes('\\Brb') && !sb.includes('\\Blb') && !sb.includes('\\Bb')) {
+            if (sb.includes('\\Brb') && !sb.includes('\\Blb') && !hasBbOrBs(sb)) {
               addRecursive(`\\Brb{${bb.top}}{${sb}}`, true, false);
             } else if (!sb.includes('\\Blb') && !sb.includes('\\Brb')) {
               addRecursive(`\\Bb{${bb.cond}}{${bb.top}}{${sb}}`, false, false);
             }
             // Blb->Blb, Blb->Bb: outer \Blb with inner \Blb or \Bb; skip if content before inner branch is delimiter-only
-            if ((sb.includes('\\Blb') || sb.includes('\\Bb')) && !sb.includes('\\Brb') && !outerBlbArmInvalid(sb)) {
+            if ((sb.includes('\\Blb') || hasBbOrBs(sb)) && !sb.includes('\\Brb') && !outerBlbArmInvalid(sb)) {
               addRecursive(`\\Blb{${bb.cond}}{${bb.top}}{${sb}}`, false, true);
             }
           }

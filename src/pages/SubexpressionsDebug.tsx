@@ -70,7 +70,7 @@ const SubexpressionsDebug: React.FC = () => {
     });
   };
 
-  const hasBranch = (s: string) => /\\B[lr]b|\\Bb/.test(s);
+  const hasBranch = (s: string) => /\\B[lr]b|\\B[bs]/.test(s);
 
   return (
     <div className="min-h-screen gradient-bg">

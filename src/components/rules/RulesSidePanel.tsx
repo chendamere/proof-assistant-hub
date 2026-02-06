@@ -21,89 +21,99 @@ interface DraggableRuleCardProps {
 
 const DraggableRuleCard: React.FC<DraggableRuleCardProps> = React.memo(({ rule }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  
-  const handleDragStart = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    const data = JSON.stringify({
-      id: rule.id,
-      name: rule.name,
-      leftSide: rule.leftSide,
-      rightSide: rule.rightSide,
-    });
-    e.dataTransfer.setData('application/json', data);
-    e.dataTransfer.effectAllowed = 'copy';
-    
-    // Create a custom drag image
-    const dragImage = document.createElement('div');
-    dragImage.textContent = rule.name;
-    dragImage.style.cssText = 'position: absolute; top: -1000px; padding: 8px 12px; background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); border-radius: 6px; font-size: 12px; font-weight: 500;';
-    document.body.appendChild(dragImage);
-    e.dataTransfer.setDragImage(dragImage, 0, 0);
-    setTimeout(() => document.body.removeChild(dragImage), 0);
-  }, [rule]);
+
+  const handleLeftDragStart = useCallback(
+    (e: React.DragEvent) => {
+      e.dataTransfer.setData('application/x-rule-drag-side', 'left');
+      e.dataTransfer.setData(
+        'application/json',
+        JSON.stringify({ id: rule.id, name: rule.name, leftSide: rule.leftSide, rightSide: rule.rightSide, draggedSide: 'left' })
+      );
+      e.dataTransfer.effectAllowed = 'copy';
+    },
+    [rule.id, rule.name, rule.leftSide, rule.rightSide]
+  );
+
+  const handleRightDragStart = useCallback(
+    (e: React.DragEvent) => {
+      e.dataTransfer.setData('application/x-rule-drag-side', 'right');
+      e.dataTransfer.setData(
+        'application/json',
+        JSON.stringify({ id: rule.id, name: rule.name, leftSide: rule.leftSide, rightSide: rule.rightSide, draggedSide: 'right' })
+      );
+      e.dataTransfer.effectAllowed = 'copy';
+    },
+    [rule.id, rule.name, rule.leftSide, rule.rightSide]
+  );
 
   return (
-    <div
-      draggable="true"
-      onDragStart={handleDragStart}
-      className="group bg-card border border-border rounded-lg p-3 cursor-grab active:cursor-grabbing hover:border-primary/50 transition-colors select-none min-h-0 overflow-visible h-auto"
-    >
-      <div className="flex items-start gap-2">
-        <GripVertical className="w-4 h-4 text-muted-foreground mt-1 opacity-50 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-        
-        <div className="flex-1 min-w-0">
-          {/* Rule header */}
-          <div className="flex items-center gap-2 mb-2">
-            <span className={`text-xs px-1.5 py-0.5 rounded font-mono ${getTypeBadgeClass(rule.type)}`}>
-              {rule.type.charAt(0).toUpperCase()}
-            </span>
-            <span className="text-xs text-foreground font-medium truncate">{rule.name}</span>
-          </div>
-          
-          {/* Rendered expression */}
-          <div className="flex items-center gap-2 text-sm overflow-x-auto pb-1 pointer-events-none">
+    <div className="group bg-card border border-border rounded-lg p-3 min-h-0 overflow-visible h-auto">
+      <div className="flex items-center gap-2 mb-2">
+        <span className={`text-xs px-1.5 py-0.5 rounded font-mono ${getTypeBadgeClass(rule.type)}`}>
+          {rule.type.charAt(0).toUpperCase()}
+        </span>
+        <span className="text-xs text-foreground font-medium truncate">{rule.name}</span>
+      </div>
+
+      <div className="flex items-center gap-1 mb-2">
+        <div
+          draggable
+          onDragStart={handleLeftDragStart}
+          className="flex-1 min-w-0 cursor-grab active:cursor-grabbing rounded border border-dashed border-border hover:border-primary/50 p-1.5 select-none"
+          title="Drag left expression to Debug workbench"
+        >
+          <div className="text-sm overflow-x-auto">
             <ExpressionRenderer expression={rule.leftSide} size={12} />
-            <EquivalenceSymbol size={12} />
+          </div>
+        </div>
+        <EquivalenceSymbol size={12} className="flex-shrink-0 text-muted-foreground" />
+        <div
+          draggable
+          onDragStart={handleRightDragStart}
+          className="flex-1 min-w-0 cursor-grab active:cursor-grabbing rounded border border-dashed border-border hover:border-primary/50 p-1.5 select-none"
+          title="Drag right expression to Debug workbench"
+        >
+          <div className="text-sm overflow-x-auto">
             <ExpressionRenderer expression={rule.rightSide} size={12} />
           </div>
-          
-          {/* Expand button for text form */}
-          <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-            <CollapsibleTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground mt-1"
-                onClick={(e) => e.stopPropagation()}
-                onMouseDown={(e) => e.stopPropagation()}
-              >
-                {isExpanded ? (
-                  <>
-                    <ChevronUp className="w-3 h-3 mr-1" />
-                    Hide text
-                  </>
-                ) : (
-                  <>
-                    <ChevronDown className="w-3 h-3 mr-1" />
-                    Show text
-                  </>
-                )}
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="mt-2">
-              <div className="bg-muted/50 rounded p-2 font-mono text-xs space-y-1">
-                <div className="flex gap-2">
-                  <span className="text-muted-foreground">L:</span>
-                  <span className="text-foreground break-all">{rule.leftSide}</span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-muted-foreground">R:</span>
-                  <span className="text-foreground break-all">{rule.rightSide}</span>
-                </div>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
         </div>
       </div>
+
+      <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+        <CollapsibleTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            {isExpanded ? (
+              <>
+                <ChevronUp className="w-3 h-3 mr-1" />
+                Hide text
+              </>
+            ) : (
+              <>
+                <ChevronDown className="w-3 h-3 mr-1" />
+                Show text
+              </>
+            )}
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="mt-2">
+          <div className="bg-muted/50 rounded p-2 font-mono text-xs space-y-1">
+            <div className="flex gap-2">
+              <span className="text-muted-foreground">L:</span>
+              <span className="text-foreground break-all">{rule.leftSide}</span>
+            </div>
+            <div className="flex gap-2">
+              <span className="text-muted-foreground">R:</span>
+              <span className="text-foreground break-all">{rule.rightSide}</span>
+            </div>
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
     </div>
   );
 });

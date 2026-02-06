@@ -4,7 +4,7 @@
  */
 
 import React, { useMemo } from 'react';
-import { ChevronUp, ChevronDown, Bug, ChevronRight } from 'lucide-react';
+import { ChevronUp, ChevronDown, Bug, ChevronRight, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,7 +15,9 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { exprToDAG, vf2ExprSubgraphIsomorphism } from '@/lib/dag';
+import { DAGGraphVisual } from '@/components/dag/DAGGraphVisual';
 import { checkInferenceRules } from '@/lib/inferenceRules';
+import { trySubstitution } from '@/lib/inferenceRules/substitution';
 import { axioms } from '@/data/axioms';
 import { definitions } from '@/data/definitions';
 import { theorems } from '@/data/theorems';
@@ -51,6 +53,19 @@ interface DebugWorkbenchProps {
   initialRight?: string;
 }
 
+/** Parse dragged rule from dataTransfer (RulesSidePanel format). draggedSide: 'left'|'right'|undefined (legacy) */
+function parseDroppedRule(e: React.DragEvent): { leftSide: string; rightSide: string; draggedSide?: 'left' | 'right' } | null {
+  try {
+    const json = e.dataTransfer.getData('application/json');
+    if (!json) return null;
+    const data = JSON.parse(json);
+    if (data?.leftSide != null && data?.rightSide != null) return data;
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
 const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
   embedded = false,
   initialLeft = '',
@@ -59,6 +74,8 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
   const ctx = usePanelContext();
   const [localLeft, setLocalLeft] = React.useState(initialLeft);
   const [localRight, setLocalRight] = React.useState(initialRight);
+  const [leftDragOver, setLeftDragOver] = React.useState(false);
+  const [rightDragOver, setRightDragOver] = React.useState(false);
 
   const leftExpr = embedded ? ctx.debugWorkbenchLeft : localLeft;
   const rightExpr = embedded ? ctx.debugWorkbenchRight : localRight;
@@ -67,13 +84,27 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
   const { isWorkbenchExpanded, isRulesPanelOpen } = ctx;
   const [ruleLeft, setRuleLeft] = React.useState('');
   const [ruleRight, setRuleRight] = React.useState('');
+  const [ruleLeftDragOver, setRuleLeftDragOver] = React.useState(false);
+  const [ruleRightDragOver, setRuleRightDragOver] = React.useState(false);
 
-  const leftDAG = useMemo(() => (leftExpr.trim() ? safeExprToDAG(leftExpr) : null), [leftExpr]);
-  const rightDAG = useMemo(() => (rightExpr.trim() ? safeExprToDAG(rightExpr) : null), [rightExpr]);
-  const ruleLeftDAG = useMemo(() => (ruleLeft.trim() ? safeExprToDAG(ruleLeft) : null), [ruleLeft]);
-  const ruleRightDAG = useMemo(() => (ruleRight.trim() ? safeExprToDAG(ruleRight) : null), [ruleRight]);
+  /** Snapshot of inputs used for computation; updated only on Refresh to avoid heavy work on every keystroke */
+  const [snapshot, setSnapshot] = React.useState<{
+    left: string;
+    right: string;
+    ruleLeft: string;
+    ruleRight: string;
+  }>({ left: '', right: '', ruleLeft: '', ruleRight: '' });
 
-  const hasRule = ruleLeft.trim() && ruleRight.trim();
+  const onRefresh = React.useCallback(() => {
+    setSnapshot({ left: leftExpr, right: rightExpr, ruleLeft, ruleRight });
+  }, [leftExpr, rightExpr, ruleLeft, ruleRight]);
+
+  const leftDAG = useMemo(() => (snapshot.left.trim() ? safeExprToDAG(snapshot.left) : null), [snapshot.left]);
+  const rightDAG = useMemo(() => (snapshot.right.trim() ? safeExprToDAG(snapshot.right) : null), [snapshot.right]);
+  const ruleLeftDAG = useMemo(() => (snapshot.ruleLeft.trim() ? safeExprToDAG(snapshot.ruleLeft) : null), [snapshot.ruleLeft]);
+  const ruleRightDAG = useMemo(() => (snapshot.ruleRight.trim() ? safeExprToDAG(snapshot.ruleRight) : null), [snapshot.ruleRight]);
+
+  const hasRule = snapshot.ruleLeft.trim() && snapshot.ruleRight.trim();
 
   const isomorphismResults = useMemo(() => {
     const results: { label: string; match: boolean }[] = [];
@@ -101,14 +132,41 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
     return results;
   }, [hasRule, ruleLeftDAG, ruleRightDAG, leftDAG, rightDAG]);
 
+  const hasIsomorphismMatch = isomorphismResults.some((r) => r.match);
+
+  const equivalentSubstitutionResult = useMemo((): { match: boolean; direction?: string; substituted?: string; replace?: string } => {
+    if (!hasRule || !hasIsomorphismMatch || !snapshot.left.trim() || !snapshot.right.trim()) {
+      return { match: false };
+    }
+    const attempts: Array<{ target: string; ruleSide: string; otherSide: string; expected: string; targetForOperands: string; side: 'left' | 'right'; direction: string; replace: string }> = [
+      { target: snapshot.left, ruleSide: snapshot.ruleLeft, otherSide: snapshot.ruleRight, expected: snapshot.right, targetForOperands: snapshot.left, side: 'left', direction: 'left → right', replace: `${snapshot.ruleLeft} → ${snapshot.ruleRight}` },
+      { target: snapshot.left, ruleSide: snapshot.ruleRight, otherSide: snapshot.ruleLeft, expected: snapshot.right, targetForOperands: snapshot.left, side: 'left', direction: 'left → right', replace: `${snapshot.ruleRight} → ${snapshot.ruleLeft}` },
+      { target: snapshot.right, ruleSide: snapshot.ruleLeft, otherSide: snapshot.ruleRight, expected: snapshot.left, targetForOperands: snapshot.right, side: 'right', direction: 'right → left', replace: `${snapshot.ruleLeft} → ${snapshot.ruleRight}` },
+      { target: snapshot.right, ruleSide: snapshot.ruleRight, otherSide: snapshot.ruleLeft, expected: snapshot.left, targetForOperands: snapshot.right, side: 'right', direction: 'right → left', replace: `${snapshot.ruleRight} → ${snapshot.ruleLeft}` },
+    ];
+    for (const a of attempts) {
+      try {
+        const r = trySubstitution(a.target, a.ruleSide, a.otherSide, a.expected, a.targetForOperands, a.side);
+        if (r?.match && r.reconstructedExpr != null) {
+          return { match: true, direction: a.direction, substituted: r.reconstructedExpr, replace: a.replace };
+        }
+      } catch {
+        // continue to next attempt
+      }
+    }
+    return { match: false };
+  }, [hasRule, hasIsomorphismMatch, snapshot.left, snapshot.right, snapshot.ruleLeft, snapshot.ruleRight]);
+
+  const showEquivalentSubstitution = hasRule && hasIsomorphismMatch;
+
   const allRulesResults = useMemo(() => {
-    if (!leftExpr.trim() || !rightExpr.trim() || hasRule) return [];
+    if (!snapshot.left.trim() || !snapshot.right.trim() || hasRule) return [];
     const allRules = [...axioms, ...definitions, ...theorems];
     return allRules.map((r) => {
-      const result = checkInferenceRules(leftExpr, rightExpr, r.leftSide, r.rightSide);
+      const result = checkInferenceRules(snapshot.left, snapshot.right, r.leftSide, r.rightSide);
       return { rule: r, match: result.match, inferenceRule: result.inferenceRule };
     });
-  }, [leftExpr, rightExpr, hasRule]);
+  }, [snapshot.left, snapshot.right, hasRule]);
 
   const content = (
         <div className="h-[calc(100%-3rem)] flex overflow-hidden">
@@ -116,37 +174,93 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
           <div className="w-80 flex-shrink-0 border-r border-border flex flex-col p-3 gap-3">
             <div>
               <Label className="text-xs">Left expression</Label>
-              <Input
-                value={leftExpr}
-                onChange={(e) => setLeftExpr(e.target.value)}
-                placeholder=", a \Od b,"
-                className="h-8 text-xs font-mono mt-1"
-              />
+              <div
+                className={`rounded-md border transition-colors mt-1 ${leftDragOver ? 'border-primary bg-primary/5' : 'border-transparent'}`}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = 'copy';
+                  setLeftDragOver(true);
+                }}
+                onDragLeave={() => setLeftDragOver(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setLeftDragOver(false);
+                  const rule = parseDroppedRule(e);
+                  if (rule) setLeftExpr(rule.draggedSide === 'right' ? rule.rightSide : rule.leftSide);
+                }}
+              >
+                <Input
+                  value={leftExpr}
+                  onChange={(e) => setLeftExpr(e.target.value)}
+                  placeholder=", a \Od b, (or drag rule here)"
+                  className="h-8 text-xs font-mono border-border"
+                />
+              </div>
             </div>
             <div>
               <Label className="text-xs">Right expression</Label>
-              <Input
-                value={rightExpr}
-                onChange={(e) => setRightExpr(e.target.value)}
-                placeholder=", b \Od a,"
-                className="h-8 text-xs font-mono mt-1"
-              />
+              <div
+                className={`rounded-md border transition-colors mt-1 ${rightDragOver ? 'border-primary bg-primary/5' : 'border-transparent'}`}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = 'copy';
+                  setRightDragOver(true);
+                }}
+                onDragLeave={() => setRightDragOver(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setRightDragOver(false);
+                  const rule = parseDroppedRule(e);
+                  if (rule) setRightExpr(rule.draggedSide === 'right' ? rule.rightSide : rule.leftSide);
+                }}
+              >
+                <Input
+                  value={rightExpr}
+                  onChange={(e) => setRightExpr(e.target.value)}
+                  placeholder=", b \Od a, (or drag rule here)"
+                  className="h-8 text-xs font-mono border-border"
+                />
+              </div>
             </div>
             <div>
               <Label className="text-xs text-muted-foreground">Rule (optional)</Label>
-              <Input
-                value={ruleLeft}
-                onChange={(e) => setRuleLeft(e.target.value)}
-                placeholder="Rule left"
-                className="h-7 text-xs font-mono mt-1"
-              />
-              <Input
-                value={ruleRight}
-                onChange={(e) => setRuleRight(e.target.value)}
-                placeholder="Rule right"
-                className="h-7 text-xs font-mono mt-1"
-              />
+              <div
+                className={`rounded-md border transition-colors mt-1 ${ruleLeftDragOver ? 'border-primary bg-primary/5' : 'border-transparent'}`}
+                onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; setRuleLeftDragOver(true); }}
+                onDragLeave={() => setRuleLeftDragOver(false)}
+                onDrop={(e) => { e.preventDefault(); setRuleLeftDragOver(false); const r = parseDroppedRule(e); if (r) setRuleLeft(r.draggedSide === 'right' ? r.rightSide : r.leftSide); }}
+              >
+                <Input
+                  value={ruleLeft}
+                  onChange={(e) => setRuleLeft(e.target.value)}
+                  placeholder="Rule left (or drag rule)"
+                  className="h-7 text-xs font-mono border-border"
+                />
+              </div>
+              <div
+                className={`rounded-md border transition-colors mt-1 ${ruleRightDragOver ? 'border-primary bg-primary/5' : 'border-transparent'}`}
+                onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; setRuleRightDragOver(true); }}
+                onDragLeave={() => setRuleRightDragOver(false)}
+                onDrop={(e) => { e.preventDefault(); setRuleRightDragOver(false); const r = parseDroppedRule(e); if (r) setRuleRight(r.draggedSide === 'right' ? r.rightSide : r.leftSide); }}
+              >
+                <Input
+                  value={ruleRight}
+                  onChange={(e) => setRuleRight(e.target.value)}
+                  placeholder="Rule right (or drag rule)"
+                  className="h-7 text-xs font-mono border-border"
+                />
+              </div>
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full"
+              onClick={onRefresh}
+              title="Refresh (compute DAG, isomorphism, substitution)"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Refresh
+            </Button>
           </div>
 
           {/* DAG displays */}
@@ -209,10 +323,52 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
                   </Collapsible>
                 )}
                 {!leftDAG && !rightDAG && !ruleLeftDAG && !ruleRightDAG && (
-                  <p className="text-xs text-muted-foreground p-2">Enter expressions to see DAGs</p>
+                  <p className="text-xs text-muted-foreground p-2">
+                    {leftExpr.trim() || rightExpr.trim() ? 'Click Refresh to compute' : 'Enter expressions and click Refresh'}
+                  </p>
                 )}
               </div>
             </ScrollArea>
+          </div>
+
+          {/* DAG structure visual (like Substitution DAG page) */}
+          <div className="w-[520px] flex-shrink-0 border-r border-border flex flex-col overflow-hidden">
+            <div className="px-3 py-2 border-b border-border bg-muted/30 text-xs font-medium text-muted-foreground">
+              DAG structure
+            </div>
+            <div className="flex-1 overflow-auto min-h-0">
+              <div className="p-2 space-y-3 min-w-max">
+                {leftDAG && leftDAG.nodes.length > 0 && (
+                  <div>
+                    <div className="text-xs font-medium text-muted-foreground mb-1">Left</div>
+                    <DAGGraphVisual structure={leftDAG} />
+                  </div>
+                )}
+                {rightDAG && rightDAG.nodes.length > 0 && (
+                  <div>
+                    <div className="text-xs font-medium text-muted-foreground mb-1">Right</div>
+                    <DAGGraphVisual structure={rightDAG} />
+                  </div>
+                )}
+                {ruleLeftDAG && ruleLeftDAG.nodes.length > 0 && (
+                  <div>
+                    <div className="text-xs font-medium text-muted-foreground mb-1">Rule left</div>
+                    <DAGGraphVisual structure={ruleLeftDAG} />
+                  </div>
+                )}
+                {ruleRightDAG && ruleRightDAG.nodes.length > 0 && (
+                  <div>
+                    <div className="text-xs font-medium text-muted-foreground mb-1">Rule right</div>
+                    <DAGGraphVisual structure={ruleRightDAG} />
+                  </div>
+                )}
+                {!leftDAG && !rightDAG && !ruleLeftDAG && !ruleRightDAG && (
+                  <p className="text-xs text-muted-foreground p-2">
+                    {leftExpr.trim() || rightExpr.trim() ? 'Click Refresh to compute' : 'Enter expressions and click Refresh'}
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Isomorphism / All rules results */}
@@ -223,17 +379,39 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
             <ScrollArea className="flex-1">
               <div className="p-2">
                 {hasRule ? (
-                  <div className="space-y-1">
-                    {isomorphismResults.map((r, i) => (
-                      <div key={i} className="flex items-center gap-2 text-xs">
-                        <span className={r.match ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}>
-                          {r.match ? '✓' : '✗'}
-                        </span>
-                        <span>{r.label}</span>
+                  <div className="space-y-2">
+                    <div className="space-y-1">
+                      {isomorphismResults.map((r, i) => (
+                        <div key={i} className="flex items-center gap-2 text-xs">
+                          <span className={r.match ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}>
+                            {r.match ? '✓' : '✗'}
+                          </span>
+                          <span>{r.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                    {showEquivalentSubstitution && (
+                      <div className="pt-2 mt-2 border-t border-border">
+                        <div className="text-xs font-medium text-muted-foreground mb-1">Equivalent substitution</div>
+                        {equivalentSubstitutionResult.match ? (
+                          <Collapsible defaultOpen>
+                            <CollapsibleTrigger className="flex items-center gap-1 text-xs w-full hover:bg-muted/50 rounded px-1 py-0.5">
+                              <ChevronRight className="w-3 h-3" />
+                              <span className="text-green-600 dark:text-green-400">✓</span> {equivalentSubstitutionResult.direction} ({equivalentSubstitutionResult.replace})
+                            </CollapsibleTrigger>
+                            <CollapsibleContent>
+                              <pre className="text-[10px] font-mono whitespace-pre-wrap p-1 bg-muted/30 rounded mt-0.5 overflow-x-auto">
+                                {equivalentSubstitutionResult.substituted}
+                              </pre>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        ) : (
+                          <p className="text-xs text-muted-foreground py-0.5">No equivalent substitution found</p>
+                        )}
                       </div>
-                    ))}
+                    )}
                   </div>
-                ) : leftExpr.trim() && rightExpr.trim() ? (
+                ) : snapshot.left.trim() && snapshot.right.trim() ? (
                   <div className="space-y-1">
                     {allRulesResults.filter((r) => r.match).length > 0 ? (
                       <>
@@ -243,7 +421,7 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
                           .map((r, i) => (
                             <div key={i} className="text-xs flex items-center gap-2">
                               <span className="text-green-600 dark:text-green-400">✓</span>
-                              <span className="font-mono truncate">{r.rule.id}</span>
+                              <span className="font-mono truncate">{r.rule.name}</span>
                               {r.inferenceRule && (
                                 <span className="text-muted-foreground">({r.inferenceRule})</span>
                               )}
@@ -256,7 +434,7 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
                           .map((r, i) => (
                             <div key={i} className="text-xs flex items-center gap-2 text-muted-foreground">
                               <span>✗</span>
-                              <span className="font-mono truncate">{r.rule.id}</span>
+                              <span className="font-mono truncate">{r.rule.name}</span>
                             </div>
                           ))}
                         {allRulesResults.filter((r) => !r.match).length > 20 && (
@@ -273,7 +451,9 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
                   </div>
                 ) : (
                   <p className="text-xs text-muted-foreground">
-                    Enter left and right expressions. With no rule, all axioms, definitions, and theorems are tried.
+                    {leftExpr.trim() && rightExpr.trim()
+                      ? 'Click Refresh to run checks'
+                      : 'Enter left and right expressions, then click Refresh. With no rule, all axioms, definitions, and theorems are tried.'}
                   </p>
                 )}
               </div>
@@ -289,7 +469,7 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
   return (
     <div
       className={`fixed bottom-0 left-0 bg-background border-t border-border shadow-lg z-30 transition-all duration-300 ease-in-out ${
-        isWorkbenchExpanded ? 'h-80' : 'h-12'
+        isWorkbenchExpanded ? 'h-[50vh]' : 'h-12'
       }`}
       style={{ right: isRulesPanelOpen ? '380px' : '0' }}
     >

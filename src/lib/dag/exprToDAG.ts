@@ -23,6 +23,9 @@ function parseOneBraced(expr: string, pos: number): { content: string; end: numb
   return null;
 }
 
+/** Operators that take no operands (nullary) */
+const NULLARY_OPERATORS = new Set(['\\Or', '\\Ri', '\\Rq']);
+
 /** Extract operations from a flat (no branches) comma-separated expression */
 function extractOperations(expr: string): Array<{ op: string; operands: string[]; start: number; end: number }> {
   const ops: Array<{ op: string; operands: string[]; start: number; end: number }> = [];
@@ -34,32 +37,41 @@ function extractOperations(expr: string): Array<{ op: string; operands: string[]
     const opStart = match.index;
     const opEnd = match.index + match[0].length;
 
-    // Look backwards for operand before (skip whitespace and comma)
-    let beforeStart = opStart - 1;
-    while (beforeStart >= 0 && /\s/.test(expr[beforeStart])) beforeStart--;
-    if (beforeStart >= 0 && expr[beforeStart] === ',') {
-      beforeStart--;
-      while (beforeStart >= 0 && /\s/.test(expr[beforeStart])) beforeStart--;
-    }
     let operandBefore: string | undefined;
-    let rangeStart = opStart;
-    if (beforeStart >= 0) {
-      const beforeText = expr.substring(Math.max(0, beforeStart - 12), beforeStart + 1);
-      const bm = beforeText.match(/([a-zA-Z](?:_\d+)?|\d+)\s*$/);
-      if (bm) {
-        operandBefore = bm[1];
-        rangeStart = beforeStart - bm[1].length + 1;
-      }
-    }
-
-    // Look forwards for operand after
-    let afterEnd = opEnd;
-    while (afterEnd < expr.length && /\s/.test(expr[afterEnd])) afterEnd++;
     let operandAfter: string | undefined;
-    if (afterEnd < expr.length) {
-      const afterText = expr.substring(afterEnd);
-      const am = afterText.match(/^([a-zA-Z](?:_\d+)?|\d+)/);
-      if (am) operandAfter = am[1];
+    let rangeStart = opStart;
+
+    let afterEnd = opEnd;
+    if (!NULLARY_OPERATORS.has(opFull)) {
+      // Look backwards for operand before (skip whitespace and comma)
+      let beforeStart = opStart - 1;
+      while (beforeStart >= 0 && /\s/.test(expr[beforeStart])) beforeStart--;
+      if (beforeStart >= 0 && expr[beforeStart] === ',') {
+        beforeStart--;
+        while (beforeStart >= 0 && /\s/.test(expr[beforeStart])) beforeStart--;
+      }
+      if (beforeStart >= 0) {
+        const beforeText = expr.substring(Math.max(0, beforeStart - 12), beforeStart + 1);
+        const bm = beforeText.match(/([a-zA-Z](?:_\d+)?|\d+)\s*$/);
+        if (bm) {
+          const matchEnd = beforeStart + 1;
+          const matchStart = matchEnd - bm[1].length;
+          // Reject if the match is the suffix of a LaTeX command (e.g. "s" from \Os)
+          const prevCh = matchStart > 0 ? expr[matchStart - 1] : '';
+          if (!/[a-z]/.test(prevCh)) {
+            operandBefore = bm[1];
+            rangeStart = matchStart;
+          }
+        }
+      }
+
+      // Look forwards for operand after
+      while (afterEnd < expr.length && /\s/.test(expr[afterEnd])) afterEnd++;
+      if (afterEnd < expr.length) {
+        const afterText = expr.substring(afterEnd);
+        const am = afterText.match(/^([a-zA-Z](?:_\d+)?|\d+)/);
+        if (am) operandAfter = am[1];
+      }
     }
 
     const operands: string[] = [];
@@ -88,9 +100,28 @@ function extractOperations(expr: string): Array<{ op: string; operands: string[]
   return ops;
 }
 
+/** If condition is if(...), extract only the content between parentheses. */
+function normalizeBranchCondition(cond: string): string {
+  const t = cond.trim();
+  if (t.startsWith('if(')) {
+    let depth = 1;
+    let i = 3;
+    while (i < t.length && depth > 0) {
+      if (t[i] === '(') depth++;
+      else if (t[i] === ')') {
+        depth--;
+        if (depth === 0) return t.substring(3, i).trim();
+      }
+      i++;
+    }
+  }
+  return cond;
+}
+
 /** Parse a condition like "i \\Oe j" into { op: "\\Oe", operands: ["i","j"] }. Returns null if no op found. */
 function parseConditionOp(cond: string): { op: string; operands: string[] } | null {
-  const ops = extractOperations(cond.trim());
+  const normalized = normalizeBranchCondition(cond);
+  const ops = extractOperations(normalized.trim());
   if (ops.length === 0) return null;
   const first = ops[0];
   return { op: first.op, operands: [...first.operands] };
@@ -98,10 +129,10 @@ function parseConditionOp(cond: string): { op: string; operands: string[] } | nu
 
 /** Check if expression contains branch operators */
 function hasBranch(expr: string): boolean {
-  return /\\B[lr]b|\\Bb/.test(expr);
+  return /\\B[lr]b|\\B[bs]/.test(expr);
 }
 
-/** Parse \Bb{cond}{top}{bottom}, \Blb{cond}{top}{bottom}, or \Brb{top}{bottom}. Returns content and end positions. */
+/** Parse \Bb{cond}{top}{bottom}, \Bs{cond}{top}{bottom}, \Blb{cond}{top}{bottom}, or \Brb{top}{bottom}. Returns content and end positions. \Bs is treated as \Bb. */
 function parseBranchAtStart(
   expr: string
 ): {
@@ -115,11 +146,13 @@ function parseBranchAtStart(
 } | null {
   const trimmed = expr.trim();
   const bb = trimmed.match(/^[\s,]*\\Bb\s*\{/);
+  const bs = trimmed.match(/^[\s,]*\\Bs\s*\{/);
   const blb = trimmed.match(/^[\s,]*\\Blb\s*\{/);
   const brb = trimmed.match(/^[\s,]*\\Brb\s*\{/);
 
   const candidates: { m: RegExpMatchArray; kind: 'Bb' | 'Blb' | 'Brb' }[] = [];
   if (bb) candidates.push({ m: bb, kind: 'Bb' });
+  if (bs) candidates.push({ m: bs, kind: 'Bb' });
   if (blb) candidates.push({ m: blb, kind: 'Blb' });
   if (brb) candidates.push({ m: brb, kind: 'Brb' });
   if (candidates.length === 0) return null;
@@ -139,7 +172,7 @@ function parseBranchAtStart(
     if (!bottomRes) return null;
     return {
       kind,
-      cond: condRes.content,
+      cond: normalizeBranchCondition(condRes.content),
       top: topRes.content,
       bottom: bottomRes.content,
       condEnd: condRes.end,

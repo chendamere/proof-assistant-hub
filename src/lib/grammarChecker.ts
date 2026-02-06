@@ -238,7 +238,7 @@ function extractBranchRanges(expression: string): {
     // Bb and Blb: first branch is condition, then 2 actual branches
     // Br: no condition, just 2 branches
     // Bls and Brs: similar to Bb/Blb (condition + branches)
-    const hasCondition = (operator === 'Bb' || operator === 'Blb' || operator === 'Bls' || operator === 'Brs');
+    const hasCondition = (operator === 'Bb' || operator === 'Bs' || operator === 'Blb' || operator === 'Bls' || operator === 'Brs');
     
     if (hasCondition && allBranches.length >= 3) {
       // First branch is condition, rest are actual branches

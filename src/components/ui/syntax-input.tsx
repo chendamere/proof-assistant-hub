@@ -44,8 +44,8 @@ const operatorPatterns = [
   { pattern: /\\Tc/g, className: 'text-emerald-400' },
   { pattern: /\\Tt/g, className: 'text-emerald-400' },
   
-  // Branch operators
-  { pattern: /\\Bb/g, className: 'text-pink-400' },
+  // Branch operators (\Bs treated same as \Bb)
+  { pattern: /\\B[bs]/g, className: 'text-pink-400' },
   { pattern: /\\Blb/g, className: 'text-pink-400' },
   { pattern: /\\Br/g, className: 'text-pink-400' },
   

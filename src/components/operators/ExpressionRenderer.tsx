@@ -106,8 +106,8 @@ interface Token {
 
 // Parse branch expressions like \Bb{condition}{branch1}{branch2}
 const parseBranchExpression = (expr: string): { match: boolean; branchData?: Token['branchData']; remaining: string } => {
-  // Match branch patterns: \Bb{...}{...}{...}, \Blb{...}{...}{...}, \Br{...}{...}{...}, \Bls{...}{...}{...}, \Brs{...}{...}{...}
-  const branchPatterns = ['\\Bb', '\\Blb', '\\Br', '\\Bls', '\\Brs'];
+  // Match branch patterns: \Bb, \Bs (same as \Bb), \Blb, \Br, \Bls, \Brs
+  const branchPatterns = ['\\Bb', '\\Bs', '\\Blb', '\\Br', '\\Bls', '\\Brs'];
   
   for (const pattern of branchPatterns) {
     if (expr.startsWith(pattern)) {
@@ -146,10 +146,11 @@ const parseBranchExpression = (expr: string): { match: boolean; branchData?: Tok
         remaining = remaining.slice(j + 1);
       }
       
+      const rawType = pattern.slice(1);
       return {
         match: true,
         branchData: {
-          type: pattern.slice(1) as 'Bb' | 'Blb' | 'Br' | 'Bls' | 'Brs',
+          type: (rawType === 'Bs' ? 'Bb' : rawType) as 'Bb' | 'Blb' | 'Br' | 'Bls' | 'Brs',
           condition: braces[0],
           branch1: braces[1],
           branch2: braces[2],
@@ -249,7 +250,7 @@ const BranchRenderer: React.FC<{
   
   // Helper function to check if content contains nested branches
   const hasNestedBranches = React.useCallback((content: string): boolean => {
-    const branchPatterns = ['\\Bb', '\\Blb', '\\Br', '\\Bls', '\\Brs'];
+    const branchPatterns = ['\\Bb', '\\Bs', '\\Blb', '\\Br', '\\Bls', '\\Brs'];
     return branchPatterns.some(pattern => content.includes(pattern));
   }, []);
   

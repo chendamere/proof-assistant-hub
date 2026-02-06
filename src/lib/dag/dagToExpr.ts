@@ -3,7 +3,8 @@
  * Supports operand substitution via mapping (rule vars -> target operands).
  */
 
-import type { DAGStructure, ExprNodeData } from './types';
+import type { DAGStructure, ExprNodeData, BranchKind } from './types';
+import { buildAdjacency } from './utils';
 
 function formatOp(data: ExprNodeData, subst?: Map<string, string>): string {
   const op = data.op;
@@ -38,32 +39,25 @@ export function dagToExpr(
   if (structure.nodes.length === 0) return '';
 
   const nodeMap = new Map(structure.nodes.map((n) => [n.id, n]));
-  const outgoing = new Map<string, string[]>();
-  const incoming = new Map<string, string[]>();
-  for (const n of structure.nodes) {
-    outgoing.set(n.id, []);
-    incoming.set(n.id, []);
-  }
-  for (const e of structure.edges) {
-    outgoing.get(e.from)!.push(e.to);
-    incoming.get(e.to)!.push(e.from);
-  }
+  const adj = buildAdjacency(structure);
+  const { outgoing } = adj;
 
   const roots = structure.nodes
-    .filter((n) => (incoming.get(n.id)?.length ?? 0) === 0)
+    .filter((n) => (adj.incoming.get(n.id)?.length ?? 0) === 0)
     .map((n) => n.id);
 
   const itemParts: string[] = [];
   const visited = new Set<string>();
 
-  /** Can we reach a :tail from this node? */
-  function reachesTail(id: string): boolean {
+  /** Set of :tail node ids reachable from id. */
+  function findTailsReachableFrom(id: string): Set<string> {
+    const hits = new Set<string>();
     const stack = [id];
     const seen = new Set(stack);
     while (stack.length) {
       const cur = stack.pop()!;
       const op = (nodeMap.get(cur)?.data as ExprNodeData)?.op ?? '';
-      if (op.endsWith(':tail')) return true;
+      if (op.endsWith(':tail')) hits.add(cur);
       for (const c of outgoing.get(cur) ?? []) {
         if (!seen.has(c)) {
           seen.add(c);
@@ -71,23 +65,26 @@ export function dagToExpr(
         }
       }
     }
-    return false;
+    return hits;
   }
 
-  /** Both arms lead to a :tail node? */
+  function reachesTail(id: string): boolean {
+    return findTailsReachableFrom(id).size > 0;
+  }
+
   function armsLeadToTail(children: string[]): boolean {
     if (children.length < 2) return false;
     return reachesTail(children[0]) && reachesTail(children[1]);
   }
 
-  /** Get branchKind from the first reachable tail node (for target kind when substituting Blb in Bb) */
-  function getReachableTailBranchKind(children: string[]): 'Bb' | 'Blb' | 'Brb' | undefined {
+  /** Get branchKind from the first reachable tail node (for target kind when substituting Blb in Bb). */
+  function getReachableTailBranchKind(children: string[]): BranchKind | undefined {
     const stack = [...children];
     const seen = new Set(children);
     while (stack.length > 0) {
       const cur = stack.pop()!;
       const node = nodeMap.get(cur);
-      const data = node?.data as (ExprNodeData & { branchKind?: 'Bb' | 'Blb' | 'Brb' }) | undefined;
+      const data = node?.data as (ExprNodeData & { branchKind?: BranchKind }) | undefined;
       const op = data?.op ?? '';
       if (op.endsWith(':tail') && data?.branchKind) return data.branchKind;
       for (const c of outgoing.get(cur) ?? []) {
@@ -102,32 +99,29 @@ export function dagToExpr(
 
   /** Do these two roots both reach the same :tail? */
   function isBrbDualRoots(r0: string, r1: string): boolean {
-    const reachTails = (id: string) => {
-      const hits = new Set<string>();
-      const stack = [id];
-      const seen = new Set(stack);
-      while (stack.length) {
-        const cur = stack.pop()!;
-        const op = (nodeMap.get(cur)?.data as ExprNodeData)?.op ?? '';
-        if (op.endsWith(':tail')) hits.add(cur);
-        for (const c of outgoing.get(cur) ?? []) {
-          if (!seen.has(c)) {
-            seen.add(c);
-            stack.push(c);
-          }
-        }
-      }
-      return hits;
-    };
-    const t0 = reachTails(r0);
-    const t1 = reachTails(r1);
+    const t0 = findTailsReachableFrom(r0);
+    const t1 = findTailsReachableFrom(r1);
     for (const t of t0) {
       if (t1.has(t)) return true;
     }
     return false;
   }
 
-  function serializeChain(startId: string): { parts: string[]; nextId: string | null } {
+  /** Infer Bb/Blb/Brb from cond node and children. */
+  function inferBranchKind(
+    condData: ExprNodeData,
+    children: string[]
+  ): BranchKind {
+    const hasTail = children.length >= 2 ? armsLeadToTail(children) : reachesTail(children[0]);
+    const kind: BranchKind = hasTail ? 'Bb' : 'Blb';
+    const tailKind = getReachableTailBranchKind(children);
+    if (tailKind) return tailKind;
+    const condBranchKind = (condData as ExprNodeData & { branchKind?: BranchKind })?.branchKind;
+    return condBranchKind ?? kind;
+  }
+
+  /** Serialize ops in a chain until cond/tail/fork; returns parts and nextId (or null). */
+  function serializeChainUntilBranch(startId: string): { parts: string[]; nextId: string | null } {
     const parts: string[] = [];
     let cur: string | null = startId;
     while (cur) {
@@ -146,26 +140,6 @@ export function dagToExpr(
     return { parts, nextId: cur };
   }
 
-  /** Serialize ops in a chain; returns [] if arm starts with cond/tail. */
-  function serializeArm(startId: string): string[] {
-    const parts: string[] = [];
-    let cur: string | null = startId;
-    while (cur) {
-      if (visited.has(cur)) break;
-      const node = nodeMap.get(cur);
-      const data = node?.data as ExprNodeData | undefined;
-      const op = data?.op ?? '';
-      if (!data || op.endsWith(':tail') || op.includes(':cond')) break;
-      visited.add(cur);
-      const s = formatOp(data!, operandMapping);
-      if (s) parts.push(s);
-      const next = outgoing.get(cur) ?? [];
-      if (next.length !== 1) break;
-      cur = next[0];
-    }
-    return parts;
-  }
-
   /** Serialize arm content: either ops (comma-separated) or a nested branch. Returns string for braced content. */
   function serializeArmContent(startId: string): string {
     const node = nodeMap.get(startId);
@@ -174,21 +148,14 @@ export function dagToExpr(
     if (op.endsWith(':tail')) return ','; // empty arm
     if (op.includes(':cond') && (outgoing.get(startId)?.length ?? 0) >= 1) {
       const children = outgoing.get(startId) ?? [];
-      const hasTail = children.length >= 2 ? armsLeadToTail(children) : reachesTail(children[0]);
-      let kind: 'Bb' | 'Blb' | 'Brb' = hasTail ? 'Bb' : 'Blb';
-      const tailKind = getReachableTailBranchKind(children);
-      if (tailKind) kind = tailKind;
-      else {
-        const condBranchKind = (data as ExprNodeData & { branchKind?: 'Bb' | 'Blb' | 'Brb' })?.branchKind;
-        if (condBranchKind) kind = condBranchKind;
-      }
+      const kind = inferBranchKind(data!, children);
       const cond = formatCond(data!, operandMapping);
       const topStr = children[0] ? serializeArmContent(children[0]) : ',';
       const botStr = children[1] ? serializeArmContent(children[1]) : ',';
       const inner = `\\${kind}{${cond}}{${topStr}}{${botStr}}`;
       return ',' + inner + ',';
     }
-    const parts = serializeArm(startId);
+    const { parts } = serializeChainUntilBranch(startId);
     return parts.length ? ',' + parts.join(', ') + ',' : ',';
   }
 
@@ -208,21 +175,11 @@ export function dagToExpr(
       visited.add(id);
       const children = outgoing.get(id) ?? [];
       if (children.length < 1) {
-        // Cond with no arms (malformed or empty branch) - serialize as empty
-        const kind = (data as ExprNodeData & { branchKind?: 'Bb' | 'Blb' | 'Brb' })?.branchKind ?? 'Blb';
+        const kind = (data as ExprNodeData & { branchKind?: BranchKind })?.branchKind ?? 'Blb';
         itemParts.push(`, \\${kind}{${formatCond(data!, operandMapping)}}{,}{,}`);
         return [];
       }
-      const hasTail = children.length >= 2 ? armsLeadToTail(children) : reachesTail(children[0]);
-      let kind: 'Bb' | 'Blb' | 'Brb' = hasTail ? 'Bb' : 'Blb';
-      // Prefer tail's branchKind (target context when substituting Blb in Bb) over cond's
-      const tailKind = getReachableTailBranchKind(children);
-      if (tailKind) {
-        kind = tailKind;
-      } else {
-        const condBranchKind = (data as ExprNodeData & { branchKind?: 'Bb' | 'Blb' | 'Brb' })?.branchKind;
-        if (condBranchKind) kind = condBranchKind;
-      }
+      const kind = inferBranchKind(data!, children);
       const cond = formatCond(data!, operandMapping);
       const topStr = children[0] ? serializeArmContent(children[0]) : ',';
       const botStr = children[1] ? serializeArmContent(children[1]) : ',';
@@ -239,10 +196,8 @@ export function dagToExpr(
       return [];
     }
 
-    const { parts, nextId } = serializeChain(id);
-    if (parts.length) {
-      itemParts.push(', ' + parts.join(', '));
-    }
+    const { parts, nextId } = serializeChainUntilBranch(id);
+    if (parts.length) itemParts.push(', ' + parts.join(', '));
     if (nextId) nextIds.push(nextId);
     return nextIds;
   }
@@ -253,8 +208,8 @@ export function dagToExpr(
     const [r0, r1] = roots;
     visited.add(r0);
     visited.add(r1);
-    const topParts = serializeArm(r0);
-    const botParts = serializeArm(r1);
+    const topParts = serializeChainUntilBranch(r0).parts;
+    const botParts = serializeChainUntilBranch(r1).parts;
     const topStr = topParts.length ? ',' + topParts.join(', ') + ',' : '';
     const botStr = botParts.length ? ',' + botParts.join(', ') + ',' : '';
     itemParts.push(`, \\Brb{${topStr}}{${botStr}}`);

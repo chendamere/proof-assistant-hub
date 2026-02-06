@@ -109,6 +109,12 @@ export const InferenceRules: InferenceRule[] = [
 
       result = trySubstitution(targetLeft, ruleRight, ruleLeft, targetRight, targetLeft, 'left', stepCounter);
       if (result) return result;
+      
+      result = trySubstitution(targetRight, ruleLeft, ruleRight, targetLeft, ruleRight, 'right', stepCounter);
+      if (result) return result;
+
+      result = trySubstitution(targetRight, ruleRight, ruleLeft, targetLeft, ruleRight, 'right', stepCounter);
+      if (result) return result;
 
       return { match: false };
     },

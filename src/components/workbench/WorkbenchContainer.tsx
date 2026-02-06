@@ -23,7 +23,7 @@ const WorkbenchContainer: React.FC = () => {
   return (
     <div
       className={`fixed bottom-0 left-0 bg-background border-t border-border shadow-lg z-30 transition-all duration-300 ease-in-out ${
-        isWorkbenchExpanded ? 'h-80' : 'h-12'
+        isWorkbenchExpanded ? 'h-[50vh]' : 'h-12'
       }`}
       style={{ right: isRulesPanelOpen ? '380px' : '0' }}
     >

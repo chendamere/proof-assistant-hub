@@ -13,8 +13,8 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { checkInferenceRules, CheckInferenceRulesOptions } from '@/lib/inferenceRules';
-import { axioms, Rule } from '@/data/axioms';
+import { axioms } from '@/data/axioms';
+import { verifyTransitionWorker } from '@/lib/transitionVerificationWorkerClient';
 import { definitions } from '@/data/definitions';
 import { theorems } from '@/data/theorems';
 import { Button } from '@/components/ui/button';
@@ -61,48 +61,6 @@ interface VerificationResult {
   total: number;
 }
 
-function verifyTransitionWithLogging(
-  targetLeft: string,
-  targetRight: string,
-  axioms: Rule[],
-  theorems: Rule[],
-  cache: Map<string, { l2r: { left: string; right: string }; r2l: { left: string; right: string } }>,
-  transitionLabel: string
-): boolean {
-  let totalVf2Steps = 0;
-  const options: CheckInferenceRulesOptions = {
-    onProgress: (info) => {
-      if (info.vf2Steps != null) totalVf2Steps += info.vf2Steps;
-      if (info.inferenceRule === 'Equivalent Substitution' && info.vf2Steps != null && info.vf2Steps > 0) {
-        // console.log(`    → Substitution tried: ${info.vf2Steps} VF2 steps`);
-      }
-    },
-  };
-  const tryRule = (rule: Rule) => {
-    const cached = cache.get(rule.id);
-    if (!cached) return false;
-    if (checkInferenceRules(targetLeft, targetRight, cached.l2r.left, cached.l2r.right, options).match) return true;
-    return false;
-  };
-
-  for (const rule of axioms) {
-    if (tryRule(rule)) {
-      return true;
-    }
-  }
-  for (const rule of theorems) {
-    if (tryRule(rule)) {
-      return true;
-    }
-  }
-  for (const rule of definitions) {
-    if (tryRule(rule)) {
-      return true;
-    }
-  }
-  return false;
-}
-
 function parseKey(key: string): { filename: string; index: number; ruleStr: string } {
   const parts = key.split('::');
   if (parts.length >= 3) {
@@ -121,20 +79,18 @@ const ProofSteps: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [chapter, setChapter] = useState<string>('Theorems_of_Identical_Node_Comparison');
-  const [verificationResults, setVerificationResults] = useState<Record<string, VerificationResult>>({});
   const [transitionVerifying, setTransitionVerifying] = useState<string | null>(null);
   const [transitionResults, setTransitionResults] = useState<Record<string, Record<number, boolean>>>({});
 
-  const normalizedRulesCache = useMemo(() => {
-    const cache = new Map<string, { l2r: { left: string; right: string }; r2l: { left: string; right: string } }>();
-    [...axioms, ...definitions, ...theorems].forEach((rule) => {
-      cache.set(rule.id, {
-        l2r: { left: rule.leftSide, right: rule.rightSide },
-        r2l: { left: rule.rightSide, right: rule.leftSide },
-      });
-    });
-    return cache;
-  }, []);
+  const rulesForWorker = useMemo(
+    () =>
+      [...axioms, ...definitions, ...theorems].map((r) => ({
+        id: r.id,
+        leftSide: r.leftSide,
+        rightSide: r.rightSide,
+      })),
+    []
+  );
 
   useEffect(() => {
     fetch('/proof-steps-table.json')
@@ -154,7 +110,7 @@ const ProofSteps: React.FC = () => {
   }, []);
 
   const verifySingleTransition = React.useCallback(
-    (key: string, transitionIndex: number) => {
+    async (key: string, transitionIndex: number) => {
       const transitionId = `${key}::${transitionIndex}`;
       if (transitionVerifying) return;
       const steps = table?.[key];
@@ -162,37 +118,43 @@ const ProofSteps: React.FC = () => {
       setTransitionVerifying(transitionId);
       const left = steps[transitionIndex];
       const right = steps[transitionIndex + 1];
-      const schedule =
-        typeof requestIdleCallback !== 'undefined'
-          ? (fn: () => void) => requestIdleCallback(fn, { timeout: 50 })
-          : (fn: () => void) => setTimeout(fn, 0);
-      schedule(() => {
-        const label = `step ${transitionIndex + 1} → step ${transitionIndex + 2}`;
-        const matched = verifyTransitionWithLogging(left, right, axioms, theorems, normalizedRulesCache, label);
+      try {
+        const matched = await verifyTransitionWorker({
+          targetLeft: left,
+          targetRight: right,
+          rules: rulesForWorker,
+        });
         setTransitionResults((prev) => ({
           ...prev,
           [key]: { ...prev[key], [transitionIndex]: matched },
         }));
-        setVerificationResults((prev) => {
-          const cur = prev[key] ?? { passed: 0, total: 0 };
-          return {
-            ...prev,
-            [key]: {
-              passed: cur.passed + (matched ? 1 : 0),
-              total: cur.total + 1,
-            },
-          };
-        });
+      } catch (err) {
+        console.error('Transition verification error:', err);
+        setTransitionResults((prev) => ({
+          ...prev,
+          [key]: { ...prev[key], [transitionIndex]: false },
+        }));
+      } finally {
         setTransitionVerifying(null);
-      });
+      }
     },
-    [table, transitionVerifying, axioms, theorems, normalizedRulesCache]
+    [table, transitionVerifying, rulesForWorker]
   );
 
   useEffect(() => {
-    setVerificationResults({});
     setTransitionResults({});
   }, [chapter]);
+
+  const verificationResults = React.useMemo(() => {
+    const out: Record<string, VerificationResult> = {};
+    for (const [key, results] of Object.entries(transitionResults)) {
+      const indices = Object.keys(results).map(Number);
+      if (indices.length === 0) continue;
+      const passed = indices.filter((i) => results[i] === true).length;
+      out[key] = { passed, total: indices.length };
+    }
+    return out;
+  }, [transitionResults]);
 
   const theoremsWithSteps: TheoremWithSteps[] = React.useMemo(() => {
     if (!table) return [];
@@ -273,7 +235,7 @@ const ProofSteps: React.FC = () => {
         className="flex-1 pt-24 pb-12 px-6 transition-all duration-300"
         style={{
           marginRight: isRulesPanelOpen ? '380px' : '0',
-          marginBottom: isWorkbenchExpanded ? '320px' : '48px',
+          marginBottom: isWorkbenchExpanded ? '50vh' : '48px',
         }}
       >
         <div className="max-w-4xl mx-auto">

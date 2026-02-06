@@ -5,20 +5,7 @@
  */
 
 import type { DAGStructure, DAGNode, DAGEdge, ExprNodeData } from './types';
-
-function buildAdjacency(structure: DAGStructure) {
-  const outgoing = new Map<string, string[]>();
-  const incoming = new Map<string, string[]>();
-  for (const n of structure.nodes) {
-    outgoing.set(n.id, []);
-    incoming.set(n.id, []);
-  }
-  for (const e of structure.edges) {
-    outgoing.get(e.from)!.push(e.to);
-    incoming.get(e.to)!.push(e.from);
-  }
-  return { outgoing, incoming };
-}
+import { buildAdjacency, reachableFrom } from './utils';
 
 /**
  * Substitute the matched sub-DAG in target with the replacement DAG.
@@ -39,110 +26,61 @@ export function substituteInDAG(
 ): DAGStructure<ExprNodeData> {
   const matchedIds = new Set(mapping.values());
   const tAdj = buildAdjacency(targetDAG);
-  const pAdj = buildAdjacency(patternDAG);
   const rAdj = buildAdjacency(replacementDAG);
 
   const tNodeMap = new Map(targetDAG.nodes.map((n) => [n.id, n]));
-  const pNodeMap = new Map(patternDAG.nodes.map((n) => [n.id, n]));
-  const rNodeMap = new Map(replacementDAG.nodes.map((n) => [n.id, n]));
+  const allTargetIds = new Set(targetDAG.nodes.map((n) => n.id));
 
-  // Partition target nodes: prefix (upstream of match), suffix (downstream of match)
-  const prefixNodes = new Set<string>();
-  const suffixNodes = new Set<string>();
+  // Partition: prefix = nodes that can reach matched; suffix = nodes reachable from matched
+  const prefixSet = reachableFrom(matchedIds, tAdj, 'incoming', matchedIds);
+  const suffixSet = reachableFrom(matchedIds, tAdj, 'outgoing', matchedIds);
 
-  for (const n of targetDAG.nodes) {
-    if (matchedIds.has(n.id)) continue;
-    prefixNodes.add(n.id);
-    suffixNodes.add(n.id);
+  // Sibling set: nodes neither in prefix, suffix, nor matched (e.g. top arm when match is in bottom arm)
+  const siblingSet = new Set<string>();
+  for (const id of allTargetIds) {
+    if (!matchedIds.has(id) && !prefixSet.has(id) && !suffixSet.has(id)) siblingSet.add(id);
   }
 
-  // Prefix: nodes that have a path TO a matched node (walk backward from matched)
-  const prefixCandidates = new Set<string>();
-  let frontier = [...matchedIds];
-  const visited = new Set<string>();
-  while (frontier.length > 0) {
-    const id = frontier.pop()!;
-    if (visited.has(id)) continue;
-    visited.add(id);
-    for (const from of tAdj.incoming.get(id) ?? []) {
-      if (!matchedIds.has(from)) {
-        prefixCandidates.add(from);
-        frontier.push(from);
-      }
-    }
-  }
-  // Prefix = nodes that can reach matched (transitive backward)
-  const canReachMatched = new Set(prefixCandidates);
-  frontier = [...prefixCandidates];
-  visited.clear();
-  while (frontier.length > 0) {
-    const id = frontier.pop()!;
-    if (visited.has(id)) continue;
-    visited.add(id);
-    canReachMatched.add(id);
-    for (const from of tAdj.incoming.get(id) ?? []) {
-      if (!matchedIds.has(from)) frontier.push(from);
-    }
-  }
-  // Suffix: nodes that matched has a path TO (walk forward from matched)
-  const suffixCandidates = new Set<string>();
-  frontier = [...matchedIds];
-  visited.clear();
-  while (frontier.length > 0) {
-    const id = frontier.pop()!;
-    if (visited.has(id)) continue;
-    visited.add(id);
-    for (const to of tAdj.outgoing.get(id) ?? []) {
-      if (!matchedIds.has(to)) {
-        suffixCandidates.add(to);
-        frontier.push(to);
-      }
-    }
-  }
-  const canBeReachedFromMatched = new Set(suffixCandidates);
-  frontier = [...suffixCandidates];
-  visited.clear();
-  while (frontier.length > 0) {
-    const id = frontier.pop()!;
-    if (visited.has(id)) continue;
-    visited.add(id);
-    canBeReachedFromMatched.add(id);
-    for (const to of tAdj.outgoing.get(id) ?? []) {
-      if (!matchedIds.has(to)) frontier.push(to);
-    }
-  }
-
-  const prefixSet = canReachMatched;
-  const suffixSet = canBeReachedFromMatched;
-
-  // Map pattern nodes to replacement nodes by index (assume same structure)
-  const patternNodeToReplacementNode = new Map<string, string>();
-  for (let i = 0; i < patternDAG.nodes.length && i < replacementDAG.nodes.length; i++) {
-    patternNodeToReplacementNode.set(patternDAG.nodes[i].id, replacementDAG.nodes[i].id);
-  }
-
-  // Map target node -> replacement node (for matched nodes)
-  const targetToReplacement = new Map<string, string>();
   const replacementIdMap = new Map<string, string>();
   let nextId = 0;
   for (const rNode of replacementDAG.nodes) {
     const newId = `sub_${nextId++}`;
     replacementIdMap.set(rNode.id, newId);
   }
+
+  // Replacement HEADS: nodes with no incoming edges from within replacement (entry points)
+  const replacementHeads = new Set<string>();
+  for (const n of replacementDAG.nodes) {
+    const newId = replacementIdMap.get(n.id)!;
+    const incomingFromRepl = (rAdj.incoming.get(n.id) ?? []).filter((id) =>
+      replacementDAG.nodes.some((rn) => rn.id === id)
+    );
+    if (incomingFromRepl.length === 0) replacementHeads.add(newId);
+  }
+
+  // Replacement TAILS: nodes with no outgoing edges to within replacement (exit points)
+  const replacementTails = new Set<string>();
+  for (const n of replacementDAG.nodes) {
+    const newId = replacementIdMap.get(n.id)!;
+    const outgoingToRepl = (rAdj.outgoing.get(n.id) ?? []).filter((id) =>
+      replacementDAG.nodes.some((rn) => rn.id === id)
+    );
+    if (outgoingToRepl.length === 0) replacementTails.add(newId);
+  }
+
+  // For branchKind: when pattern and replacement have same structure, copy from matched target
+  const patternNodeToReplacementNode = new Map<string, string>();
+  for (let i = 0; i < patternDAG.nodes.length && i < replacementDAG.nodes.length; i++) {
+    patternNodeToReplacementNode.set(patternDAG.nodes[i].id, replacementDAG.nodes[i].id);
+  }
+  const replacementToTarget = new Map<string, string>();
   for (const [pId, tId] of mapping) {
     const rId = patternNodeToReplacementNode.get(pId);
     if (rId != null) {
-      targetToReplacement.set(tId, replacementIdMap.get(rId)!);
+      replacementToTarget.set(replacementIdMap.get(rId)!, tId);
     }
   }
 
-  // Map replacement node id -> matched target node id (reverse of targetToReplacement)
-  const replacementToTarget = new Map<string, string>();
-  for (const [tId, replId] of targetToReplacement) {
-    replacementToTarget.set(replId, tId);
-  }
-
-  // Apply operand substitution to node data; use target's branchKind for tail when substituting Brb in Bb
   const applySubst = (rData: ExprNodeData, rNodeId: string, newReplId: string): ExprNodeData => {
     const operands = (rData.operands ?? []).map((o) => operandMapping.get(o) ?? o);
     const data: ExprNodeData = { ...rData, operands };
@@ -160,18 +98,16 @@ export function substituteInDAG(
   const mergedNodes: DAGNode<ExprNodeData>[] = [];
   const mergedEdges: DAGEdge[] = [];
 
-  // Add prefix nodes
+  // Add prefix nodes and edges (include prefix->sibling here to preserve arm order for dagToExpr)
   for (const id of prefixSet) {
     const node = tNodeMap.get(id)!;
     mergedNodes.push({ id: node.id, data: node.data });
   }
   for (const e of targetDAG.edges) {
-    if (prefixSet.has(e.from) && prefixSet.has(e.to)) {
-      mergedEdges.push(e);
-    }
+    if (prefixSet.has(e.from) && (prefixSet.has(e.to) || siblingSet.has(e.to))) mergedEdges.push(e);
   }
 
-  // Add replacement nodes with new IDs and operand mapping
+  // Add replacement nodes and edges
   for (const rNode of replacementDAG.nodes) {
     const newId = replacementIdMap.get(rNode.id)!;
     mergedNodes.push({
@@ -185,43 +121,70 @@ export function substituteInDAG(
     if (from && to) mergedEdges.push({ from, to });
   }
 
-  // Add suffix nodes
+  // Add sibling nodes and edges (e.g. top arm when match is in bottom arm)
+  for (const id of siblingSet) {
+    const node = tNodeMap.get(id)!;
+    mergedNodes.push({ id: node.id, data: node.data });
+  }
+  for (const e of targetDAG.edges) {
+    if (siblingSet.has(e.from) && siblingSet.has(e.to)) mergedEdges.push(e);
+  }
+
+  // Add suffix nodes and edges
   for (const id of suffixSet) {
     const node = tNodeMap.get(id)!;
     mergedNodes.push({ id: node.id, data: node.data });
   }
   for (const e of targetDAG.edges) {
-    if (suffixSet.has(e.from) && suffixSet.has(e.to)) {
-      mergedEdges.push(e);
-    }
+    if (suffixSet.has(e.from) && suffixSet.has(e.to)) mergedEdges.push(e);
   }
 
-  // Boundary edges: prefix -> replacement (prefix had edge to matched; redirect to replacement)
-  for (const e of targetDAG.edges) {
-    if (prefixSet.has(e.from) && matchedIds.has(e.to)) {
-      const replId = targetToReplacement.get(e.to);
-      if (replId) {
-        mergedEdges.push({ from: e.from, to: replId });
-      }
-    }
-  }
-
-  // Boundary edges: replacement -> suffix (matched had edge to suffix; replacement feeds suffix)
-  for (const e of targetDAG.edges) {
-    if (matchedIds.has(e.from) && suffixSet.has(e.to)) {
-      const replId = targetToReplacement.get(e.from);
-      if (replId) {
-        mergedEdges.push({ from: replId, to: e.to });
-      }
-    }
-  }
-
-  // Boundary edges: prefix -> suffix (e.g. empty branch arm: cond directly to tail)
-  for (const e of targetDAG.edges) {
-    if (prefixSet.has(e.from) && suffixSet.has(e.to)) {
-      mergedEdges.push({ from: e.from, to: e.to });
-    }
-  }
+  // Boundary edges: prefix->replacement, replacement->suffix, prefix->suffix (empty arms),
+  // prefix->sibling, sibling->suffix (sibling arms)
+  addBoundaryEdges(
+    targetDAG.edges,
+    mergedEdges,
+    prefixSet,
+    suffixSet,
+    siblingSet,
+    matchedIds,
+    replacementHeads,
+    replacementTails
+  );
 
   return { nodes: mergedNodes, edges: mergedEdges };
+}
+
+function addBoundaryEdges(
+  targetEdges: DAGEdge[],
+  out: DAGEdge[],
+  prefixSet: Set<string>,
+  suffixSet: Set<string>,
+  siblingSet: Set<string>,
+  matchedIds: Set<string>,
+  replacementHeads: Set<string>,
+  replacementTails: Set<string>
+): void {
+  const prefixHadEdgeToMatched = new Set<string>();
+  for (const e of targetEdges) {
+    if (prefixSet.has(e.from) && matchedIds.has(e.to)) prefixHadEdgeToMatched.add(e.from);
+  }
+  for (const prefixId of prefixHadEdgeToMatched) {
+    for (const headId of replacementHeads) out.push({ from: prefixId, to: headId });
+  }
+
+  const suffixReceivedFromMatched = new Set<string>();
+  for (const e of targetEdges) {
+    if (matchedIds.has(e.from) && suffixSet.has(e.to)) suffixReceivedFromMatched.add(e.to);
+  }
+  for (const tailId of replacementTails) {
+    for (const suffixId of suffixReceivedFromMatched) out.push({ from: tailId, to: suffixId });
+  }
+
+  // prefix->suffix (empty arms) and sibling->suffix (sibling arms)
+  // prefix->sibling is added with prefix edges to preserve arm order
+  for (const e of targetEdges) {
+    if (prefixSet.has(e.from) && suffixSet.has(e.to)) out.push({ from: e.from, to: e.to });
+    if (siblingSet.has(e.from) && suffixSet.has(e.to)) out.push({ from: e.from, to: e.to });
+  }
 }

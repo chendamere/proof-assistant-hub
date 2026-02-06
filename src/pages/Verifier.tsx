@@ -21,7 +21,7 @@ const Verifier = () => {
         className="flex-1 overflow-hidden transition-all duration-300"
         style={{
           marginRight: isRulesPanelOpen ? '380px' : '0',
-          marginBottom: isWorkbenchExpanded ? '320px' : '48px',
+          marginBottom: isWorkbenchExpanded ? '50vh' : '48px',
         }}
       >
         <ProofVerifierSection />

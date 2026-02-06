@@ -4,27 +4,7 @@
  */
 
 import type { DAGStructure, ExprNodeData } from './types';
-
-function buildAdjacency(structure: DAGStructure): {
-  outgoing: Map<string, Set<string>>;
-  incoming: Map<string, Set<string>>;
-} {
-  const nodeIds = new Set(structure.nodes.map((n) => n.id));
-  const outgoing = new Map<string, Set<string>>();
-  const incoming = new Map<string, Set<string>>();
-
-  for (const n of structure.nodes) {
-    outgoing.set(n.id, new Set());
-    incoming.set(n.id, new Set());
-  }
-  for (const e of structure.edges) {
-    if (nodeIds.has(e.from) && nodeIds.has(e.to)) {
-      outgoing.get(e.from)!.add(e.to);
-      incoming.get(e.to)!.add(e.from);
-    }
-  }
-  return { outgoing, incoming };
-}
+import { buildAdjacency } from './utils';
 
 /**
  * Normalize branch structural op for comparison.
@@ -134,7 +114,7 @@ export function vf2ExprSubgraphIsomorphism(
     for (const p2 of pAdj.outgoing.get(p) ?? []) {
       if (mapping.has(p2)) {
         const t2 = mapping.get(p2)!;
-        if (!tAdj.outgoing.get(t)?.has(t2)) {
+        if (!(tAdj.outgoing.get(t) ?? []).includes(t2)) {
           varToTarget.clear();
           targetToVar.clear();
           savedVar.forEach((v, k) => varToTarget.set(k, v));
@@ -146,7 +126,7 @@ export function vf2ExprSubgraphIsomorphism(
     for (const p1 of pAdj.incoming.get(p) ?? []) {
       if (mapping.has(p1)) {
         const t1 = mapping.get(p1)!;
-        if (!tAdj.incoming.get(t)?.has(t1)) {
+        if (!(tAdj.incoming.get(t) ?? []).includes(t1)) {
           varToTarget.clear();
           targetToVar.clear();
           savedVar.forEach((v, k) => varToTarget.set(k, v));
@@ -240,7 +220,7 @@ export function* vf2ExprSubgraphIsomorphismAll(
     for (const p2 of pAdj.outgoing.get(p) ?? []) {
       if (mapping.has(p2)) {
         const t2 = mapping.get(p2)!;
-        if (!tAdj.outgoing.get(t)?.has(t2)) {
+        if (!(tAdj.outgoing.get(t) ?? []).includes(t2)) {
           varToTarget.clear();
           targetToVar.clear();
           savedVar.forEach((v, k) => varToTarget.set(k, v));
@@ -252,7 +232,7 @@ export function* vf2ExprSubgraphIsomorphismAll(
     for (const p1 of pAdj.incoming.get(p) ?? []) {
       if (mapping.has(p1)) {
         const t1 = mapping.get(p1)!;
-        if (!tAdj.incoming.get(t)?.has(t1)) {
+        if (!(tAdj.incoming.get(t) ?? []).includes(t1)) {
           varToTarget.clear();
           targetToVar.clear();
           savedVar.forEach((v, k) => varToTarget.set(k, v));

@@ -26,11 +26,13 @@ function parseOneBraced(expr: string, pos: number): { content: string; end: numb
 
 function findFirstBranch(expr: string): BranchInfo | null {
   const bb = expr.match(/\\Bb\s*\{/);
+  const bs = expr.match(/\\Bs\s*\{/);
   const blb = expr.match(/\\Blb\s*\{/);
   const brb = expr.match(/\\Brb\s*\{/);
 
   const candidates: { m: RegExpMatchArray; kind: 'Bb' | 'Blb' | 'Brb' }[] = [];
   if (bb) candidates.push({ m: bb, kind: 'Bb' });
+  if (bs) candidates.push({ m: bs, kind: 'Bb' });
   if (blb) candidates.push({ m: blb, kind: 'Blb' });
   if (brb) candidates.push({ m: brb, kind: 'Brb' });
 

@@ -202,37 +202,7 @@ const IntroductionSection: React.FC = () => {
 
         
 
-        {/* Navigation hint */}
-        <div className="mt-16 text-center">
-          <p className="text-muted-foreground mb-4">
-            Explore the complete system below
-          </p>
-          <div className="flex items-center justify-center gap-2 text-primary animate-bounce mb-6">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 5v14M5 12l7 7 7-7" />
-            </svg>
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link to="/proof-step">
-              <Button variant="outline" className="gap-2">
-                <GitBranch className="w-4 h-4" />
-                Proof Step Demo
-              </Button>
-            </Link>
-            <Link to="/glossary">
-              <Button variant="outline" className="gap-2">
-                <BookOpen className="w-4 h-4" />
-                Glossary
-              </Button>
-            </Link>
-            <Link to="/verifier">
-              <Button variant="outline" className="gap-2">
-                <Play className="w-4 h-4" />
-                Proof Verifier
-              </Button>
-            </Link>
-          </div>
-        </div>
+        
       </div>
     </section>
   );

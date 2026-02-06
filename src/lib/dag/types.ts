@@ -26,6 +26,8 @@ export interface DAGValidationResult {
   missingReferences?: { edge: DAGEdge; missing: 'from' | 'to' }[];
 }
 
+export type BranchKind = 'Bb' | 'Blb' | 'Brb';
+
 /** Node data for expression DAG: operator + operands (ordered) */
 export interface ExprNodeData {
   op: string;         // e.g. "\\Oc", ":cond:\\Oe", ":tail" (branch head by :cond, tail by :tail)
@@ -34,5 +36,5 @@ export interface ExprNodeData {
   start?: number;
   end?: number;
   /** Branch kind from source expression; used when serializing to prefer target's kind over inferred */
-  branchKind?: 'Bb' | 'Blb' | 'Brb';
+  branchKind?: BranchKind;
 }
