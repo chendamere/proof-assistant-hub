@@ -42,23 +42,6 @@ export const checkInferenceRules = (
   ruleRight: string,
   options?: CheckInferenceRulesOptions
 ): { match: boolean; inferenceRule?: string; matchPosition?: MatchPosition; grammarError?: string } => {
-  // const targetLeftGrammar = checkGrammar(targetLeft);
-  // if (!targetLeftGrammar.isValid) {
-  //   const errors = targetLeftGrammar.errors.map(e => e.message).join('; ');
-  //   return {
-  //     match: false,
-  //     grammarError: `Target left side has grammar errors: ${errors}`
-  //   };
-  // }
-
-  // const targetRightGrammar = checkGrammar(targetRight);
-  // if (!targetRightGrammar.isValid) {
-  //   const errors = targetRightGrammar.errors.map(e => e.message).join('; ');
-  //   return {
-  //     match: false,
-  //     grammarError: `Target right side has grammar errors: ${errors}`
-  //   };
-  // }
 
   const stepCounter = options?.onProgress ? { count: 0 } : undefined;
   const context = stepCounter ? { stepCounter } : undefined;

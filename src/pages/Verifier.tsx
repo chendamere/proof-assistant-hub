@@ -1,7 +1,7 @@
 import Navigation from '@/components/layout/Navigation';
 import ProofVerifierSection from '@/components/sections/ProofVerifierSection';
 import RulesSidePanel from '@/components/rules/RulesSidePanel';
-import UserWorkbench from '@/components/workbench/UserWorkbench';
+import WorkbenchContainer from '@/components/workbench/WorkbenchContainer';
 import { usePanelContext } from '@/contexts/PanelContext';
 
 const Verifier = () => {
@@ -27,8 +27,8 @@ const Verifier = () => {
         <ProofVerifierSection />
       </main>
       
-      {/* User Workbench */}
-      <UserWorkbench />
+      {/* Workbench (Workbench | Debug tabs) */}
+      <WorkbenchContainer />
     </div>
   );
 };

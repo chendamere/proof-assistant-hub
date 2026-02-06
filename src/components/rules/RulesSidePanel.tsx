@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { axioms, Rule, RuleType, getTypeBadgeClass } from '@/data/axioms';
+import { definitions } from '@/data/definitions';
 import { BookOpen, Search, ChevronDown, ChevronUp, GripVertical, X, PanelRightOpen } from 'lucide-react';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
@@ -136,7 +137,7 @@ export const RulesSidePanel: React.FC = () => {
   const setIsOpen = setRulesPanelOpen;
 
   // Combine axioms and theorems
-  const allRules = useMemo(() => [...axioms, ...theorems], [theorems]);
+  const allRules = useMemo(() => [...axioms, ...definitions, ...theorems], [theorems]);
 
   const filteredRules = useMemo(() => {
     return allRules.filter(rule => {

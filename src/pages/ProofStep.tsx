@@ -11,6 +11,7 @@ import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { checkInferenceRules, MatchPosition } from '@/lib/inferenceRules';
 import { checkGrammar } from '@/lib/grammarChecker';
 import { axioms, Rule } from '@/data/axioms';
+import { definitions } from '@/data/definitions';
 import { theorems } from '@/data/theorems';
 import { Play, RotateCcw, CheckCircle2, XCircle, Loader2, AlertCircle, X, BookOpen } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -68,7 +69,7 @@ const ProofStep: React.FC = () => {
   const cancelRef = useRef(false);
   
   // Combine axioms and theorems - prioritize axioms (more likely to match)
-  const allRules = useMemo(() => [...axioms, ...theorems], []);
+  const allRules = useMemo(() => [...axioms, ...definitions, ...theorems], []);
   
   // Pre-normalize and cache all rules (both directions) to avoid recomputation
   // This is a one-time cost that dramatically speeds up subsequent searches

@@ -26,7 +26,12 @@ interface ImportedRule {
   source: string;
 }
 
-const UserWorkbench: React.FC = () => {
+interface UserWorkbenchProps {
+  /** When true, render only the content (no fixed wrapper/header); used inside WorkbenchContainer */
+  embedded?: boolean;
+}
+
+const UserWorkbench: React.FC<UserWorkbenchProps> = ({ embedded = false }) => {
   const { isRulesPanelOpen, setRulesPanelOpen, isWorkbenchExpanded, setWorkbenchExpanded } = usePanelContext();
   const [contextRules, setContextRules] = useState<Rule[]>([]);
   const [importedRules, setImportedRules] = useState<ImportedRule[]>([]);
@@ -221,69 +226,7 @@ const UserWorkbench: React.FC = () => {
     );
   }, [contextRules, contextRulesSearch]);
 
-  return (
-    <div 
-      className={`fixed bottom-0 left-0 bg-background border-t border-border shadow-lg z-30 transition-all duration-300 ease-in-out ${
-        isWorkbenchExpanded ? 'h-80' : 'h-12'
-      }`}
-      style={{
-        right: isRulesPanelOpen ? '380px' : '0',
-      }}
-    >
-      {/* Header / Toggle Bar */}
-      <div 
-        className="h-12 px-4 flex items-center justify-between border-b border-border cursor-pointer hover:bg-muted/50 transition-colors"
-        onClick={() => setWorkbenchExpanded(!isWorkbenchExpanded)}
-      >
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 gap-2"
-            onClick={(e) => {
-              e.stopPropagation();
-              setRulesPanelOpen(!isRulesPanelOpen);
-            }}
-          >
-            <PanelRightOpen className="w-4 h-4" />
-            Rules
-          </Button>
-          <div className="h-6 w-px bg-border" />
-          <Briefcase className="w-4 h-4 text-primary" />
-          <span className="font-medium text-sm">Workbench</span>
-          {totalRules > 0 && (
-            <span className="bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-full font-mono">
-              {totalRules} rules
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          {isWorkbenchExpanded && totalRules > 0 && (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="h-7 text-xs gap-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                downloadRules();
-              }}
-            >
-              <Download className="w-3 h-3" />
-              Export
-            </Button>
-          )}
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            {isWorkbenchExpanded ? (
-              <ChevronDown className="w-4 h-4" />
-            ) : (
-              <ChevronUp className="w-4 h-4" />
-            )}
-          </Button>
-        </div>
-      </div>
-
-      {/* Workbench Content */}
-      {isWorkbenchExpanded && (
+  const content = (
         <div className="h-[calc(100%-3rem)] flex">
           {/* Context Rules Section */}
           <div 
@@ -531,7 +474,48 @@ const UserWorkbench: React.FC = () => {
             </div>
           </div>
         </div>
-      )}
+  );
+
+  if (embedded) {
+    return isWorkbenchExpanded ? content : null;
+  }
+
+  return (
+    <div
+      className={`fixed bottom-0 left-0 bg-background border-t border-border shadow-lg z-30 transition-all duration-300 ease-in-out ${
+        isWorkbenchExpanded ? 'h-80' : 'h-12'
+      }`}
+      style={{ right: isRulesPanelOpen ? '380px' : '0' }}
+    >
+      <div
+        className="h-12 px-4 flex items-center justify-between border-b border-border cursor-pointer hover:bg-muted/50 transition-colors"
+        onClick={() => setWorkbenchExpanded(!isWorkbenchExpanded)}
+      >
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm" className="h-8 gap-2" onClick={(e) => { e.stopPropagation(); setRulesPanelOpen(!isRulesPanelOpen); }}>
+            <PanelRightOpen className="w-4 h-4" />
+            Rules
+          </Button>
+          <div className="h-6 w-px bg-border" />
+          <Briefcase className="w-4 h-4 text-primary" />
+          <span className="font-medium text-sm">Workbench</span>
+          {totalRules > 0 && (
+            <span className="bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-full font-mono">{totalRules} rules</span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          {isWorkbenchExpanded && totalRules > 0 && (
+            <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={(e) => { e.stopPropagation(); downloadRules(); }}>
+              <Download className="w-3 h-3" />
+              Export
+            </Button>
+          )}
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            {isWorkbenchExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+          </Button>
+        </div>
+      </div>
+      {isWorkbenchExpanded && content}
     </div>
   );
 };

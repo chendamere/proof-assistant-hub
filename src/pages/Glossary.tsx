@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { axioms, getTypeBadgeClass, categories, Rule, RuleType, RuleCategory } from '@/data/axioms';
+import { definitions } from '@/data/definitions';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { Search, Filter, Play } from 'lucide-react';
@@ -35,7 +36,7 @@ const Glossary: React.FC = () => {
   }, []);
 
   // Combine all rules
-  const allRules: Rule[] = useMemo(() => [...axioms, ...theorems], [theorems]);
+  const allRules: Rule[] = useMemo(() => [...axioms, ...definitions, ...theorems], [theorems]);
 
   // Filter states
   const [searchQuery, setSearchQuery] = useState('');

@@ -1,0 +1,131 @@
+
+\chapter{Rules of Three Fundamental Relationships}
+
+\section{Definition of Relationships}
+
+\subsection{Definition of node value comparison}
+\[, \Blb{i \Pe i}{,}{,} \Rq , \Blb{i \Oe i}{,}{,}\]
+\bigskip
+\[,i \Pe i, \Rq ,\Bb{i \Pe i}{,}{,\Or,},\]
+
+\bigskip
+\bigskip
+
+\[, \Blb{i \Pe j}{,}{,} \Rq , \Blb{i \Oe j}{,}{,}\]
+\bigskip
+\[,i \Pe j, \Rq ,\Bb{i \Pe j}{,}{,\Or,},\]
+
+\[,i \nPe j, \Rq ,\Bb{i \Pe j}{,\Or,}{,},\]
+
+
+
+\newpage
+\subsection{Definition of node null comparison}
+\[, \Blb{i \Pu }{,}{,} \Rq , \Ot j, \Blb{i \Pe j}{,j \Os,}{,j \Os,}\]
+\bigskip
+\subsubsection{Propositions:}
+\[,i \Pu , \Rq ,\Bb{i \Pu}{,}{,\Or,},\]
+
+\[,i \nPu , \Rq ,\Bb{i \Pu}{,\Or,}{,},\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Definition of identical node comparison}
+\[, \Blb{i \Ps j}{,}{,} \Rq ,i \Od m ,j \Od n, \Blb{m \Pe n}{,m \Os,n \Os,}{,m \Os,n \Os,}\]
+\bigskip
+\subsubsection{Propositions:}
+\[,i \Ps j , \Rq ,\Bb{i \Ps j}{,}{,\Or,},\]
+
+\[,i \nPs j , \Rq ,\Bb{i \Ps j}{,\Or,}{,},\]
+
+\newpage
+
+
+
+
+
+\section{Axioms of Relationships}
+
+\subsection{Substitution axioms of identical node comparison}
+
+\[,i \Ps j, i \Od t, \Rq , i \Ps j, j \Od t,\]
+\[,i \Ps j, i \Oc t, \Rq , i \Ps j, j \Oc t,\]
+\[,i \Ps j, i \Ob t, \Rq , i \Ps j, j \Ob t,\]
+\bigskip
+\bigskip
+
+\[,i \Ps j, \Blb{i \Pe j}{,}{,} \Rq , i \Ps j, \Blb{i \Pe i}{,}{,}\]
+
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{ Axioms of node id operator and propositions}
+\[, i \Od m, \Rq , i \Od m, m \nPu,\]
+
+\[, i \Od m, i \Od n, \Rq , i \Od m, i \Od n, m \Pe n,\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{ Axioms of copy operator and propositions}
+\[, i \Oc j , \Rq , i \Oc j , i \Ps j,\]
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{ Axioms of subnode operator and propositions}
+\[,i \Pu, i \Ob t, \Rq , i \Pu, i \Oc t,\]
+
+\[, i \Ob t, \Rq ,i \Ob t, t \Pu,\]
+
+\[,i_1 \nPu, i_2 \nPu, i_1 \Ob t_1, i_2 \Ob t_2, \Bls{i_1 \Ps i_2}{,}{,} \Rq ,i_1 \nPu, i_2 \nPu, i_1 \Ob t_1, i_2 \Ob t_2, \Bls{t_1 \Ps t_2}{,}{,}\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{ Axioms of global space operator and propositions}
+\[,\Og i, \Og j, \Rq , \Og i, i \Oc j,\]
+
+
+\[, \Og i, \Rq , \Og i, i \Pu ,\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{ Axioms of  temporary space operator and propositions}
+\[, \Ot i, \Ot j, \Rq , \Ot i, \Ot j, i \Pe j,\]
+
+\[, \Ot i, i \On, \Rq , \Ot i, i \On, i \Pu,\]
+
+\[,\Ot i, \Rq , \Ot i, i \nPs j,\]
+
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{ Axioms of next node operator and propositions}
+\[,i \On, j \On, \Blb{i \Ps j}{,}{,} \Rq , \Blb{i \Ps j}{,i \On, j \On,}{,i \On, j \On,}\]
+
+
+
+
+
+
+
+
+
+
+

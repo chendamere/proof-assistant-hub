@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
+import WorkbenchContainer from '@/components/workbench/WorkbenchContainer';
+import RulesSidePanel from '@/components/rules/RulesSidePanel';
+import { usePanelContext } from '@/contexts/PanelContext';
+import { Copy } from 'lucide-react';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -11,6 +15,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { checkInferenceRules, CheckInferenceRulesOptions } from '@/lib/inferenceRules';
 import { axioms, Rule } from '@/data/axioms';
+import { definitions } from '@/data/definitions';
 import { theorems } from '@/data/theorems';
 import { Button } from '@/components/ui/button';
 import { Search, ChevronDown, ChevronRight, FileText, ListOrdered, CheckCircle2, Check, X } from 'lucide-react';
@@ -77,7 +82,6 @@ function verifyTransitionWithLogging(
     const cached = cache.get(rule.id);
     if (!cached) return false;
     if (checkInferenceRules(targetLeft, targetRight, cached.l2r.left, cached.l2r.right, options).match) return true;
-    // if (checkInferenceRules(targetLeft, targetRight, cached.r2l.left, cached.r2l.right, options).match) return true;
     return false;
   };
 
@@ -86,13 +90,16 @@ function verifyTransitionWithLogging(
       return true;
     }
   }
-  // for (const rule of theorems) {
-  //   if (tryRule(rule, false)) {
-  //     console.log(`Total VF2 substitution steps: ${totalVf2Steps}`);
-  //     console.groupEnd();
-  //     return true;
-  //   }
-  // }
+  for (const rule of theorems) {
+    if (tryRule(rule)) {
+      return true;
+    }
+  }
+  for (const rule of definitions) {
+    if (tryRule(rule)) {
+      return true;
+    }
+  }
   return false;
 }
 
@@ -108,6 +115,7 @@ function parseKey(key: string): { filename: string; index: number; ruleStr: stri
 }
 
 const ProofSteps: React.FC = () => {
+  const { isWorkbenchExpanded, isRulesPanelOpen, setDebugWorkbenchExpressions } = usePanelContext();
   const [table, setTable] = useState<ProofStepsTable | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -119,7 +127,7 @@ const ProofSteps: React.FC = () => {
 
   const normalizedRulesCache = useMemo(() => {
     const cache = new Map<string, { l2r: { left: string; right: string }; r2l: { left: string; right: string } }>();
-    [...axioms, ...theorems].forEach((rule) => {
+    [...axioms, ...definitions, ...theorems].forEach((rule) => {
       cache.set(rule.id, {
         l2r: { left: rule.leftSide, right: rule.rightSide },
         r2l: { left: rule.rightSide, right: rule.leftSide },
@@ -260,7 +268,14 @@ const ProofSteps: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navigation />
-      <main className="flex-1 pt-24 pb-12 px-6">
+      <RulesSidePanel />
+      <main
+        className="flex-1 pt-24 pb-12 px-6 transition-all duration-300"
+        style={{
+          marginRight: isRulesPanelOpen ? '380px' : '0',
+          marginBottom: isWorkbenchExpanded ? '320px' : '48px',
+        }}
+      >
         <div className="max-w-4xl mx-auto">
           <div className="mb-6">
             <h1 className="text-2xl font-semibold text-foreground mb-1">
@@ -304,6 +319,7 @@ const ProofSteps: React.FC = () => {
                   theorem={t}
                   verification={verificationResults[t.key]}
                   onVerifyTransition={verifySingleTransition}
+                  onCopyToDebug={setDebugWorkbenchExpressions}
                   transitionVerifying={transitionVerifying}
                   transitionResults={transitionResults[t.key]}
                 />
@@ -318,6 +334,7 @@ const ProofSteps: React.FC = () => {
         </div>
       </main>
       <Footer />
+      <WorkbenchContainer />
     </div>
   );
 };
@@ -326,12 +343,14 @@ function TheoremCard({
   theorem,
   verification,
   onVerifyTransition,
+  onCopyToDebug,
   transitionVerifying,
   transitionResults = {},
 }: {
   theorem: TheoremWithSteps;
   verification?: VerificationResult;
   onVerifyTransition?: (key: string, transitionIndex: number) => void;
+  onCopyToDebug?: (left: string, right: string) => void;
   transitionVerifying?: string | null;
   transitionResults?: Record<number, boolean>;
 }) {
@@ -398,37 +417,54 @@ function TheoremCard({
             <div className="border-t border-border pt-3 space-y-1">
               {theorem.steps.map((step, i) => (
                 <React.Fragment key={i}>
-                  {i > 0 && onVerifyTransition && (
+                  {i > 0 && (onVerifyTransition || onCopyToDebug) && (
                     <div className="flex items-center gap-2 py-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 px-2 text-xs gap-1.5"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onVerifyTransition(theorem.key, i - 1);
-                        }}
-                        disabled={transitionVerifying !== null}
-                      >
-                        {transitionVerifying === `${theorem.key}::${i - 1}` ? (
-                          <>Checking...</>
-                        ) : transitionResults[i - 1] === true ? (
-                          <>
-                            <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
-                            Check step
-                          </>
-                        ) : transitionResults[i - 1] === false ? (
-                          <>
-                            <X className="w-3.5 h-3.5 text-destructive" />
-                            Check step
-                          </>
-                        ) : (
-                          <>
-                            <Check className="w-3.5 h-3.5" />
-                            Check step
-                          </>
-                        )}
-                      </Button>
+                      {onVerifyTransition && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 px-2 text-xs gap-1.5"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onVerifyTransition(theorem.key, i - 1);
+                          }}
+                          disabled={transitionVerifying !== null}
+                        >
+                          {transitionVerifying === `${theorem.key}::${i - 1}` ? (
+                            <>Checking...</>
+                          ) : transitionResults[i - 1] === true ? (
+                            <>
+                              <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+                              Check step
+                            </>
+                          ) : transitionResults[i - 1] === false ? (
+                            <>
+                              <X className="w-3.5 h-3.5 text-destructive" />
+                              Check step
+                            </>
+                          ) : (
+                            <>
+                              <Check className="w-3.5 h-3.5" />
+                              Check step
+                            </>
+                          )}
+                        </Button>
+                      )}
+                      {onCopyToDebug && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 px-2 text-xs gap-1.5"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onCopyToDebug(theorem.steps[i - 1], theorem.steps[i]);
+                          }}
+                          title="Copy to Debug workbench"
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                          Copy to Debug
+                        </Button>
+                      )}
                     </div>
                   )}
                   <div

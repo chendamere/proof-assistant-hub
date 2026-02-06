@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button';
 import { SyntaxInput } from '@/components/ui/syntax-input';
 import { Rule, getTypeBadgeClass, axioms } from '@/data/axioms';
+import { definitions } from '@/data/definitions';
 import { theorems } from '@/data/theorems';
 import { checkInferenceRules } from '@/lib/inferenceRules';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
@@ -44,7 +45,7 @@ const ProofVerifierSection: React.FC = () => {
   const [addStepExpanded, setAddStepExpanded] = useState(true);
 
   // Combine axioms and theorems
-  const allRules = useMemo(() => [...axioms, ...theorems], []);
+  const allRules = useMemo(() => [...axioms, ...definitions, ...theorems], []);
 
   // Cache rule sides (both directions) - no integer conversion; VF2 handles operand mapping
   const normalizedRulesCache = useMemo(() => {
