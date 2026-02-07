@@ -438,7 +438,7 @@ export default function SubstitutionDAGDemo() {
             <li><strong>Expression → DAG:</strong> Each operation (\Oc, \Od, \Os, etc.) becomes a node. Operands are stored in node data.</li>
             <li><strong>Sequential edges:</strong> Operations in a comma-separated list form a chain (op₁→op₂→op₃).</li>
             <li><strong>Bb, Blb, Brb:</strong> Branch operators have two outgoing edges to the top and bottom arms.</li>
-            <li><strong>VF2:</strong> Subgraph isomorphism with variable binding—rule operands (i, m, j) match target operands (1, 2, 3) consistently.</li>
+            <li><strong>VF2:</strong> Subgraph isomorphism with variable binding—rule operands matches after assigning them to the first occurrence of the target operands</li>
           </ul>
         </CardContent>
       </Card>

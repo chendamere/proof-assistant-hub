@@ -147,34 +147,6 @@ const IntroductionSection: React.FC = () => {
             </p>
           </div>
 
-          {/* Inference Rules */}
-          <div className="bg-card border border-border rounded-lg p-6 card-glow animate-fade-in delay-300">
-            <h3 className="text-xl font-semibold text-primary mb-4">Inference Rules</h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex items-start gap-3">
-                <span className="text-primary font-bold">1.</span>
-                <div>
-                  <span className="font-semibold">Equivalent Commutativity</span>
-                  <p className="text-muted-foreground">A ⟺ B implies B ⟺ A</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-primary font-bold">2.</span>
-                <div>
-                  <span className="font-semibold">Equivalent Transitivity</span>
-                  <p className="text-muted-foreground">A ⟺ B and B ⟺ C implies A ⟺ C</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-primary font-bold">3.</span>
-                <div>
-                  <span className="font-semibold">Equivalent Substitution</span>
-                  <p className="text-muted-foreground">A ⟺ B allows replacing A with B in any context M·A·N → M·B·N</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Types of Rules */}
           <div className="bg-card border border-border rounded-lg p-6 card-glow animate-fade-in delay-400 md:col-span-2">
             <h3 className="text-xl font-semibold text-primary mb-4">Types of Rules</h3>
@@ -199,6 +171,35 @@ const IntroductionSection: React.FC = () => {
               </div>
             </div>
           </div>
+          {/* Inference Rules */}
+          <div className="bg-card border border-border rounded-lg p-6 card-glow animate-fade-in delay-300">
+            <h3 className="text-xl font-semibold text-primary mb-4">Inference Rules</h3>
+            <div className="space-y-3 text-sm">
+              <div className="flex items-start gap-3">
+                <span className="text-primary font-bold">1.</span>
+                <div>
+                  <span className="font-semibold">Equivalent Commutativity</span>
+                  <p className="text-muted-foreground">A ⟺ B implies B ⟺ A</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-primary font-bold">2.</span>
+                <div>
+                  <span className="font-semibold">Equivalent Transitivity</span>
+                  <p className="text-muted-foreground">A ⟺ B and B ⟺ C implies A ⟺ C</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-primary font-bold">3.</span>
+                <div>
+                  <span className="font-semibold">Equivalent Substitution</span>
+                  <p className="text-muted-foreground">A ⟺ B allows inserting A with B in any context M·A·N → M·B·N</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          
         </div>
 
         
