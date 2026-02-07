@@ -19,7 +19,7 @@ const IntroductionSection: React.FC = () => {
             The Way of Machine Thinking
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            A formal system for machine reasoning — a universal language completely independent 
+            A formal system for machine reasoning — a (maximal) universal language completely independent 
             of human natural language. This closed, self-defining system uses equivalence relations 
             to express all axioms, definitions, and theorems.
           </p>
@@ -37,12 +37,12 @@ const IntroductionSection: React.FC = () => {
           
           <div className="space-y-4 text-muted-foreground text-sm leading-relaxed">
             <p>
-              In order to allow the machine to think in its own way, I designed this universal machine language. 
-              This language is not just a programming language, but also a calculus language as conceived by Leibniz. 
-              The calculus of language is the thinking process of machines.
+              The author designed this formal system and its language to serve as a machine reasoning language. 
+              This language is not just a programming language, but also a calculus language conceivable by 
+              Leibniz's idea of calculus of language.
             </p>
             <p>
-              This language is very small, only 11 operators, but it is very complex and powerful. 
+              This core of the language is very small, with only 11 primitive operators, but it is very complex and powerful. 
               It can understand its own structure and operation, and use this as a starting point to define 
               mathematical concepts and derive basic mathematical laws.
             </p>
@@ -87,7 +87,8 @@ const IntroductionSection: React.FC = () => {
         <div className="bg-card border border-border rounded-lg p-6 md:p-8 card-glow animate-fade-in delay-100 mb-8">
           <h3 className="text-xl font-semibold text-primary mb-4">Data Structure</h3>
           <p className="text-muted-foreground mb-6">
-            The foundation is a tree-like multidimensional structure with doubly-linked circular nodes. 
+            The assumed data structure is a multidimensional cyclical graph with bidirectional links between nodes. Each cycle contains a null node. 
+            Each node contains a link to a null child cycle.  
             Each node contains:
           </p>
           
