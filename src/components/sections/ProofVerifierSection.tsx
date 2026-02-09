@@ -5,6 +5,7 @@ import { Rule, getTypeBadgeClass, axioms } from '@/data/axioms';
 import { definitions } from '@/data/definitions';
 import { theorems } from '@/data/theorems';
 import { checkInferenceRules } from '@/lib/inferenceRules';
+import { buildRuleIndex, getRulesForTransition } from '@/lib/inferenceRules/ruleIndex';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { Play, Plus, RotateCcw, ChevronRight, ChevronDown, ChevronUp, AlertCircle, PartyPopper } from 'lucide-react';
@@ -47,6 +48,16 @@ const ProofVerifierSection: React.FC = () => {
   // Combine axioms and theorems
   const allRules = useMemo(() => [...axioms, ...definitions, ...theorems], []);
 
+  // Rule index for op-count delta filtering
+  const ruleIndex = useMemo(
+    () =>
+      buildRuleIndex(
+        allRules.map((r) => ({ id: r.id, leftSide: r.leftSide, rightSide: r.rightSide }))
+      ),
+    [allRules]
+  );
+  const ruleById = useMemo(() => new Map(allRules.map((r) => [r.id, r])), [allRules]);
+
   // Cache rule sides (both directions) - no integer conversion; VF2 handles operand mapping
   const normalizedRulesCache = useMemo(() => {
     const cache = new Map<string, {
@@ -88,20 +99,27 @@ const ProofVerifierSection: React.FC = () => {
     const runSearch = async () => {
       try {
         const foundMatches: ApplicableRule[] = [];
+        const rulesToTry = getRulesForTransition(ruleIndex, targetLeft, targetRight);
         const BATCH_SIZE = hasBranch ? 4 : 12;
-        for (let i = 0; i < allRules.length && !cancelled; i += BATCH_SIZE) {
-          const batch = allRules.slice(i, i + BATCH_SIZE);
-          for (const rule of batch) {
+        for (let i = 0; i < rulesToTry.length && !cancelled; i += BATCH_SIZE) {
+          const batch = rulesToTry.slice(i, i + BATCH_SIZE);
+          for (const indexedRule of batch) {
             if (cancelled) return;
+            const rule = ruleById.get(indexedRule.id);
+            if (!rule) continue;
             const cached = normalizedRulesCache.get(rule.id);
             if (!cached) continue;
-            const l2rResult = checkInferenceRules(targetLeft, targetRight, cached.l2r.left, cached.l2r.right);
+            const l2rResult = checkInferenceRules(targetLeft, targetRight, cached.l2r.left, cached.l2r.right, {
+              dagCache: ruleIndex.dagCache,
+            });
             if (l2rResult.match) {
               foundMatches.push({ rule, direction: 'left-to-right', inferenceRule: l2rResult.inferenceRule });
               setApplicableRules([...foundMatches]);
               return;
             }
-            const r2lResult = checkInferenceRules(targetLeft, targetRight, cached.r2l.left, cached.r2l.right);
+            const r2lResult = checkInferenceRules(targetLeft, targetRight, cached.r2l.left, cached.r2l.right, {
+              dagCache: ruleIndex.dagCache,
+            });
             if (r2lResult.match) {
               foundMatches.push({ rule, direction: 'right-to-left', inferenceRule: r2lResult.inferenceRule });
               setApplicableRules([...foundMatches]);
@@ -110,7 +128,7 @@ const ProofVerifierSection: React.FC = () => {
           }
           if (cancelled) return;
           setApplicableRules([...foundMatches]);
-          if (i + BATCH_SIZE < allRules.length) {
+          if (i + BATCH_SIZE < rulesToTry.length) {
             await new Promise((r) => setTimeout(r, hasBranch ? 20 : 0));
           }
         }
@@ -133,7 +151,7 @@ const ProofVerifierSection: React.FC = () => {
       cancelled = true;
       clearTimeout(timeoutId);
     };
-  }, [currentExpression, isProving, proofSteps, allRules, normalizedRulesCache]);
+  }, [currentExpression, isProving, proofSteps, allRules, normalizedRulesCache, ruleIndex, ruleById]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();

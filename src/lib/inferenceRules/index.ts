@@ -5,8 +5,9 @@
  * These rules determine if a target rule can be proven using existing rules.
  */
 
-import { checkGrammar } from '../grammarChecker';
-import { MatchPosition, InferenceRule } from './types';
+import type { DAGStructure } from '../dag';
+import type { ExprNodeData } from '../dag/types';
+import { MatchPosition } from './types';
 import { InferenceRules } from './rules';
 
 // Re-export types and interfaces
@@ -15,14 +16,20 @@ export type { MatchPosition, InferenceRule } from './types';
 // Re-export rules
 export { InferenceRules } from './rules';
 
-// Re-export subexpression generation
-export { generateSubexpressions } from './subexpressions';
+/** Stub: returns empty array. Full implementation was removed. */
+export function generateSubexpressions(_expr: string): string[] {
+  return [];
+}
 
-// Re-export branch tree formatting for terminal display
-export { formatBranchTree, logBranchTree } from './branchTreeFormat';
+/** Stub: returns expression as-is. Full implementation was removed. */
+export function formatBranchTree(expr: string): string {
+  return expr;
+}
+
 
 export interface CheckInferenceRulesOptions {
   onProgress?: (info: { inferenceRule: string; matched: boolean; vf2Steps?: number }) => void;
+  dagCache?: Map<string, DAGStructure<ExprNodeData>>;
 }
 
 /**
@@ -33,7 +40,7 @@ export interface CheckInferenceRulesOptions {
  * @param targetRight - Target right expression
  * @param ruleLeft - Rule left expression
  * @param ruleRight - Rule right expression
- * @param options - Optional { onProgress } for debug logging (rule name, matched, VF2 steps)
+ * @param options - Optional { onProgress, dagCache } for debug and DAG caching
  */
 export const checkInferenceRules = (
   targetLeft: string,
@@ -44,7 +51,7 @@ export const checkInferenceRules = (
 ): { match: boolean; inferenceRule?: string; matchPosition?: MatchPosition; grammarError?: string } => {
 
   const stepCounter = options?.onProgress ? { count: 0 } : undefined;
-  const context = stepCounter ? { stepCounter } : undefined;
+  const context = { stepCounter, dagCache: options?.dagCache };
 
   for (const infRule of InferenceRules) {
     if (stepCounter) stepCounter.count = 0;

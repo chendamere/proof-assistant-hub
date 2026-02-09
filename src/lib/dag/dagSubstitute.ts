@@ -118,7 +118,7 @@ export function substituteInDAG(
   for (const e of replacementDAG.edges) {
     const from = replacementIdMap.get(e.from);
     const to = replacementIdMap.get(e.to);
-    if (from && to) mergedEdges.push({ from, to });
+    if (from && to) mergedEdges.push({ from, to, edgeType: e.edgeType });
   }
 
   // Add sibling nodes and edges (e.g. top arm when match is in bottom arm)

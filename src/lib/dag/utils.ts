@@ -9,6 +9,17 @@ export type Adjacency = {
   incoming: Map<string, string[]>;
 };
 
+/** Build O(1) lookup map for edge types. Key: from + NUL + to. */
+export function buildEdgeTypeMap(
+  edges: Array<{ from: string; to: string; edgeType?: number }>
+): Map<string, number> {
+  const map = new Map<string, number>();
+  for (const e of edges) {
+    map.set(`${e.from}\0${e.to}`, (e.edgeType ?? 0) as number);
+  }
+  return map;
+}
+
 /** Build adjacency lists from a DAG structure. */
 export function buildAdjacency<T>(structure: DAGStructure<T>): Adjacency {
   const outgoing = new Map<string, string[]>();
@@ -71,26 +82,100 @@ export function augmentTargetDAGForTcMatching<T extends { op?: string }>(
     outgoing.get(e.from)!.push(e.to);
   }
   let nextEmptyId = 0;
-  const toAdd: { emptyId: string; from: string; to: string }[] = [];
+  const toAdd: { emptyId: string; from: string; to: string; topArm: boolean }[] = [];
+  const condEmptyCount = new Map<string, number>();
   for (const e of edges) {
     const fromNode = nodeMap.get(e.from);
     const toNode = nodeMap.get(e.to);
     const fromOp = (fromNode?.data as { op?: string })?.op ?? '';
     const toOp = (toNode?.data as { op?: string })?.op ?? '';
     if (fromOp.includes(':cond') && toOp.endsWith(':tail')) {
-      toAdd.push({ emptyId: `empty_${nextEmptyId++}`, from: e.from, to: e.to });
+      const count = condEmptyCount.get(e.from) ?? 0;
+      condEmptyCount.set(e.from, count + 1);
+      toAdd.push({ emptyId: `empty_${nextEmptyId++}`, from: e.from, to: e.to, topArm: count === 0 });
     }
   }
   if (toAdd.length === 0) return structure;
   const newEdges = edges.filter((e) => !toAdd.some((a) => a.from === e.from && a.to === e.to));
-  for (const { emptyId, from, to } of toAdd) {
+  for (const { emptyId, from, to, topArm } of toAdd) {
     nodes.push({
       id: emptyId,
-      data: { op: '\\Tc', operands: [''] } as T,
+      data: { op: '\\Tc', operands: [''] } as unknown as ExprNodeData,
     } as any);
-    newEdges.push({ from, to: emptyId }, { from: emptyId, to });
+    if (topArm) {
+      newEdges.push({ from, to: emptyId, edgeType: 1 }, { from: emptyId, to, edgeType: 3 }); // empty top arm
+    } else {
+      newEdges.push({ from, to: emptyId, edgeType: 2 }, { from: emptyId, to, edgeType: 4 }); // empty bottom arm
+    }
   }
   return { nodes, edges: newEdges };
+}
+
+/**
+ * Extract operator identifiers from a DAG for signature matching.
+ * For :cond:\Pe returns \Pe; for \Od returns \Od. Used to filter rules by operator overlap.
+ */
+export function extractOperators<T extends { op?: string }>(structure: DAGStructure<T>): Set<string> {
+  const ops = new Set<string>();
+  for (const n of structure.nodes) {
+    const op = (n.data as { op?: string })?.op ?? '';
+    if (!op) continue;
+    const base = op.startsWith(':cond:') ? op.slice(6) : op;
+    if (base && !base.endsWith(':tail')) ops.add(base);
+  }
+  return ops;
+}
+
+/** Normalize branch op for multiset key (must match vf2Expr key). */
+function normalizeBranchOpForMultiset(op: string): string {
+  if (/^:cond(:|$)|^:tail$/.test(op)) return op;
+  const m = op.match(/^\\B[lr]?b(:cond(?::\S+)?|:tail)$/);
+  return m ? m[1] : op;
+}
+
+/**
+ * (op, operandCount) multiset for a DAG (non-\Tc nodes). Key = normalizedOp:operandCount.
+ * Used to pre-filter rules: pattern multiset must be <= target multiset for a match to exist.
+ */
+export function getOpCountMultiset<T extends { op?: string; operands?: unknown[] }>(
+  structure: DAGStructure<T>
+): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const n of structure.nodes) {
+    const op = (n.data as { op?: string })?.op ?? '';
+    if (op === '\\Tc') continue;
+    const key = `${normalizeBranchOpForMultiset(op)}:${(n.data as { operands?: unknown[] })?.operands?.length ?? 0}`;
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  return counts;
+}
+
+/**
+ * True iff pattern's (op, count) multiset is contained in target's (patternCount[key] <= targetCount[key] for all keys).
+ */
+export function patternOpMultisetContainedInTarget<T extends { op?: string; operands?: unknown[] }>(
+  pattern: DAGStructure<T>,
+  target: DAGStructure<T>
+): boolean {
+  const pMultiset = getOpCountMultiset(pattern);
+  const tMultiset = getOpCountMultiset(target);
+  for (const [key, c] of pMultiset) {
+    if ((tMultiset.get(key) ?? 0) < c) return false;
+  }
+  return true;
+}
+
+/**
+ * Count operations in a DAG. Branch head + condition counts as one; :tail (merge point) is structural and not counted.
+ */
+export function countOperations<T extends { op?: string }>(structure: DAGStructure<T>): number {
+  let count = 0;
+  for (const n of structure.nodes) {
+    const op = (n.data as { op?: string })?.op ?? '';
+    if (op.endsWith(':tail')) continue; // tail is structural, not an operation
+    count++;
+  }
+  return count;
 }
 
 /**

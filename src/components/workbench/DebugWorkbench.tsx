@@ -14,7 +14,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { exprToDAG, vf2ExprSubgraphIsomorphism } from '@/lib/dag';
+import { exprToDAG, SingleRootDAGInjection } from '@/lib/dag';
 import { DAGGraphVisual } from '@/components/dag/DAGGraphVisual';
 import { checkInferenceRules } from '@/lib/inferenceRules';
 import { trySubstitution } from '@/lib/inferenceRules/substitution';
@@ -107,26 +107,30 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
   const hasRule = snapshot.ruleLeft.trim() && snapshot.ruleRight.trim();
 
   const isomorphismResults = useMemo(() => {
+    const hasMatch = (p: DAGStructure<ExprNodeData>, t: DAGStructure<ExprNodeData>) => {
+      for (const _ of SingleRootDAGInjection(p, t)) return true;
+      return false;
+    };
     const results: { label: string; match: boolean }[] = [];
     if (!hasRule || !ruleLeftDAG || !ruleRightDAG) return results;
     if (leftDAG) {
       results.push({
         label: 'ruleLeft subgraph of left',
-        match: vf2ExprSubgraphIsomorphism(ruleLeftDAG, leftDAG) !== null,
+        match: hasMatch(ruleLeftDAG, leftDAG),
       });
       results.push({
         label: 'ruleRight subgraph of left',
-        match: vf2ExprSubgraphIsomorphism(ruleRightDAG, leftDAG) !== null,
+        match: hasMatch(ruleRightDAG, leftDAG),
       });
     }
     if (rightDAG) {
       results.push({
         label: 'ruleLeft subgraph of right',
-        match: vf2ExprSubgraphIsomorphism(ruleLeftDAG, rightDAG) !== null,
+        match: hasMatch(ruleLeftDAG, rightDAG),
       });
       results.push({
         label: 'ruleRight subgraph of right',
-        match: vf2ExprSubgraphIsomorphism(ruleRightDAG, rightDAG) !== null,
+        match: hasMatch(ruleRightDAG, rightDAG),
       });
     }
     return results;

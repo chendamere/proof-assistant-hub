@@ -8,22 +8,19 @@ export interface DAGNode<T = unknown> {
   data?: T;
 }
 
+/** Edge type for branch structure: 0=chain/empty, 1=cond→top, 2=cond→bottom, 3=top→tail, 4=bottom→tail */
+export type EdgeType = 0 | 1 | 2 | 3 | 4;
+
 export interface DAGEdge {
   from: string;
   to: string;
+  /** Branch role: 0=chain or empty arm, 1=cond→first of top arm, 2=cond→first of bottom, 3=last of top→tail, 4=last of bottom→tail */
+  edgeType?: EdgeType;
 }
 
 export interface DAGStructure<T = unknown> {
   nodes: DAGNode<T>[];
   edges: DAGEdge[];
-}
-
-export interface DAGValidationResult {
-  isValid: boolean;
-  isAcyclic: boolean;
-  cycles?: string[][];
-  orphanNodes?: string[];
-  missingReferences?: { edge: DAGEdge; missing: 'from' | 'to' }[];
 }
 
 export type BranchKind = 'Bb' | 'Blb' | 'Brb' | 'Brs';

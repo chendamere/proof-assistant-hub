@@ -102,18 +102,19 @@ export const InferenceRules: InferenceRule[] = [
     description: 'A ⟺ B allows inserting A with B in any context M·A·N ⟺ M·B·N',
     check: (targetLeft, targetRight, ruleLeft, ruleRight, context) => {
       const stepCounter = context?.stepCounter;
+      const dagCache = context?.dagCache;
 
       // Try all 4 substitution directions
-      let result = trySubstitution(targetLeft, ruleLeft, ruleRight, targetRight, targetLeft, 'left', stepCounter);
+      let result = trySubstitution(targetLeft, ruleLeft, ruleRight, targetRight, targetLeft, 'left', stepCounter, dagCache);
       if (result) return result;
 
-      result = trySubstitution(targetLeft, ruleRight, ruleLeft, targetRight, targetLeft, 'left', stepCounter);
-      if (result) return result;
-      
-      result = trySubstitution(targetRight, ruleLeft, ruleRight, targetLeft, ruleRight, 'right', stepCounter);
+      result = trySubstitution(targetLeft, ruleRight, ruleLeft, targetRight, targetLeft, 'left', stepCounter, dagCache);
       if (result) return result;
 
-      result = trySubstitution(targetRight, ruleRight, ruleLeft, targetLeft, ruleRight, 'right', stepCounter);
+      result = trySubstitution(targetRight, ruleLeft, ruleRight, targetLeft, ruleRight, 'right', stepCounter, dagCache);
+      if (result) return result;
+
+      result = trySubstitution(targetRight, ruleRight, ruleLeft, targetLeft, ruleRight, 'right', stepCounter, dagCache);
       if (result) return result;
 
       return { match: false };

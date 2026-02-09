@@ -4,7 +4,11 @@
  * Branch head nodes are identified by :cond, tail by :tail (no Bb/Blb/Brb in node data).
  */
 
-import type { DAGStructure, DAGNode, DAGEdge, ExprNodeData } from './types';
+import type { DAGStructure, DAGNode, DAGEdge, ExprNodeData, EdgeType } from './types';
+
+function pushEdge(edges: DAGEdge[], from: string, to: string, edgeType: EdgeType = 0): void {
+  edges.push({ from, to, edgeType });
+}
 import { normalizeSpacing } from '../inferenceRules/utils';
 
 function parseOneBraced(expr: string, pos: number): { content: string; end: number } | null {
@@ -249,11 +253,11 @@ function buildItem(
       const firstIds: string[] = [];
       if (topResult) {
         firstIds.push(topResult.firstId!);
-        edges.push({ from: topResult.lastId!, to: tailId });
+        pushEdge(edges, topResult.lastId!, tailId, 3); // top→tail
       }
       if (botResult) {
         firstIds.push(botResult.firstId!);
-        edges.push({ from: botResult.lastId!, to: tailId });
+        pushEdge(edges, botResult.lastId!, tailId, 4); // bottom→tail
       }
       if (firstIds.length === 0) firstIds.push(tailId);
 
@@ -275,14 +279,14 @@ function buildItem(
       const lastIds: string[] = [];
       const topResult = buildItem(branch.top, nodes, edges, nextId, topOffset);
       if (topResult) {
-        edges.push({ from: condHeadId, to: topResult.firstId! });
+        pushEdge(edges, condHeadId, topResult.firstId!, 1); // cond→top
         lastIds.push(topResult.lastId!);
       } else {
         lastIds.push(condHeadId);
       }
       const botResult = buildItem(branch.bottom, nodes, edges, nextId, botOffset);
       if (botResult) {
-        edges.push({ from: condHeadId, to: botResult.firstId! });
+        pushEdge(edges, condHeadId, botResult.firstId!, 2); // cond→bottom
         lastIds.push(botResult.lastId!);
       } else if (!topResult) {
         lastIds.pop(); // already pushed condHeadId for empty top
@@ -312,17 +316,17 @@ function buildItem(
 
     const topResult = buildItem(branch.top, nodes, edges, nextId, topOffset);
     if (topResult) {
-      edges.push({ from: condHeadId, to: topResult.firstId! });
-      edges.push({ from: topResult.lastId!, to: tailId });
+      pushEdge(edges, condHeadId, topResult.firstId!, 1); // cond→top
+      pushEdge(edges, topResult.lastId!, tailId, 3); // top→tail
     } else {
-      edges.push({ from: condHeadId, to: tailId });
+      pushEdge(edges, condHeadId, tailId, 0); // empty top arm
     }
     const botResult = buildItem(branch.bottom, nodes, edges, nextId, botOffset);
     if (botResult) {
-      edges.push({ from: condHeadId, to: botResult.firstId! });
-      edges.push({ from: botResult.lastId!, to: tailId });
+      pushEdge(edges, condHeadId, botResult.firstId!, 2); // cond→bottom
+      pushEdge(edges, botResult.lastId!, tailId, 4); // bottom→tail
     } else {
-      edges.push({ from: condHeadId, to: tailId });
+      pushEdge(edges, condHeadId, tailId, 0); // empty bottom arm
     }
 
     return { firstId: condHeadId, lastId: tailId };
@@ -346,7 +350,7 @@ function buildItem(
     if (i === 0) firstId = nodeId;
     lastId = nodeId;
     if (i > 0) {
-      edges.push({ from: `n${nextId.n - 2}`, to: nodeId });
+      pushEdge(edges, `n${nextId.n - 2}`, nodeId, 0); // chain
     }
   }
   return firstId && lastId ? { firstId, lastId } : null;
@@ -358,7 +362,7 @@ function chain(from: BuildResult, to: BuildResult, edges: DAGEdge[]): void {
   const toIds = to.firstIds ?? (to.firstId ? [to.firstId] : []);
   for (const fid of fromIds) {
     for (const tid of toIds) {
-      edges.push({ from: fid, to: tid });
+      pushEdge(edges, fid, tid, 0); // chain between items
     }
   }
 }

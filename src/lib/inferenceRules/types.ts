@@ -20,6 +20,7 @@ export interface MatchPosition {
 
 export interface InferenceRuleContext {
   stepCounter?: { count: number };
+  dagCache?: Map<string, DAGStructure<ExprNodeData>>;
 }
 
 export interface InferenceRule {

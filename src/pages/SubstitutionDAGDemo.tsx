@@ -7,7 +7,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
-import { exprToDAG, vf2ExprSubgraphIsomorphism } from '@/lib/dag';
+import { exprToDAG, SingleRootDAGInjection } from '@/lib/dag';
 import { findSubstitution as findSubst } from '@/lib/inferenceRules/substitution';
 import { trySubstitutionWorker } from '@/lib/substitutionWorkerClient';
 import { normalizeSpacing } from '@/lib/inferenceRules/utils';
@@ -307,7 +307,11 @@ export default function SubstitutionDAGDemo() {
   const matchFound = subResult.match;
 
   // Check if rule DAG is isomorphic to (subgraph of) target DAG
-  const vf2Result = vf2ExprSubgraphIsomorphism(patternDAG, targetDAG);
+  let vf2Result: { mapping: Map<string, string>; operandMapping: Map<string, string> } | null = null;
+  for (const r of SingleRootDAGInjection(patternDAG, targetDAG)) {
+    vf2Result = r;
+    break;
+  }
 
   return (
     <div className="min-h-screen gradient-bg">

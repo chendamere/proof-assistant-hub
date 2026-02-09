@@ -7,7 +7,7 @@
 import type { DAGStructure, ExprNodeData } from '../dag';
 import { MatchPosition } from './types';
 import { normalizeSpacing, extractOperandTokens } from './utils';
-import { exprToDAG, dagToExpr, vf2ExprSubgraphIsomorphism, vf2ExprSubgraphIsomorphismAll, substituteInDAG, extractSubgraphFromNode, augmentTargetDAGForTcMatching } from '../dag';
+import { exprToDAG, dagToExpr, SingleRootDAGInjection, substituteInDAG, extractSubgraphFromNode, augmentTargetDAGForTcMatching, patternOpMultisetContainedInTarget } from '../dag';
 
 /**
  * Convert ruleOtherSide using operand mapping
@@ -299,7 +299,11 @@ export const findSubstitution = function findSubstitutionRecursive(
     return { match: false };
   }
 
-  const result = vf2ExprSubgraphIsomorphism(patternDAG, targetDAG);
+  let result: { mapping: Map<string, string>; operandMapping: Map<string, string> } | null = null;
+  for (const r of SingleRootDAGInjection(patternDAG, targetDAG)) {
+    result = r;
+    break;
+  }
   if (result === null) {
     return { match: false };
   }
@@ -363,6 +367,18 @@ function getCommaBoundaries(expr: string): number[] {
  * so heads and tails connect correctly (no character-position splicing).
  * When rule side parses to empty DAG (e.g. ","), tries insertion at each top-level comma boundary.
  */
+function getCachedOrCreateDAG(
+  expr: string,
+  cache?: Map<string, DAGStructure<ExprNodeData>>
+): DAGStructure<ExprNodeData> {
+  const normalized = normalizeSpacing(expr);
+  const cached = cache?.get(normalized);
+  if (cached) return cached;
+  const dag = exprToDAG(normalized) as DAGStructure<ExprNodeData>;
+  if (cache) cache.set(normalized, dag);
+  return dag;
+}
+
 export const trySubstitution = (
   target: string,
   ruleSide: string,
@@ -370,12 +386,13 @@ export const trySubstitution = (
   expectedResult: string,
   targetSideForOperands: string,
   side: 'left' | 'right',
-  stepCounter?: { count: number }
+  stepCounter?: { count: number },
+  dagCache?: Map<string, DAGStructure<ExprNodeData>>
 ) => {
   const normalizedTarget = normalizeSpacing(target);
   const normalizedRule = normalizeSpacing(ruleSide);
-  const patternDAG = exprToDAG(normalizedRule);
-  let targetDAG = exprToDAG(normalizedTarget);
+  const patternDAG = getCachedOrCreateDAG(ruleSide, dagCache);
+  let targetDAG = getCachedOrCreateDAG(target, dagCache);
   const hasTc = patternDAG.nodes.some((n) => (n.data as ExprNodeData)?.op === '\\Tc');
   if (hasTc && patternDAG.nodes.length > targetDAG.nodes.length) {
     targetDAG = augmentTargetDAGForTcMatching(targetDAG) as DAGStructure<ExprNodeData>;
@@ -384,7 +401,7 @@ export const trySubstitution = (
   // Normalize expected for comparison (roundtrip through parser strips if(...) from conditions)
   let normalizedExpected = normalizeSpacing(expectedResult);
   try {
-    normalizedExpected = normalizeSpacing(dagToExpr(exprToDAG(normalizedExpected)));
+    normalizedExpected = normalizeSpacing(dagToExpr(getCachedOrCreateDAG(expectedResult, dagCache)));
   } catch {
     // keep original if roundtrip fails
   }
@@ -432,12 +449,17 @@ export const trySubstitution = (
     return null;
   }
 
+  // Pre-filter: pattern (op, count) multiset must be contained in target (no match possible otherwise)
+  if (!patternOpMultisetContainedInTarget(patternDAG, targetDAG)) {
+    return null;
+  }
+
   // DAG-based: try each match candidate until one produces the expected result
-  const maxTrials = targetDAG.nodes.length > 12 ? 32 : 64;
+  const nodeCount = targetDAG.nodes.length;
+  const maxTrials =
+    nodeCount > 24 ? 4 : nodeCount > 20 ? 8 : nodeCount > 12 ? 32 : 64;
   let trialCount = 0;
-  const sc = stepCounter ?? { count: 0 };
-  if (stepCounter) stepCounter.count = 0;
-  for (const vf2Result of vf2ExprSubgraphIsomorphismAll(patternDAG, targetDAG, { stepCounter: sc })) {
+  for (const vf2Result of SingleRootDAGInjection(patternDAG, targetDAG)) {
     if (++trialCount > maxTrials) break;
     const tNodeMap = new Map(targetDAG.nodes.map((n) => [n.id, n]));
     let candidateStart = normalizedTarget.length;
