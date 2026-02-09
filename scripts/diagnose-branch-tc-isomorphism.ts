@@ -6,7 +6,7 @@
  * Rule right:   ", \Bb{m \Oe n}{,\Bb{i \Oe j}{,\Tc c_1,}{,\Tc c_3,},}{, \Bb{i \Oe j}{,\Tc c_2,}{,\Tc c_4,},},"
  */
 
-import { exprToDAG, dagToExpr, vf2ExprSubgraphIsomorphismAll, augmentTargetDAGForTcMatching } from '../src/lib/dag';
+import { exprToDAG, dagToExpr, SingleRootDAGInjection, augmentTargetDAGForTcMatching } from '../src/lib/dag';
 import { normalizeSpacing } from '../src/lib/inferenceRules/utils';
 import type { ExprNodeData } from '../src/lib/dag/types';
 
@@ -91,7 +91,7 @@ function runDiagnostic() {
 
   logSection('STEP 3: VF2 ISOMORPHISM');
   let vf2Count = 0;
-  for (const vf2Result of vf2ExprSubgraphIsomorphismAll(patternDAG, targetDAG)) {
+  for (const vf2Result of SingleRootDAGInjection(patternDAG, targetDAG)) {
     vf2Count++;
     console.log(`\n--- Match ${vf2Count} ---`);
     console.log('Node mapping:', Object.fromEntries(vf2Result.mapping));

@@ -1,7 +1,7 @@
 /**
  * Diagnose why Branch arm swap4 is not matching
  */
-import { exprToDAG, dagToExpr, vf2ExprSubgraphIsomorphismAll, substituteInDAG } from '../src/lib/dag';
+import { exprToDAG, dagToExpr, SingleRootDAGInjection, substituteInDAG } from '../src/lib/dag';
 import { normalizeSpacing } from '../src/lib/inferenceRules/utils';
 
 const ex = {
@@ -32,7 +32,7 @@ console.log('Edges:', replacementDAG.edges);
 
 console.log('\n=== VF2 All Matches ===');
 let matchCount = 0;
-for (const result of vf2ExprSubgraphIsomorphismAll(patternDAG, targetDAG)) {
+for (const result of SingleRootDAGInjection(patternDAG, targetDAG)) {
   matchCount++;
   console.log(`\nMatch ${matchCount}:`);
   console.log('  mapping:', [...result.mapping.entries()]);

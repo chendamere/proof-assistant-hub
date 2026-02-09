@@ -6,7 +6,7 @@ import { exprToDAG, countOperations } from '../src/lib/dag';
 import { normalizeSpacing } from '../src/lib/inferenceRules/utils';
 import { buildRuleIndex, getRulesForTransition } from '../src/lib/inferenceRules/ruleIndex';
 import { checkInferenceRules } from '../src/lib/inferenceRules';
-import { SingleRootDAGInjection } from '../src/lib/dag/vf2Expr';
+import { SingleRootDAGInjection } from '../src/lib/dag';
 
 const ruleLeft = ',j \\Od t_2, i \\Od t_1, \\Blb{if(t_2 \\Pe t_1)}{, t_2 \\Os,t_1 \\Os,}{, t_2 \\Os,t_1 \\Os,},';
 const ruleRight = ',\\Blb{if(j \\Ps i)}{,}{,},';

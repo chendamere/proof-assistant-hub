@@ -9,7 +9,7 @@
  * Isomorphism found but equivalent substitution fails after conversion.
  */
 
-import { exprToDAG, dagToExpr, vf2ExprSubgraphIsomorphismAll, substituteInDAG } from '../src/lib/dag';
+import { exprToDAG, dagToExpr, SingleRootDAGInjection, substituteInDAG } from '../src/lib/dag';
 import { normalizeSpacing } from '../src/lib/inferenceRules/utils';
 import { trySubstitution } from '../src/lib/inferenceRules/substitution';
 import type { ExprNodeData } from '../src/lib/dag/types';
@@ -80,7 +80,7 @@ function runDiagnostic() {
 
   logSection('Step 2: VF2 isomorphism enumeration');
   let trialIdx = 0;
-  for (const vf2Result of vf2ExprSubgraphIsomorphismAll(patternDAG, targetDAG)) {
+  for (const vf2Result of SingleRootDAGInjection(patternDAG, targetDAG)) {
     trialIdx++;
     console.log(`\n--- Trial ${trialIdx} ---`);
     const operandMapping = vf2Result.operandMapping;
