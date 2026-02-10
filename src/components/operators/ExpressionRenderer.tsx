@@ -468,7 +468,7 @@ export const ExpressionRenderer: React.FC<ExpressionRendererProps> = ({ expressi
                 alt={token.value}
                 title={token.value}
                 style={{ width: adjustedSize, height: adjustedSize, verticalAlign: 'middle' }}
-                className="inline-block invert brightness-0 invert align-middle"
+                className="inline-block align-middle dark:invert dark:brightness-0 dark:invert"
               />
             </span>
           );
