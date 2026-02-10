@@ -8,10 +8,18 @@
 import type {
   TransitionVerificationRequest,
   TransitionVerificationResponse,
+  MatchInfo,
 } from '@/workers/transitionVerificationWorker';
 import { buildRuleIndex, getRulesForTransition } from '@/lib/inferenceRules/ruleIndex';
+import { ruleStatistics } from '@/lib/inferenceRules/ruleStatistics';
+import { diagnoseFailure } from '@/lib/inferenceRules/errorDiagnosis';
+import { normalizeSpacing } from '@/lib/inferenceRules/utils';
 
 const WORKER_URL = new URL('@/workers/transitionVerificationWorker.ts', import.meta.url);
+const FALSE_RESULT_CACHE_MAX = 500;
+
+/** Cache for transition verification false results (key = normalized left + "\\n---\\n" + normalized right). */
+const falseResultCache = new Map<string, VerifyTransitionResult>();
 const PARALLEL_WORKERS = Math.min(4, Math.max(1, navigator.hardwareConcurrency ?? 4));
 
 const workerPool: Worker[] = [];
@@ -41,7 +49,7 @@ function verifyChunk(
   targetLeft: string,
   targetRight: string,
   rulesChunk: Array<{ id: string; leftSide: string; rightSide: string }>
-): Promise<boolean> {
+): Promise<{ matched: boolean; response: TransitionVerificationResponse }> {
   const id = `${baseId}-${chunkIndex}`;
   return new Promise((resolve, reject) => {
     const handler = (e: MessageEvent<TransitionVerificationResponse>) => {
@@ -51,7 +59,7 @@ function verifyChunk(
       if (e.data.error) {
         reject(new Error(e.data.error));
       } else {
-        resolve(e.data.matched);
+        resolve({ matched: e.data.matched, response: e.data });
       }
     };
 
@@ -75,18 +83,41 @@ function verifyChunk(
   });
 }
 
+export interface VerifyTransitionResult {
+  matched: boolean;
+  /** When matched: which rule and where it matched (for collapsible success details). */
+  matchInfo?: MatchInfo;
+  diagnosis?: import('@/lib/inferenceRules/errorDiagnosis').DiagnosisResult;
+}
+
+function cacheFalseResult(key: string, result: VerifyTransitionResult): void {
+  if (falseResultCache.size >= FALSE_RESULT_CACHE_MAX) {
+    const first = falseResultCache.keys().next().value;
+    if (first !== undefined) falseResultCache.delete(first);
+  }
+  falseResultCache.set(key, result);
+}
+
 export function verifyTransitionWorker(
   params: VerifyTransitionParams
-): Promise<boolean> {
+): Promise<VerifyTransitionResult> {
   const baseId = `tv-${++requestId}`;
   const { targetLeft, targetRight, rules } = params;
+
+  const cacheKey = normalizeSpacing(targetLeft) + '\n---\n' + normalizeSpacing(targetRight);
+  const cached = falseResultCache.get(cacheKey);
+  if (cached !== undefined) return Promise.resolve(cached);
 
   // Build index and get filtered rules on main thread (fast, no VF2)
   const index = buildRuleIndex(rules);
   const rulesToTry = getRulesForTransition(index, targetLeft, targetRight);
 
   if (rulesToTry.length === 0) {
-    return Promise.resolve(false);
+    // Generate diagnosis for no rules case
+    const diagnosis = diagnoseFailure(targetLeft, targetRight, [], rules, index);
+    const result: VerifyTransitionResult = { matched: false, diagnosis };
+    cacheFalseResult(cacheKey, result);
+    return Promise.resolve(result);
   }
 
   // Split into parallel chunks
@@ -98,7 +129,13 @@ export function verifyTransitionWorker(
     if (chunk.length > 0) chunks.push(chunk);
   }
 
-  if (chunks.length === 0) return Promise.resolve(false);
+  if (chunks.length === 0) {
+    const diagnosis = diagnoseFailure(targetLeft, targetRight, [], rules, index);
+    const result: VerifyTransitionResult = { matched: false, diagnosis };
+    cacheFalseResult(cacheKey, result);
+    return Promise.resolve(result);
+  }
+  
   if (chunks.length === 1) {
     return verifyChunk(
       getWorkerFromPool(),
@@ -107,7 +144,24 @@ export function verifyTransitionWorker(
       targetLeft,
       targetRight,
       chunks[0]
-    );
+    ).then(({ matched, response }) => {
+      // Track statistics for all rules tried
+      if (response.rulesTried) {
+        for (const { ruleId, matched: ruleMatched, matchTime } of response.rulesTried) {
+          ruleStatistics.recordAttempt(ruleId, matchTime, ruleMatched);
+        }
+      }
+      
+      // Generate diagnosis if no match
+      if (!matched && response.rulesTried) {
+        const diagnosis = diagnoseFailure(targetLeft, targetRight, response.rulesTried, rules, index);
+        const result: VerifyTransitionResult = { matched: false, diagnosis };
+        cacheFalseResult(cacheKey, result);
+        return result;
+      }
+      
+      return { matched: true, matchInfo: response.matchInfo };
+    });
   }
 
   // Run chunks in parallel; resolve true as soon as any matches, false when all done
@@ -115,12 +169,19 @@ export function verifyTransitionWorker(
     let settled = 0;
     let foundMatch = false;
     let rejected = false;
+    const allRulesTried: Array<{ ruleId: string; matched: boolean; matchTime: number }> = [];
 
     const maybeSettle = () => {
       if (foundMatch) return;
       if (rejected) return;
       settled += 1;
-      if (settled === chunks.length) resolve(false);
+      if (settled === chunks.length) {
+        // All chunks done, generate diagnosis
+        const diagnosis = diagnoseFailure(targetLeft, targetRight, allRulesTried, rules, index);
+        const result: VerifyTransitionResult = { matched: false, diagnosis };
+        cacheFalseResult(cacheKey, result);
+        resolve(result);
+      }
     };
 
     chunks.forEach((chunk, i) => {
@@ -132,10 +193,18 @@ export function verifyTransitionWorker(
         targetRight,
         chunk
       )
-        .then((matched) => {
+        .then(({ matched, response }) => {
+          // Track statistics for all rules tried in this chunk
+          if (response.rulesTried) {
+            for (const { ruleId, matched: ruleMatched, matchTime } of response.rulesTried) {
+              ruleStatistics.recordAttempt(ruleId, matchTime, ruleMatched);
+              allRulesTried.push({ ruleId, matched: ruleMatched, matchTime });
+            }
+          }
+          
           if (matched) {
             foundMatch = true;
-            resolve(true);
+            resolve({ matched: true, matchInfo: response.matchInfo });
           }
           maybeSettle();
         })

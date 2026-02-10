@@ -7,6 +7,7 @@ import type { DAGStructure } from '../dag';
 import type { ExprNodeData } from '../dag/types';
 import { exprToDAG, countOperations, extractOperators } from '../dag';
 import { normalizeSpacing } from './utils';
+import { ruleStatistics } from './ruleStatistics';
 
 export interface IndexedRule {
   id: string;
@@ -126,13 +127,29 @@ export function getRulesForTransition(
 
     const withTc = [...result, ...index.tcRules];
     const patternSize = index.rulePatternSize;
-    if (patternSize) {
-      withTc.sort((a, b) => {
-        const sa = patternSize.get(a.id) ?? 999;
-        const sb = patternSize.get(b.id) ?? 999;
-        return sa - sb;
-      });
-    }
+    
+    // Sort by priority: statistics first, then pattern size, then fast-reject first
+    withTc.sort((a, b) => {
+      // Primary: success rate from statistics
+      const scoreA = ruleStatistics.getPriorityScore(a.id);
+      const scoreB = ruleStatistics.getPriorityScore(b.id);
+      
+      // If scores differ significantly (more than 0.1), use statistics
+      if (Math.abs(scoreA - scoreB) > 0.1) {
+        return scoreB - scoreA; // Higher score first
+      }
+
+      // Secondary: pattern size (smaller first) - fallback for similar scores
+      const sa = patternSize?.get(a.id) ?? 999;
+      const sb = patternSize?.get(b.id) ?? 999;
+      if (sa !== sb) return sa - sb;
+
+      // Tertiary: try fast-reject rules first (lower avg reject time = try earlier)
+      const rejectA = ruleStatistics.getAvgRejectTime(a.id);
+      const rejectB = ruleStatistics.getAvgRejectTime(b.id);
+      return rejectA - rejectB;
+    });
+    
     return withTc;
   } catch {
     return [...Array.from(index.byDelta.values()).flat(), ...index.tcRules];

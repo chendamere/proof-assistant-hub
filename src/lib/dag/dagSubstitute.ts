@@ -98,13 +98,10 @@ export function substituteInDAG(
   const mergedNodes: DAGNode<ExprNodeData>[] = [];
   const mergedEdges: DAGEdge[] = [];
 
-  // Add prefix nodes and edges (include prefix->sibling here to preserve arm order for dagToExpr)
+  // Add prefix nodes
   for (const id of prefixSet) {
     const node = tNodeMap.get(id)!;
     mergedNodes.push({ id: node.id, data: node.data });
-  }
-  for (const e of targetDAG.edges) {
-    if (prefixSet.has(e.from) && (prefixSet.has(e.to) || siblingSet.has(e.to))) mergedEdges.push(e);
   }
 
   // Add replacement nodes and edges
@@ -119,6 +116,21 @@ export function substituteInDAG(
     const from = replacementIdMap.get(e.from);
     const to = replacementIdMap.get(e.to);
     if (from && to) mergedEdges.push({ from, to, edgeType: e.edgeType });
+  }
+
+  // Boundary: prefix->replacement heads first (in edge-type order) so :cond's children
+  // are serialized top arm then bottom by dagToExpr
+  addPrefixToReplacementEdges(
+    targetDAG.edges,
+    mergedEdges,
+    prefixSet,
+    matchedIds,
+    replacementHeads
+  );
+
+  // Prefix edges (prefix->prefix, prefix->sibling)
+  for (const e of targetDAG.edges) {
+    if (prefixSet.has(e.from) && (prefixSet.has(e.to) || siblingSet.has(e.to))) mergedEdges.push(e);
   }
 
   // Add sibling nodes and edges (e.g. top arm when match is in bottom arm)
@@ -139,8 +151,7 @@ export function substituteInDAG(
     if (suffixSet.has(e.from) && suffixSet.has(e.to)) mergedEdges.push(e);
   }
 
-  // Boundary edges: prefix->replacement, replacement->suffix, prefix->suffix (empty arms),
-  // prefix->sibling, sibling->suffix (sibling arms)
+  // Boundary: replacement->suffix, prefix->suffix (empty arms), sibling->suffix
   addBoundaryEdges(
     targetDAG.edges,
     mergedEdges,
@@ -155,6 +166,37 @@ export function substituteInDAG(
   return { nodes: mergedNodes, edges: mergedEdges };
 }
 
+/** Edge type order for branch: top arm (0,1,3) before bottom arm (2,4) so dagToExpr serializes top then bottom. */
+const TOP_ARM_TYPES = new Set([0, 1, 3]);
+function edgeTypeOrder(et: number): number {
+  return TOP_ARM_TYPES.has(et) ? 0 : 1;
+}
+
+/** Add prefix->replacement head edges in edge-type order so :cond children are top then bottom. */
+function addPrefixToReplacementEdges(
+  targetEdges: DAGEdge[],
+  out: DAGEdge[],
+  prefixSet: Set<string>,
+  matchedIds: Set<string>,
+  replacementHeads: Set<string>
+): void {
+  const prefixToMatched: Array<{ from: string; edgeType: number }> = [];
+  for (const e of targetEdges) {
+    if (prefixSet.has(e.from) && matchedIds.has(e.to)) {
+      prefixToMatched.push({ from: e.from, edgeType: (e.edgeType ?? 0) as number });
+    }
+  }
+  prefixToMatched.sort(
+    (a, b) => edgeTypeOrder(a.edgeType) - edgeTypeOrder(b.edgeType) || a.edgeType - b.edgeType
+  );
+  const headIds = [...replacementHeads];
+  for (const { from: prefixId, edgeType } of prefixToMatched) {
+    for (const headId of headIds) {
+      out.push({ from: prefixId, to: headId, edgeType });
+    }
+  }
+}
+
 function addBoundaryEdges(
   targetEdges: DAGEdge[],
   out: DAGEdge[],
@@ -162,29 +204,25 @@ function addBoundaryEdges(
   suffixSet: Set<string>,
   siblingSet: Set<string>,
   matchedIds: Set<string>,
-  replacementHeads: Set<string>,
+  _replacementHeads: Set<string>,
   replacementTails: Set<string>
 ): void {
-  const prefixHadEdgeToMatched = new Set<string>();
-  for (const e of targetEdges) {
-    if (prefixSet.has(e.from) && matchedIds.has(e.to)) prefixHadEdgeToMatched.add(e.from);
-  }
-  for (const prefixId of prefixHadEdgeToMatched) {
-    for (const headId of replacementHeads) out.push({ from: prefixId, to: headId });
-  }
+  // prefix->replacement already added in addPrefixToReplacementEdges (in type order)
 
   const suffixReceivedFromMatched = new Set<string>();
   for (const e of targetEdges) {
     if (matchedIds.has(e.from) && suffixSet.has(e.to)) suffixReceivedFromMatched.add(e.to);
   }
   for (const tailId of replacementTails) {
-    for (const suffixId of suffixReceivedFromMatched) out.push({ from: tailId, to: suffixId });
+    for (const suffixId of suffixReceivedFromMatched) {
+      out.push({ from: tailId, to: suffixId, edgeType: (targetEdges.find((e) => matchedIds.has(e.from) && e.to === suffixId)?.edgeType ?? 0) as number });
+    }
   }
 
   // prefix->suffix (empty arms) and sibling->suffix (sibling arms)
   // prefix->sibling is added with prefix edges to preserve arm order
   for (const e of targetEdges) {
-    if (prefixSet.has(e.from) && suffixSet.has(e.to)) out.push({ from: e.from, to: e.to });
-    if (siblingSet.has(e.from) && suffixSet.has(e.to)) out.push({ from: e.from, to: e.to });
+    if (prefixSet.has(e.from) && suffixSet.has(e.to)) out.push({ from: e.from, to: e.to, edgeType: e.edgeType });
+    if (siblingSet.has(e.from) && suffixSet.has(e.to)) out.push({ from: e.from, to: e.to, edgeType: e.edgeType });
   }
 }

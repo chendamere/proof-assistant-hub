@@ -14,11 +14,14 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { axioms } from '@/data/axioms';
-import { verifyTransitionWorker } from '@/lib/transitionVerificationWorkerClient';
+import { verifyTransitionWorker, type VerifyTransitionResult } from '@/lib/transitionVerificationWorkerClient';
+import type { MatchInfo } from '@/workers/transitionVerificationWorker';
+import type { DiagnosisResult } from '@/lib/inferenceRules/errorDiagnosis';
+import { generateLLMDiagnosis } from '@/lib/inferenceRules/llmDiagnosis';
 import { definitions } from '@/data/definitions';
 import { theorems } from '@/data/theorems';
 import { Button } from '@/components/ui/button';
-import { Search, ChevronDown, ChevronRight, FileText, ListOrdered, CheckCircle2, Check, X } from 'lucide-react';
+import { Search, ChevronDown, ChevronRight, FileText, ListOrdered, CheckCircle2, Check, X, AlertTriangle, Info, Plus, Trash2, CheckCheck } from 'lucide-react';
 
 type ProofStepsTable = Record<string, string[]>;
 
@@ -81,6 +84,10 @@ const ProofSteps: React.FC = () => {
   const [chapter, setChapter] = useState<string>('Theorems_of_Identical_Node_Comparison');
   const [transitionVerifying, setTransitionVerifying] = useState<string | null>(null);
   const [transitionResults, setTransitionResults] = useState<Record<string, Record<number, boolean>>>({});
+  const [transitionMatchInfo, setTransitionMatchInfo] = useState<Record<string, Record<number, MatchInfo>>>({});
+  const [transitionDiagnoses, setTransitionDiagnoses] = useState<Record<string, Record<number, DiagnosisResult>>>({});
+  const [customTransitionVerifying, setCustomTransitionVerifying] = useState<string | null>(null);
+  const [customTransitionResults, setCustomTransitionResults] = useState<Record<string, boolean>>({});
 
   const rulesForWorker = useMemo(
     () =>
@@ -119,15 +126,53 @@ const ProofSteps: React.FC = () => {
       const left = steps[transitionIndex];
       const right = steps[transitionIndex + 1];
       try {
-        const matched = await verifyTransitionWorker({
+        const result: VerifyTransitionResult = await verifyTransitionWorker({
           targetLeft: left,
           targetRight: right,
           rules: rulesForWorker,
         });
         setTransitionResults((prev) => ({
           ...prev,
-          [key]: { ...prev[key], [transitionIndex]: matched },
+          [key]: { ...prev[key], [transitionIndex]: result.matched },
         }));
+        if (result.matched && result.matchInfo) {
+          setTransitionMatchInfo((prev) => ({
+            ...prev,
+            [key]: { ...prev[key], [transitionIndex]: result.matchInfo! },
+          }));
+        } else if (!result.matched) {
+          setTransitionMatchInfo((prev) => {
+            const keyData = prev[key];
+            if (!keyData || !(transitionIndex in keyData)) return prev;
+            const nextKey = { ...keyData };
+            delete nextKey[transitionIndex];
+            return { ...prev, [key]: nextKey };
+          });
+        }
+        if (result.diagnosis) {
+          const diagnosis = result.diagnosis;
+          setTransitionDiagnoses((prev) => ({
+            ...prev,
+            [key]: { ...prev[key], [transitionIndex]: diagnosis },
+          }));
+          // LLM diagnosis disabled by default. Set VITE_ENABLE_LLM_DIAGNOSIS=true to enable.
+          // Fetch LLM diagnosis (Ollama/Llama) in background
+          // generateLLMDiagnosis(left, right, diagnosis)
+          //   .then((llmResult) => {
+          //     setTransitionDiagnoses((prev) => {
+          //       const current = prev[key]?.[transitionIndex];
+          //       if (!current) return prev;
+          //       return {
+          //         ...prev,
+          //         [key]: {
+          //           ...prev[key],
+          //           [transitionIndex]: { ...current, llmDiagnosis: llmResult },
+          //         },
+          //       };
+          //     });
+          //   })
+          //   .catch(() => { /* ignore LLM errors */ });
+        }
       } catch (err) {
         console.error('Transition verification error:', err);
         setTransitionResults((prev) => ({
@@ -141,8 +186,49 @@ const ProofSteps: React.FC = () => {
     [table, transitionVerifying, rulesForWorker]
   );
 
+  const verifyCustomTransition = React.useCallback(
+    async (customId: string, left: string, right: string) => {
+      if (customTransitionVerifying) return;
+      setCustomTransitionVerifying(customId);
+      try {
+        const result: VerifyTransitionResult = await verifyTransitionWorker({
+          targetLeft: left,
+          targetRight: right,
+          rules: rulesForWorker,
+        });
+        setCustomTransitionResults((prev) => ({ ...prev, [customId]: result.matched }));
+      } catch (err) {
+        console.error('Custom transition verification error:', err);
+        setCustomTransitionResults((prev) => ({ ...prev, [customId]: false }));
+      } finally {
+        setCustomTransitionVerifying(null);
+      }
+    },
+    [customTransitionVerifying, rulesForWorker]
+  );
+
+  const handleInsertStep = React.useCallback((key: string, insertAtIndex: number, newExpr: string) => {
+    setTable((prev) => {
+      if (!prev || !prev[key]) return prev;
+      const steps = [...prev[key]];
+      steps.splice(insertAtIndex, 0, newExpr);
+      return { ...prev, [key]: steps };
+    });
+  }, []);
+
+  const handleDeleteStep = React.useCallback((key: string, stepIndex: number) => {
+    setTable((prev) => {
+      if (!prev || !prev[key]) return prev;
+      const steps = prev[key].filter((_, idx) => idx !== stepIndex);
+      return { ...prev, [key]: steps };
+    });
+  }, []);
+
   useEffect(() => {
     setTransitionResults({});
+    setTransitionMatchInfo({});
+    setTransitionDiagnoses({});
+    setCustomTransitionResults({});
   }, [chapter]);
 
   const verificationResults = React.useMemo(() => {
@@ -280,10 +366,17 @@ const ProofSteps: React.FC = () => {
                   key={t.key}
                   theorem={t}
                   verification={verificationResults[t.key]}
+                  transitionMatchInfo={transitionMatchInfo[t.key]}
                   onVerifyTransition={verifySingleTransition}
+                  onVerifyCustomTransition={verifyCustomTransition}
                   onCopyToDebug={setDebugWorkbenchExpressions}
+                  onInsertStep={handleInsertStep}
+                  onDeleteStep={handleDeleteStep}
                   transitionVerifying={transitionVerifying}
+                  customTransitionVerifying={customTransitionVerifying}
                   transitionResults={transitionResults[t.key]}
+                  customTransitionResults={customTransitionResults}
+                  transitionDiagnoses={transitionDiagnoses[t.key]}
                 />
               ))}
               {filtered.length === 0 && (
@@ -304,19 +397,37 @@ const ProofSteps: React.FC = () => {
 function TheoremCard({
   theorem,
   verification,
+  transitionMatchInfo = {},
   onVerifyTransition,
+  onVerifyCustomTransition,
   onCopyToDebug,
+  onInsertStep,
+  onDeleteStep,
   transitionVerifying,
+  customTransitionVerifying,
   transitionResults = {},
+  customTransitionResults = {},
+  transitionDiagnoses = {},
 }: {
   theorem: TheoremWithSteps;
   verification?: VerificationResult;
+  transitionMatchInfo?: Record<number, MatchInfo>;
   onVerifyTransition?: (key: string, transitionIndex: number) => void;
+  onVerifyCustomTransition?: (customId: string, left: string, right: string) => void;
   onCopyToDebug?: (left: string, right: string) => void;
+  onInsertStep?: (key: string, insertAtIndex: number, newExpr: string) => void;
+  onDeleteStep?: (key: string, stepIndex: number) => void;
   transitionVerifying?: string | null;
+  customTransitionVerifying?: string | null;
   transitionResults?: Record<number, boolean>;
+  customTransitionResults?: Record<string, boolean>;
+  transitionDiagnoses?: Record<number, DiagnosisResult>;
 }) {
   const [open, setOpen] = useState(false);
+  const [expandedDiagnosis, setExpandedDiagnosis] = useState<number | null>(null);
+  const [expandedMatchInfo, setExpandedMatchInfo] = useState<number | null>(null);
+  const [insertStepOpen, setInsertStepOpen] = useState<string | null>(null);
+  const [insertStepDrafts, setInsertStepDrafts] = useState<Record<string, string>>({});
   const parts = theorem.ruleStr.split(/\s*⟺\s*/);
   const left = parts[0]?.trim() ?? '';
   const right = parts.slice(1).join('⟺').trim();
@@ -380,60 +491,277 @@ function TheoremCard({
               {theorem.steps.map((step, i) => (
                 <React.Fragment key={i}>
                   {i > 0 && (onVerifyTransition || onCopyToDebug) && (
-                    <div className="flex items-center gap-2 py-1">
-                      {onVerifyTransition && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 px-2 text-xs gap-1.5"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onVerifyTransition(theorem.key, i - 1);
-                          }}
-                          disabled={transitionVerifying !== null}
-                        >
-                          {transitionVerifying === `${theorem.key}::${i - 1}` ? (
-                            <>Checking...</>
-                          ) : transitionResults[i - 1] === true ? (
-                            <>
-                              <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
-                              Check step
-                            </>
-                          ) : transitionResults[i - 1] === false ? (
-                            <>
-                              <X className="w-3.5 h-3.5 text-destructive" />
-                              Check step
-                            </>
-                          ) : (
-                            <>
-                              <Check className="w-3.5 h-3.5" />
-                              Check step
-                            </>
-                          )}
-                        </Button>
+                    <div className="space-y-2 py-1">
+                      {(() => {
+                        const transitionId = `${theorem.key}::${i - 1}`;
+                        const prevExpr = theorem.steps[i - 1];
+                        const draft = insertStepDrafts[transitionId] ?? prevExpr;
+                        const isInsertOpen = insertStepOpen === transitionId;
+                        const toggleInsert = () => {
+                          if (isInsertOpen) {
+                            setInsertStepOpen(null);
+                          } else {
+                            setInsertStepOpen(transitionId);
+                            setInsertStepDrafts((prev) => ({
+                              ...prev,
+                              [transitionId]: prev[transitionId] ?? prevExpr,
+                            }));
+                          }
+                        };
+                        const customId = `${transitionId}::insert`;
+                        const customIdAbove = `${transitionId}::insert-above`;
+                        const nextExpr = theorem.steps[i];
+                        // When insert is open, first row references (step above → inserted draft)
+                        const firstRowLeft = prevExpr;
+                        const firstRowRight = isInsertOpen ? draft : nextExpr;
+                        const firstButtonRow = (
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {onVerifyTransition && (
+                              isInsertOpen && onVerifyCustomTransition ? (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 px-2 text-xs gap-1.5"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onVerifyCustomTransition(customIdAbove, firstRowLeft, firstRowRight);
+                                  }}
+                                  disabled={customTransitionVerifying !== null}
+                                  title="Verify: step above → inserted expression"
+                                >
+                                  {customTransitionVerifying === customIdAbove ? (
+                                    <>Checking...</>
+                                  ) : customTransitionResults[customIdAbove] === true ? (
+                                    <>
+                                      <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+                                      Check step
+                                    </>
+                                  ) : customTransitionResults[customIdAbove] === false ? (
+                                    <>
+                                      <X className="w-3.5 h-3.5 text-destructive" />
+                                      Check step
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Check className="w-3.5 h-3.5" />
+                                      Check step
+                                    </>
+                                  )}
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 px-2 text-xs gap-1.5"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onVerifyTransition(theorem.key, i - 1);
+                                  }}
+                                  disabled={transitionVerifying !== null}
+                                >
+                                  {transitionVerifying === transitionId ? (
+                                    <>Checking...</>
+                                  ) : transitionResults[i - 1] === true ? (
+                                    <>
+                                      <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+                                      Check step
+                                    </>
+                                  ) : transitionResults[i - 1] === false ? (
+                                    <>
+                                      <X className="w-3.5 h-3.5 text-destructive" />
+                                      Check step
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Check className="w-3.5 h-3.5" />
+                                      Check step
+                                    </>
+                                  )}
+                                </Button>
+                              )
+                            )}
+                            {onCopyToDebug && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 px-2 text-xs gap-1.5"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onCopyToDebug(firstRowLeft, firstRowRight);
+                                }}
+                                title={isInsertOpen ? 'Copy to Debug: step above → inserted expression' : 'Copy to Debug workbench'}
+                              >
+                                <Copy className="w-3.5 h-3.5" />
+                                Copy to Debug
+                              </Button>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 px-2 text-xs gap-1.5"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleInsert();
+                              }}
+                              title="Insert step: edit expression and see rendered preview"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              Insert step
+                            </Button>
+                          </div>
+                        );
+                        const secondButtonRow = isInsertOpen && (
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {onVerifyCustomTransition && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 px-2 text-xs gap-1.5"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onVerifyCustomTransition(customId, draft, nextExpr);
+                                }}
+                                disabled={customTransitionVerifying !== null}
+                                title="Verify: inserted expression → step below"
+                              >
+                                {customTransitionVerifying === customId ? (
+                                  <>Checking...</>
+                                ) : customTransitionResults[customId] === true ? (
+                                  <>
+                                    <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+                                    Check step
+                                  </>
+                                ) : customTransitionResults[customId] === false ? (
+                                  <>
+                                    <X className="w-3.5 h-3.5 text-destructive" />
+                                    Check step
+                                  </>
+                                ) : (
+                                  <>
+                                    <Check className="w-3.5 h-3.5" />
+                                    Check step
+                                  </>
+                                )}
+                              </Button>
+                            )}
+                            {onCopyToDebug && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 px-2 text-xs gap-1.5"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onCopyToDebug(draft, nextExpr);
+                                }}
+                                title="Copy to Debug: inserted expression → step below"
+                              >
+                                <Copy className="w-3.5 h-3.5" />
+                                Copy to Debug
+                              </Button>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 px-2 text-xs gap-1.5"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleInsert();
+                              }}
+                              title="Insert step: edit expression and see rendered preview"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              Insert step
+                            </Button>
+                          </div>
+                        );
+                        return (
+                          <>
+                            {firstButtonRow}
+                            {isInsertOpen && (
+                              <div className="pl-1 space-y-2 border border-border/50 rounded-md p-2 bg-muted/20">
+                                <Input
+                                  value={draft}
+                                  onChange={(e) =>
+                                    setInsertStepDrafts((prev) => ({
+                                      ...prev,
+                                      [transitionId]: e.target.value,
+                                    }))
+                                  }
+                                  placeholder="Expression (e.g. \\Oa(x,y))"
+                                  className="font-mono text-sm"
+                                  onClick={(e) => e.stopPropagation()}
+                                />
+                                <div className="text-sm">
+                                  <span className="text-muted-foreground mr-1">Rendered:</span>
+                                  <span className="font-mono inline-flex items-baseline">
+                                    <ExpressionRenderer expression={draft || ','} size={12} />
+                                  </span>
+                                </div>
+                                {onInsertStep && (
+                                  <Button
+                                    variant="default"
+                                    size="sm"
+                                    className="h-7 px-2 text-xs gap-1.5"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      onInsertStep(theorem.key, i, draft);
+                                      setInsertStepOpen(null);
+                                      setInsertStepDrafts((prev) => {
+                                        const next = { ...prev };
+                                        delete next[transitionId];
+                                        return next;
+                                      });
+                                    }}
+                                    title="Insert this step and close"
+                                  >
+                                    <CheckCheck className="w-3.5 h-3.5" />
+                                    Finalize
+                                  </Button>
+                                )}
+                              </div>
+                            )}
+                            {secondButtonRow}
+                          </>
+                        );
+                      })()}
+                      {transitionResults[i - 1] === false && transitionDiagnoses[i - 1] && (
+                        <DiagnosisDisplay
+                          diagnosis={transitionDiagnoses[i - 1]}
+                          expanded={expandedDiagnosis === i - 1}
+                          onToggle={() => setExpandedDiagnosis(expandedDiagnosis === i - 1 ? null : i - 1)}
+                        />
                       )}
-                      {onCopyToDebug && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 px-2 text-xs gap-1.5"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onCopyToDebug(theorem.steps[i - 1], theorem.steps[i]);
-                          }}
-                          title="Copy to Debug workbench"
-                        >
-                          <Copy className="w-3.5 h-3.5" />
-                          Copy to Debug
-                        </Button>
+                      {transitionResults[i - 1] === true && transitionMatchInfo[i - 1] && (
+                        <MatchInfoDisplay
+                          matchInfo={transitionMatchInfo[i - 1]}
+                          expanded={expandedMatchInfo === i - 1}
+                          onToggle={() => setExpandedMatchInfo(expandedMatchInfo === i - 1 ? null : i - 1)}
+                        />
                       )}
                     </div>
                   )}
                   <div
-                    className="flex items-start gap-2 text-sm py-1.5 px-2 rounded bg-muted/30 border border-border/50"
+                    className="flex items-start gap-2 text-sm py-1.5 px-2 rounded bg-muted/30 border border-border/50 group"
                   >
                     <span className="text-muted-foreground shrink-0 font-mono w-6">{i + 1}.</span>
-                    <ExpressionRenderer expression={step} size={12} />
+                    <span className="flex-1 min-w-0">
+                      <ExpressionRenderer expression={step} size={12} />
+                    </span>
+                    {onDeleteStep && theorem.steps.length > 1 && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0 shrink-0 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDeleteStep(theorem.key, i);
+                        }}
+                        title="Delete this step"
+                        aria-label="Delete step"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    )}
                   </div>
                 </React.Fragment>
               ))}
@@ -442,6 +770,213 @@ function TheoremCard({
         </CollapsibleContent>
       </Collapsible>
     </Card>
+  );
+}
+
+function MatchInfoDisplay({
+  matchInfo,
+  expanded,
+  onToggle,
+}: {
+  matchInfo: MatchInfo;
+  expanded: boolean;
+  onToggle: () => void;
+}) {
+  const startNodeDesc =
+    matchInfo.description ??
+    (matchInfo.startPosition != null
+      ? `character position ${matchInfo.startPosition}`
+      : matchInfo.side
+        ? `${matchInfo.side} side`
+        : null);
+  const nodeMapEntries = matchInfo.nodeMap ? Object.entries(matchInfo.nodeMap) : [];
+  return (
+    <div className="border border-green-200 dark:border-green-800 rounded-md bg-green-500/5 dark:bg-green-950/30 p-2 text-xs">
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggle();
+        }}
+        className="flex items-center gap-2 w-full text-left hover:bg-green-500/10 rounded px-1 py-0.5 -mx-1 -my-0.5"
+      >
+        <CheckCircle2 className="w-3.5 h-3.5 text-green-600 dark:text-green-400 shrink-0" />
+        <span className="font-medium text-green-700 dark:text-green-300">Check passed</span>
+        <span className="text-muted-foreground ml-auto">
+          {expanded ? <ChevronDown className="w-3 h-3 inline" /> : <ChevronRight className="w-3 h-3 inline" />}
+        </span>
+      </button>
+      {expanded && (
+        <div className="mt-2 space-y-3 pl-5">
+          <div>
+            <span className="font-medium text-foreground/80">Rule id: </span>
+            <span className="font-mono text-muted-foreground">{matchInfo.matchedRuleId}</span>
+          </div>
+          {matchInfo.inferenceRuleName && (
+            <div>
+              <span className="font-medium text-foreground/80">Inference rule: </span>
+              <span className="text-muted-foreground">{matchInfo.inferenceRuleName}</span>
+            </div>
+          )}
+          {(matchInfo.ruleLeft != null || matchInfo.ruleRight != null) && (
+            <div>
+              <div className="font-medium text-foreground/80 mb-1">Pattern rule:</div>
+              <div className="font-mono text-muted-foreground flex flex-wrap items-center gap-1">
+                <ExpressionRenderer expression={matchInfo.ruleLeft ?? ','} size={12} />
+                <EquivalenceSymbol size={12} className="shrink-0 text-muted-foreground" />
+                <ExpressionRenderer expression={matchInfo.ruleRight ?? ','} size={12} />
+              </div>
+            </div>
+          )}
+          {startNodeDesc && (
+            <div>
+              <span className="font-medium text-foreground/80">Starting node of match: </span>
+              <span className="text-muted-foreground">{startNodeDesc}</span>
+            </div>
+          )}
+          {nodeMapEntries.length > 0 && (
+            <div>
+              <div className="font-medium text-foreground/80 mb-1">Node map (pattern → target):</div>
+              <div className="font-mono text-muted-foreground space-y-0.5 max-h-32 overflow-y-auto">
+                {nodeMapEntries.map(([patternId, targetId]) => (
+                  <div key={patternId} className="flex gap-2">
+                    <span className="shrink-0">{patternId}</span>
+                    <span className="text-muted-foreground/80">→</span>
+                    <span>{targetId}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DiagnosisDisplay({
+  diagnosis,
+  expanded,
+  onToggle,
+}: {
+  diagnosis: DiagnosisResult;
+  expanded: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div className="border border-destructive/20 rounded-md bg-destructive/5 p-2 text-xs">
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggle();
+        }}
+        className="flex items-center gap-2 w-full text-left hover:bg-destructive/10 rounded px-1 py-0.5 -mx-1 -my-0.5"
+      >
+        <AlertTriangle className="w-3.5 h-3.5 text-destructive shrink-0" />
+        <span className="font-medium text-destructive">Verification failed</span>
+        <span className="text-muted-foreground ml-auto">
+          {expanded ? <ChevronDown className="w-3 h-3 inline" /> : <ChevronRight className="w-3 h-3 inline" />}
+        </span>
+      </button>
+      {expanded && (
+        <div className="mt-2 space-y-2 pl-5">
+          <div>
+            <div className="font-medium mb-1">Transition Analysis:</div>
+            <div className="text-muted-foreground space-y-0.5">
+              <div>Delta: {diagnosis.characteristics.delta}</div>
+              <div>Operators: {[...diagnosis.characteristics.operatorsAll].slice(0, 5).join(', ')}
+                {diagnosis.characteristics.operatorsAll.size > 5 && ' ...'}
+              </div>
+              <div>Operations: {diagnosis.characteristics.opCountLeft} → {diagnosis.characteristics.opCountRight}</div>
+              {diagnosis.characteristics.hasBranches && <div>Has branches</div>}
+            </div>
+          </div>
+          
+          {diagnosis.totalRulesTried > 0 && (
+            <div>
+              <div className="font-medium mb-1">Rules Tried: {diagnosis.totalRulesTried}</div>
+              {diagnosis.rulesFiltered > 0 && (
+                <div className="text-muted-foreground text-xs">
+                  ({diagnosis.rulesFiltered} filtered out)
+                </div>
+              )}
+            </div>
+          )}
+          
+          {diagnosis.possibleReasons.length > 0 && (
+            <div>
+              <div className="font-medium mb-1 flex items-center gap-1">
+                <Info className="w-3 h-3" />
+                Possible Reasons:
+              </div>
+              <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
+                {diagnosis.possibleReasons.map((reason, idx) => (
+                  <li key={idx}>{reason}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          
+          {diagnosis.suggestions.length > 0 && (
+            <div>
+              <div className="font-medium mb-1">Suggestions:</div>
+              <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
+                {diagnosis.suggestions.map((suggestion, idx) => (
+                  <li key={idx}>{suggestion}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          
+          {diagnosis.similarRules && diagnosis.similarRules.length > 0 && (
+            <div>
+              <div className="font-medium mb-1">Similar Rules (not tried):</div>
+              <div className="text-muted-foreground space-y-0.5">
+                {diagnosis.similarRules.slice(0, 3).map((rule, idx) => (
+                  <div key={idx} className="text-xs">
+                    • {rule.ruleId} ({Math.round(rule.similarity * 100)}% similar - {rule.reason})
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {diagnosis.llmDiagnosis && (
+            <div className="border-t border-border/50 pt-2 mt-2">
+              <div className="font-medium mb-1 flex items-center gap-1">
+                <span>AI explanation</span>
+                {diagnosis.llmDiagnosis.provider && (
+                  <span className="text-muted-foreground font-normal text-[10px]">
+                    ({diagnosis.llmDiagnosis.provider})
+                  </span>
+                )}
+              </div>
+              <div className="text-muted-foreground space-y-1.5">
+                <p className="leading-relaxed">{diagnosis.llmDiagnosis.explanation}</p>
+                {diagnosis.llmDiagnosis.analysis && (
+                  <p className="leading-relaxed opacity-90">{diagnosis.llmDiagnosis.analysis}</p>
+                )}
+                {diagnosis.llmDiagnosis.suggestions.length > 0 && (
+                  <ul className="list-disc list-inside space-y-0.5 mt-1">
+                    {diagnosis.llmDiagnosis.suggestions.map((s, i) => (
+                      <li key={i}>{s}</li>
+                    ))}
+                  </ul>
+                )}
+                {diagnosis.llmDiagnosis.rootCauses.length > 0 && (
+                  <div className="mt-1">
+                    <span className="font-medium text-foreground/80">Root causes: </span>
+                    {diagnosis.llmDiagnosis.rootCauses.join('; ')}
+                  </div>
+                )}
+                {!diagnosis.llmDiagnosis.success && diagnosis.llmDiagnosis.error && (
+                  <p className="text-destructive/80 text-[10px]">{diagnosis.llmDiagnosis.error}</p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 

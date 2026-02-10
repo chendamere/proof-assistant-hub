@@ -1,6 +1,6 @@
 /**
  * Substitution logic for inference rules
- * Uses DAG isomorphism (VF2) for rule applicability after operand normalization.
+ * Uses DAG injection (VF2) for rule applicability after operand normalization.
  * A single VF2 pass on the full target finds the match and operand mapping.
  */
 
@@ -225,8 +225,8 @@ function expandTcInRuleSide(ruleOtherSide: string, tcMapping: Map<string, string
 }
 
 /**
- * Find substitution match in target expression using DAG isomorphism.
- * Rule applicability after operand normalization is equivalent to DAG isomorphism:
+ * Find substitution match in target expression using DAG injection.
+ * Rule applicability after operand normalization is equivalent to DAG injection:
  * the rule matches if its expression DAG is isomorphic to a subgraph of the target's DAG.
  */
 export const findSubstitution = function findSubstitutionRecursive(
@@ -288,7 +288,7 @@ export const findSubstitution = function findSubstitutionRecursive(
   const normalizedTarget = normalizeSpacing(target);
   const normalizedRule = normalizeSpacing(ruleSide);
 
-  // DAG isomorphism: single pass on full target. Rule DAG uses original operands (i, m, j).
+  // DAG injection: single pass on full target. Rule DAG uses original operands (i, m, j).
   const patternDAG = exprToDAG(normalizedRule);
   let targetDAG = exprToDAG(normalizedTarget);
   const hasTc = patternDAG.nodes.some((n) => (n.data as ExprNodeData)?.op === '\\Tc');
@@ -335,7 +335,7 @@ export const findSubstitution = function findSubstitutionRecursive(
     position: {
       side,
       position: candidateStart,
-      description: `Rule found (DAG isomorphism) in ${side} side`,
+      description: `Rule found (DAG injection) in ${side} side`,
       prefix: prefix || undefined,
       suffix: suffix || undefined,
       operandMapping,
@@ -492,7 +492,7 @@ export const trySubstitution = (
           position: {
             side,
             position: candidateStart,
-            description: `Rule found (DAG isomorphism) in ${side} side`,
+            description: `Rule found (DAG injection) in ${side} side`,
             prefix: normalizedTarget.substring(0, candidateStart) || undefined,
             suffix: normalizedTarget.substring(candidateEnd) || undefined,
             operandMapping,

@@ -147,30 +147,7 @@ const IntroductionSection: React.FC = () => {
             </p>
           </div>
 
-          {/* Types of Rules */}
-          <div className="bg-card border border-border rounded-lg p-6 card-glow animate-fade-in delay-400 md:col-span-2">
-            <h3 className="text-xl font-semibold text-primary mb-4">Types of Rules</h3>
-            <div className="flex flex-wrap gap-6">
-              <div className="flex items-center gap-3">
-                <span className="px-2 py-1 rounded text-xs font-mono bg-primary/20 text-primary border border-primary/30">
-                  AXIOM
-                </span>
-                <span className="text-muted-foreground text-sm">Natural properties, no proof needed</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="px-2 py-1 rounded text-xs font-mono bg-operator-temp/20 text-operator-temp border border-operator-temp/30">
-                  DEFINITION
-                </span>
-                <span className="text-muted-foreground text-sm">Concept definitions via rules</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="px-2 py-1 rounded text-xs font-mono bg-operator-next/20 text-operator-next border border-operator-next/30">
-                  THEOREM
-                </span>
-                <span className="text-muted-foreground text-sm">Proven conclusions from inference</span>
-              </div>
-            </div>
-          </div>
+          
           {/* Inference Rules */}
           <div className="bg-card border border-border rounded-lg p-6 card-glow animate-fade-in delay-300">
             <h3 className="text-xl font-semibold text-primary mb-4">Inference Rules</h3>
@@ -199,12 +176,31 @@ const IntroductionSection: React.FC = () => {
             </div>
           </div>
 
-          
-        </div>
-
-        
-
-        
+          {/* Types of Rules */}
+          <div className="bg-card border border-border rounded-lg p-6 card-glow animate-fade-in delay-400 md:col-span-2">
+            <h3 className="text-xl font-semibold text-primary mb-4">Types of Rules</h3>
+            <div className="flex flex-wrap gap-6">
+              <div className="flex items-center gap-3">
+                <span className="px-2 py-1 rounded text-xs font-mono bg-primary/20 text-primary border border-primary/30">
+                  AXIOM
+                </span>
+                <span className="text-muted-foreground text-sm">Natural properties, no proof needed</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="px-2 py-1 rounded text-xs font-mono bg-operator-temp/20 text-operator-temp border border-operator-temp/30">
+                  DEFINITION
+                </span>
+                <span className="text-muted-foreground text-sm">Concept definitions via rules</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="px-2 py-1 rounded text-xs font-mono bg-operator-next/20 text-operator-next border border-operator-next/30">
+                  THEOREM
+                </span>
+                <span className="text-muted-foreground text-sm">Proven conclusions from inference</span>
+              </div>
+            </div>
+          </div>
+        </div>        
       </div>
     </section>
   );
