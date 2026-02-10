@@ -3,6 +3,7 @@
  * Provides async verifyTransition that runs off the main thread.
  * Parallelizes rule tries across multiple workers: tries several rules in parallel
  * and stops as soon as one matches.
+ * Falls back to main-thread verification if the worker fails to load (e.g. strict MIME on static hosts).
  */
 
 import type {
@@ -14,9 +15,14 @@ import { buildRuleIndex, getRulesForTransition } from '@/lib/inferenceRules/rule
 import { ruleStatistics } from '@/lib/inferenceRules/ruleStatistics';
 import { diagnoseFailure } from '@/lib/inferenceRules/errorDiagnosis';
 import { normalizeSpacing } from '@/lib/inferenceRules/utils';
+import { checkInferenceRules } from '@/lib/inferenceRules';
 
-const WORKER_URL = new URL('@/workers/transitionVerificationWorker.ts', import.meta.url);
+// Relative path so Vite resolves the worker correctly in dev and production (avoids alias/MIME issues)
+const WORKER_URL = new URL('../workers/transitionVerificationWorker.ts', import.meta.url);
 const FALSE_RESULT_CACHE_MAX = 500;
+
+/** When true, worker failed to load (e.g. 404 or wrong MIME); use main-thread verification. */
+let workerFailed = false;
 
 /** Cache for transition verification false results (key = normalized left + "\\n---\\n" + normalized right). */
 const falseResultCache = new Map<string, VerifyTransitionResult>();
@@ -25,13 +31,19 @@ const PARALLEL_WORKERS = Math.min(4, Math.max(1, navigator.hardwareConcurrency ?
 const workerPool: Worker[] = [];
 let poolIndex = 0;
 
-function getWorkerFromPool(): Worker {
-  if (workerPool.length < PARALLEL_WORKERS) {
-    workerPool.push(new Worker(WORKER_URL, { type: 'module' }));
+function getWorkerFromPool(): Worker | null {
+  if (workerFailed) return null;
+  try {
+    if (workerPool.length < PARALLEL_WORKERS) {
+      workerPool.push(new Worker(WORKER_URL, { type: 'module' }));
+    }
+    const w = workerPool[poolIndex % workerPool.length];
+    poolIndex += 1;
+    return w;
+  } catch {
+    workerFailed = true;
+    return null;
   }
-  const w = workerPool[poolIndex % workerPool.length];
-  poolIndex += 1;
-  return w;
 }
 
 let requestId = 0;
@@ -64,6 +76,7 @@ function verifyChunk(
     };
 
     const errorHandler = (ev: ErrorEvent) => {
+      workerFailed = true;
       worker.removeEventListener('message', handler);
       worker.removeEventListener('error', errorHandler);
       reject(new Error(ev.message ?? 'Worker error'));
@@ -88,6 +101,48 @@ export interface VerifyTransitionResult {
   /** When matched: which rule and where it matched (for collapsible success details). */
   matchInfo?: MatchInfo;
   diagnosis?: import('@/lib/inferenceRules/errorDiagnosis').DiagnosisResult;
+}
+
+/** Run transition verification on the main thread (fallback when worker fails to load). */
+function verifyTransitionMainThread(
+  targetLeft: string,
+  targetRight: string,
+  rules: Array<{ id: string; leftSide: string; rightSide: string }>,
+  index: ReturnType<typeof buildRuleIndex>,
+  rulesToTry: Array<{ id: string; leftSide: string; rightSide: string }>
+): VerifyTransitionResult {
+  const rulesTried: Array<{ ruleId: string; matched: boolean; matchTime: number }> = [];
+  for (const rule of rulesToTry) {
+    const ruleStartTime = performance.now();
+    const result = checkInferenceRules(
+      targetLeft,
+      targetRight,
+      rule.leftSide,
+      rule.rightSide,
+      { dagCache: index.dagCache }
+    );
+    const ruleMatchTime = performance.now() - ruleStartTime;
+    rulesTried.push({ ruleId: rule.id, matched: result.match, matchTime: ruleMatchTime });
+    ruleStatistics.recordAttempt(rule.id, ruleMatchTime, result.match);
+    if (result.match) {
+      const pos = result.matchPosition;
+      return {
+        matched: true,
+        matchInfo: {
+          matchedRuleId: rule.id,
+          description: pos?.description,
+          startPosition: pos?.position,
+          side: pos?.side,
+          ruleLeft: rule.leftSide,
+          ruleRight: rule.rightSide,
+          inferenceRuleName: result.inferenceRule,
+          nodeMap: pos?.nodeMapping ? Object.fromEntries(pos.nodeMapping) : undefined,
+        },
+      };
+    }
+  }
+  const diagnosis = diagnoseFailure(targetLeft, targetRight, rulesTried, rules, index);
+  return { matched: false, diagnosis };
 }
 
 function cacheFalseResult(key: string, result: VerifyTransitionResult): void {
@@ -120,6 +175,13 @@ export function verifyTransitionWorker(
     return Promise.resolve(result);
   }
 
+  // Fallback when worker failed to load (e.g. 404 or wrong MIME on static host)
+  if (workerFailed) {
+    const result = verifyTransitionMainThread(targetLeft, targetRight, rules, index, rulesToTry);
+    if (!result.matched) cacheFalseResult(cacheKey, result);
+    return Promise.resolve(result);
+  }
+
   // Split into parallel chunks
   const chunkCount = Math.min(PARALLEL_WORKERS, rulesToTry.length);
   const chunkSize = Math.ceil(rulesToTry.length / chunkCount);
@@ -137,8 +199,14 @@ export function verifyTransitionWorker(
   }
   
   if (chunks.length === 1) {
+    const w = getWorkerFromPool();
+    if (!w) {
+      const result = verifyTransitionMainThread(targetLeft, targetRight, rules, index, rulesToTry);
+      if (!result.matched) cacheFalseResult(cacheKey, result);
+      return Promise.resolve(result);
+    }
     return verifyChunk(
-      getWorkerFromPool(),
+      w,
       baseId,
       0,
       targetLeft,
@@ -165,6 +233,13 @@ export function verifyTransitionWorker(
   }
 
   // Run chunks in parallel; resolve true as soon as any matches, false when all done
+  const workers = chunks.map(() => getWorkerFromPool());
+  if (workers.some((w) => w === null)) {
+    const result = verifyTransitionMainThread(targetLeft, targetRight, rules, index, rulesToTry);
+    if (!result.matched) cacheFalseResult(cacheKey, result);
+    return Promise.resolve(result);
+  }
+
   return new Promise((resolve, reject) => {
     let settled = 0;
     let foundMatch = false;
@@ -186,7 +261,7 @@ export function verifyTransitionWorker(
 
     chunks.forEach((chunk, i) => {
       verifyChunk(
-        getWorkerFromPool(),
+        workers[i]!,
         baseId,
         i,
         targetLeft,

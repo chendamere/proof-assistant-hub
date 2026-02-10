@@ -7,12 +7,12 @@ import type { SubstitutionRequest, SubstitutionResponse } from '@/workers/substi
 
 let workerInstance: Worker | null = null;
 
+// Relative path so Vite resolves the worker correctly in dev and production (avoids alias/MIME issues)
+const SUBSTITUTION_WORKER_URL = new URL('../workers/substitutionWorker.ts', import.meta.url);
+
 function getWorker(): Worker {
   if (!workerInstance) {
-    workerInstance = new Worker(
-      new URL('@/workers/substitutionWorker.ts', import.meta.url),
-      { type: 'module' }
-    );
+    workerInstance = new Worker(SUBSTITUTION_WORKER_URL, { type: 'module' });
   }
   return workerInstance;
 }

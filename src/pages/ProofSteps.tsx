@@ -100,7 +100,8 @@ const ProofSteps: React.FC = () => {
   );
 
   useEffect(() => {
-    fetch('/proof-steps-table.json')
+    const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
+    fetch(`${base}proof-steps-table.json`)
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load proof steps data');
         return res.json();
