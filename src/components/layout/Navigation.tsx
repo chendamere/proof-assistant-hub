@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, Network, ListOrdered, Library } from 'lucide-react';
+import { BookOpen, Network, ListOrdered, Library, Sun, Moon } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { Button } from '@/components/ui/button';
 
 interface NavItem {
   path: string;
@@ -10,6 +12,7 @@ interface NavItem {
 
 const Navigation: React.FC = () => {
   const location = useLocation();
+  const { theme, setTheme } = useTheme();
   
   const navItems: NavItem[] = [
     { path: '/', label: 'Introduction', icon: <BookOpen className="w-4 h-4" /> },
@@ -32,7 +35,7 @@ const Navigation: React.FC = () => {
             </span>
           </Link>
 
-          {/* Nav Items */}
+          {/* Nav Items + Theme Toggle */}
           <div className="flex items-center gap-1">
             {navItems.map((item) => (
                 <Link
@@ -48,6 +51,16 @@ const Navigation: React.FC = () => {
                   <span className="text-sm hidden sm:block">{item.label}</span>
                 </Link>
             ))}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="ml-2"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              aria-label="Toggle theme"
+            >
+              <Sun className="h-4 w-4 rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100" />
+            </Button>
           </div>
         </div>
       </div>
