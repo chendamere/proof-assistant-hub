@@ -156,94 +156,9 @@ async function callOllamaAPI(
 }
 
 /**
- * Call OpenAI-compatible API (OpenAI, Groq, etc.)
+ * Call OpenAI-compatible API (via backend edge function in future)
+ * Currently unused — kept as reference for edge function migration.
  */
-async function callOpenAICompatibleAPI(
-  prompt: string,
-  config: LLMProviderConfig
-): Promise<string> {
-  if (!config.apiKey) {
-    throw new Error('API key required');
-  }
-
-  const response = await fetch(config.endpoint!, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${config.apiKey}`,
-    },
-    body: JSON.stringify({
-      model: config.model,
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an expert in formal proof verification systems. Analyze proof transition failures and provide clear, actionable diagnostic information. Always respond with valid JSON.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.3,
-      max_tokens: 1000,
-      response_format: { type: 'json_object' },
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`API error: ${response.status} ${error}`);
-  }
-
-  const data = await response.json();
-  return data.choices?.[0]?.message?.content || data.content || '';
-}
-
-/**
- * Call Google Gemini API
- */
-async function callGeminiAPI(
-  prompt: string,
-  config: LLMProviderConfig
-): Promise<string> {
-  if (!config.apiKey) {
-    throw new Error('API key required');
-  }
-
-  const model = config.model || 'gemini-pro';
-  const endpoint = `${config.endpoint}/${model}:generateContent?key=${config.apiKey}`;
-
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      contents: [
-        {
-          parts: [
-            {
-              text: prompt,
-            },
-          ],
-        },
-      ],
-      generationConfig: {
-        temperature: 0.3,
-        maxOutputTokens: 1000,
-        responseMimeType: 'application/json',
-      },
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Gemini API error: ${response.status} ${error}`);
-  }
-
-  const data = await response.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-}
 
 /**
  * Parse LLM response into structured format
@@ -319,20 +234,8 @@ export async function generateLLMDiagnosis(
         provider = 'Ollama (Llama)';
         response = await callOllamaAPI(prompt, config);
         break;
-      case 'groq':
-        provider = 'Groq';
-        response = await callOpenAICompatibleAPI(prompt, config);
-        break;
-      case 'gemini':
-        provider = 'Google Gemini';
-        response = await callGeminiAPI(prompt, config);
-        break;
-      case 'openai':
-        provider = 'OpenAI';
-        response = await callOpenAICompatibleAPI(prompt, config);
-        break;
       default:
-        throw new Error(`Unsupported provider: ${config.type}`);
+        throw new Error(`Unsupported provider: ${config.type}. Cloud LLM providers should use a backend edge function.`);
     }
 
     const parsed = parseLLMResponse(response);
