@@ -69,6 +69,69 @@
     --sidebar-border: 35 15% 85%;
     --sidebar-ring: 35 80% 45%;
   }
+
+  .dark {
+    /* Core palette - deep charcoal with amber gold accents */
+    --background: 240 10% 6%;
+    --foreground: 45 15% 92%;
+
+    --card: 240 8% 10%;
+    --card-foreground: 45 15% 92%;
+
+    --popover: 240 8% 10%;
+    --popover-foreground: 45 15% 92%;
+
+    /* Primary - warm amber gold */
+    --primary: 40 85% 55%;
+    --primary-foreground: 240 10% 6%;
+
+    /* Secondary - muted bronze */
+    --secondary: 35 25% 20%;
+    --secondary-foreground: 45 15% 85%;
+
+    --muted: 240 8% 15%;
+    --muted-foreground: 240 8% 55%;
+
+    /* Accent - soft gold glow */
+    --accent: 45 70% 45%;
+    --accent-foreground: 240 10% 6%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 8% 18%;
+    --input: 240 8% 15%;
+    --ring: 40 85% 55%;
+
+    /* Custom design tokens */
+    --gold-glow: 0 0 40px hsla(40, 85%, 55%, 0.3);
+    --gold-glow-subtle: 0 0 20px hsla(40, 85%, 55%, 0.15);
+    --text-glow: 0 0 10px hsla(40, 85%, 55%, 0.2);
+    --card-shadow: 0 4px 24px -8px hsla(0, 0%, 0%, 0.5);
+
+    /* Operator colors */
+    --operator-global: 200 70% 55%;
+    --operator-temp: 280 60% 55%;
+    --operator-copy: 160 60% 50%;
+    --operator-id: 320 60% 55%;
+    --operator-subnode: 30 70% 55%;
+    --operator-release: 0 60% 55%;
+    --operator-next: 120 55% 50%;
+    --operator-prev: 90 55% 50%;
+    --operator-compare: 40 85% 55%;
+    --operator-assign: 260 60% 60%;
+    --operator-error: 0 80% 50%;
+
+    /* Sidebar */
+    --sidebar-background: 240 10% 8%;
+    --sidebar-foreground: 45 15% 92%;
+    --sidebar-primary: 40 85% 55%;
+    --sidebar-primary-foreground: 240 10% 6%;
+    --sidebar-accent: 35 25% 20%;
+    --sidebar-accent-foreground: 45 15% 85%;
+    --sidebar-border: 240 8% 18%;
+    --sidebar-ring: 40 85% 55%;
+  }
 }
 
 @layer base {
