@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, Network, ListOrdered, Library, Sun, Moon } from 'lucide-react';
+import { BookOpen, Network, ListOrdered, Library, Sun, Moon, LogIn, LogOut } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
 
 interface NavItem {
   path: string;
@@ -13,6 +14,7 @@ interface NavItem {
 const Navigation: React.FC = () => {
   const location = useLocation();
   const { theme, setTheme } = useTheme();
+  const { user, signOut } = useAuth();
   
   const navItems: NavItem[] = [
     { path: '/', label: 'Introduction', icon: <BookOpen className="w-4 h-4" /> },
@@ -61,6 +63,19 @@ const Navigation: React.FC = () => {
               <Sun className="h-4 w-4 rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0" />
               <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100" />
             </Button>
+            {user ? (
+              <Button variant="ghost" size="sm" className="ml-1 gap-2" onClick={signOut}>
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline text-sm">Sign Out</span>
+              </Button>
+            ) : (
+              <Link to="/auth">
+                <Button variant="ghost" size="sm" className="ml-1 gap-2">
+                  <LogIn className="h-4 w-4" />
+                  <span className="hidden sm:inline text-sm">Sign In</span>
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>

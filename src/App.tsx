@@ -13,6 +13,7 @@ import SubstitutionDAGDemo from "./pages/SubstitutionDAGDemo";
 import SubstitutionExample from "./pages/SubstitutionExample";
 import Glossary from "./pages/Glossary";
 import Bibliography from "./pages/Bibliography";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            <Route path="/auth" element={<Auth />} />
             <Route path="/" element={<Index />} />
             <Route path="/verifier" element={<Verifier />} />
             <Route path="/proof-step" element={<ProofStep />} />
