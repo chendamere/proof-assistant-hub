@@ -16,11 +16,11 @@ const Navigation: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
   
-  const navItems: NavItem[] = [
+  const navItems: (NavItem & { requiresAuth?: boolean })[] = [
     { path: '/', label: 'Introduction', icon: <BookOpen className="w-4 h-4" /> },
-    { path: '/substitution-dag', label: 'Substitution DAG', icon: <Network className="w-4 h-4" /> },
-    { path: '/proof-steps', label: 'Proof Steps', icon: <ListOrdered className="w-4 h-4" /> },
-    { path: '/bibliography', label: 'Bibliography', icon: <Library className="w-4 h-4" /> },
+    { path: '/substitution-dag', label: 'Substitution DAG', icon: <Network className="w-4 h-4" />, requiresAuth: true },
+    { path: '/proof-steps', label: 'Proof Steps', icon: <ListOrdered className="w-4 h-4" />, requiresAuth: true },
+    { path: '/bibliography', label: 'Bibliography', icon: <Library className="w-4 h-4" />, requiresAuth: true },
   ];
 
   return (
@@ -39,7 +39,21 @@ const Navigation: React.FC = () => {
 
           {/* Nav Items + Theme Toggle */}
           <div className="flex items-center gap-1">
-            {navItems.map((item) => (
+            {navItems.map((item) => {
+              const disabled = item.requiresAuth && !user;
+              if (disabled) {
+                return (
+                  <span
+                    key={item.path}
+                    className="flex items-center gap-2 px-3 py-2 rounded-md text-muted-foreground/40 cursor-not-allowed select-none"
+                    title="Sign in to access"
+                  >
+                    {item.icon}
+                    <span className="text-sm hidden sm:block">{item.label}</span>
+                  </span>
+                );
+              }
+              return (
                 <Link
                   key={item.path}
                   to={item.path}
@@ -52,7 +66,8 @@ const Navigation: React.FC = () => {
                   {item.icon}
                   <span className="text-sm hidden sm:block">{item.label}</span>
                 </Link>
-            ))}
+              );
+            })}
             <Button
               variant="ghost"
               size="icon"

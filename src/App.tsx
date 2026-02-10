@@ -15,6 +15,7 @@ import Glossary from "./pages/Glossary";
 import Bibliography from "./pages/Bibliography";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/layout/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -31,11 +32,11 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/verifier" element={<Verifier />} />
             <Route path="/proof-step" element={<ProofStep />} />
-            <Route path="/proof-steps" element={<ProofSteps />} />
-            <Route path="/substitution-dag" element={<SubstitutionDAGDemo />} />
+            <Route path="/proof-steps" element={<ProtectedRoute><ProofSteps /></ProtectedRoute>} />
+            <Route path="/substitution-dag" element={<ProtectedRoute><SubstitutionDAGDemo /></ProtectedRoute>} />
             <Route path="/substitution-example" element={<SubstitutionExample />} />
             <Route path="/glossary" element={<Glossary />} />
-            <Route path="/bibliography" element={<Bibliography />} />
+            <Route path="/bibliography" element={<ProtectedRoute><Bibliography /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
