@@ -12,11 +12,12 @@ import { findSubstitution as findSubst } from '@/lib/inferenceRules/substitution
 import { trySubstitutionWorker } from '@/lib/substitutionWorkerClient';
 import { normalizeSpacing } from '@/lib/inferenceRules/utils';
 import { DAGGraphVisual } from '@/components/dag/DAGGraphVisual';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Select,
   SelectContent,
@@ -24,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { ChevronRight } from 'lucide-react';
 
 interface DAGExample {
   name: string;
@@ -227,70 +229,76 @@ function TrySubstitutionSection() {
             : null;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Try Substitution Demo</CardTitle>
-        <CardDescription>
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-base font-semibold">Try Substitution Demo</h3>
+        <p className="text-sm text-muted-foreground mt-1">
           Equivalent Substitution: A ⟺ B allows replacing A with B in any context. Try all four directions.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Label htmlFor="try-sub-select" className="shrink-0">Example:</Label>
-          <Select value={selected} onValueChange={setSelected}>
-            <SelectTrigger id="try-sub-select" className="w-[280px]">
-              <SelectValue placeholder="Choose an example..." />
-            </SelectTrigger>
-            <SelectContent>
-              {TRY_SUB_EXAMPLES.map((e) => (
-                <SelectItem key={e.name} value={e.name}>
-                  {e.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <p className="text-sm text-muted-foreground">{ex.description}</p>
-        <div className="grid gap-4 md:grid-cols-2 text-sm font-mono">
-          <div>
-            <p className="font-semibold text-foreground mb-1">Target</p>
-            <p className="text-muted-foreground">Left: <span className="text-foreground">{ex.targetLeft}</span></p>
-            <p className="text-muted-foreground">Right: <span className="text-foreground">{ex.targetRight}</span></p>
-          </div>
-          <div>
-            <p className="font-semibold text-foreground mb-1">Rule A ⟺ B</p>
-            <p className="text-muted-foreground">A: <span className="text-foreground">{ex.ruleLeft}</span></p>
-            <p className="text-muted-foreground">B: <span className="text-foreground">{ex.ruleRight}</span></p>
+        </p>
+      </div>
+      <div className="flex items-center gap-4">
+        <Label htmlFor="try-sub-select" className="shrink-0">Example:</Label>
+        <Select value={selected} onValueChange={setSelected}>
+          <SelectTrigger id="try-sub-select" className="w-[280px]">
+            <SelectValue placeholder="Choose an example..." />
+          </SelectTrigger>
+          <SelectContent>
+            {TRY_SUB_EXAMPLES.map((e) => (
+              <SelectItem key={e.name} value={e.name}>
+                {e.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <p className="text-sm text-muted-foreground">{ex.description}</p>
+      <div className="grid gap-4 md:grid-cols-2 text-sm">
+        <div className="space-y-2">
+          <p className="font-semibold text-foreground">Target</p>
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground">Left:</p>
+            <ExpressionRenderer expression={ex.targetLeft} size={14} />
+            <p className="text-xs text-muted-foreground mt-2">Right:</p>
+            <ExpressionRenderer expression={ex.targetRight} size={14} />
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-4">
-          <Badge variant={loading ? 'outline' : matchResult ? 'default' : 'secondary'}>
-            {loading ? 'Computing...' : matchResult ? 'Match found' : 'No match'}
-          </Badge>
-          {matchDirection && (
-            <span className="text-sm text-muted-foreground">
-              Via: {matchDirection}
-            </span>
-          )}
-          {matchResult?.position?.operandMapping && (
-            <span className="text-sm">
-              Operand mapping: {[...matchResult.position.operandMapping.entries()]
-                .map(([k, v]) => `${k}→${v}`)
-                .join(', ')}
-            </span>
-          )}
+        <div className="space-y-2">
+          <p className="font-semibold text-foreground">Rule A ⟺ B</p>
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground">A:</p>
+            <ExpressionRenderer expression={ex.ruleLeft} size={14} />
+            <p className="text-xs text-muted-foreground mt-2">B:</p>
+            <ExpressionRenderer expression={ex.ruleRight} size={14} />
+          </div>
         </div>
-        <div className="rounded-md border bg-muted/30 p-3 text-xs font-mono">
-          <p className="font-semibold mb-2">Tried directions:</p>
-          <ul className="space-y-1 text-muted-foreground">
-            <li>targetLeft, replace ruleLeft→ruleRight: {results?.leftRuleLeft ? '✓' : '—'}</li>
-            <li>targetLeft, replace ruleRight→ruleLeft: {results?.leftRuleRight ? '✓' : '—'}</li>
-            <li>targetRight, replace ruleLeft→ruleRight: {results?.rightRuleLeft ? '✓' : '—'}</li>
-            <li>targetRight, replace ruleRight→ruleLeft: {results?.rightRuleRight ? '✓' : '—'}</li>
-          </ul>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+      <div className="flex flex-wrap items-center gap-4">
+        <Badge variant={loading ? 'outline' : matchResult ? 'default' : 'secondary'}>
+          {loading ? 'Computing...' : matchResult ? 'Match found' : 'No match'}
+        </Badge>
+        {matchDirection && (
+          <span className="text-sm text-muted-foreground">
+            Via: {matchDirection}
+          </span>
+        )}
+        {matchResult?.position?.operandMapping && (
+          <span className="text-sm">
+            Operand mapping: {[...matchResult.position.operandMapping.entries()]
+              .map(([k, v]) => `${k}→${v}`)
+              .join(', ')}
+          </span>
+        )}
+      </div>
+      <div className="rounded-md border bg-muted/30 p-3 text-xs font-mono">
+        <p className="font-semibold mb-2">Tried directions:</p>
+        <ul className="space-y-1 text-muted-foreground">
+          <li>targetLeft, replace ruleLeft→ruleRight: {results?.leftRuleLeft ? '✓' : '—'}</li>
+          <li>targetLeft, replace ruleRight→ruleLeft: {results?.leftRuleRight ? '✓' : '—'}</li>
+          <li>targetRight, replace ruleLeft→ruleRight: {results?.rightRuleLeft ? '✓' : '—'}</li>
+          <li>targetRight, replace ruleRight→ruleLeft: {results?.rightRuleRight ? '✓' : '—'}</li>
+        </ul>
+      </div>
+    </div>
   );
 }
 
@@ -359,45 +367,63 @@ export default function SubstitutionDAGDemo() {
           </AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
             <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base">Rule (Pattern)</CardTitle>
-                  <CardDescription className="text-xs">Expression from the inference rule</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="rule">Rule expression</Label>
-                    <Input id="rule" value={ruleExpr} onChange={(e) => setRuleExpr(e.target.value)} className="font-mono mt-2" />
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-base font-semibold">Rule (Pattern)</h4>
+                  <p className="text-xs text-muted-foreground">Expression from the inference rule</p>
+                </div>
+                <div>
+                  <Label htmlFor="rule">Rule expression</Label>
+                  <Input id="rule" value={ruleExpr} onChange={(e) => setRuleExpr(e.target.value)} className="font-mono mt-2" />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Preview</Label>
+                  <div className="mt-1 p-2 rounded-md border bg-muted/20 overflow-x-auto">
+                    <ExpressionRenderer expression={ruleExpr} size={14} />
                   </div>
-                  <div>
-                    <Label>Pattern DAG</Label>
+                </div>
+                <Collapsible>
+                  <CollapsibleTrigger className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors [&[data-state=open]>svg]:rotate-90">
+                    <ChevronRight className="h-3 w-3 transition-transform" />
+                    Raw DAG JSON
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
                     <div className="mt-2 text-xs text-muted-foreground font-mono overflow-auto max-h-32">
                       {JSON.stringify(patternDAG, null, 2)}
                     </div>
-                  </div>
-                  {patternDAG.nodes.length > 0 && <DAGGraphVisual structure={patternDAG} />}
-                </CardContent>
-              </Card>
+                  </CollapsibleContent>
+                </Collapsible>
+                {patternDAG.nodes.length > 0 && <DAGGraphVisual structure={patternDAG} />}
+              </div>
 
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base">Target</CardTitle>
-                  <CardDescription className="text-xs">Target expression (normalized)</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="target">Target expression</Label>
-                    <Input id="target" value={targetExpr} onChange={(e) => setTargetExpr(e.target.value)} className="font-mono mt-2" />
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-base font-semibold">Target</h4>
+                  <p className="text-xs text-muted-foreground">Target expression (normalized)</p>
+                </div>
+                <div>
+                  <Label htmlFor="target">Target expression</Label>
+                  <Input id="target" value={targetExpr} onChange={(e) => setTargetExpr(e.target.value)} className="font-mono mt-2" />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Preview</Label>
+                  <div className="mt-1 p-2 rounded-md border bg-muted/20 overflow-x-auto">
+                    <ExpressionRenderer expression={targetExpr} size={14} />
                   </div>
-                  <div>
-                    <Label>Target DAG</Label>
+                </div>
+                <Collapsible>
+                  <CollapsibleTrigger className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors [&[data-state=open]>svg]:rotate-90">
+                    <ChevronRight className="h-3 w-3 transition-transform" />
+                    Raw DAG JSON
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
                     <div className="mt-2 text-xs text-muted-foreground font-mono overflow-auto max-h-32">
                       {JSON.stringify(targetDAG, null, 2)}
                     </div>
-                  </div>
-                  {targetDAG.nodes.length > 0 && <DAGGraphVisual structure={targetDAG} />}
-                </CardContent>
-              </Card>
+                  </CollapsibleContent>
+                </Collapsible>
+                {targetDAG.nodes.length > 0 && <DAGGraphVisual structure={targetDAG} />}
+              </div>
             </div>
           </AccordionContent>
         </AccordionItem>
