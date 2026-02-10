@@ -42,28 +42,13 @@ export interface LLMProviderConfig {
  * Get LLM configuration from environment variables
  */
 function getLLMConfig(): LLMProviderConfig {
+  // LLM diagnosis disabled by default. Set VITE_ENABLE_LLM_DIAGNOSIS=true to enable.
+  const llmEnabled = import.meta.env.VITE_ENABLE_LLM_DIAGNOSIS === 'true';
+
   // Use relative URL so Vite proxy is used (avoids CORS when app is on localhost:8080)
   const ollamaEndpoint = import.meta.env.VITE_OLLAMA_ENDPOINT || (typeof window !== "undefined" ? "/api/ollama" : "http://localhost:11434");
   const ollamaModel = import.meta.env.VITE_OLLAMA_MODEL || "llama3:8b";
-  
-  // Check for OpenAI
-  const openaiKey = import.meta.env.VITE_OPENAI_API_KEY;
-  const openaiEndpoint = import.meta.env.VITE_OPENAI_API_ENDPOINT || 'https://api.openai.com/v1/chat/completions';
-  const openaiModel = import.meta.env.VITE_OPENAI_MODEL || 'gpt-4o-mini';
-  
-  // Check for Gemini
-  const geminiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  const geminiEndpoint = import.meta.env.VITE_GEMINI_API_ENDPOINT || 'https://generativelanguage.googleapis.com/v1beta/models';
-  const geminiModel = import.meta.env.VITE_GEMINI_MODEL || 'gemini-pro';
-  
-  // Check for Groq
-  const groqKey = import.meta.env.VITE_GROQ_API_KEY;
-  const groqEndpoint = import.meta.env.VITE_GROQ_API_ENDPOINT || 'https://api.groq.com/openai/v1/chat/completions';
-  const groqModel = import.meta.env.VITE_GROQ_MODEL || 'llama-3.1-8b-instant';
-  
-  // LLM diagnosis disabled by default. Set VITE_ENABLE_LLM_DIAGNOSIS=true to enable.
-  const llmEnabled = import.meta.env.VITE_ENABLE_LLM_DIAGNOSIS === 'true';
-  
+
   if (!llmEnabled) {
     return {
       type: 'ollama',
@@ -72,48 +57,9 @@ function getLLMConfig(): LLMProviderConfig {
       enabled: false,
     };
   }
-  
-  // Priority: Ollama (local, free) > Groq (free tier) > Gemini (free tier) > OpenAI
-  if (ollamaEndpoint) {
-    return {
-      type: 'ollama',
-      endpoint: ollamaEndpoint,
-      model: ollamaModel,
-      enabled: true,
-    };
-  }
-  
-  if (groqKey) {
-    return {
-      type: 'groq',
-      endpoint: groqEndpoint,
-      apiKey: groqKey,
-      model: groqModel,
-      enabled: true,
-    };
-  }
-  
-  if (geminiKey) {
-    return {
-      type: 'gemini',
-      endpoint: geminiEndpoint,
-      apiKey: geminiKey,
-      model: geminiModel,
-      enabled: true,
-    };
-  }
-  
-  if (openaiKey) {
-    return {
-      type: 'openai',
-      endpoint: openaiEndpoint,
-      apiKey: openaiKey,
-      model: openaiModel,
-      enabled: true,
-    };
-  }
-  
-  // Default to Ollama (will fail gracefully if not running)
+
+  // Only Ollama (local, free) is supported client-side.
+  // For cloud LLM providers, use a backend edge function instead.
   return {
     type: 'ollama',
     endpoint: ollamaEndpoint,
