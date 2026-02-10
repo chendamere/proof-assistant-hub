@@ -6,68 +6,68 @@
 
 @layer base {
   :root {
-    /* Core palette - deep charcoal with amber gold accents */
-    --background: 240 10% 6%;
-    --foreground: 45 15% 92%;
+    /* Core palette - warm light background with deep accents */
+    --background: 40 30% 96%;
+    --foreground: 240 10% 15%;
 
-    --card: 240 8% 10%;
-    --card-foreground: 45 15% 92%;
+    --card: 40 25% 99%;
+    --card-foreground: 240 10% 15%;
 
-    --popover: 240 8% 10%;
-    --popover-foreground: 45 15% 92%;
+    --popover: 40 25% 99%;
+    --popover-foreground: 240 10% 15%;
 
     /* Primary - warm amber gold */
-    --primary: 40 85% 55%;
-    --primary-foreground: 240 10% 6%;
+    --primary: 35 80% 45%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Secondary - muted bronze */
-    --secondary: 35 25% 20%;
-    --secondary-foreground: 45 15% 85%;
+    /* Secondary - soft warm gray */
+    --secondary: 35 15% 90%;
+    --secondary-foreground: 240 10% 25%;
 
-    --muted: 240 8% 15%;
-    --muted-foreground: 240 8% 55%;
+    --muted: 35 15% 92%;
+    --muted-foreground: 240 8% 42%;
 
-    /* Accent - soft gold glow */
-    --accent: 45 70% 45%;
-    --accent-foreground: 240 10% 6%;
+    /* Accent - rich gold */
+    --accent: 40 65% 50%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 8% 18%;
-    --input: 240 8% 15%;
-    --ring: 40 85% 55%;
+    --border: 35 15% 85%;
+    --input: 35 15% 90%;
+    --ring: 35 80% 45%;
 
     --radius: 0.5rem;
 
     /* Custom design tokens */
-    --gold-glow: 0 0 40px hsla(40, 85%, 55%, 0.3);
-    --gold-glow-subtle: 0 0 20px hsla(40, 85%, 55%, 0.15);
-    --text-glow: 0 0 10px hsla(40, 85%, 55%, 0.2);
-    --card-shadow: 0 4px 24px -8px hsla(0, 0%, 0%, 0.5);
+    --gold-glow: 0 0 40px hsla(35, 80%, 45%, 0.2);
+    --gold-glow-subtle: 0 0 20px hsla(35, 80%, 45%, 0.1);
+    --text-glow: 0 0 10px hsla(35, 80%, 45%, 0.15);
+    --card-shadow: 0 4px 24px -8px hsla(35, 20%, 30%, 0.1);
     
     /* Operator colors */
-    --operator-global: 200 70% 55%;
-    --operator-temp: 280 60% 55%;
-    --operator-copy: 160 60% 50%;
-    --operator-id: 320 60% 55%;
-    --operator-subnode: 30 70% 55%;
-    --operator-release: 0 60% 55%;
-    --operator-next: 120 55% 50%;
-    --operator-prev: 90 55% 50%;
-    --operator-compare: 40 85% 55%;
-    --operator-assign: 260 60% 60%;
+    --operator-global: 200 70% 45%;
+    --operator-temp: 280 60% 45%;
+    --operator-copy: 160 60% 40%;
+    --operator-id: 320 60% 45%;
+    --operator-subnode: 30 70% 45%;
+    --operator-release: 0 60% 45%;
+    --operator-next: 120 55% 40%;
+    --operator-prev: 90 55% 40%;
+    --operator-compare: 35 80% 45%;
+    --operator-assign: 260 60% 50%;
     --operator-error: 0 80% 50%;
 
-    /* Sidebar (keeping for compatibility) */
-    --sidebar-background: 240 10% 8%;
-    --sidebar-foreground: 45 15% 92%;
-    --sidebar-primary: 40 85% 55%;
-    --sidebar-primary-foreground: 240 10% 6%;
-    --sidebar-accent: 35 25% 20%;
-    --sidebar-accent-foreground: 45 15% 85%;
-    --sidebar-border: 240 8% 18%;
-    --sidebar-ring: 40 85% 55%;
+    /* Sidebar */
+    --sidebar-background: 40 25% 97%;
+    --sidebar-foreground: 240 10% 15%;
+    --sidebar-primary: 35 80% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 35 15% 92%;
+    --sidebar-accent-foreground: 240 10% 25%;
+    --sidebar-border: 35 15% 85%;
+    --sidebar-ring: 35 80% 45%;
   }
 }
 
@@ -140,8 +140,8 @@
   /* Animated gradient background */
   .gradient-bg {
     background: 
-      radial-gradient(ellipse at 20% 30%, hsla(40, 85%, 55%, 0.08) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 70%, hsla(280, 60%, 55%, 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 20% 30%, hsla(35, 80%, 45%, 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, hsla(280, 60%, 50%, 0.04) 0%, transparent 50%),
       hsl(var(--background));
   }
 
