@@ -67,7 +67,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "Universal Language <noreply@contact.thewayofmachinethinking.com>",
       to: [email],
-      subject: "Welcome to Universal Language",
+      subject: "Thank you for visiting Universal Language",
       html: `
 <!DOCTYPE html>
 <html>
@@ -84,7 +84,7 @@ const handler = async (req: Request): Promise<Response> => {
           <tr>
             <td style="background:linear-gradient(135deg,#b8860b,#d4a017);padding:40px 40px 30px;text-align:center;">
               <div style="display:inline-block;width:48px;height:48px;border-radius:8px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);line-height:48px;font-family:monospace;font-weight:bold;color:#fff;font-size:18px;margin-bottom:16px;">UL</div>
-              <h1 style="margin:12px 0 0;color:#ffffff;font-size:28px;font-weight:600;letter-spacing:-0.5px;">Welcome to Universal Language</h1>
+              <h1 style="margin:12px 0 0;color:#ffffff;font-size:28px;font-weight:600;letter-spacing:-0.5px;">Thank You for Visiting Universal Language</h1>
             </td>
           </tr>
           <!-- Body -->
@@ -92,10 +92,13 @@ const handler = async (req: Request): Promise<Response> => {
             <td style="padding:40px;">
               <p style="color:#2d2d2d;font-size:18px;line-height:1.6;margin:0 0 20px;">Hello ${name},</p>
               <p style="color:#4a4a4a;font-size:16px;line-height:1.7;margin:0 0 24px;">
-                Thank you for joining Universal Language — a formal system for reasoning about tree-structured data with mathematical precision.
+                Thank you for visiting the site. I built this to implement the formal system described in the book. This is an ongoing research by Weili Chen, in development for over a decade.
               </p>
               <p style="color:#4a4a4a;font-size:16px;line-height:1.7;margin:0 0 24px;">
-                You now have access to our proof verifier, theorem library, and interactive tools for exploring the language's operators and inference rules.
+                If you have a background in computer science theory, foundational mathematics, are a logician, or someone who finds this interesting, please feel free to reach out — I'd love to hear your feedback and suggestions.
+              </p>
+              <p style="color:#4a4a4a;font-size:16px;line-height:1.7;margin:0 0 24px;">
+                You can contact me at: <a href="mailto:hankaichen750@gmail.com" style="color:#b8860b;text-decoration:underline;">hankaichen750@gmail.com</a>
               </p>
               <table cellpadding="0" cellspacing="0" style="margin:32px 0;">
                 <tr>
@@ -105,7 +108,7 @@ const handler = async (req: Request): Promise<Response> => {
                 </tr>
               </table>
               <p style="color:#888;font-size:14px;line-height:1.6;margin:0;">
-                If you have any questions, feel free to reach out. We're glad to have you.
+                Warm regards,<br>Hankai Chen
               </p>
             </td>
           </tr>
