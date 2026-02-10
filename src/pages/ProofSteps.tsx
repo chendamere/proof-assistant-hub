@@ -17,7 +17,7 @@ import { axioms } from '@/data/axioms';
 import { verifyTransitionWorker, type VerifyTransitionResult } from '@/lib/transitionVerificationWorkerClient';
 import type { MatchInfo } from '@/workers/transitionVerificationWorker';
 import type { DiagnosisResult } from '@/lib/inferenceRules/errorDiagnosis';
-import { generateLLMDiagnosis } from '@/lib/inferenceRules/llmDiagnosis';
+// LLM diagnosis hidden for now. Re-enable: import { generateLLMDiagnosis } from '@/lib/inferenceRules/llmDiagnosis';
 import { definitions } from '@/data/definitions';
 import { theorems } from '@/data/theorems';
 import { Button } from '@/components/ui/button';
@@ -940,7 +940,8 @@ function DiagnosisDisplay({
             </div>
           )}
 
-          {diagnosis.llmDiagnosis && (
+          {/* LLM diagnosis UI hidden for now. Re-enable when VITE_ENABLE_LLM_DIAGNOSIS is used. */}
+          {false && diagnosis.llmDiagnosis && (
             <div className="border-t border-border/50 pt-2 mt-2">
               <div className="font-medium mb-1 flex items-center gap-1">
                 <span>AI explanation</span>
