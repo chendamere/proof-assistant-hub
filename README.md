@@ -44,7 +44,7 @@ Rules are proven by applying inference rules in order:
 
 **Location:** `src/lib/dag/`, `src/lib/inferenceRules/substitution.ts`
 
-Substitution uses VF2 subgraph isomorphism on DAGs. Operand binding (rule operands like `i`, `m` → target operands) is resolved during the VF2 matching, not via integer normalization.
+Substitution uses VF2 subgraph injection on DAGs. Operand binding (rule operands like `i`, `m` → target operands) is resolved during the VF2 matching, not via integer normalization.
 
 #### VF2 Subgraph Isomorphism
 
@@ -61,29 +61,12 @@ When the pattern has `\Tc` and the target has empty arms (cond→tail with no co
 
 1. `exprToDAG` for target and rule
 2. Optionally augment target with empty placeholders
-3. `vf2ExprSubgraphIsomorphism` → mapping and operand mapping
+3. `SingleRootDAGInjection` → mapping and operand mapping
 4. `resolveTcOperandMapping` → map `\Tc` operands to extracted expressions
 5. `expandTcInRuleSide` → replace `\Tc` placeholders before building replacement DAG
 6. `substituteInDAG` → merge prefix + replacement + suffix DAGs
 7. `dagToExpr(merged)` → result expression
 
----
-
-### 4. Subexpression Generation
-
-**Location:** `src/lib/inferenceRules/subexpressions.ts`
-
-Produces candidate subexpressions for branch-heavy rules (prefix/suffix combinations for `\Blb`, `\Brb`, `\Bb`) when direct matching fails.
-
----
-
-### 5. Grammar Checking
-
-**Location:** `src/lib/grammarChecker.ts`
-
-Validates operand instantiation: Oa, Ob, Oc, Od, Og, Ot create bound operands; Os releases; Or, Oe, On, Op, P-ops, B-ops, Tc do not instantiate.
-
----
 
 ## Data Flow
 
@@ -95,7 +78,7 @@ Expression string
        └──► exprToDAG ─► DAG
               │
               ├─ augmentTargetDAGForTcMatching (if needed)
-              ├─ vf2ExprSubgraphIsomorphism (operand matching here)
+              ├─ SingleRootDAGInjection (operand matching here)
               ├─ resolveTcOperandMapping, expandTcInRuleSide
               ├─ substituteInDAG
               └─ dagToExpr ─► Result expression
@@ -110,5 +93,5 @@ Expression string
 | `inferenceRules` | `checkInferenceRules` | Apply all inference rules |
 | `substitution` | `findSubstitution`, `trySubstitution` | DAG-based rule matching and substitution |
 | `dag` | `exprToDAG`, `dagToExpr` | Expression ↔ DAG conversion |
-| `dag` | `vf2ExprSubgraphIsomorphism` | Subgraph isomorphism with operand binding |
+| `dag` | `SingleRootDAGInjection` | Subgraph injection with operand binding |
 | `dag` | `substituteInDAG` | Replace matched subgraph with replacement DAG |
