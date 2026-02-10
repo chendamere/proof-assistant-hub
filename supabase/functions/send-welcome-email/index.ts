@@ -29,7 +29,7 @@ const handler = async (req: Request): Promise<Response> => {
     const name = displayName || "there";
 
     const emailResponse = await resend.emails.send({
-      from: "Universal Language <noreply@yourdomain.com>",
+      from: "Universal Language <noreply@contact.thewayofmachinethinking.com>",
       to: [email],
       subject: "Welcome to Universal Language",
       html: `
