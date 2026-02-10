@@ -16,6 +16,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import {
   Select,
   SelectContent,
@@ -317,12 +318,11 @@ export default function SubstitutionDAGDemo() {
     <div className="min-h-screen gradient-bg">
       <Navigation />
       <div className="h-16" />
-      <div className="container max-w-6xl py-8 space-y-8">
+      <div className="container max-w-6xl py-8 space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">DAG-Based Substitution Demo</h1>
         <p className="text-muted-foreground mt-2">
           Rule applicability after operand normalization is equivalent to DAG isomorphism.
-          Expressions are converted to DAGs with operations as nodes; Bb, Blb, Brb have two outgoing edges.
         </p>
         <div className="mt-4 flex items-center gap-4">
           <Label htmlFor="example-select" className="shrink-0">Load example:</Label>
@@ -351,103 +351,106 @@ export default function SubstitutionDAGDemo() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Rule (Pattern)</CardTitle>
-            <CardDescription>Expression from the inference rule (original operands i, m, j)</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="rule">Rule expression</Label>
-              <Input
-                id="rule"
-                value={ruleExpr}
-                onChange={(e) => setRuleExpr(e.target.value)}
-                className="font-mono mt-2"
-              />
-            </div>
-            <div>
-              <Label>Pattern DAG</Label>
-              <div className="mt-2 text-xs text-muted-foreground font-mono overflow-auto max-h-32">
-                {JSON.stringify(patternDAG, null, 2)}
-              </div>
-            </div>
-            {patternDAG.nodes.length > 0 && (
-              <DAGGraphVisual structure={patternDAG} />
-            )}
-          </CardContent>
-        </Card>
+      <Accordion type="multiple" defaultValue={["dag-inputs", "vf2-result"]} className="space-y-3">
+        {/* DAG Inputs */}
+        <AccordionItem value="dag-inputs" className="border rounded-lg">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline text-base font-semibold">
+            Rule &amp; Target DAGs
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4">
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Rule (Pattern)</CardTitle>
+                  <CardDescription className="text-xs">Expression from the inference rule</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label htmlFor="rule">Rule expression</Label>
+                    <Input id="rule" value={ruleExpr} onChange={(e) => setRuleExpr(e.target.value)} className="font-mono mt-2" />
+                  </div>
+                  <div>
+                    <Label>Pattern DAG</Label>
+                    <div className="mt-2 text-xs text-muted-foreground font-mono overflow-auto max-h-32">
+                      {JSON.stringify(patternDAG, null, 2)}
+                    </div>
+                  </div>
+                  {patternDAG.nodes.length > 0 && <DAGGraphVisual structure={patternDAG} />}
+                </CardContent>
+              </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Target</CardTitle>
-            <CardDescription>Target expression (normalized, integer operands)</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="target">Target expression</Label>
-              <Input
-                id="target"
-                value={targetExpr}
-                onChange={(e) => setTargetExpr(e.target.value)}
-                className="font-mono mt-2"
-              />
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Target</CardTitle>
+                  <CardDescription className="text-xs">Target expression (normalized)</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label htmlFor="target">Target expression</Label>
+                    <Input id="target" value={targetExpr} onChange={(e) => setTargetExpr(e.target.value)} className="font-mono mt-2" />
+                  </div>
+                  <div>
+                    <Label>Target DAG</Label>
+                    <div className="mt-2 text-xs text-muted-foreground font-mono overflow-auto max-h-32">
+                      {JSON.stringify(targetDAG, null, 2)}
+                    </div>
+                  </div>
+                  {targetDAG.nodes.length > 0 && <DAGGraphVisual structure={targetDAG} />}
+                </CardContent>
+              </Card>
             </div>
-            <div>
-              <Label>Target DAG</Label>
-              <div className="mt-2 text-xs text-muted-foreground font-mono overflow-auto max-h-32">
-                {JSON.stringify(targetDAG, null, 2)}
-              </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* VF2 Result */}
+        <AccordionItem value="vf2-result" className="border rounded-lg">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline text-base font-semibold">
+            VF2 Isomorphism Result
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4 space-y-4">
+            <div className="flex items-center gap-4">
+              <Badge variant={vf2Result ? 'default' : 'secondary'}>
+                {vf2Result ? 'Isomorphic' : 'Not isomorphic'}
+              </Badge>
+              {vf2Result && (
+                <span className="text-sm">
+                  Operand mapping: {[...vf2Result.operandMapping.entries()].map(([k, v]) => `${k}→${v}`).join(', ')}
+                </span>
+              )}
             </div>
-            {targetDAG.nodes.length > 0 && (
-              <DAGGraphVisual structure={targetDAG} />
-            )}
-          </CardContent>
-        </Card>
-      </div>
+            <div className="flex items-center gap-4">
+              <Badge variant={matchFound ? 'default' : 'secondary'}>
+                findSubstitution: {matchFound ? 'Match found' : 'No match'}
+              </Badge>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>VF2 Isomorphism Result</CardTitle>
-          <CardDescription>
-            Rule DAG vs Target DAG — isomorphic when rule structure matches target
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center gap-4">
-            <Badge variant={vf2Result ? 'default' : 'secondary'}>
-              {vf2Result ? 'Isomorphic' : 'Not isomorphic'}
-            </Badge>
-            {vf2Result && (
-              <span className="text-sm">
-                Operand mapping: {[...vf2Result.operandMapping.entries()].map(([k, v]) => `${k}→${v}`).join(', ')}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-4">
-            <Badge variant={matchFound ? 'default' : 'secondary'}>
-              findSubstitution: {matchFound ? 'Match found' : 'No match'}
-            </Badge>
-          </div>
-        </CardContent>
-      </Card>
+        {/* How it works */}
+        <AccordionItem value="how-it-works" className="border rounded-lg">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline text-base font-semibold">
+            How it works
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4">
+            <ul className="prose prose-sm dark:prose-invert max-w-none list-disc pl-4 space-y-1">
+              <li><strong>Expression → DAG:</strong> Each operation becomes a node. Operands are stored in node data.</li>
+              <li><strong>Sequential edges:</strong> Operations in a comma-separated list form a chain.</li>
+              <li><strong>Bb, Blb, Brb:</strong> Branch operators have two outgoing edges to top and bottom arms.</li>
+              <li><strong>VF2:</strong> Subgraph isomorphism with variable binding.</li>
+            </ul>
+          </AccordionContent>
+        </AccordionItem>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>How it works</CardTitle>
-        </CardHeader>
-        <CardContent className="prose prose-sm dark:prose-invert max-w-none">
-          <ul>
-            <li><strong>Expression → DAG:</strong> Each operation (\Oc, \Od, \Os, etc.) becomes a node. Operands are stored in node data.</li>
-            <li><strong>Sequential edges:</strong> Operations in a comma-separated list form a chain (op₁→op₂→op₃).</li>
-            <li><strong>Bb, Blb, Brb:</strong> Branch operators have two outgoing edges to the top and bottom arms.</li>
-            <li><strong>VF2:</strong> Subgraph isomorphism with variable binding—rule operands matches after assigning them to the first occurrence of the target operands</li>
-          </ul>
-        </CardContent>
-      </Card>
-
-      <TrySubstitutionSection />
+        {/* Try Substitution */}
+        <AccordionItem value="try-sub" className="border rounded-lg">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline text-base font-semibold">
+            Try Substitution Demo
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4">
+            <TrySubstitutionSection />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
       </div>
       <Footer />
     </div>
