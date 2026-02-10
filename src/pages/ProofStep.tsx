@@ -16,6 +16,7 @@ import { theorems } from '@/data/theorems';
 import { Play, RotateCcw, CheckCircle2, XCircle, Loader2, AlertCircle, X, BookOpen } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 interface ProofStep {
   step: number;
@@ -439,37 +440,40 @@ const ProofStep: React.FC = () => {
             Verify if a rule is true by checking if it can be transformed using existing true rules.
           </p>
           
-          {/* Explanation Card */}
-          <Card className="max-w-4xl mx-auto mt-6 mb-4">
-            <CardContent className="p-6">
-              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                A rule is true if it satisfies one or a combination of inference rules together with rules that are 
-                already known to be true. A proof-step is one satisfiable step of applying an inference rule together 
-                with a true rule. A rule in question is true if the beginning expression (left side) can be transformed 
-                into the ending expression (right side) after a series of inference steps.
-              </p>
-              
-              {/* Inference Rules Box */}
-              <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-primary mb-3">Inference Rules</h3>
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <span className="font-semibold text-foreground block text-center">Equivalent Commutativity</span>
-                    <p className="text-muted-foreground mt-1">A ⟺ B implies B ⟺ A - Exact match (reversed)</p>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-foreground block text-center">Equivalent Transitivity</span>
-                    <p className="text-muted-foreground mt-1">A ⟺ B and B ⟺ C implies A ⟺ C - Chain through common side</p>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-foreground block text-center">Equivalent Substitution</span>
-                    <p className="text-muted-foreground mt-1">A ⟺ B allows replacing A with B in any context M·A·N → M·B·N</p>
-                    <p className="text-primary/80 text-xs italic mt-2 font-medium text-center">Note: Equivalent Substitution carries the bulk of most proofs.</p>
+          {/* Explanation Accordion */}
+          <Accordion type="single" collapsible className="max-w-4xl mx-auto mt-6 mb-4">
+            <AccordionItem value="explanation" className="bg-card border border-border rounded-lg">
+              <AccordionTrigger className="px-6 py-3 hover:no-underline text-sm font-semibold">
+                How Proof Steps Work &amp; Inference Rules
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-6">
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                  A rule is true if it satisfies one or a combination of inference rules together with rules that are 
+                  already known to be true. A proof-step is one satisfiable step of applying an inference rule together 
+                  with a true rule. A rule in question is true if the beginning expression (left side) can be transformed 
+                  into the ending expression (right side) after a series of inference steps.
+                </p>
+                <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+                  <h3 className="text-sm font-semibold text-primary mb-3">Inference Rules</h3>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <span className="font-semibold text-foreground block text-center">Equivalent Commutativity</span>
+                      <p className="text-muted-foreground mt-1">A ⟺ B implies B ⟺ A - Exact match (reversed)</p>
+                    </div>
+                    <div>
+                      <span className="font-semibold text-foreground block text-center">Equivalent Transitivity</span>
+                      <p className="text-muted-foreground mt-1">A ⟺ B and B ⟺ C implies A ⟺ C - Chain through common side</p>
+                    </div>
+                    <div>
+                      <span className="font-semibold text-foreground block text-center">Equivalent Substitution</span>
+                      <p className="text-muted-foreground mt-1">A ⟺ B allows replacing A with B in any context M·A·N → M·B·N</p>
+                      <p className="text-primary/80 text-xs italic mt-2 font-medium text-center">Note: Equivalent Substitution carries the bulk of most proofs.</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
           
           <Link to="/glossary">
             <Button variant="outline" className="gap-2">
