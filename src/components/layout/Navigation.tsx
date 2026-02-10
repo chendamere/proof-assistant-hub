@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, Network, ListOrdered, Library, Sun, Moon, LogIn, LogOut } from 'lucide-react';
+import { BookOpen, Network, ListOrdered, Library, Sun, Moon, LogIn, LogOut, Lock } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/hooks/useAuth';
 
 interface NavItem {
@@ -43,14 +44,21 @@ const Navigation: React.FC = () => {
               const disabled = item.requiresAuth && !user;
               if (disabled) {
                 return (
-                  <span
-                    key={item.path}
-                    className="flex items-center gap-2 px-3 py-2 rounded-md text-muted-foreground/40 cursor-not-allowed select-none"
-                    title="Sign in to access"
-                  >
-                    {item.icon}
-                    <span className="text-sm hidden sm:block">{item.label}</span>
-                  </span>
+                  <Tooltip key={item.path}>
+                    <TooltipTrigger asChild>
+                      <Link
+                        to="/auth"
+                        className="flex items-center gap-2 px-3 py-2 rounded-md text-muted-foreground/40 hover:text-muted-foreground/60 transition-colors"
+                      >
+                        {item.icon}
+                        <span className="text-sm hidden sm:block">{item.label}</span>
+                        <Lock className="w-3 h-3 hidden sm:block" />
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs">
+                      Sign in to access {item.label}
+                    </TooltipContent>
+                  </Tooltip>
                 );
               }
               return (
