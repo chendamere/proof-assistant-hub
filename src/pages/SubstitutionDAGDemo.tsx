@@ -359,7 +359,7 @@ export default function SubstitutionDAGDemo() {
         </div>
       </div>
 
-      <Accordion type="multiple" defaultValue={["dag-inputs", "vf2-result"]} className="space-y-3">
+      <Accordion type="multiple" defaultValue={[]} className="space-y-3">
         {/* DAG Inputs */}
         <AccordionItem value="dag-inputs" className="border rounded-lg">
           <AccordionTrigger className="px-4 py-3 hover:no-underline text-base font-semibold">
@@ -428,6 +428,21 @@ export default function SubstitutionDAGDemo() {
           </AccordionContent>
         </AccordionItem>
 
+        {/* How it works */}
+        <AccordionItem value="how-it-works" className="border rounded-lg">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline text-base font-semibold">
+            How it works
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4">
+            <ul className="prose prose-sm dark:prose-invert max-w-none list-disc pl-4 space-y-1">
+              <li><strong>Expression → DAG:</strong> Each operation becomes a node. Operands are stored in node data.</li>
+              <li><strong>Sequential edges:</strong> Operations in a comma-separated list form a chain.</li>
+              <li><strong>Bb, Blb, Brb:</strong> Branch operators have two outgoing edges to top and bottom arms.</li>
+              <li><strong>VF2:</strong> Subgraph isomorphism with variable binding.</li>
+            </ul>
+          </AccordionContent>
+        </AccordionItem>
+
         {/* VF2 Result */}
         <AccordionItem value="vf2-result" className="border rounded-lg">
           <AccordionTrigger className="px-4 py-3 hover:no-underline text-base font-semibold">
@@ -449,21 +464,6 @@ export default function SubstitutionDAGDemo() {
                 findSubstitution: {matchFound ? 'Match found' : 'No match'}
               </Badge>
             </div>
-          </AccordionContent>
-        </AccordionItem>
-
-        {/* How it works */}
-        <AccordionItem value="how-it-works" className="border rounded-lg">
-          <AccordionTrigger className="px-4 py-3 hover:no-underline text-base font-semibold">
-            How it works
-          </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4">
-            <ul className="prose prose-sm dark:prose-invert max-w-none list-disc pl-4 space-y-1">
-              <li><strong>Expression → DAG:</strong> Each operation becomes a node. Operands are stored in node data.</li>
-              <li><strong>Sequential edges:</strong> Operations in a comma-separated list form a chain.</li>
-              <li><strong>Bb, Blb, Brb:</strong> Branch operators have two outgoing edges to top and bottom arms.</li>
-              <li><strong>VF2:</strong> Subgraph isomorphism with variable binding.</li>
-            </ul>
           </AccordionContent>
         </AccordionItem>
 
