@@ -87,7 +87,7 @@ const Navigation: React.FC = () => {
               <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100" />
             </Button>
             {user ? (
-              <Button variant="ghost" size="sm" className="ml-1 gap-2" onClick={signOut}>
+              <Button variant="ghost" size="sm" className="ml-1 gap-2" onClick={(e) => { e.stopPropagation(); e.preventDefault(); signOut(); }}>
                 <LogOut className="h-4 w-4" />
                 <span className="hidden sm:inline text-sm">Sign Out</span>
               </Button>
