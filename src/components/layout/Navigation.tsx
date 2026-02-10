@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, Network, ListOrdered } from 'lucide-react';
+import { BookOpen, Network, ListOrdered, Library } from 'lucide-react';
 
 interface NavItem {
   path: string;
@@ -14,7 +14,8 @@ const Navigation: React.FC = () => {
   const navItems: NavItem[] = [
     { path: '/', label: 'Introduction', icon: <BookOpen className="w-4 h-4" /> },
     { path: '/substitution-dag', label: 'Substitution DAG', icon: <Network className="w-4 h-4" /> },
-    { path: '/proof-steps', label: 'Proof Steps', icon: <ListOrdered className="w-4 h-4" /> }
+    { path: '/proof-steps', label: 'Proof Steps', icon: <ListOrdered className="w-4 h-4" /> },
+    { path: '/bibliography', label: 'Bibliography', icon: <Library className="w-4 h-4" /> },
   ];
 
   return (
