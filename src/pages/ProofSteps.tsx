@@ -83,7 +83,7 @@ const ProofSteps: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [chapter, setChapter] = useState<string>('Theorems_of_Identical_Node_Comparison');
+  const [chapter, setChapter] = useState<string>('all');
   const [ruleInput, setRuleInput] = useState('');
   const [transitionVerifying, setTransitionVerifying] = useState<string | null>(null);
   const [transitionResults, setTransitionResults] = useState<Record<string, Record<number, boolean>>>({});
@@ -417,7 +417,7 @@ const ProofSteps: React.FC = () => {
           <ScrollArea className="h-[calc(100vh-14rem)]">
             <div className="space-y-3 pr-4">
               {groupedByChapter.map(([chapterName, theorems]) => (
-                <Collapsible key={chapterName} defaultOpen>
+                <Collapsible key={chapterName}>
                   <div className="rounded-lg border bg-card">
                     <CollapsibleTrigger className="flex w-full items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors rounded-t-lg [&[data-state=open]>div>svg:first-child]:rotate-90">
                       <div className="flex items-center gap-2">
