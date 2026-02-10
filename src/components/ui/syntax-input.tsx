@@ -175,7 +175,7 @@ export const SyntaxInput: React.FC<SyntaxInputProps> = ({
           wordBreak: 'break-word',
         }}
         dangerouslySetInnerHTML={{ 
-          __html: highlightSyntax(value) || `<span class="text-muted-foreground">${placeholder || ''}</span>` 
+          __html: highlightSyntax(value) || `<span class="text-muted-foreground">${escapeHtml(placeholder || '')}</span>` 
         }}
       />
       
