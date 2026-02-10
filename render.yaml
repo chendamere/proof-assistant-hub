@@ -1,0 +1,8 @@
+# Render.com static site (Blueprint)
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: proof-assistant-hub
+    runtime: static
+    buildCommand: npm run build
+    staticPublishPath: dist
