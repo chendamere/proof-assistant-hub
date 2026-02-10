@@ -4,7 +4,7 @@ import Footer from '@/components/layout/Footer';
 import WorkbenchContainer from '@/components/workbench/WorkbenchContainer';
 import RulesSidePanel from '@/components/rules/RulesSidePanel';
 import { usePanelContext } from '@/contexts/PanelContext';
-import { Copy } from 'lucide-react';
+import { Copy, Play } from 'lucide-react';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -22,6 +22,7 @@ import { definitions } from '@/data/definitions';
 import { theorems } from '@/data/theorems';
 import { Button } from '@/components/ui/button';
 import { Search, ChevronDown, ChevronRight, FileText, ListOrdered, CheckCircle2, Check, X, AlertTriangle, Info, Plus, Trash2, CheckCheck } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 type ProofStepsTable = Record<string, string[]>;
 
@@ -77,11 +78,13 @@ function parseKey(key: string): { filename: string; index: number; ruleStr: stri
 
 const ProofSteps: React.FC = () => {
   const { isWorkbenchExpanded, isRulesPanelOpen, setDebugWorkbenchExpressions } = usePanelContext();
+  const navigate = useNavigate();
   const [table, setTable] = useState<ProofStepsTable | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [chapter, setChapter] = useState<string>('Theorems_of_Identical_Node_Comparison');
+  const [ruleInput, setRuleInput] = useState('');
   const [transitionVerifying, setTransitionVerifying] = useState<string | null>(null);
   const [transitionResults, setTransitionResults] = useState<Record<string, Record<number, boolean>>>({});
   const [transitionMatchInfo, setTransitionMatchInfo] = useState<Record<string, Record<number, MatchInfo>>>({});
@@ -279,6 +282,27 @@ const ProofSteps: React.FC = () => {
     return list;
   }, [theoremsWithSteps, chapter, search]);
 
+  const groupedByChapter = React.useMemo(() => {
+    const groups: Record<string, TheoremWithSteps[]> = {};
+    for (const t of filtered) {
+      if (!groups[t.filename]) groups[t.filename] = [];
+      groups[t.filename].push(t);
+    }
+    return Object.entries(groups).sort(
+      ([a], [b]) => getChapterIndex(a) - getChapterIndex(b)
+    );
+  }, [filtered]);
+
+  const handleBeginProof = React.useCallback(() => {
+    const parts = ruleInput.split(/\s*⟺\s*/);
+    const left = parts[0]?.trim() || '';
+    const right = parts.slice(1).join('⟺').trim() || '';
+    const params = new URLSearchParams();
+    if (left) params.set('start', left);
+    if (right) params.set('end', right);
+    navigate(`/proof-step?${params.toString()}`);
+  }, [ruleInput, navigate]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
@@ -335,6 +359,36 @@ const ProofSteps: React.FC = () => {
             </p>
           </div>
 
+          {/* Rule input + Begin Proof */}
+          <Card className="mb-6">
+            <CardContent className="pt-5 pb-4 space-y-3">
+              <div className="flex flex-col sm:flex-row gap-3 items-start">
+                <div className="flex-1 w-full">
+                  <label className="text-sm font-medium text-foreground mb-1.5 block">Enter a rule to prove</label>
+                  <Input
+                    placeholder=", i \Op, ⟺ , j \Op,"
+                    value={ruleInput}
+                    onChange={(e) => setRuleInput(e.target.value)}
+                    className="font-mono"
+                  />
+                </div>
+                <Button
+                  onClick={handleBeginProof}
+                  disabled={!ruleInput.trim()}
+                  className="sm:mt-6 shrink-0"
+                >
+                  <Play className="w-4 h-4 mr-2" />
+                  Begin Proof Step
+                </Button>
+              </div>
+              {ruleInput.trim() && (
+                <div className="p-2 rounded-md border bg-muted/20 overflow-x-auto">
+                  <ExpressionRenderer expression={ruleInput} size={14} />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -362,23 +416,43 @@ const ProofSteps: React.FC = () => {
 
           <ScrollArea className="h-[calc(100vh-14rem)]">
             <div className="space-y-3 pr-4">
-              {filtered.map((t) => (
-                <TheoremCard
-                  key={t.key}
-                  theorem={t}
-                  verification={verificationResults[t.key]}
-                  transitionMatchInfo={transitionMatchInfo[t.key]}
-                  onVerifyTransition={verifySingleTransition}
-                  onVerifyCustomTransition={verifyCustomTransition}
-                  onCopyToDebug={setDebugWorkbenchExpressions}
-                  onInsertStep={handleInsertStep}
-                  onDeleteStep={handleDeleteStep}
-                  transitionVerifying={transitionVerifying}
-                  customTransitionVerifying={customTransitionVerifying}
-                  transitionResults={transitionResults[t.key]}
-                  customTransitionResults={customTransitionResults}
-                  transitionDiagnoses={transitionDiagnoses[t.key]}
-                />
+              {groupedByChapter.map(([chapterName, theorems]) => (
+                <Collapsible key={chapterName} defaultOpen>
+                  <div className="rounded-lg border bg-card">
+                    <CollapsibleTrigger className="flex w-full items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors rounded-t-lg [&[data-state=open]>div>svg:first-child]:rotate-90">
+                      <div className="flex items-center gap-2">
+                        <ChevronRight className="h-4 w-4 transition-transform" />
+                        <span className="font-semibold text-sm">
+                          {getChapterIndex(chapterName) < 99 ? `Ch. ${getChapterIndex(chapterName)}: ` : ''}
+                          {chapterName.replace(/_/g, ' ')}
+                        </span>
+                        <Badge variant="secondary" className="text-xs">{theorems.length}</Badge>
+                      </div>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="px-4 pb-4 space-y-3">
+                        {theorems.map((t) => (
+                          <TheoremCard
+                            key={t.key}
+                            theorem={t}
+                            verification={verificationResults[t.key]}
+                            transitionMatchInfo={transitionMatchInfo[t.key]}
+                            onVerifyTransition={verifySingleTransition}
+                            onVerifyCustomTransition={verifyCustomTransition}
+                            onCopyToDebug={setDebugWorkbenchExpressions}
+                            onInsertStep={handleInsertStep}
+                            onDeleteStep={handleDeleteStep}
+                            transitionVerifying={transitionVerifying}
+                            customTransitionVerifying={customTransitionVerifying}
+                            transitionResults={transitionResults[t.key]}
+                            customTransitionResults={customTransitionResults}
+                            transitionDiagnoses={transitionDiagnoses[t.key]}
+                          />
+                        ))}
+                      </div>
+                    </CollapsibleContent>
+                  </div>
+                </Collapsible>
               ))}
               {filtered.length === 0 && (
                 <p className="text-muted-foreground py-8 text-center">
