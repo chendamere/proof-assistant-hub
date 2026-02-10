@@ -4,7 +4,7 @@
  * Uses structural boundaries instead of character positions.
  */
 
-import type { DAGStructure, DAGNode, DAGEdge, ExprNodeData } from './types';
+import type { DAGStructure, DAGNode, DAGEdge, EdgeType, ExprNodeData } from './types';
 import { buildAdjacency, reachableFrom } from './utils';
 
 /**
@@ -192,7 +192,7 @@ function addPrefixToReplacementEdges(
   const headIds = [...replacementHeads];
   for (const { from: prefixId, edgeType } of prefixToMatched) {
     for (const headId of headIds) {
-      out.push({ from: prefixId, to: headId, edgeType });
+      out.push({ from: prefixId, to: headId, edgeType: edgeType as EdgeType });
     }
   }
 }
@@ -215,7 +215,7 @@ function addBoundaryEdges(
   }
   for (const tailId of replacementTails) {
     for (const suffixId of suffixReceivedFromMatched) {
-      out.push({ from: tailId, to: suffixId, edgeType: (targetEdges.find((e) => matchedIds.has(e.from) && e.to === suffixId)?.edgeType ?? 0) as number });
+      out.push({ from: tailId, to: suffixId, edgeType: (targetEdges.find((e) => matchedIds.has(e.from) && e.to === suffixId)?.edgeType ?? 0) as EdgeType });
     }
   }
 
