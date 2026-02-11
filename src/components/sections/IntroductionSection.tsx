@@ -37,7 +37,7 @@ const IntroductionSection: React.FC = () => {
             <AccordionContent className="px-6 pb-6">
               <div className="space-y-4 text-muted-foreground text-sm leading-relaxed">
                 <p>
-                  Thank you for visiting the site. My name is Kyle Chen, a recent computer science gradient son of the author. 
+                  Thank you for visiting the site. My name is Kyle Chen, a recent computer science graduate and <thead></thead> son of the author. 
                   I built this to implement the formal system described in the book. 
                   This is an ongoing research in development for over a decade. If you have a background 
                   in computer science theory, foundational mathematics, logician, or someone who finds this interesting, 
