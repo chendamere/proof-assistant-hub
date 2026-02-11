@@ -461,13 +461,15 @@ export const ExpressionRenderer: React.FC<ExpressionRendererProps> = ({ expressi
             </span>
           );
         } else if (token.type === 'operator' && token.operatorSrc) {
+          const isPuOperator = token.value === '\\Pu' || token.value === '\\nPu';
+          const opSize = isPuOperator ? adjustedSize * 1.35 : adjustedSize;
           return (
             <span key={index} className="inline-flex whitespace-nowrap">
               <img
                 src={token.operatorSrc}
                 alt={token.value}
                 title={token.value}
-                style={{ width: adjustedSize, height: adjustedSize, verticalAlign: 'middle' }}
+                style={{ width: opSize, height: opSize, verticalAlign: 'middle' }}
                 className="inline-block align-middle dark:invert dark:brightness-0 dark:invert"
               />
             </span>
