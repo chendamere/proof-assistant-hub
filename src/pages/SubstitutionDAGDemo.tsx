@@ -332,40 +332,57 @@ export default function SubstitutionDAGDemo() {
         <p className="text-muted-foreground mt-2">
           Rule applicability after operand normalization is equivalent to DAG isomorphism.
         </p>
-        <div className="mt-4 flex items-center gap-4">
-          <Label htmlFor="example-select" className="shrink-0">Load example:</Label>
-          <Select
-            value={selectedExample}
-            onValueChange={(value) => {
-              const ex = DAG_EXAMPLES.find((e) => e.name === value);
-              if (ex) {
-                setSelectedExample(ex.name);
-                setRuleExpr(ex.rule);
-                setTargetExpr(ex.target);
-              }
-            }}
-          >
-            <SelectTrigger id="example-select" className="w-[280px]">
-              <SelectValue placeholder="Choose an example..." />
-            </SelectTrigger>
-            <SelectContent>
-              {DAG_EXAMPLES.map((ex) => (
-                <SelectItem key={ex.name} value={ex.name}>
-                  {ex.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
       </div>
 
-      <Accordion type="multiple" defaultValue={[]} className="space-y-3">
-        {/* DAG Inputs */}
+      <Accordion type="multiple" defaultValue={["how-it-works"]} className="space-y-3">
+        {/* How it works – open by default */}
+        <AccordionItem value="how-it-works" className="border rounded-lg">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline text-base font-semibold">
+            How it works
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4">
+            <ul className="prose prose-sm dark:prose-invert max-w-none list-disc pl-4 space-y-1">
+              <li><strong>Expression → DAG:</strong> Each operation becomes a node. Operands are stored in node data.</li>
+              <li><strong>Sequential edges:</strong> Operations in a comma-separated list form a chain.</li>
+              <li><strong>Bb, Blb, Brb:</strong> Branch operators have two outgoing edges to top and bottom arms.</li>
+              <li><strong>VF2:</strong> Subgraph isomorphism with variable binding.</li>
+            </ul>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* DAG Inputs – now includes Load example and VF2 result */}
         <AccordionItem value="dag-inputs" className="border rounded-lg">
           <AccordionTrigger className="px-4 py-3 hover:no-underline text-base font-semibold">
             Rule &amp; Target DAGs
           </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4">
+          <AccordionContent className="px-4 pb-4 space-y-6">
+            {/* Load example */}
+            <div className="flex items-center gap-4">
+              <Label htmlFor="example-select" className="shrink-0">Load example:</Label>
+              <Select
+                value={selectedExample}
+                onValueChange={(value) => {
+                  const ex = DAG_EXAMPLES.find((e) => e.name === value);
+                  if (ex) {
+                    setSelectedExample(ex.name);
+                    setRuleExpr(ex.rule);
+                    setTargetExpr(ex.target);
+                  }
+                }}
+              >
+                <SelectTrigger id="example-select" className="w-[280px]">
+                  <SelectValue placeholder="Choose an example..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {DAG_EXAMPLES.map((ex) => (
+                    <SelectItem key={ex.name} value={ex.name}>
+                      {ex.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-4">
                 <div>
@@ -425,44 +442,25 @@ export default function SubstitutionDAGDemo() {
                 {targetDAG.nodes.length > 0 && <DAGGraphVisual structure={targetDAG} />}
               </div>
             </div>
-          </AccordionContent>
-        </AccordionItem>
 
-        {/* How it works */}
-        <AccordionItem value="how-it-works" className="border rounded-lg">
-          <AccordionTrigger className="px-4 py-3 hover:no-underline text-base font-semibold">
-            How it works
-          </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4">
-            <ul className="prose prose-sm dark:prose-invert max-w-none list-disc pl-4 space-y-1">
-              <li><strong>Expression → DAG:</strong> Each operation becomes a node. Operands are stored in node data.</li>
-              <li><strong>Sequential edges:</strong> Operations in a comma-separated list form a chain.</li>
-              <li><strong>Bb, Blb, Brb:</strong> Branch operators have two outgoing edges to top and bottom arms.</li>
-              <li><strong>VF2:</strong> Subgraph isomorphism with variable binding.</li>
-            </ul>
-          </AccordionContent>
-        </AccordionItem>
-
-        {/* VF2 Result */}
-        <AccordionItem value="vf2-result" className="border rounded-lg">
-          <AccordionTrigger className="px-4 py-3 hover:no-underline text-base font-semibold">
-            VF2 Isomorphism Result
-          </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4 space-y-4">
-            <div className="flex items-center gap-4">
-              <Badge variant={vf2Result ? 'default' : 'secondary'}>
-                {vf2Result ? 'Isomorphic' : 'Not isomorphic'}
-              </Badge>
-              {vf2Result && (
-                <span className="text-sm">
-                  Operand mapping: {[...vf2Result.operandMapping.entries()].map(([k, v]) => `${k}→${v}`).join(', ')}
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-4">
-              <Badge variant={matchFound ? 'default' : 'secondary'}>
-                findSubstitution: {matchFound ? 'Match found' : 'No match'}
-              </Badge>
+            {/* VF2 Isomorphism Result */}
+            <div className="space-y-4 pt-4 border-t">
+              <h4 className="text-base font-semibold">VF2 Isomorphism Result</h4>
+              <div className="flex items-center gap-4">
+                <Badge variant={vf2Result ? 'default' : 'secondary'}>
+                  {vf2Result ? 'Isomorphic' : 'Not isomorphic'}
+                </Badge>
+                {vf2Result && (
+                  <span className="text-sm">
+                    Operand mapping: {[...vf2Result.operandMapping.entries()].map(([k, v]) => `${k}→${v}`).join(', ')}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-4">
+                <Badge variant={matchFound ? 'default' : 'secondary'}>
+                  findSubstitution: {matchFound ? 'Match found' : 'No match'}
+                </Badge>
+              </div>
             </div>
           </AccordionContent>
         </AccordionItem>
