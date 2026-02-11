@@ -350,6 +350,12 @@ const ProofSteps: React.FC = () => {
         }}
       >
         <div className="max-w-4xl mx-auto">
+          <div className="mb-4 flex items-start gap-3 rounded-lg border border-yellow-500/40 bg-yellow-500/10 p-3">
+            <AlertTriangle className="h-5 w-5 text-yellow-500 shrink-0 mt-0.5" />
+            <p className="text-sm text-yellow-700 dark:text-yellow-400">
+              This page is under development. Features may be incomplete or change without notice.
+            </p>
+          </div>
           <div className="mb-6">
             <h1 className="text-2xl font-semibold text-foreground mb-1">
               Theorems with Proof Steps
