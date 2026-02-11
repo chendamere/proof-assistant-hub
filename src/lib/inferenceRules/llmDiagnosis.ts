@@ -121,6 +121,19 @@ Format your response as valid JSON only.`;
 }
 
 /**
+ * Validate that an endpoint URL points to localhost only (SSRF prevention)
+ */
+function isAllowedEndpoint(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    const allowedHosts = ['localhost', '127.0.0.1', '[::1]'];
+    return allowedHosts.includes(parsed.hostname);
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Call Ollama API (local Llama models)
  */
 async function callOllamaAPI(
@@ -129,6 +142,10 @@ async function callOllamaAPI(
 ): Promise<string> {
   const endpoint = config.endpoint || 'http://localhost:11434';
   const model = config.model || 'llama3:8b';
+
+  if (!isAllowedEndpoint(endpoint)) {
+    throw new Error('Ollama endpoint must be a localhost address. External endpoints are not allowed for security reasons.');
+  }
   
   const response = await fetch(`${endpoint}/api/generate`, {
     method: 'POST',
