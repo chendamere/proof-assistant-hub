@@ -118,8 +118,12 @@ export function substituteInDAG(
     if (from && to) mergedEdges.push({ from, to, edgeType: e.edgeType });
   }
 
-  // Boundary: prefix->replacement heads first (in edge-type order) so :cond's children
-  // are serialized top arm then bottom by dagToExpr
+  // Prefix edges (prefix->prefix, prefix->sibling) first so that for branch nodes,
+  // sibling (e.g. top arm) appears before replacement in outgoing order; then
+  // prefix->replacement so replacement keeps the same arm position as the matched subgraph.
+  for (const e of targetDAG.edges) {
+    if (prefixSet.has(e.from) && (prefixSet.has(e.to) || siblingSet.has(e.to))) mergedEdges.push(e);
+  }
   addPrefixToReplacementEdges(
     targetDAG.edges,
     mergedEdges,
@@ -127,11 +131,6 @@ export function substituteInDAG(
     matchedIds,
     replacementHeads
   );
-
-  // Prefix edges (prefix->prefix, prefix->sibling)
-  for (const e of targetDAG.edges) {
-    if (prefixSet.has(e.from) && (prefixSet.has(e.to) || siblingSet.has(e.to))) mergedEdges.push(e);
-  }
 
   // Add sibling nodes and edges (e.g. top arm when match is in bottom arm)
   for (const id of siblingSet) {
