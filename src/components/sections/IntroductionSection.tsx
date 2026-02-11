@@ -210,34 +210,32 @@ const IntroductionSection: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
 
-          {/* Types of Rules */}
-          <AccordionItem value="types" className="bg-card border border-border rounded-lg card-glow animate-fade-in delay-400">
-            <AccordionTrigger className="px-6 py-4 hover:no-underline">
-              <span className="text-lg font-semibold text-primary">Types of Rules</span>
-            </AccordionTrigger>
-            <AccordionContent className="px-6 pb-6">
-              <div className="flex flex-wrap gap-6">
-                <div className="flex items-center gap-3">
-                  <span className="px-2 py-1 rounded text-xs font-mono bg-primary/20 text-primary border border-primary/30">
-                    AXIOM
-                  </span>
-                  <span className="text-muted-foreground text-sm">Natural properties, no proof needed</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="px-2 py-1 rounded text-xs font-mono bg-operator-temp/20 text-operator-temp border border-operator-temp/30">
-                    DEFINITION
-                  </span>
-                  <span className="text-muted-foreground text-sm">Concept definitions via rules</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="px-2 py-1 rounded text-xs font-mono bg-operator-next/20 text-operator-next border border-operator-next/30">
-                    THEOREM
-                  </span>
-                  <span className="text-muted-foreground text-sm">Proven conclusions from inference</span>
+                <div className="section-divider" />
+
+                {/* Types of Rules */}
+                <div>
+                  <h3 className="text-base font-semibold text-foreground mb-3">Types of Rules</h3>
+                  <div className="flex flex-wrap gap-6">
+                    <div className="flex items-center gap-3">
+                      <span className="px-2 py-1 rounded text-xs font-mono bg-primary/20 text-primary border border-primary/30">
+                        AXIOM
+                      </span>
+                      <span className="text-muted-foreground text-sm">Natural properties, no proof needed</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="px-2 py-1 rounded text-xs font-mono bg-operator-temp/20 text-operator-temp border border-operator-temp/30">
+                        DEFINITION
+                      </span>
+                      <span className="text-muted-foreground text-sm">Concept definitions via rules</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="px-2 py-1 rounded text-xs font-mono bg-operator-next/20 text-operator-next border border-operator-next/30">
+                        THEOREM
+                      </span>
+                      <span className="text-muted-foreground text-sm">Proven conclusions from inference</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </AccordionContent>
