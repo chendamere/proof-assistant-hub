@@ -40,9 +40,9 @@ const IntroductionSection: React.FC = () => {
                 <p>
                   Thank you for visiting the site. My name is Hankai (Kyle) Chen, a recent computer science graduate and son of the author. 
                   I built this to implement the formal system described in the book. 
-                  This is an ongoing research in development for over a decade. If you have a background 
-                  in computer science theory, foundational mathematics, logician, or someone who finds this interesting, 
-                  please feel free to reach out, I'd love to hear your feedback and suggestions.
+                  This theory has been in developmentfor over a decade. If you have a background 
+                  in computer science theory, foundational mathematics, logici, or is someone who finds this interesting, 
+                  please feel free to reach out. I am currently drafting a research paper on this topic, I'd love to hear your feedback and suggestions.
                 </p>
                 <div className="flex items-center gap-2 mt-4">
                   <Mail className="w-4 h-4 text-primary" />
