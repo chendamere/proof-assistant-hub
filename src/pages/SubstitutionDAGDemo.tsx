@@ -1,7 +1,7 @@
 /**
  * Demo page for DAG-based substitution in rule inference.
  * Shows how expressions convert to DAGs and how rule applicability
- * after operand normalization is equivalent to DAG isomorphism.
+ * after operand normalization is equivalent to DAG injection.
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -330,7 +330,7 @@ export default function SubstitutionDAGDemo() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">DAG-Based Substitution Demo</h1>
         <p className="text-muted-foreground mt-2">
-          Rule applicability after operand normalization is equivalent to DAG isomorphism.
+          Rule applicability after operand normalization is equivalent to DAG injection.
         </p>
       </div>
 
@@ -345,7 +345,7 @@ export default function SubstitutionDAGDemo() {
               <li><strong>Expression → DAG:</strong> Each operation becomes a node. Operands are stored in node data.</li>
               <li><strong>Sequential edges:</strong> Operations in a comma-separated list form a chain.</li>
               <li><strong>Bb, Blb, Brb:</strong> Branch operators have two outgoing edges to top and bottom arms.</li>
-              <li><strong>VF2:</strong> Subgraph isomorphism with variable binding.</li>
+              <li><strong>VF2:</strong> Subgraph injection with variable binding.</li>
             </ul>
           </AccordionContent>
         </AccordionItem>
@@ -443,9 +443,9 @@ export default function SubstitutionDAGDemo() {
               </div>
             </div>
 
-            {/* VF2 Isomorphism Result */}
+            {/* VF2 Injection Result */}
             <div className="space-y-4 pt-4 border-t">
-              <h4 className="text-base font-semibold">VF2 Isomorphism Result</h4>
+              <h4 className="text-base font-semibold">VF2 Injection Result</h4>
               <div className="flex items-center gap-4">
                 <Badge variant={vf2Result ? 'default' : 'secondary'}>
                   {vf2Result ? 'Isomorphic' : 'Not isomorphic'}
