@@ -2,7 +2,7 @@ import React from 'react';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import NodeDiagram from '@/components/visuals/NodeDiagram';
 import TreeStructureDiagram from '@/components/visuals/TreeStructureDiagram';
-import { BookOpen, ExternalLink } from 'lucide-react';
+import { BookOpen, ExternalLink, Mail, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
@@ -25,7 +25,36 @@ const IntroductionSection: React.FC = () => {
           </p>
         </div>
 
-        <Accordion type="multiple" defaultValue={["book"]} className="space-y-3">
+        <Accordion type="multiple" defaultValue={[]} className="space-y-3">
+          {/* About / Author Section */}
+          <AccordionItem value="about" className="bg-card border border-border rounded-lg card-glow animate-fade-in delay-100">
+            <AccordionTrigger className="px-6 py-4 hover:no-underline">
+              <div className="flex items-center gap-3">
+                <User className="w-5 h-5 text-primary flex-shrink-0" />
+                <span className="text-lg font-semibold text-primary">About</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="px-6 pb-6">
+              <div className="space-y-4 text-muted-foreground text-sm leading-relaxed">
+                <p>
+                  Thank you for visiting the site, I built this to implement the formal system described in the book. 
+                  This is an ongoing research by Weili Chen, in development for over a decade. If you have a background 
+                  in computer science theory, foundational mathematics, logician, or someone who finds this interesting, 
+                  please feel free to reach out, I'd love to hear your feedback and suggestions.
+                </p>
+                <div className="flex items-center gap-2 mt-4">
+                  <Mail className="w-4 h-4 text-primary" />
+                  <a 
+                    href="mailto:hankaichen750@gmail.com" 
+                    className="font-mono text-primary hover:underline"
+                  >
+                    hankaichen750@gmail.com
+                  </a>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
           {/* Book Section */}
           <AccordionItem value="book" className="bg-card border border-border rounded-lg card-glow animate-fade-in delay-500">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
