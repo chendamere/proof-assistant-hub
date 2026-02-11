@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
@@ -22,33 +21,6 @@ const Footer: React.FC = () => {
             </p>
           </div>
 
-          {/* Links */}
-          <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
-            <Link 
-              to="/"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Introduction
-            </Link>
-            <Link 
-              to="/proof-step"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Proof Step
-            </Link>
-            <Link 
-              to="/glossary"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Glossary
-            </Link>
-            <Link 
-              to="/verifier"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Verifier
-            </Link>
-          </div>
         </div>
 
         <div className="section-divider my-8" />
