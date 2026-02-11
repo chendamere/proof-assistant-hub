@@ -1,10 +1,8 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, Network, ListOrdered, Library, Sun, Moon, LogIn, LogOut, Lock } from 'lucide-react';
+import { BookOpen, Network, ListOrdered, Library, Sun, Moon } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { useAuth } from '@/hooks/useAuth';
 
 interface NavItem {
   path: string;
@@ -15,13 +13,12 @@ interface NavItem {
 const Navigation: React.FC = () => {
   const location = useLocation();
   const { theme, setTheme } = useTheme();
-  const { user, signOut } = useAuth();
   
-  const navItems: (NavItem & { requiresAuth?: boolean })[] = [
+  const navItems: NavItem[] = [
     { path: '/', label: 'Introduction', icon: <BookOpen className="w-4 h-4" /> },
-    { path: '/substitution-dag', label: 'Substitution DAG', icon: <Network className="w-4 h-4" />, requiresAuth: true },
-    { path: '/proof-steps', label: 'Proof Steps', icon: <ListOrdered className="w-4 h-4" />, requiresAuth: true },
-    { path: '/bibliography', label: 'Bibliography', icon: <Library className="w-4 h-4" />, requiresAuth: true },
+    { path: '/substitution-dag', label: 'Substitution DAG', icon: <Network className="w-4 h-4" /> },
+    { path: '/proof-steps', label: 'Proof Steps', icon: <ListOrdered className="w-4 h-4" /> },
+    { path: '/bibliography', label: 'Bibliography', icon: <Library className="w-4 h-4" /> },
   ];
 
   return (
@@ -40,42 +37,20 @@ const Navigation: React.FC = () => {
 
           {/* Nav Items + Theme Toggle */}
           <div className="flex items-center gap-1">
-            {navItems.map((item) => {
-              const disabled = item.requiresAuth && !user;
-              if (disabled) {
-                return (
-                  <Tooltip key={item.path}>
-                    <TooltipTrigger asChild>
-                      <Link
-                        to="/auth"
-                        className="flex items-center gap-2 px-3 py-2 rounded-md text-muted-foreground/40 hover:text-muted-foreground/60 transition-colors"
-                      >
-                        {item.icon}
-                        <span className="text-sm hidden sm:block">{item.label}</span>
-                        <Lock className="w-3 h-3 hidden sm:block" />
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom" className="text-xs">
-                      Sign in to access {item.label}
-                    </TooltipContent>
-                  </Tooltip>
-                );
-              }
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors relative ${
-                    location.pathname === item.path
-                      ? 'text-foreground bg-muted/50'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                  }`}
-                >
-                  {item.icon}
-                  <span className="text-sm hidden sm:block">{item.label}</span>
-                </Link>
-              );
-            })}
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors relative ${
+                  location.pathname === item.path
+                    ? 'text-foreground bg-muted/50'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                }`}
+              >
+                {item.icon}
+                <span className="text-sm hidden sm:block">{item.label}</span>
+              </Link>
+            ))}
             <Button
               variant="ghost"
               size="icon"
@@ -86,19 +61,6 @@ const Navigation: React.FC = () => {
               <Sun className="h-4 w-4 rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0" />
               <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100" />
             </Button>
-            {user ? (
-              <Button variant="ghost" size="sm" className="ml-1 gap-2" onClick={(e) => { e.stopPropagation(); e.preventDefault(); signOut(); }}>
-                <LogOut className="h-4 w-4" />
-                <span className="hidden sm:inline text-sm">Sign Out</span>
-              </Button>
-            ) : (
-              <Link to="/auth">
-                <Button variant="ghost" size="sm" className="ml-1 gap-2">
-                  <LogIn className="h-4 w-4" />
-                  <span className="hidden sm:inline text-sm">Sign In</span>
-                </Button>
-              </Link>
-            )}
           </div>
         </div>
       </div>
