@@ -25,7 +25,7 @@ const IntroductionSection: React.FC = () => {
           </p>
         </div>
 
-        <Accordion type="multiple" defaultValue={[]} className="space-y-3">
+        <Accordion type="multiple" defaultValue={["formal-system"]} className="space-y-3">
           {/* About / Author Section */}
           <AccordionItem value="about" className="bg-card border border-border rounded-lg card-glow animate-fade-in delay-100">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
@@ -56,7 +56,7 @@ const IntroductionSection: React.FC = () => {
           </AccordionItem>
 
           {/* Book Section */}
-          <AccordionItem value="book" className="bg-card border border-border rounded-lg card-glow animate-fade-in delay-500">
+          <AccordionItem value="book" className="bg-card border border-border rounded-lg card-glow animate-fade-in delay-200">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex items-center gap-3">
                 <BookOpen className="w-5 h-5 text-primary flex-shrink-0" />
@@ -116,96 +116,98 @@ const IntroductionSection: React.FC = () => {
             </AccordionContent>
           </AccordionItem>
 
-          {/* Data Structure Section */}
-          <AccordionItem value="data-structure" className="bg-card border border-border rounded-lg card-glow animate-fade-in delay-100">
+          {/* Formal System Overview - combines Data Structure, Logic System, Inference Rules */}
+          <AccordionItem value="formal-system" className="bg-card border border-border rounded-lg card-glow animate-fade-in delay-300">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
-              <span className="text-lg font-semibold text-primary">Data Structure</span>
+              <span className="text-lg font-semibold text-primary">Formal System Overview</span>
             </AccordionTrigger>
             <AccordionContent className="px-6 pb-6">
-              <p className="text-muted-foreground mb-6">
-                The assumed data structure is a multidimensional cyclical graph with bidirectional links between nodes. Each cycle contains a null node. 
-                Each node contains a link to a null child cycle.  
-                Each node contains:
-              </p>
-              <div className="grid md:grid-cols-[1fr,auto,auto] gap-6 items-start">
-                <ul className="space-y-2 text-sm font-mono">
-                  <li className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-primary/50" />
-                    <span>Data value</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-operator-next" />
-                    <span>Link → next node</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-operator-next" />
-                    <span>Link → previous node</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-operator-next" />
-                    <span>Link → child node</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-operator-id" />
-                    <span>Unique node ID</span>
-                  </li>
-                </ul>
-                <div className="flex items-center justify-center">
-                  <NodeDiagram />
-                </div>
-                <div className="flex items-center justify-center">
-                  <TreeStructureDiagram />
-                </div>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-
-          {/* Logic System */}
-          <AccordionItem value="logic" className="bg-card border border-border rounded-lg card-glow animate-fade-in delay-200">
-            <AccordionTrigger className="px-6 py-4 hover:no-underline">
-              <span className="text-lg font-semibold text-primary">Logic System</span>
-            </AccordionTrigger>
-            <AccordionContent className="px-6 pb-6">
-              <p className="text-muted-foreground mb-4">
-                Rules express equivalence relations between code sequences. All rules use the format:
-              </p>
-              <div className="bg-muted/30 rounded-md p-4 font-mono text-center flex items-center justify-center gap-2 text-lg">
-                <span className="text-foreground">A</span>
-                <EquivalenceSymbol size={28} />
-                <span className="text-foreground">B</span>
-              </div>
-              <p className="text-muted-foreground mt-4 text-sm">
-                Where A and B are equivalent rule texts that can replace each other in any context after normalization.
-              </p>
-            </AccordionContent>
-          </AccordionItem>
-
-          {/* Inference Rules */}
-          <AccordionItem value="inference" className="bg-card border border-border rounded-lg card-glow animate-fade-in delay-300">
-            <AccordionTrigger className="px-6 py-4 hover:no-underline">
-              <span className="text-lg font-semibold text-primary">Inference Rules</span>
-            </AccordionTrigger>
-            <AccordionContent className="px-6 pb-6">
-              <div className="space-y-3 text-sm">
-                <div className="flex items-start gap-3">
-                  <span className="text-primary font-bold">1.</span>
-                  <div>
-                    <span className="font-semibold">Equivalent Commutativity</span>
-                    <p className="text-muted-foreground">A ⟺ B implies B ⟺ A</p>
+              <div className="space-y-8">
+                {/* Data Structure */}
+                <div>
+                  <h3 className="text-base font-semibold text-foreground mb-3">Data Structure</h3>
+                  <p className="text-muted-foreground mb-6 text-sm">
+                    The assumed data structure is a multidimensional cyclical graph with bidirectional links between nodes. Each cycle contains a null node. 
+                    Each node contains a link to a null child cycle.  
+                    Each node contains:
+                  </p>
+                  <div className="grid md:grid-cols-[1fr,auto,auto] gap-6 items-start">
+                    <ul className="space-y-2 text-sm font-mono">
+                      <li className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-primary/50" />
+                        <span>Data value</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-operator-next" />
+                        <span>Link → next node</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-operator-next" />
+                        <span>Link → previous node</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-operator-next" />
+                        <span>Link → child node</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-operator-id" />
+                        <span>Unique node ID</span>
+                      </li>
+                    </ul>
+                    <div className="flex items-center justify-center">
+                      <NodeDiagram />
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <TreeStructureDiagram />
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-primary font-bold">2.</span>
-                  <div>
-                    <span className="font-semibold">Equivalent Transitivity</span>
-                    <p className="text-muted-foreground">A ⟺ B and B ⟺ C implies A ⟺ C</p>
+
+                <div className="section-divider" />
+
+                {/* Logic System */}
+                <div>
+                  <h3 className="text-base font-semibold text-foreground mb-3">Logic System</h3>
+                  <p className="text-muted-foreground mb-4 text-sm">
+                    Rules express equivalence relations between code sequences. All rules use the format:
+                  </p>
+                  <div className="bg-muted/30 rounded-md p-4 font-mono text-center flex items-center justify-center gap-2 text-lg">
+                    <span className="text-foreground">A</span>
+                    <EquivalenceSymbol size={28} />
+                    <span className="text-foreground">B</span>
                   </div>
+                  <p className="text-muted-foreground mt-4 text-sm">
+                    Where A and B are equivalent rule texts that can replace each other in any context after normalization.
+                  </p>
                 </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-primary font-bold">3.</span>
-                  <div>
-                    <span className="font-semibold">Equivalent Substitution</span>
-                    <p className="text-muted-foreground">A ⟺ B allows inserting A with B in any context M·A·N → M·B·N</p>
+
+                <div className="section-divider" />
+
+                {/* Inference Rules */}
+                <div>
+                  <h3 className="text-base font-semibold text-foreground mb-3">Inference Rules</h3>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex items-start gap-3">
+                      <span className="text-primary font-bold">1.</span>
+                      <div>
+                        <span className="font-semibold">Equivalent Commutativity</span>
+                        <p className="text-muted-foreground">A ⟺ B implies B ⟺ A</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="text-primary font-bold">2.</span>
+                      <div>
+                        <span className="font-semibold">Equivalent Transitivity</span>
+                        <p className="text-muted-foreground">A ⟺ B and B ⟺ C implies A ⟺ C</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="text-primary font-bold">3.</span>
+                      <div>
+                        <span className="font-semibold">Equivalent Substitution</span>
+                        <p className="text-muted-foreground">A ⟺ B allows inserting A with B in any context M·A·N → M·B·N</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
