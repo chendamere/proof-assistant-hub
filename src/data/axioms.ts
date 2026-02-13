@@ -773,7 +773,6 @@ export const axioms: Rule[] = [
     section: 'Definition of Relationships',
     subsection: 'Definition of node null comparison'
   },
-
   // Definition of identical node comparison
   {
     id: 'def-identical-comp',

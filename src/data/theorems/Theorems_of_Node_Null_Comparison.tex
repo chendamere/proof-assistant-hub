@@ -13,6 +13,7 @@ proof:\\
 \Rq,  \Bb{if(i \Pu)}{, }{, \Or,}, \\\\\\
 \Rq, \Ot m, \Bb{if(i \Pe m)}{, m \Os,}{,m \Os, \Or,}, \\\\\\
 \Rq, \Ot m, \Bb{if(i \Pe m)}{, m \Os,}{, \Or,}, \\\\\\
+\Rq, \Ot m, \Bb{if(i \Pe m)}{, m \Os,}{, \Or, m \Os,}, \\\\\\
 \Rq, \Ot m, \Bb{if(i \Pe m)}{, }{, \Or,},m \Os, \\\\\\
 \Rq, \Ot m, i \Pe m, m \Os,
 \end{math}
@@ -43,8 +44,9 @@ proof:\\
 \bigskip
 proof:\\
 \begin{math} 
- ,\\\\
+,
 \Rq, \Ot j, \Os j,\\\\\\
+\Rq, \Ot j, \Bb{if(i \Oe j)}{,}{,}, \Os j,\\\\\\
 \Rq, \Ot j, \Bb{if(i \Pe j)}{,}{,}, \Os j,\\\\\\
 \Rq, \Ot j, \Bb{if(i \Pe j)}{, \Os j,}{, \Os j,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{,}{,},
@@ -61,6 +63,7 @@ proof:\\
 \begin{math} 
 , i \Pu, \Or, \\\\
 \Rq, \Bb{if( i \Pu)}{,}{, \Or,}, \Or,\\\\\\
+\Rq, \Bb{if( i \Pu)}{, \Or,}{, \Or, \Or,},\\\\\\
 \Rq, \Bb{if( i \Pu)}{, \Or,}{, \Or,},  \\\\\\
 \Rq, \Bb{if( i \Pu)}{,}{,}, \Or,  \\\\\\
 \Rq, \Or,
@@ -90,6 +93,7 @@ proof:\\
 \Rq, \Ot m , \Ot j, \Blb{if(i \Pe j)}{, j \Os,}{, j \Os,}\\\\\\
 \Rq, \Ot j , \Ot m, \Blb{if(i \Pe j)}{, j \Os,}{, j \Os,}\\\\\\
 \Rq, \Ot j, \Blb{if(i \Pe j)}{, \Ot m, j \Os,}{, \Ot m, j \Os,}\\\\\\
+\Rq, \Ot j, \Blb{if(i \Pe j)}{, j \Os, \Ot m,}{, \Ot m, j \Os,}\\\\\\
 \Rq, \Ot j, \Blb{if(i \Pe j)}{, j \Os, \Ot m, }{, j \Os, \Ot m, }  \\\\\\
 \Rq,  \Blb{if(i \Pu)}{,\Ot m,}{,\Ot m,}
 \end{math}
@@ -204,6 +208,7 @@ proof:\\
 \begin{math} 
 , i \Pu, \Ot m,\\\\\\
 \Rq, \Bb{if(i \Pu)}{,}{,\Or,}, \Ot m,\\\\\\
+\Rq, \Bb{if(i \Pu)}{, \Ot m,}{,\Or,\Ot m,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, \Ot m,}{,\Or,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, \Ot m,}{, \Ot m,\Or,},\\\\\\
 \Rq, \Ot m, \Bb{if(i \Pu)}{,}{,\Or,},\\\\\\
@@ -259,7 +264,7 @@ proof:\\
 \begin{math} 
  ,i \Pu, m \Pu,\\\\\\
 \Rq, \Bb{if(i \Pu)}{,}{, \Or,}, \Bb{if(m \Pu)}{,}{,\Or,},\\\\\\\\
-\Rq, \Bb{if(i \Pu)}{, \Bb{if(m \Pu)}{,}{,\Or,},}{, \Or,},\\\\\\\\
+\Rq, \Bb{if(i \Pu)}{, \Bb{if(m \Pu)}{,}{,\Or,},}{, \Or,\Bb{if(m \Pu)}{,}{,\Or,},},\\\\\\\\
 \Rq, \Bb{if(i \Pu)}{, \Bb{if(m \Pu)}{,}{,\Or,},}{, \Bb{if(m \Pu)}{,}{,}, \Or,},\\\\\\\\
 \Rq, \Bb{if(i \Pu)}{, \Bb{if(m \Pu)}{,}{,\Or,},}{, \Bb{if(m \Pu)}{, \Or,}{, \Or,},},\\\\\\\\
 \Rq, \Bb{if(m \Pu)}{, \Bb{if(i \Pu)}{,}{,\Or,},}{, \Bb{if(i \Pu)}{, \Or,}{, \Or,},},\\\\\\\\

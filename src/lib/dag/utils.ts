@@ -208,3 +208,31 @@ export function extractSubgraphFromNode<T>(
   );
   return { nodes, edges };
 }
+
+/**
+ * Extract subgraph of seedId and all nodes that can reach it by following incoming edges.
+ * Excludes any node in excludeIds (e.g. tail and cond) so the result is arm content only.
+ * Used for \Tc partial-factor to get the full arm expression (e.g. ", m \\Os," not just the last node).
+ */
+export function extractSubgraphIncomingFromNode<T>(
+  structure: DAGStructure<T>,
+  seedId: string,
+  excludeIds: Set<string> = new Set()
+): DAGStructure<T> {
+  const adj = buildAdjacency(structure);
+  const collected = new Set<string>();
+  const stack = [seedId];
+  while (stack.length > 0) {
+    const id = stack.pop()!;
+    if (collected.has(id) || excludeIds.has(id)) continue;
+    collected.add(id);
+    for (const from of adj.incoming.get(id) ?? []) {
+      stack.push(from);
+    }
+  }
+  const nodes = structure.nodes.filter((n) => collected.has(n.id));
+  const edges = structure.edges.filter(
+    (e) => collected.has(e.from) && collected.has(e.to)
+  );
+  return { nodes, edges };
+}

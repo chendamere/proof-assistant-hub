@@ -14,6 +14,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { axioms } from '@/data/axioms';
+import { normalizeSpacing } from '@/lib/inferenceRules/utils';
+import { trySubstitution } from '@/lib/inferenceRules/substitution';
 import { verifyTransitionWorker, type VerifyTransitionResult } from '@/lib/transitionVerificationWorkerClient';
 import type { MatchInfo } from '@/workers/transitionVerificationWorker';
 import type { DiagnosisResult } from '@/lib/inferenceRules/errorDiagnosis';
@@ -21,7 +23,7 @@ import type { DiagnosisResult } from '@/lib/inferenceRules/errorDiagnosis';
 import { definitions } from '@/data/definitions';
 import { theorems } from '@/data/theorems';
 import { Button } from '@/components/ui/button';
-import { Search, ChevronDown, ChevronRight, FileText, ListOrdered, CheckCircle2, Check, X, AlertTriangle, Info, Plus, Trash2, CheckCheck } from 'lucide-react';
+import { Search, ChevronDown, ChevronRight, FileText, ListOrdered, CheckCircle2, Check, X, AlertTriangle, Info, Plus, Trash2, CheckCheck, PlayCircle, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 type ProofStepsTable = Record<string, string[]>;
@@ -76,6 +78,41 @@ function parseKey(key: string): { filename: string; index: number; ruleStr: stri
   return { filename: key, index: 0, ruleStr: key };
 }
 
+function parseRuleOverride(ruleStr: string, id: string): { id: string; leftSide: string; rightSide: string } | undefined {
+  const trimmed = ruleStr.trim();
+  if (!trimmed) return undefined;
+  const parts = trimmed.split(/\s*⟺\s*/);
+  const left = parts[0]?.trim();
+  const right = parts.slice(1).join('⟺').trim();
+  if (!left || !right) return undefined;
+  return { id, leftSide: left, rightSide: right };
+}
+
+/** Parse rule drag data from rules panel (application/json with leftSide, rightSide, draggedSide). */
+function parseDroppedRule(e: React.DragEvent): { leftSide: string; rightSide: string; draggedSide?: 'left' | 'right' } | null {
+  try {
+    const json = e.dataTransfer.getData('application/json');
+    if (!json) return null;
+    const data = JSON.parse(json);
+    if (data?.leftSide != null && data?.rightSide != null) return data;
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+const allRules = [...axioms, ...definitions, ...theorems];
+
+function ruleExistsInDatabase(leftSide: string, rightSide: string): boolean {
+  const normLeft = normalizeSpacing(leftSide);
+  const normRight = normalizeSpacing(rightSide);
+  return allRules.some((r) => {
+    const rLeft = normalizeSpacing(r.leftSide);
+    const rRight = normalizeSpacing(r.rightSide);
+    return (rLeft === normLeft && rRight === normRight) || (rLeft === normRight && rRight === normLeft);
+  });
+}
+
 const ProofSteps: React.FC = () => {
   const { isWorkbenchExpanded, isRulesPanelOpen, setDebugWorkbenchExpressions } = usePanelContext();
   const navigate = useNavigate();
@@ -91,6 +128,12 @@ const ProofSteps: React.FC = () => {
   const [transitionDiagnoses, setTransitionDiagnoses] = useState<Record<string, Record<number, DiagnosisResult>>>({});
   const [customTransitionVerifying, setCustomTransitionVerifying] = useState<string | null>(null);
   const [customTransitionResults, setCustomTransitionResults] = useState<Record<string, boolean>>({});
+  /** Which theorem is currently verifying all transitions (theorem key). */
+  const [theoremVerifyingAll, setTheoremVerifyingAll] = useState<string | null>(null);
+  /** Per-transition optional rule override (key: transitionId or customId). Separate left/right fields. */
+  const [customRuleInputs, setCustomRuleInputs] = useState<Record<string, { left: string; right: string }>>({});
+  /** Error when user-entered rule is not in database (key: transitionId or customId). */
+  const [ruleValidationError, setRuleValidationError] = useState<Record<string, string>>({});
 
   const rulesForWorker = useMemo(
     () =>
@@ -121,7 +164,7 @@ const ProofSteps: React.FC = () => {
   }, []);
 
   const verifySingleTransition = React.useCallback(
-    async (key: string, transitionIndex: number) => {
+    async (key: string, transitionIndex: number, ruleOverride?: string) => {
       const transitionId = `${key}::${transitionIndex}`;
       if (transitionVerifying) return;
       const steps = table?.[key];
@@ -129,6 +172,61 @@ const ProofSteps: React.FC = () => {
       setTransitionVerifying(transitionId);
       const left = steps[transitionIndex];
       const right = steps[transitionIndex + 1];
+      const parsedOverride = parseRuleOverride(ruleOverride ?? '', `${key}-override`);
+      if (parsedOverride && !ruleExistsInDatabase(parsedOverride.leftSide, parsedOverride.rightSide)) {
+        setRuleValidationError((prev) => ({ ...prev, [transitionId]: 'Rule not found in database' }));
+        setTransitionVerifying(null);
+        return;
+      }
+      setRuleValidationError((prev) => {
+        const next = { ...prev };
+        delete next[transitionId];
+        return next;
+      });
+      const preferredRule =
+        parsedOverride ??
+        (() => {
+          const { ruleStr } = parseKey(key);
+          const ruleParts = ruleStr.split(/\s*⟺\s*/);
+          return ruleParts[0]?.trim() && ruleParts.slice(1).join('⟺').trim()
+            ? { id: key, leftSide: ruleParts[0].trim(), rightSide: ruleParts.slice(1).join('⟺').trim() }
+            : undefined;
+        })();
+
+      // Same match logic as Debug workbench: try preferred rule with trySubstitution (no dagCache) in 4 directions
+      if (preferredRule) {
+        const attempts: Array<{ target: string; ruleSide: string; otherSide: string; expected: string; targetForOperands: string; side: 'left' | 'right' }> = [
+          { target: left, ruleSide: preferredRule.leftSide, otherSide: preferredRule.rightSide, expected: right, targetForOperands: left, side: 'left' },
+          { target: left, ruleSide: preferredRule.rightSide, otherSide: preferredRule.leftSide, expected: right, targetForOperands: left, side: 'left' },
+          { target: right, ruleSide: preferredRule.leftSide, otherSide: preferredRule.rightSide, expected: left, targetForOperands: right, side: 'right' },
+          { target: right, ruleSide: preferredRule.rightSide, otherSide: preferredRule.leftSide, expected: left, targetForOperands: right, side: 'right' },
+        ];
+        for (const a of attempts) {
+          try {
+            const r = trySubstitution(a.target, a.ruleSide, a.otherSide, a.expected, a.targetForOperands, a.side, undefined, undefined);
+            if (r?.match && r.reconstructedExpr != null) {
+              const pos = r.position;
+              const matchInfo: MatchInfo = {
+                matchedRuleId: preferredRule.id,
+                description: pos?.description,
+                startPosition: pos?.position,
+                side: pos?.side,
+                ruleLeft: preferredRule.leftSide,
+                ruleRight: preferredRule.rightSide,
+                inferenceRuleName: 'Equivalent Substitution',
+                nodeMap: pos?.nodeMapping ? Object.fromEntries(pos.nodeMapping) : undefined,
+              };
+              setTransitionResults((prev) => ({ ...prev, [key]: { ...prev[key], [transitionIndex]: true } }));
+              setTransitionMatchInfo((prev) => ({ ...prev, [key]: { ...prev[key], [transitionIndex]: matchInfo } }));
+              setTransitionVerifying(null);
+              return;
+            }
+          } catch {
+            // continue to next attempt
+          }
+        }
+      }
+
       try {
         const result: VerifyTransitionResult = await verifyTransitionWorker({
           targetLeft: left,
@@ -191,9 +289,43 @@ const ProofSteps: React.FC = () => {
   );
 
   const verifyCustomTransition = React.useCallback(
-    async (customId: string, left: string, right: string) => {
+    async (customId: string, left: string, right: string, ruleOverride?: string) => {
       if (customTransitionVerifying) return;
+      const parsedOverride = parseRuleOverride(ruleOverride ?? '', `${customId}-override`);
+      if (parsedOverride && !ruleExistsInDatabase(parsedOverride.leftSide, parsedOverride.rightSide)) {
+        setRuleValidationError((prev) => ({ ...prev, [customId]: 'Rule not found in database' }));
+        return;
+      }
+      setRuleValidationError((prev) => {
+        const next = { ...prev };
+        delete next[customId];
+        return next;
+      });
       setCustomTransitionVerifying(customId);
+      const preferredRule = parsedOverride;
+
+      // Same match logic as Debug workbench: try preferred rule with trySubstitution (no dagCache) in 4 directions
+      if (preferredRule) {
+        const attempts: Array<{ target: string; ruleSide: string; otherSide: string; expected: string; targetForOperands: string; side: 'left' | 'right' }> = [
+          { target: left, ruleSide: preferredRule.leftSide, otherSide: preferredRule.rightSide, expected: right, targetForOperands: left, side: 'left' },
+          { target: left, ruleSide: preferredRule.rightSide, otherSide: preferredRule.leftSide, expected: right, targetForOperands: left, side: 'left' },
+          { target: right, ruleSide: preferredRule.leftSide, otherSide: preferredRule.rightSide, expected: left, targetForOperands: right, side: 'right' },
+          { target: right, ruleSide: preferredRule.rightSide, otherSide: preferredRule.leftSide, expected: left, targetForOperands: right, side: 'right' },
+        ];
+        for (const a of attempts) {
+          try {
+            const r = trySubstitution(a.target, a.ruleSide, a.otherSide, a.expected, a.targetForOperands, a.side, undefined, undefined);
+            if (r?.match && r.reconstructedExpr != null) {
+              setCustomTransitionResults((prev) => ({ ...prev, [customId]: true }));
+              setCustomTransitionVerifying(null);
+              return;
+            }
+          } catch {
+            // continue to next attempt
+          }
+        }
+      }
+
       try {
         const result: VerifyTransitionResult = await verifyTransitionWorker({
           targetLeft: left,
@@ -209,6 +341,135 @@ const ProofSteps: React.FC = () => {
       }
     },
     [customTransitionVerifying, rulesForWorker]
+  );
+
+  const verifyAllTransitions = React.useCallback(
+    async (key: string) => {
+      if (theoremVerifyingAll || transitionVerifying) return;
+      const steps = table?.[key];
+      if (!steps || steps.length < 2) return;
+      
+      setTheoremVerifyingAll(key);
+      
+      try {
+        // Verify all transitions sequentially
+        for (let i = 0; i < steps.length - 1; i++) {
+          const transitionId = `${key}::${i}`;
+          const left = steps[i];
+          const right = steps[i + 1];
+          
+          // Check if there's a custom rule override for this transition
+          const ruleOverride = (() => {
+            const r = customRuleInputs[transitionId];
+            return (r?.left?.trim() && r?.right?.trim()) ? `${r.left.trim()} ⟺ ${r.right.trim()}` : undefined;
+          })();
+          
+          const parsedOverride = parseRuleOverride(ruleOverride ?? '', `${key}-override`);
+          if (parsedOverride && !ruleExistsInDatabase(parsedOverride.leftSide, parsedOverride.rightSide)) {
+            setRuleValidationError((prev) => ({ ...prev, [transitionId]: 'Rule not found in database' }));
+            setTransitionResults((prev) => ({
+              ...prev,
+              [key]: { ...prev[key], [i]: false },
+            }));
+            continue;
+          }
+          setRuleValidationError((prev) => {
+            const next = { ...prev };
+            delete next[transitionId];
+            return next;
+          });
+          
+          const preferredRule =
+            parsedOverride ??
+            (() => {
+              const { ruleStr } = parseKey(key);
+              const ruleParts = ruleStr.split(/\s*⟺\s*/);
+              return ruleParts[0]?.trim() && ruleParts.slice(1).join('⟺').trim()
+                ? { id: key, leftSide: ruleParts[0].trim(), rightSide: ruleParts.slice(1).join('⟺').trim() }
+                : undefined;
+            })();
+
+          // Try preferred rule first (same as verifySingleTransition)
+          let matched = false;
+          if (preferredRule) {
+            const attempts: Array<{ target: string; ruleSide: string; otherSide: string; expected: string; targetForOperands: string; side: 'left' | 'right' }> = [
+              { target: left, ruleSide: preferredRule.leftSide, otherSide: preferredRule.rightSide, expected: right, targetForOperands: left, side: 'left' },
+              { target: left, ruleSide: preferredRule.rightSide, otherSide: preferredRule.leftSide, expected: right, targetForOperands: left, side: 'left' },
+              { target: right, ruleSide: preferredRule.leftSide, otherSide: preferredRule.rightSide, expected: left, targetForOperands: right, side: 'right' },
+              { target: right, ruleSide: preferredRule.rightSide, otherSide: preferredRule.leftSide, expected: left, targetForOperands: right, side: 'right' },
+            ];
+            for (const a of attempts) {
+              try {
+                const r = trySubstitution(a.target, a.ruleSide, a.otherSide, a.expected, a.targetForOperands, a.side, undefined, undefined);
+                if (r?.match && r.reconstructedExpr != null) {
+                  const pos = r.position;
+                  const matchInfo: MatchInfo = {
+                    matchedRuleId: preferredRule.id,
+                    description: pos?.description,
+                    startPosition: pos?.position,
+                    side: pos?.side,
+                    ruleLeft: preferredRule.leftSide,
+                    ruleRight: preferredRule.rightSide,
+                    inferenceRuleName: 'Equivalent Substitution',
+                    nodeMap: pos?.nodeMapping ? Object.fromEntries(pos.nodeMapping) : undefined,
+                  };
+                  setTransitionResults((prev) => ({ ...prev, [key]: { ...prev[key], [i]: true } }));
+                  setTransitionMatchInfo((prev) => ({ ...prev, [key]: { ...prev[key], [i]: matchInfo } }));
+                  matched = true;
+                  break;
+                }
+              } catch {
+                // continue to next attempt
+              }
+            }
+          }
+          
+          // If preferred rule didn't match, try worker
+          if (!matched) {
+            try {
+              const result: VerifyTransitionResult = await verifyTransitionWorker({
+                targetLeft: left,
+                targetRight: right,
+                rules: rulesForWorker,
+              });
+              setTransitionResults((prev) => ({
+                ...prev,
+                [key]: { ...prev[key], [i]: result.matched },
+              }));
+              if (result.matched && result.matchInfo) {
+                setTransitionMatchInfo((prev) => ({
+                  ...prev,
+                  [key]: { ...prev[key], [i]: result.matchInfo! },
+                }));
+              } else if (!result.matched) {
+                setTransitionMatchInfo((prev) => {
+                  const keyData = prev[key];
+                  if (!keyData || !(i in keyData)) return prev;
+                  const nextKey = { ...keyData };
+                  delete nextKey[i];
+                  return { ...prev, [key]: nextKey };
+                });
+              }
+              if (result.diagnosis) {
+                setTransitionDiagnoses((prev) => ({
+                  ...prev,
+                  [key]: { ...prev[key], [i]: result.diagnosis },
+                }));
+              }
+            } catch (err) {
+              console.error(`Transition ${i} verification error:`, err);
+              setTransitionResults((prev) => ({
+                ...prev,
+                [key]: { ...prev[key], [i]: false },
+              }));
+            }
+          }
+        }
+      } finally {
+        setTheoremVerifyingAll(null);
+      }
+    },
+    [table, theoremVerifyingAll, transitionVerifying, rulesForWorker, customRuleInputs]
   );
 
   const handleInsertStep = React.useCallback((key: string, insertAtIndex: number, newExpr: string) => {
@@ -444,15 +705,21 @@ const ProofSteps: React.FC = () => {
                             verification={verificationResults[t.key]}
                             transitionMatchInfo={transitionMatchInfo[t.key]}
                             onVerifyTransition={verifySingleTransition}
+                            onVerifyAllTransitions={verifyAllTransitions}
                             onVerifyCustomTransition={verifyCustomTransition}
                             onCopyToDebug={setDebugWorkbenchExpressions}
                             onInsertStep={handleInsertStep}
                             onDeleteStep={handleDeleteStep}
                             transitionVerifying={transitionVerifying}
+                            theoremVerifyingAll={theoremVerifyingAll}
                             customTransitionVerifying={customTransitionVerifying}
                             transitionResults={transitionResults[t.key]}
                             customTransitionResults={customTransitionResults}
                             transitionDiagnoses={transitionDiagnoses[t.key]}
+                            customRuleInputs={customRuleInputs}
+                            setCustomRuleInputs={setCustomRuleInputs}
+                            ruleValidationError={ruleValidationError}
+                            setRuleValidationError={setRuleValidationError}
                           />
                         ))}
                       </div>
@@ -480,35 +747,49 @@ function TheoremCard({
   verification,
   transitionMatchInfo = {},
   onVerifyTransition,
+  onVerifyAllTransitions,
   onVerifyCustomTransition,
   onCopyToDebug,
   onInsertStep,
   onDeleteStep,
   transitionVerifying,
+  theoremVerifyingAll,
   customTransitionVerifying,
   transitionResults = {},
   customTransitionResults = {},
   transitionDiagnoses = {},
+  customRuleInputs = {},
+  setCustomRuleInputs,
+  ruleValidationError = {},
+  setRuleValidationError,
 }: {
   theorem: TheoremWithSteps;
   verification?: VerificationResult;
   transitionMatchInfo?: Record<number, MatchInfo>;
-  onVerifyTransition?: (key: string, transitionIndex: number) => void;
-  onVerifyCustomTransition?: (customId: string, left: string, right: string) => void;
+  onVerifyTransition?: (key: string, transitionIndex: number, ruleOverride?: string) => void;
+  onVerifyAllTransitions?: (key: string) => void;
+  onVerifyCustomTransition?: (customId: string, left: string, right: string, ruleOverride?: string) => void;
   onCopyToDebug?: (left: string, right: string) => void;
   onInsertStep?: (key: string, insertAtIndex: number, newExpr: string) => void;
   onDeleteStep?: (key: string, stepIndex: number) => void;
   transitionVerifying?: string | null;
+  theoremVerifyingAll?: string | null;
   customTransitionVerifying?: string | null;
   transitionResults?: Record<number, boolean>;
   customTransitionResults?: Record<string, boolean>;
   transitionDiagnoses?: Record<number, DiagnosisResult>;
+  customRuleInputs?: Record<string, { left: string; right: string }>;
+  setCustomRuleInputs?: React.Dispatch<React.SetStateAction<Record<string, { left: string; right: string }>>>;
+  ruleValidationError?: Record<string, string>;
+  setRuleValidationError?: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 }) {
   const [open, setOpen] = useState(false);
   const [expandedDiagnosis, setExpandedDiagnosis] = useState<number | null>(null);
   const [expandedMatchInfo, setExpandedMatchInfo] = useState<number | null>(null);
   const [insertStepOpen, setInsertStepOpen] = useState<string | null>(null);
   const [insertStepDrafts, setInsertStepDrafts] = useState<Record<string, string>>({});
+  /** Which rule input is being dragged over: `${id}::left` or `${id}::right` */
+  const [ruleDropTarget, setRuleDropTarget] = useState<string | null>(null);
   const parts = theorem.ruleStr.split(/\s*⟺\s*/);
   const left = parts[0]?.trim() ?? '';
   const right = parts.slice(1).join('⟺').trim();
@@ -552,6 +833,31 @@ function TheoremCard({
                     ) : null}
                     {verification.passed}/{verification.total} verified
                   </Badge>
+                )}
+                {onVerifyAllTransitions && theorem.steps.length > 1 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-6 px-2 text-xs gap-1.5"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onVerifyAllTransitions(theorem.key);
+                    }}
+                    disabled={theoremVerifyingAll !== null || transitionVerifying !== null}
+                    title="Verify all transitions in this theorem"
+                  >
+                    {theoremVerifyingAll === theorem.key ? (
+                      <>
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                        Verifying...
+                      </>
+                    ) : (
+                      <>
+                        <PlayCircle className="w-3 h-3" />
+                        Verify all
+                      </>
+                    )}
+                  </Button>
                 )}
               </div>
               <div className="flex items-center gap-2 flex-wrap text-sm">
@@ -605,7 +911,7 @@ function TheoremCard({
                                   className="h-7 px-2 text-xs gap-1.5"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    onVerifyCustomTransition(customIdAbove, firstRowLeft, firstRowRight);
+                                    onVerifyCustomTransition(customIdAbove, firstRowLeft, firstRowRight, (() => { const r = customRuleInputs[customIdAbove]; return (r?.left?.trim() && r?.right?.trim()) ? `${r.left.trim()} ⟺ ${r.right.trim()}` : undefined; })());
                                   }}
                                   disabled={customTransitionVerifying !== null}
                                   title="Verify: step above → inserted expression"
@@ -636,7 +942,7 @@ function TheoremCard({
                                   className="h-7 px-2 text-xs gap-1.5"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    onVerifyTransition(theorem.key, i - 1);
+                                    onVerifyTransition(theorem.key, i - 1, (() => { const r = customRuleInputs[transitionId]; return (r?.left?.trim() && r?.right?.trim()) ? `${r.left.trim()} ⟺ ${r.right.trim()}` : undefined; })());
                                   }}
                                   disabled={transitionVerifying !== null}
                                 >
@@ -660,6 +966,78 @@ function TheoremCard({
                                   )}
                                 </Button>
                               )
+                            )}
+                            {setCustomRuleInputs && (
+                              <div className="flex flex-col gap-0.5 flex-1 min-w-[320px] max-w-[520px]">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <div
+                                    className={`flex-1 min-w-0 rounded border border-dashed transition-colors ${ruleDropTarget === `${isInsertOpen ? customIdAbove : transitionId}::left` ? 'border-primary bg-primary/5' : 'border-border'}`}
+                                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect = 'copy'; setRuleDropTarget(`${isInsertOpen ? customIdAbove : transitionId}::left`); }}
+                                    onDragLeave={(e) => { e.stopPropagation(); setRuleDropTarget(null); }}
+                                    onDrop={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      setRuleDropTarget(null);
+                                      const rule = parseDroppedRule(e);
+                                      if (rule) {
+                                        const id = isInsertOpen ? customIdAbove : transitionId;
+                                        const content = rule.draggedSide === 'right' ? rule.rightSide : rule.leftSide;
+                                        setCustomRuleInputs((prev) => ({ ...prev, [id]: { left: content, right: prev[id]?.right ?? '' } }));
+                                        setRuleValidationError?.((prev) => { const next = { ...prev }; delete next[id]; return next; });
+                                      }
+                                    }}
+                                  >
+                                    <Input
+                                      value={customRuleInputs[isInsertOpen ? customIdAbove : transitionId]?.left ?? ''}
+                                      onChange={(e) => {
+                                        const id = isInsertOpen ? customIdAbove : transitionId;
+                                        setCustomRuleInputs((prev) => ({ ...prev, [id]: { left: e.target.value, right: prev[id]?.right ?? '' } }));
+                                        setRuleValidationError?.((prev) => { const next = { ...prev }; delete next[id]; return next; });
+                                      }}
+                                      placeholder="Left (optional) — or drag rule here"
+                                      className={`h-7 text-xs font-mono w-full border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 ${ruleValidationError[isInsertOpen ? customIdAbove : transitionId] ? 'border-destructive' : ''}`}
+                                      onClick={(e) => e.stopPropagation()}
+                                      title="Rule left side (drag from rules panel or type)"
+                                    />
+                                  </div>
+                                  <EquivalenceSymbol size={12} className="flex-shrink-0 text-muted-foreground" />
+                                  <div
+                                    className={`flex-1 min-w-0 rounded border border-dashed transition-colors ${ruleDropTarget === `${isInsertOpen ? customIdAbove : transitionId}::right` ? 'border-primary bg-primary/5' : 'border-border'}`}
+                                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect = 'copy'; setRuleDropTarget(`${isInsertOpen ? customIdAbove : transitionId}::right`); }}
+                                    onDragLeave={(e) => { e.stopPropagation(); setRuleDropTarget(null); }}
+                                    onDrop={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      setRuleDropTarget(null);
+                                      const rule = parseDroppedRule(e);
+                                      if (rule) {
+                                        const id = isInsertOpen ? customIdAbove : transitionId;
+                                        const content = rule.draggedSide === 'right' ? rule.rightSide : rule.leftSide;
+                                        setCustomRuleInputs((prev) => ({ ...prev, [id]: { left: prev[id]?.left ?? '', right: content } }));
+                                        setRuleValidationError?.((prev) => { const next = { ...prev }; delete next[id]; return next; });
+                                      }
+                                    }}
+                                  >
+                                    <Input
+                                      value={customRuleInputs[isInsertOpen ? customIdAbove : transitionId]?.right ?? ''}
+                                      onChange={(e) => {
+                                        const id = isInsertOpen ? customIdAbove : transitionId;
+                                        setCustomRuleInputs((prev) => ({ ...prev, [id]: { left: prev[id]?.left ?? '', right: e.target.value } }));
+                                        setRuleValidationError?.((prev) => { const next = { ...prev }; delete next[id]; return next; });
+                                      }}
+                                      placeholder="Right (optional) — or drag rule here"
+                                      className={`h-7 text-xs font-mono w-full border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 ${ruleValidationError[isInsertOpen ? customIdAbove : transitionId] ? 'border-destructive' : ''}`}
+                                      onClick={(e) => e.stopPropagation()}
+                                      title="Rule right side (drag from rules panel or type)"
+                                    />
+                                  </div>
+                                </div>
+                                {ruleValidationError[isInsertOpen ? customIdAbove : transitionId] && (
+                                  <span className="text-xs text-destructive" onClick={(e) => e.stopPropagation()}>
+                                    {ruleValidationError[isInsertOpen ? customIdAbove : transitionId]}
+                                  </span>
+                                )}
+                              </div>
                             )}
                             {onCopyToDebug && (
                               <Button
@@ -700,7 +1078,7 @@ function TheoremCard({
                                 className="h-7 px-2 text-xs gap-1.5"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  onVerifyCustomTransition(customId, draft, nextExpr);
+                                  onVerifyCustomTransition(customId, draft, nextExpr, (() => { const r = customRuleInputs[customId]; return (r?.left?.trim() && r?.right?.trim()) ? `${r.left.trim()} ⟺ ${r.right.trim()}` : undefined; })());
                                 }}
                                 disabled={customTransitionVerifying !== null}
                                 title="Verify: inserted expression → step below"
@@ -724,6 +1102,74 @@ function TheoremCard({
                                   </>
                                 )}
                               </Button>
+                            )}
+                            {setCustomRuleInputs && (
+                              <div className="flex flex-col gap-0.5 flex-1 min-w-[320px] max-w-[520px]">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <div
+                                    className={`flex-1 min-w-0 rounded border border-dashed transition-colors ${ruleDropTarget === `${customId}::left` ? 'border-primary bg-primary/5' : 'border-border'}`}
+                                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect = 'copy'; setRuleDropTarget(`${customId}::left`); }}
+                                    onDragLeave={(e) => { e.stopPropagation(); setRuleDropTarget(null); }}
+                                    onDrop={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      setRuleDropTarget(null);
+                                      const rule = parseDroppedRule(e);
+                                      if (rule) {
+                                        const content = rule.draggedSide === 'right' ? rule.rightSide : rule.leftSide;
+                                        setCustomRuleInputs((prev) => ({ ...prev, [customId]: { left: content, right: prev[customId]?.right ?? '' } }));
+                                        setRuleValidationError?.((prev) => { const next = { ...prev }; delete next[customId]; return next; });
+                                      }
+                                    }}
+                                  >
+                                    <Input
+                                      value={customRuleInputs[customId]?.left ?? ''}
+                                      onChange={(e) => {
+                                        setCustomRuleInputs((prev) => ({ ...prev, [customId]: { left: e.target.value, right: prev[customId]?.right ?? '' } }));
+                                        setRuleValidationError?.((prev) => { const next = { ...prev }; delete next[customId]; return next; });
+                                      }}
+                                      placeholder="Left (optional) — or drag rule here"
+                                      className={`h-7 text-xs font-mono w-full border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 ${ruleValidationError[customId] ? 'border-destructive' : ''}`}
+                                      onClick={(e) => e.stopPropagation()}
+                                      title="Rule left side (drag from rules panel or type)"
+                                    />
+                                  </div>
+                                  <EquivalenceSymbol size={12} className="flex-shrink-0 text-muted-foreground" />
+                                  <div
+                                    className={`flex-1 min-w-0 rounded border border-dashed transition-colors ${ruleDropTarget === `${customId}::right` ? 'border-primary bg-primary/5' : 'border-border'}`}
+                                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect = 'copy'; setRuleDropTarget(`${customId}::right`); }}
+                                    onDragLeave={(e) => { e.stopPropagation(); setRuleDropTarget(null); }}
+                                    onDrop={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      setRuleDropTarget(null);
+                                      const rule = parseDroppedRule(e);
+                                      if (rule) {
+                                        const content = rule.draggedSide === 'right' ? rule.rightSide : rule.leftSide;
+                                        setCustomRuleInputs((prev) => ({ ...prev, [customId]: { left: prev[customId]?.left ?? '', right: content } }));
+                                        setRuleValidationError?.((prev) => { const next = { ...prev }; delete next[customId]; return next; });
+                                      }
+                                    }}
+                                  >
+                                    <Input
+                                      value={customRuleInputs[customId]?.right ?? ''}
+                                      onChange={(e) => {
+                                        setCustomRuleInputs((prev) => ({ ...prev, [customId]: { left: prev[customId]?.left ?? '', right: e.target.value } }));
+                                        setRuleValidationError?.((prev) => { const next = { ...prev }; delete next[customId]; return next; });
+                                      }}
+                                      placeholder="Right (optional) — or drag rule here"
+                                      className={`h-7 text-xs font-mono w-full border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 ${ruleValidationError[customId] ? 'border-destructive' : ''}`}
+                                      onClick={(e) => e.stopPropagation()}
+                                      title="Rule right side (drag from rules panel or type)"
+                                    />
+                                  </div>
+                                </div>
+                                {ruleValidationError[customId] && (
+                                  <span className="text-xs text-destructive" onClick={(e) => e.stopPropagation()}>
+                                    {ruleValidationError[customId]}
+                                  </span>
+                                )}
+                              </div>
                             )}
                             {onCopyToDebug && (
                               <Button

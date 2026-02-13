@@ -6,5 +6,5 @@ export type { DAGNode, DAGEdge, DAGStructure, ExprNodeData, BranchKind, EdgeType
 export { exprToDAG } from './exprToDAG';
 export { dagToExpr } from './dagToExpr';
 export { SingleRootDAGInjection } from './DAGInjection';
-export { substituteInDAG } from './dagSubstitute';
-export { extractSubgraphFromNode, augmentTargetDAGForTcMatching, countOperations, extractOperators, patternOpMultisetContainedInTarget } from './utils';
+export { substituteInDAG, substituteInDAGPartialFactor, getPrefixAndSuffixDAG } from './dagSubstitute';
+export { extractSubgraphFromNode, extractSubgraphIncomingFromNode, augmentTargetDAGForTcMatching, countOperations, extractOperators, patternOpMultisetContainedInTarget } from './utils';

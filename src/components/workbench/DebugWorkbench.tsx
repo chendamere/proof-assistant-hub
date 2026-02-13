@@ -375,10 +375,10 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
             </div>
           </div>
 
-          {/* Isomorphism / All rules results */}
+          {/* Subgraph injection / All rules results */}
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="px-3 py-2 border-b border-border bg-muted/30 text-xs font-medium text-muted-foreground">
-              {hasRule ? 'Isomorphism' : 'All rules (axioms + definitions + theorems)'}
+              {hasRule ? 'Subgraph injection' : 'All rules (axioms + definitions + theorems)'}
             </div>
             <ScrollArea className="flex-1">
               <div className="p-2">

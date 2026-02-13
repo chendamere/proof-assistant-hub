@@ -30,15 +30,53 @@ function parseOneBraced(expr: string, pos: number): { content: string; end: numb
 /** Operators that take no operands (nullary) */
 const NULLARY_OPERATORS = new Set(['\\Or', '\\Ri', '\\Rq']);
 
+/** Plus operator: "a+b:c" form (ignore colon for structure; 3 operands: left, right, result). */
+const PLUS_OP = '\\+';
+const PLUS_PATTERN = /([a-zA-Z](?:_\d+)?|\d+)\s*\+\s*([a-zA-Z](?:_\d+)?|\d+)\s*:\s*([a-zA-Z](?:_\d+)?|\d+)/g;
+
+/** Times operator: "a \\times b : c" form (ignore colon for structure; 3 operands: left, right, result). */
+const TIMES_OP = '\\times';
+const TIMES_PATTERN = /([a-zA-Z](?:_\d+)?|\d+)\s*\\times\s*([a-zA-Z](?:_\d+)?|\d+)\s*:\s*([a-zA-Z](?:_\d+)?|\d+)/g;
+
+/** Extract "a+b:c" plus operations first so they become one node with 3 operands and are not confused with \Op. */
+function extractPlusOperations(expr: string): Array<{ op: string; operands: string[]; start: number; end: number }> {
+  const ops: Array<{ op: string; operands: string[]; start: number; end: number }> = [];
+  let m: RegExpExecArray | null;
+  PLUS_PATTERN.lastIndex = 0;
+  while ((m = PLUS_PATTERN.exec(expr)) !== null) {
+    const start = m.index;
+    const end = m.index + m[0].length;
+    ops.push({ op: PLUS_OP, operands: [m[1]!, m[2]!, m[3]!], start, end });
+  }
+  return ops;
+}
+
+/** Extract "a \\times b : c" times operations (3 operands: left, right, result). */
+function extractTimesOperations(expr: string): Array<{ op: string; operands: string[]; start: number; end: number }> {
+  const ops: Array<{ op: string; operands: string[]; start: number; end: number }> = [];
+  let m: RegExpExecArray | null;
+  TIMES_PATTERN.lastIndex = 0;
+  while ((m = TIMES_PATTERN.exec(expr)) !== null) {
+    const start = m.index;
+    const end = m.index + m[0].length;
+    ops.push({ op: TIMES_OP, operands: [m[1]!, m[2]!, m[3]!], start, end });
+  }
+  return ops;
+}
+
 /** Extract operations from a flat (no branches) comma-separated expression */
 function extractOperations(expr: string): Array<{ op: string; operands: string[]; start: number; end: number }> {
+  const plusOps = extractPlusOperations(expr);
+  const timesOps = extractTimesOperations(expr);
+  const specialOps = [...plusOps, ...timesOps];
   const ops: Array<{ op: string; operands: string[]; start: number; end: number }> = [];
   const operatorPattern = /\\([A-Z][a-z]*)\b/g;
   let match;
 
   while ((match = operatorPattern.exec(expr)) !== null) {
-    const opFull = '\\' + match[1];
     const opStart = match.index;
+    if (specialOps.some((p) => opStart >= p.start && opStart < p.end)) continue;
+    const opFull = '\\' + match[1];
     const opEnd = match.index + match[0].length;
 
     let operandBefore: string | undefined;
@@ -63,8 +101,13 @@ function extractOperations(expr: string): Array<{ op: string; operands: string[]
           // Reject if the match is the suffix of a LaTeX command (e.g. "s" from \Os)
           const prevCh = matchStart > 0 ? expr[matchStart - 1] : '';
           if (!/[a-z]/.test(prevCh)) {
-            operandBefore = bm[1];
-            rangeStart = matchStart;
+            // Also reject when immediately after a \Word (e.g. "s" in "j \Os," before "\Ot")
+            let pos = matchStart - 1;
+            while (pos >= 0 && /[A-Za-z]/.test(expr[pos])) pos--;
+            if (pos < 0 || expr[pos] !== '\\') {
+              operandBefore = bm[1];
+              rangeStart = matchStart;
+            }
           }
         }
       }
@@ -101,7 +144,8 @@ function extractOperations(expr: string): Array<{ op: string; operands: string[]
 
     ops.push({ op: opFull, operands, start: rangeStart, end: rangeEnd });
   }
-  return ops;
+  const merged = [...specialOps, ...ops].sort((a, b) => a.start - b.start);
+  return merged;
 }
 
 /** If condition is if(...), extract only the content between parentheses. */

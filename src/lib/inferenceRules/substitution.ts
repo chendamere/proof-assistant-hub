@@ -6,8 +6,8 @@
 
 import type { DAGStructure, ExprNodeData } from '../dag';
 import { MatchPosition } from './types';
-import { normalizeSpacing, extractOperandTokens } from './utils';
-import { exprToDAG, dagToExpr, SingleRootDAGInjection, substituteInDAG, extractSubgraphFromNode, augmentTargetDAGForTcMatching, patternOpMultisetContainedInTarget } from '../dag';
+import { normalizeSpacing, ensureCommaWrapped, normalizeUnaryOpOrderForComparison, extractOperandTokens, oeToPeInExpression } from './utils';
+import { exprToDAG, dagToExpr, SingleRootDAGInjection, substituteInDAG, substituteInDAGPartialFactor, extractSubgraphFromNode, extractSubgraphIncomingFromNode, augmentTargetDAGForTcMatching, patternOpMultisetContainedInTarget } from '../dag';
 
 /**
  * Convert ruleOtherSide using operand mapping
@@ -38,7 +38,7 @@ export const convertRuleOtherSide = (
       const converted = applyOperandMapping(ruleOtherSide, ruleOtherTokens, m);
       const isJustComma = converted.trim() === ',';
       const substituted = prefix + (isJustComma ? '' : converted) + suffix;
-      return normalizeSpacing(substituted) === normalizeSpacing(expectedResult);
+      return normalizeUnaryOpOrderForComparison(normalizeSpacing(substituted)) === normalizeUnaryOpOrderForComparison(normalizeSpacing(expectedResult));
     });
 
   if (mapping) {
@@ -84,6 +84,12 @@ function resolveOperandMapping(
   tryMatch: (mapping: Map<string, string>) => boolean
 ): Map<string, string> | null {
   const unmappedTokens = ruleOtherTokens.filter((t) => !operandMapping.has(t.token));
+  // Try identity mapping first when all unmapped tokens exist in existingOperands (common for empty-pattern Oe→Pe)
+  if (unmappedTokens.length > 0 && unmappedTokens.every((t) => existingOperands.has(t.token))) {
+    const identityMap = new Map(operandMapping);
+    for (const t of unmappedTokens) identityMap.set(t.token, t.token);
+    if (tryMatch(identityMap)) return identityMap;
+  }
   if (unmappedTokens.length > 0) {
     const tryAssignExisting = (tokenIdx: number, mapping: Map<string, string>): Map<string, string> | null => {
       if (tokenIdx >= unmappedTokens.length) return tryMatch(mapping) ? new Map(mapping) : null;
@@ -130,25 +136,92 @@ function convertRuleOtherSideWithDAG(
   targetSide: string,
   expectedResult?: string
 ): string {
-  const mapping = resolveTcOperandMapping(patternDAG, targetDAG, nodeMapping, new Map(operandMapping));
+  const { mapping, partialFactorOperands, tcExpressionsByOperand } = resolveTcOperandMapping(
+    patternDAG,
+    targetDAG,
+    nodeMapping,
+    new Map(operandMapping)
+  );
   const targetOperands = extractOperandsFromText(targetSide);
   const expectedOperands = expectedResult ? extractOperandsFromText(expectedResult) : new Set<string>();
   const existingOperands = new Set([...targetOperands, ...expectedOperands]);
 
-  // Expand \Tc in pattern before converting to node; one Tc can map to empty operation
-  const expandedRuleOtherSide = expandTcInRuleSide(ruleOtherSide, mapping, patternDAG);
+  // \Tc operands map to sequences of operations (used only for expanding the rule string), not for DAG operand substitution
+  const tcOperands = new Set(
+    patternDAG.nodes
+      .filter((n) => (n.data as ExprNodeData)?.op === '\\Tc' && (n.data as ExprNodeData)?.operands?.length)
+      .map((n) => (n.data as ExprNodeData).operands![0])
+  );
+  const operandsOnly = (m: Map<string, string>) => new Map([...m].filter(([k]) => !tcOperands.has(k)));
+
+  let expandedRuleOtherSide: string;
+  let usePartialFactorMerge = false;
+  let arm1DAG: DAGStructure<ExprNodeData> | null = null;
+  let arm2DAG: DAGStructure<ExprNodeData> | null = null;
+  let suffixInsertDAG: DAGStructure<ExprNodeData> | null = null;
+
+  if (partialFactorOperands.size > 0 && tcExpressionsByOperand.size > 0) {
+    const tcOp = [...partialFactorOperands][0];
+    const exprs = tcExpressionsByOperand.get(tcOp);
+    const commonSuffix = mapping.get(tcOp) ?? ',';
+    if (exprs && exprs.length >= 2) {
+      const trimmed1 = trimSuffix(exprs[0], commonSuffix);
+      const trimmed2 = trimSuffix(exprs[1], commonSuffix);
+      const brs = findBrsArms(ruleOtherSide);
+      if (brs) {
+        usePartialFactorMerge = true;
+        arm1DAG = exprToDAG(normalizeSpacing(trimmed1)) as DAGStructure<ExprNodeData>;
+        arm2DAG = exprToDAG(normalizeSpacing(trimmed2)) as DAGStructure<ExprNodeData>;
+        suffixInsertDAG = exprToDAG(normalizeSpacing(commonSuffix)) as DAGStructure<ExprNodeData>;
+        if (typeof process !== 'undefined' && process.env.DEBUG_PARTIAL_FACTOR === '1') {
+          console.error('[DEBUG_PARTIAL_FACTOR] convertRuleOtherSideWithDAG (partial factor path):');
+          console.error('  exprs[0]:', JSON.stringify(exprs[0]), 'exprs[1]:', JSON.stringify(exprs[1]));
+          console.error('  commonSuffix:', JSON.stringify(commonSuffix));
+          console.error('  trimmed1:', JSON.stringify(trimmed1), 'trimmed2:', JSON.stringify(trimmed2));
+          console.error('  arm1DAG nodes:', arm1DAG.nodes.length, 'arm2DAG:', arm2DAG.nodes.length, 'suffixInsertDAG:', suffixInsertDAG.nodes.length);
+        }
+        const beforeBrs = ruleOtherSide.slice(0, brs.start);
+        const afterBrs = ruleOtherSide.slice(brs.end);
+        const ruleWithArms = beforeBrs + '{' + trimmed1 + '}{' + trimmed2 + '}' + afterBrs;
+        expandedRuleOtherSide = expandTcInRuleSide(ruleWithArms, mapping, patternDAG);
+      } else {
+        expandedRuleOtherSide = expandTcInRuleSide(ruleOtherSide, mapping, patternDAG);
+      }
+    } else {
+      expandedRuleOtherSide = expandTcInRuleSide(ruleOtherSide, mapping, patternDAG);
+    }
+  } else {
+    expandedRuleOtherSide = expandTcInRuleSide(ruleOtherSide, mapping, patternDAG);
+  }
+
   const ruleOtherTokens = extractOperandTokens(ruleOtherSide);
   const replacementDAG = exprToDAG(normalizeSpacing(expandedRuleOtherSide));
   const tryConversion = (m: Map<string, string>): string => {
-    const merged = substituteInDAG(targetDAG, patternDAG, replacementDAG, nodeMapping, m);
-    return dagToExpr(merged);
+    if (usePartialFactorMerge && arm1DAG && arm2DAG && suffixInsertDAG) {
+      const merged = substituteInDAGPartialFactor(
+        targetDAG,
+        patternDAG,
+        nodeMapping,
+        arm1DAG,
+        arm2DAG,
+        suffixInsertDAG,
+        operandsOnly(m)
+      );
+      // Don't pass operand mapping to dagToExpr: replacement nodes already have operands substituted via applySubst during merge,
+      // and target nodes should keep their original operands (not be mapped).
+      return dagToExpr(merged, undefined, { literalTc: true });
+    }
+    const merged = substituteInDAG(targetDAG, patternDAG, replacementDAG, nodeMapping, operandsOnly(m));
+    // Don't pass operand mapping to dagToExpr: replacement nodes already have operands substituted via applySubst during merge,
+    // and target nodes should keep their original operands (not be mapped).
+    return dagToExpr(merged, undefined, { literalTc: true });
   };
 
   const resolvedMapping =
     expectedResult &&
     resolveOperandMapping(ruleOtherTokens, mapping, existingOperands, (m) => {
       const substituted = tryConversion(m);
-      return normalizeSpacing(substituted) === normalizeSpacing(expectedResult);
+      return normalizeUnaryOpOrderForComparison(normalizeSpacing(substituted)) === normalizeUnaryOpOrderForComparison(normalizeSpacing(expectedResult));
     });
 
   if (resolvedMapping) return tryConversion(resolvedMapping);
@@ -160,56 +233,183 @@ function convertRuleOtherSideWithDAG(
     if (!isNaN(n) && n > maxUsed) maxUsed = n;
   });
   let nextUnused = maxUsed + 1;
-  const fallbackMapping = new Map(mapping);
+  const fallbackMapping = new Map<string, string>(mapping);
   for (const t of ruleOtherTokens) {
     if (!fallbackMapping.has(t.token)) {
-      fallbackMapping.set(t.token, (nextUnused++).toString());
+      // Prefer same token from existing operands (e.g. expected uses "j") so output format matches expected
+      const preferred = existingOperands.has(t.token) ? t.token : (nextUnused++).toString();
+      fallbackMapping.set(t.token, preferred);
     }
   }
   return tryConversion(fallbackMapping);
+}
+
+/** Longest common suffix of normalized expressions (for partial \Tc factor). */
+function longestCommonSuffix(exprs: string[]): string {
+  if (exprs.length === 0) return ',';
+  const normalized = exprs.map((e) => normalizeSpacing(e));
+  let suf = normalized[0];
+  for (let i = 1; i < normalized.length; i++) {
+    const b = normalized[i];
+    let j = suf.length - 1;
+    let k = b.length - 1;
+    while (j >= 0 && k >= 0 && suf[j] === b[k]) {
+      j--;
+      k--;
+    }
+    suf = suf.slice(j + 1);
+  }
+  return suf || ',';
+}
+
+/** Longest common suffix without normalizing (preserves leading space for correct arm trim). */
+function longestCommonSuffixRaw(exprs: string[]): string {
+  if (exprs.length === 0) return ',';
+  let suf = exprs[0];
+  for (let i = 1; i < exprs.length; i++) {
+    const b = exprs[i];
+    let j = suf.length - 1;
+    let k = b.length - 1;
+    while (j >= 0 && k >= 0 && suf[j] === b[k]) {
+      j--;
+      k--;
+    }
+    suf = suf.slice(j + 1);
+  }
+  return suf || ',';
+}
+
+/** Trim suffix from end of expression (for partial factor arms). */
+function trimSuffix(expr: string, suffix: string): string {
+  if (!suffix || !expr.endsWith(suffix)) return expr;
+  const t = expr.slice(0, expr.length - suffix.length).trimEnd();
+  return t || ',';
+}
+
+/**
+ * Find \Brs{arm1}{arm2} in s. Returns indices so slice(0,start) is before first '{', slice(end) is after second '}'.
+ * Handles nested braces.
+ */
+function findBrsArms(s: string): { start: number; end: number; arm1: string; arm2: string } | null {
+  const brs = s.indexOf('\\Brs');
+  if (brs === -1) return null;
+  const firstBrace = s.indexOf('{', brs);
+  if (firstBrace === -1) return null;
+  let depth = 1;
+  let pos = firstBrace + 1;
+  while (pos < s.length && depth > 0) {
+    if (s[pos] === '{') depth++;
+    else if (s[pos] === '}') depth--;
+    pos++;
+  }
+  const arm1End = pos - 1;
+  const arm1 = s.slice(firstBrace + 1, arm1End);
+  const secondBrace = s.indexOf('{', pos);
+  if (secondBrace === -1) return null;
+  depth = 1;
+  pos = secondBrace + 1;
+  while (pos < s.length && depth > 0) {
+    if (s[pos] === '{') depth++;
+    else if (s[pos] === '}') depth--;
+    pos++;
+  }
+  const arm2End = pos - 1;
+  const arm2 = s.slice(secondBrace + 1, arm2End);
+  return { start: firstBrace, end: arm2End + 1, arm1, arm2 };
 }
 
 /**
  * For each pattern node with op \Tc, the operand maps to the expression (one or more ops including branch)
  * at the matched target node. Augment operandMapping with these Tc operand -> expression entries.
  * Empty target arms (e.g. tail node) map to ',' (empty operation).
+ * When the same \Tc operand appears in multiple arms with different expressions (partial factor),
+ * use the longest common suffix for the single value; return the per-arm expressions for building
+ * the replacement with trimmed arms.
  */
 function resolveTcOperandMapping(
   patternDAG: DAGStructure<ExprNodeData>,
   targetDAG: DAGStructure<ExprNodeData>,
   nodeMapping: Map<string, string>,
   operandMapping: Map<string, string>
-): Map<string, string> {
+): { mapping: Map<string, string>; partialFactorOperands: Set<string>; tcExpressionsByOperand: Map<string, string[]> } {
   const result = new Map(operandMapping);
   const pNodeMap = new Map(patternDAG.nodes.map((n) => [n.id, n]));
   const tNodeMap = new Map(targetDAG.nodes.map((n) => [n.id, n]));
+  const tcExpressions = new Map<string, Array<{ armType: number; expr: string }>>();
+  const patternTailId = patternDAG.nodes.find((n) => (n.data as ExprNodeData)?.op?.endsWith?.(':tail'))?.id;
+  const tailIncomingByFrom = new Map<string, number>();
+  if (patternTailId) {
+    for (const e of patternDAG.edges) {
+      if (e.to === patternTailId) tailIncomingByFrom.set(e.from, (e.edgeType ?? 0) as number);
+    }
+  }
+  const targetTailId = patternTailId ? nodeMapping.get(patternTailId) ?? null : null;
+  let condId: string | null = null;
+  if (targetTailId) {
+    for (const e of patternDAG.edges) {
+      if (e.to === patternTailId && ((e.edgeType ?? 0) as number) === 3) {
+        const armHead = nodeMapping.get(e.from);
+        if (armHead) {
+          for (const te of targetDAG.edges) {
+            if (te.to === armHead && ((te.edgeType ?? 0) as number) === 1) {
+              condId = te.from;
+              break;
+            }
+          }
+          break;
+        }
+      }
+    }
+  }
+  const excludeForArm = new Set<string>();
+  if (targetTailId) excludeForArm.add(targetTailId);
+  if (condId) excludeForArm.add(condId);
+
   for (const [pId, tId] of nodeMapping) {
     const pNode = pNodeMap.get(pId);
     const pData = pNode?.data as ExprNodeData | undefined;
     if (pData?.op !== '\\Tc' || !pData.operands?.length) continue;
     const tcOperand = pData.operands[0];
+    const armType = tailIncomingByFrom.get(pId) ?? 0;
     const tNode = tNodeMap.get(tId);
     const tData = tNode?.data as ExprNodeData | undefined;
-    // Target tail (empty arm): map to empty operation directly
     if (tData?.op?.endsWith?.(':tail')) {
-      result.set(tcOperand, ',');
+      if (!tcExpressions.has(tcOperand)) tcExpressions.set(tcOperand, []);
+      tcExpressions.get(tcOperand)!.push({ armType, expr: ',' });
       continue;
     }
-    const subgraph = extractSubgraphFromNode(targetDAG, tId);
+    const useIncoming = excludeForArm.size >= 1;
+    const subgraph = useIncoming
+      ? extractSubgraphIncomingFromNode(targetDAG, tId, excludeForArm)
+      : extractSubgraphFromNode(targetDAG, tId);
     if (subgraph.nodes.length === 0) continue;
     const expr = dagToExpr(subgraph);
     const trimmed = expr.replace(/^,\s*|\s*,$/g, '').trim();
-    result.set(tcOperand, trimmed ? `,${trimmed},` : ',');
+    const wrapped = trimmed ? `, ${trimmed},` : ',';
+    if (!tcExpressions.has(tcOperand)) tcExpressions.set(tcOperand, []);
+    tcExpressions.get(tcOperand)!.push({ armType, expr: wrapped });
   }
-  return result;
+  const partialFactorOperands = new Set<string>();
+  const tcExpressionsByOperand = new Map<string, string[]>();
+  for (const [tcOperand, pairs] of tcExpressions) {
+    const exprs = pairs.sort((a, b) => a.armType - b.armType).map((p) => p.expr);
+    const value = exprs.length === 1 ? exprs[0]! : longestCommonSuffixRaw(exprs);
+    result.set(tcOperand, value);
+    if (exprs.length > 1) {
+      partialFactorOperands.add(tcOperand);
+      tcExpressionsByOperand.set(tcOperand, exprs);
+    }
+  }
+  return { mapping: result, partialFactorOperands, tcExpressionsByOperand };
 }
 
 /**
- * Expand \Tc placeholders in ruleOtherSide with resolved expressions before converting to DAG.
- * Replaces each ,\Tc c_X, with the mapped expression (including empty ',' for empty arms).
+ * Expand \Tc placeholders in ruleOtherSide with resolved expressions (operation sequences) before converting to DAG.
+ * Replaces every \Tc <operand> with the mapped operation(s) so Tc operands are always mapped to the sequence.
+ * Handles both comma context (,\Tc c,) and branch-arm context ({\Tc c,).
  */
 function expandTcInRuleSide(ruleOtherSide: string, tcMapping: Map<string, string>, patternDAG: DAGStructure<ExprNodeData>): string {
-  let expanded = ruleOtherSide;
+  let expanded = normalizeSpacing(ruleOtherSide);
   // Replace Tc operands in reverse order of length so c_10 before c_1
   const tcOperands = [...patternDAG.nodes]
     .filter((n) => (n.data as ExprNodeData)?.op === '\\Tc' && (n.data as ExprNodeData)?.operands?.length)
@@ -218,8 +418,11 @@ function expandTcInRuleSide(ruleOtherSide: string, tcMapping: Map<string, string
     .sort((a, b) => b.length - a.length);
   for (const op of tcOperands) {
     const value = tcMapping.get(op)!;
-    const re = new RegExp(`,\\s*\\\\Tc\\s+${op.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*,`, 'g');
-    expanded = expanded.replace(re, value);
+    const escapedOp = op.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Comma context: ",\Tc c," or " ,\Tc c,"
+    expanded = expanded.replace(new RegExp(`\\s*,\\s*\\\\Tc\\s+${escapedOp}\\s*,`, 'g'), value);
+    // Branch-arm context: "{\Tc c," inside \Brs{...}{...} or \Bb{...}{...}{...}
+    expanded = expanded.replace(new RegExp(`{\\s*\\\\Tc\\s+${escapedOp}\\s*,`, 'g'), '{' + value);
   }
   return expanded;
 }
@@ -391,7 +594,23 @@ export const trySubstitution = (
 ) => {
   const normalizedTarget = normalizeSpacing(target);
   const normalizedRule = normalizeSpacing(ruleSide);
-  const patternDAG = getCachedOrCreateDAG(ruleSide, dagCache);
+  const normalizedOther = normalizeSpacing(otherRuleSide);
+  const normalizedExpectedForOePe = normalizeSpacing(expectedResult);
+  const targetOrExpectedHasPe = normalizedTarget.includes('\\Pe') || normalizedExpectedForOePe.includes('\\Pe');
+  const ruleHasOe = normalizedRule.includes('\\Oe') || normalizedOther.includes('\\Oe');
+
+  // When target or expected has \Pe and either side of the rule has \Oe, use the \Pe variant for replacement so result matches expected
+  let effectiveRuleSide = ruleSide;
+  let effectiveOtherRuleSide = otherRuleSide;
+  if (targetOrExpectedHasPe && ruleHasOe) {
+    effectiveRuleSide = oeToPeInExpression(ruleSide);
+    effectiveOtherRuleSide = oeToPeInExpression(otherRuleSide);
+  }
+
+  // For matching: look for the pattern as it appears in the target. If target has \Oe use ruleSide (unconverted).
+  const patternForMatch =
+    targetOrExpectedHasPe && ruleHasOe && normalizedTarget.includes('\\Oe') ? ruleSide : effectiveRuleSide;
+  const patternDAG = getCachedOrCreateDAG(patternForMatch, dagCache);
   let targetDAG = getCachedOrCreateDAG(target, dagCache);
   const hasTc = patternDAG.nodes.some((n) => (n.data as ExprNodeData)?.op === '\\Tc');
   if (hasTc && patternDAG.nodes.length > targetDAG.nodes.length) {
@@ -410,15 +629,21 @@ export const trySubstitution = (
     return null;
   }
 
-  // Empty pattern (e.g. rule left ","): try insertion at each top-level comma boundary
-  if (patternDAG.nodes.length === 0) {
+  // Empty pattern (e.g. rule left ","): try insertion at each top-level comma boundary.
+  // Skip this path when the other side contains \+ or \times (3-operand form); matching must go through DAG injection so the target actually has that structure.
+  const otherDAG = getCachedOrCreateDAG(effectiveOtherRuleSide, dagCache);
+  const otherHasSpecialOp = otherDAG.nodes.some((n) => {
+    const op = (n.data as ExprNodeData)?.op ?? '';
+    return op === '\\+' || op === '\\times';
+  });
+  if (patternDAG.nodes.length === 0 && !otherHasSpecialOp) {
     const boundaries = getCommaBoundaries(normalizedTarget);
     for (let i = 0; i < boundaries.length; i++) {
       const b = boundaries[i];
       const prefix = normalizedTarget.substring(0, b);
       const suffix = normalizedTarget.substring(b);
       const converted = convertRuleOtherSide(
-        otherRuleSide,
+        effectiveOtherRuleSide,
         new Map(),
         prefix,
         suffix,
@@ -426,11 +651,19 @@ export const trySubstitution = (
         normalizedExpected
       );
       const convertedForSub = converted.trim() === ',' ? '' : converted;
-      const result = prefix + convertedForSub + suffix;
+      let result = prefix + convertedForSub + suffix;
+      // When converted used fallback mapping (e.g. 1,2), try raw insert of effectiveOtherRuleSide so Oe→Pe insert can match
+      if (normalizeSpacing(result) !== normalizedExpected) {
+        let toInsert = effectiveOtherRuleSide.trim() === ',' ? '' : effectiveOtherRuleSide;
+        // Avoid double comma: if prefix ends with comma and toInsert starts with comma, drop leading ", " from toInsert
+        if (prefix.endsWith(',') && /^,\s*/.test(toInsert)) toInsert = toInsert.replace(/^,\s*/, '');
+        const rawInsert = prefix + toInsert + suffix;
+        if (normalizeSpacing(rawInsert) === normalizedExpected) result = rawInsert;
+      }
       if (normalizeSpacing(result) === normalizedExpected) {
         return {
           match: true,
-          reconstructedExpr: result,
+          reconstructedExpr: ensureCommaWrapped(result),
           position: {
             side,
             position: b,
@@ -455,6 +688,7 @@ export const trySubstitution = (
   }
 
   // DAG-based: try each match candidate until one produces the expected result
+  const patternHasTc = patternDAG.nodes.some((n) => (n.data as ExprNodeData)?.op === '\\Tc');
   const nodeCount = targetDAG.nodes.length;
   const maxTrials =
     nodeCount > 24 ? 4 : nodeCount > 20 ? 8 : nodeCount > 12 ? 32 : 64;
@@ -473,22 +707,43 @@ export const trySubstitution = (
     if (candidateStart >= candidateEnd) continue;
 
     const operandMapping = vf2Result.operandMapping.size > 0 ? vf2Result.operandMapping : undefined;
-    if (!operandMapping) continue;
+    if (!operandMapping && !patternHasTc) continue;
 
     try {
+      // Pass raw expectedResult so resolveOperandMapping gets correct existingOperands (e.g. "j") and compares to raw expected
       const substituted = convertRuleOtherSideWithDAG(
-        otherRuleSide,
+        effectiveOtherRuleSide,
         operandMapping,
         targetDAG,
         patternDAG,
         vf2Result.mapping,
         targetSideForOperands,
-        normalizedExpected
+        expectedResult
       );
-      if (normalizeSpacing(substituted) === normalizedExpected) {
+      const normalizedSubst = normalizeSpacing(substituted);
+      const expectedNorm = normalizeUnaryOpOrderForComparison(normalizeSpacing(expectedResult));
+      const normSubst = normalizeUnaryOpOrderForComparison(normalizedSubst);
+      const normExpected = normalizeUnaryOpOrderForComparison(normalizedExpected);
+      const stripTrailingComma = (s: string) => (s.endsWith(',') ? s.slice(0, -1) : s);
+      let matchesRoundtrip = normSubst === normExpected;
+      if (!matchesRoundtrip) {
+        try {
+          const canonicalSubst = normalizeSpacing(
+            dagToExpr(getCachedOrCreateDAG(substituted, dagCache), undefined, { literalTc: true })
+          );
+          matchesRoundtrip = normalizeUnaryOpOrderForComparison(canonicalSubst) === normExpected;
+        } catch {
+          // ignore
+        }
+      }
+      if (!matchesRoundtrip && stripTrailingComma(normSubst) === stripTrailingComma(normExpected)) {
+        matchesRoundtrip = true;
+      }
+      const matchesRaw = normSubst === expectedNorm || stripTrailingComma(normSubst) === stripTrailingComma(expectedNorm);
+      if (matchesRoundtrip || matchesRaw) {
         return {
           match: true,
-          reconstructedExpr: substituted,
+          reconstructedExpr: ensureCommaWrapped(substituted),
           position: {
             side,
             position: candidateStart,
@@ -503,7 +758,15 @@ export const trySubstitution = (
           },
         };
       }
-    } catch {
+      if (typeof process !== 'undefined' && process.env.DEBUG_SUBSTITUTION === '1') {
+        console.error('[trySubstitution] substituted !== expected');
+        console.error('  substituted (normalized):', JSON.stringify(normalizedSubst));
+        console.error('  expected (normalized):    ', JSON.stringify(normalizedExpected));
+      }
+    } catch (e) {
+      if (typeof process !== 'undefined' && process.env.DEBUG_SUBSTITUTION === '1') {
+        console.error('[trySubstitution] convertRuleOtherSideWithDAG threw:', e);
+      }
       continue;
     }
   }

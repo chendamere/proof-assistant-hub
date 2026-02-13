@@ -5,41 +5,62 @@
 
 import type { DAGStructure, ExprNodeData, BranchKind } from './types';
 import { buildAdjacency } from './utils';
+import { ensureCommaWrapped } from '../inferenceRules/utils';
 
-function formatOp(data: ExprNodeData, subst?: Map<string, string>): string {
+/** Unary ops written "operand op" in axioms/theorems (e.g. m \Os). \Ot stays "op operand" (\Ot m). */
+const OPERAND_FIRST_UNARY_OPS = new Set(['\\Os', '\\Oc', '\\Od', '\\Ob', '\\Og', '\\Oa']);
+
+function formatOp(data: ExprNodeData, subst?: Map<string, string>, literalTc?: boolean): string {
   const op = data.op;
   if (op.endsWith(':tail') || op.includes(':cond')) return '';
   const ops = (data.operands ?? []).map((o) => subst?.get(o) ?? o);
-  // \Tc operand maps to one or more operations (including branch): output the expression, not "operand \Tc"
-  if (op === '\\Tc' && ops.length === 1) return ops[0];
+  // When literalTc is true (DAG from substitution result): output "\Tc operand" like any other op (target had \Tc).
+  // When literalTc is false (rule context): output just the operand (rule \Tc placeholder expands to content).
+  if (op === '\\Tc' && ops.length === 1) return literalTc ? `\\Tc ${ops[0]}` : ops[0];
+  // \+ (plus): "a+b:c" form (3 operands: left, right, result)
+  if (op === '\\+' && ops.length === 3) return `${ops[0]}+${ops[1]}:${ops[2]}`;
+  // \times: "a \times b : c" form (3 operands: left, right, result)
+  if (op === '\\times' && ops.length === 3) return `${ops[0]} \\times ${ops[1]} : ${ops[2]}`;
   if (ops.length >= 2) return `${ops[0]} ${op} ${ops[1]}`;
-  if (ops.length === 1) return `${ops[0]} ${op}`;
+  if (ops.length === 1 && OPERAND_FIRST_UNARY_OPS.has(op)) return `${ops[0]} ${op}`;
+  if (ops.length === 1) return `${op} ${ops[0]}`;
   return op;
 }
 
+/** Format condition for display: wrap in if(...) so display shows "if(i \Pe j)" while data stores only the inner condition. */
 function formatCond(data: ExprNodeData, subst?: Map<string, string>): string {
   const op = data.op;
   const ops = (data.operands ?? []).map((o) => subst?.get(o) ?? o);
+  let inner = '';
   if (op.includes(':cond:')) {
     const match = op.match(/:cond:(.+)$/);
     const innerOp = match ? match[1] : '';
-    if (ops.length >= 2) return `${ops[0]} ${innerOp} ${ops[1]}`;
-    if (ops.length === 1) return `${ops[0]} ${innerOp}`;
+    if (ops.length >= 2) inner = `${ops[0]} ${innerOp} ${ops[1]}`;
+    else if (ops.length === 1) inner = `${ops[0]} ${innerOp}`;
+    else inner = innerOp;
+  } else {
+    inner = (ops.join(' ')).trim();
   }
-  return (ops.join(' ')).trim();
+  return inner ? `if(${inner})` : '';
 }
 
+/** Options for dagToExpr. literalTc: when true, serialize \Tc as "\\Tc operand" (target); when false, as just operand (rule). */
+export type DagToExprOptions = { literalTc?: boolean };
+
 /**
- * Convert DAG to expression string with optional operand substitution.
+ * Convert DAG back to expression string with optional operand substitution.
  * @param structure - The DAG (e.g. from exprToDAG of rule's other side)
  * @param operandMapping - Map rule operand -> target operand (e.g. i->1, m->2)
+ * @param options - literalTc: true when serializing substitution result (target \Tc stays "\Tc x"); false for rule
  */
 export function dagToExpr(
   structure: DAGStructure<ExprNodeData>,
-  operandMapping?: Map<string, string>
+  operandMapping?: Map<string, string>,
+  options?: DagToExprOptions
 ): string {
-  if (structure.nodes.length === 0) return '';
+  if (structure.nodes.length === 0) return ',';
 
+  const literalTc = options?.literalTc ?? false;
   const nodeMap = new Map(structure.nodes.map((n) => [n.id, n]));
   const adj = buildAdjacency(structure);
   const { outgoing } = adj;
@@ -133,7 +154,7 @@ export function dagToExpr(
       const op = data?.op ?? '';
       if (!data || op.endsWith(':tail') || op.includes(':cond')) break;
       visited.add(cur);
-      const s = formatOp(data, operandMapping);
+      const s = formatOp(data, operandMapping, literalTc);
       if (s) parts.push(s);
       const next = outgoing.get(cur) ?? [];
       if (next.length !== 1) break;
@@ -157,8 +178,19 @@ export function dagToExpr(
       const inner = `\\${kind}{${cond}}{${topStr}}{${botStr}}`;
       return ',' + inner + ',';
     }
-    const { parts } = serializeChainUntilBranch(startId);
-    return parts.length ? ',' + parts.join(', ') + ',' : ',';
+    const { parts, nextId } = serializeChainUntilBranch(startId);
+    let result = parts.length ? ',' + parts.join(', ') + ',' : ',';
+    // Chain may end at a nested branch (e.g. prefix-arms merge: repl arm -> target arm with nested \Bb)
+    if (nextId) {
+      const nextOp = (nodeMap.get(nextId)?.data as ExprNodeData)?.op ?? '';
+      if (nextOp.includes(':cond')) {
+        const inner = serializeArmContent(nextId);
+        // Insert comma between chain and nested branch so format is ",op,\Bb{...}," not ",op\Bb{...},"
+        const branchContent = inner === ',' ? '' : inner.slice(1, -1);
+        result = result.slice(0, -1) + (branchContent ? ',' + branchContent : '') + ',';
+      }
+    }
+    return result;
   }
 
   function processFrom(id: string): string[] {
@@ -183,13 +215,20 @@ export function dagToExpr(
       }
       const kind = inferBranchKind(data!, children);
       const cond = formatCond(data!, operandMapping);
-      const topStr = children[0] ? serializeArmContent(children[0]) : ',';
-      const botStr = children[1] ? serializeArmContent(children[1]) : ',';
+      let topStr = children[0] ? serializeArmContent(children[0]) : ',';
+      let botStr = children[1] ? serializeArmContent(children[1]) : ',';
+      // Normalize arm order: empty arm first (e.g. {,}{\Or,}) so substitution results match expected.
+      if (topStr !== ',' && botStr === ',') [topStr, botStr] = [botStr, topStr];
       itemParts.push(`, \\${kind}{${cond}}{${topStr}}{${botStr}}`);
       if (kind === 'Bb' && children[0]) {
-        const tailId = (outgoing.get(children[0]) ?? []).find(
-          (c) => (nodeMap.get(c)?.data as ExprNodeData)?.op?.endsWith(':tail')
-        );
+        const firstChild = children[0];
+        const firstChildOp = (nodeMap.get(firstChild)?.data as ExprNodeData)?.op ?? '';
+        // When top arm is empty, cond points directly to tail, so firstChild is the tail.
+        const tailId = firstChildOp.endsWith(':tail')
+          ? firstChild
+          : (outgoing.get(firstChild) ?? []).find(
+              (c) => (nodeMap.get(c)?.data as ExprNodeData)?.op?.endsWith(':tail')
+            );
         if (tailId) {
           visited.add(tailId);
           return [...(outgoing.get(tailId) ?? [])];
@@ -235,5 +274,5 @@ export function dagToExpr(
   }
 
   const joined = itemParts.join('');
-  return (joined.startsWith(',') ? joined : ',' + joined) + (joined ? ',' : '');
+  return ensureCommaWrapped(joined);
 }

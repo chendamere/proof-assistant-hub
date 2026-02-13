@@ -10,6 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { usePanelContext } from '@/contexts/PanelContext';
 import { useDebounce } from '@/hooks/useDebounce';
+import { ensureCommaWrapped } from '@/lib/inferenceRules/utils';
 
 // Lazy load theorems
 const loadTheorems = () => import('@/data/theorems').then(m => m.theorems);
@@ -21,17 +22,19 @@ interface DraggableRuleCardProps {
 
 const DraggableRuleCard: React.FC<DraggableRuleCardProps> = React.memo(({ rule }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const leftSide = ensureCommaWrapped(rule.leftSide);
+  const rightSide = ensureCommaWrapped(rule.rightSide);
 
   const handleLeftDragStart = useCallback(
     (e: React.DragEvent) => {
       e.dataTransfer.setData('application/x-rule-drag-side', 'left');
       e.dataTransfer.setData(
         'application/json',
-        JSON.stringify({ id: rule.id, name: rule.name, leftSide: rule.leftSide, rightSide: rule.rightSide, draggedSide: 'left' })
+        JSON.stringify({ id: rule.id, name: rule.name, leftSide, rightSide, draggedSide: 'left' })
       );
       e.dataTransfer.effectAllowed = 'copy';
     },
-    [rule.id, rule.name, rule.leftSide, rule.rightSide]
+    [rule.id, rule.name, leftSide, rightSide]
   );
 
   const handleRightDragStart = useCallback(
@@ -39,11 +42,11 @@ const DraggableRuleCard: React.FC<DraggableRuleCardProps> = React.memo(({ rule }
       e.dataTransfer.setData('application/x-rule-drag-side', 'right');
       e.dataTransfer.setData(
         'application/json',
-        JSON.stringify({ id: rule.id, name: rule.name, leftSide: rule.leftSide, rightSide: rule.rightSide, draggedSide: 'right' })
+        JSON.stringify({ id: rule.id, name: rule.name, leftSide, rightSide, draggedSide: 'right' })
       );
       e.dataTransfer.effectAllowed = 'copy';
     },
-    [rule.id, rule.name, rule.leftSide, rule.rightSide]
+    [rule.id, rule.name, leftSide, rightSide]
   );
 
   return (
@@ -63,7 +66,7 @@ const DraggableRuleCard: React.FC<DraggableRuleCardProps> = React.memo(({ rule }
           title="Drag left expression to Debug workbench"
         >
           <div className="text-sm overflow-x-auto overflow-y-hidden min-h-[1.5rem]">
-            <ExpressionRenderer expression={rule.leftSide} size={12} />
+            <ExpressionRenderer expression={leftSide} size={12} />
           </div>
         </div>
         <EquivalenceSymbol size={12} className="flex-shrink-0 text-muted-foreground self-center" />
@@ -74,7 +77,7 @@ const DraggableRuleCard: React.FC<DraggableRuleCardProps> = React.memo(({ rule }
           title="Drag right expression to Debug workbench"
         >
           <div className="text-sm overflow-x-auto overflow-y-hidden min-h-[1.5rem]">
-            <ExpressionRenderer expression={rule.rightSide} size={12} />
+            <ExpressionRenderer expression={rightSide} size={12} />
           </div>
         </div>
       </div>
@@ -105,11 +108,11 @@ const DraggableRuleCard: React.FC<DraggableRuleCardProps> = React.memo(({ rule }
           <div className="bg-muted/50 rounded p-2 font-mono text-xs space-y-1">
             <div className="flex gap-2">
               <span className="text-muted-foreground">L:</span>
-              <span className="text-foreground break-all">{rule.leftSide}</span>
+              <span className="text-foreground break-all">{leftSide}</span>
             </div>
             <div className="flex gap-2">
               <span className="text-muted-foreground">R:</span>
-              <span className="text-foreground break-all">{rule.rightSide}</span>
+              <span className="text-foreground break-all">{rightSide}</span>
             </div>
           </div>
         </CollapsibleContent>

@@ -16,6 +16,9 @@ export type { MatchPosition, InferenceRule } from './types';
 // Re-export rules
 export { InferenceRules } from './rules';
 
+// Helpers: generate \Pe variant from \Oe patterns
+export { oeToPeInExpression, proofStepsOeToPe } from './utils';
+
 /** Stub: returns empty array. Full implementation was removed. */
 export function generateSubexpressions(_expr: string): string[] {
   return [];

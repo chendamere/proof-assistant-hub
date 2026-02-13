@@ -23,12 +23,9 @@ function exprDataMatches(
   varToTarget: Map<string, string>,
   targetToVar: Map<string, string>
 ): boolean {
-  // \Tc operand maps to one or more operations (including branch); match any target node
+  // \Tc matches any target node; Tc operands map to sequences of operations in substitution, not to varToTarget
   if (pData.op === '\\Tc') {
     if (pData.operands.length !== 1) return false;
-    const tcOp = pData.operands[0];
-    if (varToTarget.has(tcOp)) return true;
-    varToTarget.set(tcOp, tData.operands[0] ?? '');
     return true;
   }
 
@@ -183,8 +180,14 @@ export function* SingleRootDAGInjection(
     .filter((ti) =>
       canMatchAsRoot(pStartData, (tNodeMap.get(ti)?.data ?? {}) as ExprNodeData)
     );
-  // Order roots: same op as pattern root first (find match sooner when one suffices)
+  // When more tails than heads (e.g. Brs/Brb), use right-to-left traversal and try last outermost
+  // target node first (rightmost by character position). Otherwise same-op-first for earlier match.
   tNodes = [...tNodes].sort((a, b) => {
+    if (useIncoming) {
+      const aEnd = ((tNodeMap.get(a)?.data ?? {}) as ExprNodeData & { end?: number }).end ?? 0;
+      const bEnd = ((tNodeMap.get(b)?.data ?? {}) as ExprNodeData & { end?: number }).end ?? 0;
+      return bEnd - aEnd;
+    }
     const aNorm = normalizeBranchOp(((tNodeMap.get(a)?.data ?? {}) as ExprNodeData).op);
     const bNorm = normalizeBranchOp(((tNodeMap.get(b)?.data ?? {}) as ExprNodeData).op);
     const aMatch = aNorm === pStartOpNorm ? 1 : 0;
@@ -396,7 +399,7 @@ export function* SingleRootDAGInjection(
     varToTarget.clear();
     targetToVar.clear();
 
-    if (fill(pStart, tStart)) {
+    if (fill(pStart, tStart) && mapping.size === pNodes.length) {
       yield { mapping: new Map(mapping), operandMapping: new Map(varToTarget) };
     }
   }
