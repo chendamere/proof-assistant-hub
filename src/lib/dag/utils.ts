@@ -2,7 +2,7 @@
  * Shared DAG graph utilities
  */
 
-import type { DAGStructure, ExprNodeData } from './types';
+import type { DAGStructure, DAGEdge, ExprNodeData } from './types';
 
 export type Adjacency = {
   outgoing: Map<string, string[]>;
@@ -111,6 +111,130 @@ export function augmentTargetDAGForTcMatching<T extends { op?: string }>(
   return { nodes, edges: newEdges };
 }
 
+/** Find first node in arm by traversing backward from armLast (chain edges type 0). */
+function findFirstInArm<T>(
+  armLastId: string,
+  incoming: Map<string, Array<{ from: string; et: number }>>,
+  nodeMap: Map<string, { data?: { op?: string } }>
+): string | null {
+  const visited = new Set<string>();
+  let current: string | null = armLastId;
+  while (current) {
+    if (visited.has(current)) return null;
+    visited.add(current);
+    const ins = incoming.get(current) ?? [];
+    const chainIn = ins.find((x) => x.et === 0);
+    const armIn = ins.find((x) => x.et === 1 || x.et === 2);
+    if (armIn) return current;
+    current = chainIn ? chainIn.from : null;
+  }
+  return armLastId;
+}
+
+/**
+ * Add shortcut edges cond -> Tc when there is a path cond -> ... -> Tc in an arm.
+ * Allows pattern \Tc to match target ", \Os j, \Tc c_1," (Tc after other ops in the arm).
+ */
+export function addTcShortcutEdges<T extends { op?: string }>(
+  structure: DAGStructure<T>
+): DAGStructure<T> {
+  const nodeMap = new Map(structure.nodes.map((n) => [n.id, n]));
+  const outgoing = new Map<string, Array<{ to: string; et: number }>>();
+  for (const e of structure.edges) {
+    if (!outgoing.has(e.from)) outgoing.set(e.from, []);
+    outgoing.get(e.from)!.push({ to: e.to, et: (e.edgeType ?? 0) as number });
+  }
+
+  const shortcutEdges: Array<{ from: string; to: string; edgeType: number }> = [];
+  const edgeSet = new Set(structure.edges.map((e) => `${e.from}\0${e.to}\0${e.edgeType ?? 0}`));
+
+  // Add tail -> cond first so pattern \Tc maps to whole \Bb block (preferred over tail->Tc)
+  const incoming = new Map<string, Array<{ from: string; et: number }>>();
+  for (const e of structure.edges) {
+    if (!incoming.has(e.to)) incoming.set(e.to, []);
+    incoming.get(e.to)!.push({ from: e.from, et: (e.edgeType ?? 0) as number });
+  }
+  const tailToCond = new Map<string, string>();
+  for (const n of structure.nodes) {
+    const op = (n.data as { op?: string })?.op ?? '';
+    if (!op.endsWith(':tail')) continue;
+    const tailId = n.id;
+    for (const { from: armLastId, et } of incoming.get(tailId) ?? []) {
+      if (et !== 3 && et !== 4) continue;
+      const firstInArm = findFirstInArm(armLastId, incoming, nodeMap);
+      if (!firstInArm) continue;
+      const condEdge = (incoming.get(firstInArm) ?? []).find((x) => x.et === 1 || x.et === 2);
+      if (!condEdge) continue;
+      const condId = condEdge.from;
+      if (!tailToCond.has(tailId)) tailToCond.set(tailId, condId);
+      break;
+    }
+  }
+  for (const [tailId, condId] of tailToCond) {
+    const key = `${tailId}\0${condId}\0${0}`;
+    if (!edgeSet.has(key)) {
+      shortcutEdges.push({ from: tailId, to: condId, edgeType: 0 });
+      edgeSet.add(key);
+    }
+  }
+
+  for (const e of structure.edges) {
+    const fromOp = (nodeMap.get(e.from)?.data as { op?: string })?.op ?? '';
+    const toOp = (nodeMap.get(e.to)?.data as { op?: string })?.op ?? '';
+    const et = (e.edgeType ?? 0) as number;
+    if (!fromOp.includes(':cond') || (et !== 1 && et !== 2)) continue;
+    // Skip when arm starts with nested branch: inner cond will add its own shortcuts
+    if (toOp.includes(':cond')) continue;
+
+    const firstInArm = e.to;
+    const tcInArm = new Set<string>();
+    const visited = new Set<string>();
+    const queue = [firstInArm];
+
+    while (queue.length > 0) {
+      const id = queue.shift()!;
+      if (visited.has(id)) continue;
+      visited.add(id);
+      const op = (nodeMap.get(id)?.data as { op?: string })?.op ?? '';
+      if (op.endsWith(':tail')) continue;
+      if (op === '\\Tc') tcInArm.add(id);
+      for (const { to } of outgoing.get(id) ?? []) {
+        if (!visited.has(to)) queue.push(to);
+      }
+    }
+
+    for (const tcId of tcInArm) {
+      const key = `${e.from}\0${tcId}\0${et}`;
+      if (!edgeSet.has(key)) {
+        shortcutEdges.push({ from: e.from, to: tcId, edgeType: et });
+        edgeSet.add(key);
+      }
+    }
+  }
+
+  // Add tail -> Tc when Tc -> tail (edges 3 or 4), so pattern \Brs{,}{,} ,\Tc c can match
+  // target \Bb{...}{,\Tc c_1,}{,\Tc c_2,} (Tc in arm chains to tail)
+  for (const e of structure.edges) {
+    const toOp = (nodeMap.get(e.to)?.data as { op?: string })?.op ?? '';
+    const fromOp = (nodeMap.get(e.from)?.data as { op?: string })?.op ?? '';
+    const et = (e.edgeType ?? 0) as number;
+    if (!toOp.endsWith(':tail') || (et !== 3 && et !== 4)) continue;
+    if (fromOp !== '\\Tc') continue;
+    const key = `${e.to}\0${e.from}\0${0}`;
+    if (!edgeSet.has(key)) {
+      shortcutEdges.push({ from: e.to, to: e.from, edgeType: 0 });
+      edgeSet.add(key);
+    }
+  }
+
+  if (shortcutEdges.length === 0) return structure;
+  // Prepend so cond->Tc / tail->Tc are tried before other edges
+  return {
+    nodes: structure.nodes,
+    edges: [...shortcutEdges, ...structure.edges],
+  };
+}
+
 /**
  * Extract operator identifiers from a DAG for signature matching.
  * For :cond:\Pe returns \Pe; for \Od returns \Od. Used to filter rules by operator overlap.
@@ -167,12 +291,14 @@ export function patternOpMultisetContainedInTarget<T extends { op?: string; oper
 
 /**
  * Count operations in a DAG. Branch head + condition counts as one; :tail (merge point) is structural and not counted.
+ * \Bb, \Blb, \Brb, \Brs nodes are also structural (branch operators) and should not be counted as operations.
  */
 export function countOperations<T extends { op?: string }>(structure: DAGStructure<T>): number {
   let count = 0;
   for (const n of structure.nodes) {
     const op = (n.data as { op?: string })?.op ?? '';
     if (op.endsWith(':tail')) continue; // tail is structural, not an operation
+    if (op === '\\Bb' || op === '\\Blb' || op === '\\Brb' || op === '\\Brs') continue; // branch operators are structural, not operations
     count++;
   }
   return count;
@@ -235,4 +361,17 @@ export function extractSubgraphIncomingFromNode<T>(
     (e) => collected.has(e.from) && collected.has(e.to)
   );
   return { nodes, edges };
+}
+
+/**
+ * Trim edges of unmatched target nodes: keep only edges where both endpoints
+ * are unmatched (not in matchedIds). Removes boundary edges (matched↔unmatched).
+ */
+export function trimEdges<T>(
+  structure: DAGStructure<T>,
+  matchedIds: Set<string>
+): DAGEdge[] {
+  return structure.edges.filter(
+    (e) => !matchedIds.has(e.from) && !matchedIds.has(e.to)
+  );
 }

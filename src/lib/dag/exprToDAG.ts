@@ -85,14 +85,10 @@ function extractOperations(expr: string): Array<{ op: string; operands: string[]
 
     let afterEnd = opEnd;
     if (!NULLARY_OPERATORS.has(opFull)) {
-      // Look backwards for operand before (skip whitespace and comma)
+      // Look backwards for operand before (skip whitespace only; comma is a boundary between list items)
       let beforeStart = opStart - 1;
       while (beforeStart >= 0 && /\s/.test(expr[beforeStart])) beforeStart--;
-      if (beforeStart >= 0 && expr[beforeStart] === ',') {
-        beforeStart--;
-        while (beforeStart >= 0 && /\s/.test(expr[beforeStart])) beforeStart--;
-      }
-      if (beforeStart >= 0) {
+      if (beforeStart >= 0 && expr[beforeStart] !== ',') {
         const beforeText = expr.substring(Math.max(0, beforeStart - 12), beforeStart + 1);
         const bm = beforeText.match(/([a-zA-Z](?:_\d+)?|\d+)\s*$/);
         if (bm) {
@@ -374,6 +370,30 @@ function buildItem(
     }
 
     return { firstId: condHeadId, lastId: tailId };
+  }
+
+  // When item contains a branch not at the start (e.g. ",\Os j, \Bb{...},"), split and build each part so branches are parsed correctly.
+  if (/[{}]/.test(trimmed) && hasBranch(trimmed)) {
+    const parts = splitSequence(trimmed);
+    let first: BuildResult = null;
+    let prev: BuildResult = null;
+    for (const { item, start } of parts) {
+      const partTrimmed = item.trim();
+      if (!partTrimmed) continue;
+      const partOffset = trimmedOffset + start;
+      const result = buildItem(partTrimmed, nodes, edges, nextId, partOffset);
+      if (result) {
+        if (prev) chain(prev, result, edges);
+        if (!first) first = result;
+        prev = result;
+      }
+    }
+    if (first && prev && first !== prev) {
+      const fid = first.firstId ?? first.firstIds?.[0] ?? first.lastId!;
+      const lid = prev.lastId ?? prev.lastIds?.[0] ?? prev.firstId!;
+      return { firstId: fid, lastId: lid };
+    }
+    return prev;
   }
 
   const ops = extractOperations(trimmed);

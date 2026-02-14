@@ -14,8 +14,8 @@ function formatOp(data: ExprNodeData, subst?: Map<string, string>, literalTc?: b
   const op = data.op;
   if (op.endsWith(':tail') || op.includes(':cond')) return '';
   const ops = (data.operands ?? []).map((o) => subst?.get(o) ?? o);
-  // When literalTc is true (DAG from substitution result): output "\Tc operand" like any other op (target had \Tc).
-  // When literalTc is false (rule context): output just the operand (rule \Tc placeholder expands to content).
+  // When literalTc is true (default): output "\Tc operand" (never plain operand when no \Tc in pattern).
+  // When literalTc is false: output just operand (only when rule \Tc placeholder expands to content).
   if (op === '\\Tc' && ops.length === 1) return literalTc ? `\\Tc ${ops[0]}` : ops[0];
   // \+ (plus): "a+b:c" form (3 operands: left, right, result)
   if (op === '\\+' && ops.length === 3) return `${ops[0]}+${ops[1]}:${ops[2]}`;
@@ -44,14 +44,14 @@ function formatCond(data: ExprNodeData, subst?: Map<string, string>): string {
   return inner ? `if(${inner})` : '';
 }
 
-/** Options for dagToExpr. literalTc: when true, serialize \Tc as "\\Tc operand" (target); when false, as just operand (rule). */
+/** Options for dagToExpr. literalTc: when true (default), serialize \Tc as "\\Tc operand"; when false, as just operand. We never want plain operands when there is no \\Tc in pattern. */
 export type DagToExprOptions = { literalTc?: boolean };
 
 /**
  * Convert DAG back to expression string with optional operand substitution.
  * @param structure - The DAG (e.g. from exprToDAG of rule's other side)
  * @param operandMapping - Map rule operand -> target operand (e.g. i->1, m->2)
- * @param options - literalTc: true when serializing substitution result (target \Tc stays "\Tc x"); false for rule
+ * @param options - literalTc: true (default) to always output "\\Tc operand"; false only when rule \\Tc expands to content
  */
 export function dagToExpr(
   structure: DAGStructure<ExprNodeData>,
@@ -60,10 +60,27 @@ export function dagToExpr(
 ): string {
   if (structure.nodes.length === 0) return ',';
 
-  const literalTc = options?.literalTc ?? false;
+  const literalTc = options?.literalTc ?? true;
   const nodeMap = new Map(structure.nodes.map((n) => [n.id, n]));
   const adj = buildAdjacency(structure);
   const { outgoing } = adj;
+  const edgeTypeMap = new Map<string, number>();
+  for (const e of structure.edges) {
+    edgeTypeMap.set(`${e.from}\0${e.to}`, (e.edgeType ?? 0) as number);
+  }
+  /** Get cond's arm children sorted by edge type (1=top before 2=bottom). When cond has arm edges (1,2), use only those. */
+  function getCondChildrenSorted(condId: string): string[] {
+    const children = outgoing.get(condId) ?? [];
+    if (children.length <= 1) return children;
+    const withType = children.map((c) => ({ id: c, et: edgeTypeMap.get(`${condId}\0${c}`) ?? 0 }));
+    const armChildren = withType.filter((x) => x.et === 1 || x.et === 2);
+    const use = armChildren.length >= 2 ? armChildren : withType;
+    use.sort((a, b) => {
+      const order = (et: number) => (et === 1 || et === 3 ? 0 : et === 2 || et === 4 ? 1 : 2);
+      return order(a.et) - order(b.et) || a.et - b.et;
+    });
+    return use.map((x) => x.id);
+  }
 
   const roots = structure.nodes
     .filter((n) => (adj.incoming.get(n.id)?.length ?? 0) === 0)
@@ -170,7 +187,7 @@ export function dagToExpr(
     const op = data?.op ?? '';
     if (op.endsWith(':tail')) return ','; // empty arm
     if (op.includes(':cond') && (outgoing.get(startId)?.length ?? 0) >= 1) {
-      const children = outgoing.get(startId) ?? [];
+      const children = getCondChildrenSorted(startId);
       const kind = inferBranchKind(data!, children);
       const cond = formatCond(data!, operandMapping);
       const topStr = children[0] ? serializeArmContent(children[0]) : ',';
@@ -207,7 +224,7 @@ export function dagToExpr(
 
     if (op.includes(':cond')) {
       visited.add(id);
-      const children = outgoing.get(id) ?? [];
+      const children = getCondChildrenSorted(id);
       if (children.length < 1) {
         const kind = (data as ExprNodeData & { branchKind?: BranchKind })?.branchKind ?? 'Blb';
         itemParts.push(`, \\${kind}{${formatCond(data!, operandMapping)}}{,}{,}`);

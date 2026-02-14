@@ -151,7 +151,11 @@ export function getRulesForTransition(
     });
     
     return withTc;
-  } catch {
-    return [...Array.from(index.byDelta.values()).flat(), ...index.tcRules];
+  } catch (err) {
+    // If DAG parsing fails for target, we can't filter by delta or operators
+    // Return only tcRules as a conservative fallback (they bypass delta filtering anyway)
+    // rather than returning all rules which would incorrectly include rules that don't match the delta
+    console.warn('getRulesForTransition: DAG parsing failed for target, returning only tcRules', err);
+    return [...index.tcRules];
   }
 }

@@ -4,7 +4,7 @@
  */
 
 import type { DAGStructure, ExprNodeData } from './types';
-import { buildAdjacency, buildEdgeTypeMap, augmentTargetDAGForTcMatching } from './utils';
+import { buildAdjacency, buildEdgeTypeMap, augmentTargetDAGForTcMatching, addTcShortcutEdges } from './utils';
 
 /**
  * Normalize branch structural op for comparison.
@@ -49,6 +49,7 @@ function exprDataMatches(
 
   const pOpNorm = normalizeBranchOp(pData.op);
   const tOpNorm = normalizeBranchOp(tData.op);
+  // if (!tData.op.includes('\\Bb') && !tData.op.includes('\\Bs') && (pData.op.includes('\\Bb')|| pData.op.includes('\\Bs'))) return false;
   if (pOpNorm !== tOpNorm) return false;
   if (pData.operands.length !== tData.operands.length) return false;
 
@@ -160,6 +161,12 @@ export function* SingleRootDAGInjection(
   }
   if (pattern.nodes.length > target.nodes.length) return;
 
+  // When pattern has \Tc, add shortcut edges so pattern \Tc matches target ", \Os j, \Tc c_1," etc.
+  const patternHasTc = pattern.nodes.some((n) => (n.data as ExprNodeData)?.op === '\\Tc');
+  if (patternHasTc) {
+    target = addTcShortcutEdges(target) as DAGStructure<ExprNodeData>;
+  }
+
   const pNodes = pattern.nodes.map((n) => n.id);
   const pAdj = buildAdjacency(pattern);
   const tAdj = buildAdjacency(target);
@@ -170,8 +177,21 @@ export function* SingleRootDAGInjection(
 
   const { headCount, tailCount, tailIds } = countHeadsAndTails(pattern);
   const useIncoming = headCount < tailCount;
+  // When right-to-left: start from a sink (no outgoing) so we traverse incoming and reach all pattern nodes.
+  // E.g. \Brs{,}{,} ,\Tc c: tail has outgoing to \Tc c; we must start from \Tc c to map both.
   const pStart = useIncoming
-    ? (tailIds[0] ?? pNodes[0])
+    ? (() => {
+        const sinks = pNodes.filter((id) => (pAdj.outgoing.get(id) ?? []).length === 0);
+        if (sinks.length > 0) {
+          sinks.sort((a, b) => {
+            const aEnd = ((pNodeMap.get(a)?.data ?? {}) as ExprNodeData & { end?: number }).end ?? 0;
+            const bEnd = ((pNodeMap.get(b)?.data ?? {}) as ExprNodeData & { end?: number }).end ?? 0;
+            return bEnd - aEnd; // rightmost first
+          });
+          return sinks[0]!;
+        }
+        return tailIds[0] ?? pNodes[0];
+      })()
     : (pNodes.find((id) => (pAdj.incoming.get(id) ?? []).length === 0) ?? pNodes[0]);
   const pStartData = (pNodeMap.get(pStart)?.data ?? {}) as ExprNodeData;
   const pStartOpNorm = normalizeBranchOp(pStartData.op);

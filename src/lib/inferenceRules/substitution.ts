@@ -8,6 +8,25 @@ import type { DAGStructure, ExprNodeData } from '../dag';
 import { MatchPosition } from './types';
 import { normalizeSpacing, ensureCommaWrapped, normalizeUnaryOpOrderForComparison, extractOperandTokens, oeToPeInExpression } from './utils';
 import { exprToDAG, dagToExpr, SingleRootDAGInjection, substituteInDAG, substituteInDAGPartialFactor, extractSubgraphFromNode, extractSubgraphIncomingFromNode, augmentTargetDAGForTcMatching, patternOpMultisetContainedInTarget } from '../dag';
+import { buildAdjacency } from '../dag/utils';
+
+/** Compute boundary signature: edges in target connecting matched nodes to non-matched. Returns '' if no boundary edges. */
+function getBoundarySignature(
+  targetDAG: DAGStructure<ExprNodeData>,
+  matchedIds: Set<string>
+): string {
+  const boundary: Array<{ dir: 'in' | 'out'; et: number }> = [];
+  for (const e of targetDAG.edges) {
+    const fromIn = matchedIds.has(e.from);
+    const toIn = matchedIds.has(e.to);
+    const et = (e.edgeType ?? 0) as number;
+    if (!fromIn && toIn) boundary.push({ dir: 'in', et });
+    else if (fromIn && !toIn) boundary.push({ dir: 'out', et });
+  }
+  if (boundary.length === 0) return '';
+  boundary.sort((a, b) => (a.dir === b.dir ? a.et - b.et : (a.dir === 'in' ? -1 : 1)));
+  return boundary.map((x) => `${x.dir}:${x.et}`).join(',');
+}
 
 /**
  * Convert ruleOtherSide using operand mapping
@@ -427,24 +446,31 @@ function expandTcInRuleSide(ruleOtherSide: string, tcMapping: Map<string, string
   return expanded;
 }
 
+/** Single match from injection: position, root target node id, and boundary signature for pairing. */
+export interface SubstitutionMatch {
+  position: MatchPosition;
+  rootTargetNodeId: string;
+  /** Boundary signature: sorted (direction, edgeType) for edges not in pattern that connect match to rest of target. Empty = no additional edges. */
+  boundarySignature: string;
+}
+
 /**
- * Find substitution match in target expression using DAG injection.
- * Rule applicability after operand normalization is equivalent to DAG injection:
- * the rule matches if its expression DAG is isomorphic to a subgraph of the target's DAG.
+ * Find ALL substitution matches in target expression using DAG injection.
+ * Returns each match with its position, the starting (root) node of the match in the target,
+ * and a boundarySignature for pairing: edges not in pattern that connect the match to the rest of the target.
  */
-export const findSubstitution = function findSubstitutionRecursive(
+export function findAllSubstitutionMatches(
   target: string,
   ruleSide: string,
   side: 'left' | 'right'
-): { match: boolean; position?: MatchPosition } {
+): SubstitutionMatch[] {
   const ruleTokens = extractOperandTokens(ruleSide);
 
   // Handle case where ruleSide has no operands (empty or operators only)
   if (ruleTokens.length === 0) {
     const trimmedRuleSide = ruleSide.trim();
     if (trimmedRuleSide === '') {
-      return {
-        match: true,
+      return [{
         position: {
           side: side,
           position: 0,
@@ -452,15 +478,15 @@ export const findSubstitution = function findSubstitutionRecursive(
           prefix: undefined,
           suffix: target || undefined,
         },
-      };
+        rootTargetNodeId: '',
+        boundarySignature: '',
+      }];
     }
 
-    // ruleSide has operators but no operands - use normalized spacing matching
     const normalizedRule = normalizeSpacing(ruleSide);
     const normalizedTarget = normalizeSpacing(target);
     if (normalizedRule === normalizedTarget) {
-      return {
-        match: true,
+      return [{
         position: {
           side: side,
           position: 0,
@@ -468,30 +494,34 @@ export const findSubstitution = function findSubstitutionRecursive(
           prefix: undefined,
           suffix: undefined,
         },
-      };
+        rootTargetNodeId: '',
+        boundarySignature: '',
+      }];
     }
 
     const index = target.indexOf(ruleSide);
     if (index !== -1) {
-      return {
-        match: true,
+      const prefix = target.substring(0, index) || '';
+      const suffix = target.substring(index + ruleSide.length) || '';
+      return [{
         position: {
           side: side,
           position: index,
           description: `Rule (operators only, no operands) found at position ${index} in ${side} side`,
-          prefix: target.substring(0, index) || undefined,
-          suffix: target.substring(index + ruleSide.length) || undefined,
+          prefix: prefix || undefined,
+          suffix: suffix || undefined,
         },
-      };
+        rootTargetNodeId: '',
+        boundarySignature: '',
+      }];
     }
 
-    return { match: false };
+    return [];
   }
 
   const normalizedTarget = normalizeSpacing(target);
   const normalizedRule = normalizeSpacing(ruleSide);
 
-  // DAG injection: single pass on full target. Rule DAG uses original operands (i, m, j).
   const patternDAG = exprToDAG(normalizedRule);
   let targetDAG = exprToDAG(normalizedTarget);
   const hasTc = patternDAG.nodes.some((n) => (n.data as ExprNodeData)?.op === '\\Tc');
@@ -499,55 +529,65 @@ export const findSubstitution = function findSubstitutionRecursive(
     targetDAG = augmentTargetDAGForTcMatching(targetDAG) as DAGStructure<ExprNodeData>;
   }
   if (patternDAG.nodes.length === 0 || patternDAG.nodes.length > targetDAG.nodes.length) {
-    return { match: false };
+    return [];
   }
 
-  let result: { mapping: Map<string, string>; operandMapping: Map<string, string> } | null = null;
-  for (const r of SingleRootDAGInjection(patternDAG, targetDAG)) {
-    result = r;
-    break;
-  }
-  if (result === null) {
-    return { match: false };
-  }
-
-  // Get match region from matched target nodes' positions
-  let candidateStart = target.length;
-  let candidateEnd = 0;
+  const pAdj = buildAdjacency(patternDAG);
+  const patternRootId = patternDAG.nodes.find((n) => (pAdj.incoming.get(n.id) ?? []).length === 0)?.id ?? patternDAG.nodes[0]?.id;
   const tNodeMap = new Map(targetDAG.nodes.map((n) => [n.id, n]));
-  for (const targetId of result.mapping.values()) {
-    const node = tNodeMap.get(targetId);
-    const data = node?.data as { start?: number; end?: number } | undefined;
-    if (data?.start != null) candidateStart = Math.min(candidateStart, data.start);
-    if (data?.end != null) candidateEnd = Math.max(candidateEnd, data.end);
+  const matches: SubstitutionMatch[] = [];
+
+  for (const result of SingleRootDAGInjection(patternDAG, targetDAG)) {
+    const rootTargetNodeId = patternRootId != null ? (result.mapping.get(patternRootId) ?? '') : '';
+    let candidateStart = target.length;
+    let candidateEnd = 0;
+    for (const targetId of result.mapping.values()) {
+      const node = tNodeMap.get(targetId);
+      const data = node?.data as { start?: number; end?: number } | undefined;
+      if (data?.start != null) candidateStart = Math.min(candidateStart, data.start);
+      if (data?.end != null) candidateEnd = Math.max(candidateEnd, data.end);
+    }
+    if (candidateStart >= candidateEnd) continue;
+
+    const prefix = normalizedTarget.substring(0, candidateStart);
+    const suffix = normalizedTarget.substring(candidateEnd);
+    const matchedIds = new Set(result.mapping.values());
+    const boundarySignature = getBoundarySignature(targetDAG, matchedIds);
+    const operandMapping = result.operandMapping.size > 0 ? result.operandMapping : undefined;
+
+    matches.push({
+      position: {
+        side,
+        position: candidateStart,
+        description: `Rule found (DAG injection) in ${side} side`,
+        prefix: prefix || undefined,
+        suffix: suffix || undefined,
+        operandMapping,
+        wasPatternMatch: true,
+        targetDAG,
+        patternDAG,
+        nodeMapping: result.mapping,
+      },
+      rootTargetNodeId,
+      boundarySignature,
+    });
   }
 
-  if (candidateStart >= candidateEnd) {
-    return { match: false };
-  }
+  return matches;
+};
 
-  // Character-based prefix/suffix (kept for fallback; substitution uses DAG structure)
-  const prefix = normalizedTarget.substring(0, candidateStart);
-  const suffix = normalizedTarget.substring(candidateEnd);
-
-  // result.operandMapping already maps rule operand -> target operand
-  const operandMapping = result.operandMapping.size > 0 ? result.operandMapping : undefined;
-
-  return {
-    match: true,
-    position: {
-      side,
-      position: candidateStart,
-      description: `Rule found (DAG injection) in ${side} side`,
-      prefix: prefix || undefined,
-      suffix: suffix || undefined,
-      operandMapping,
-      wasPatternMatch: true,
-      targetDAG,
-      patternDAG,
-      nodeMapping: result.mapping,
-    },
-  };
+/**
+ * Find substitution match in target expression using DAG injection.
+ * Returns the first match (backward compatible).
+ */
+export const findSubstitution = function findSubstitutionRecursive(
+  target: string,
+  ruleSide: string,
+  side: 'left' | 'right'
+): { match: boolean; position?: MatchPosition } {
+  const matches = findAllSubstitutionMatches(target, ruleSide, side);
+  if (matches.length === 0) return { match: false };
+  return { match: true, position: matches[0].position };
 };
 
 /** Get positions where we can insert between top-level comma-separated segments. */
@@ -581,6 +621,194 @@ function getCachedOrCreateDAG(
   if (cache) cache.set(normalized, dag);
   return dag;
 }
+
+/** Build canonical signature list for unmatched target nodes (op + operands, no mapping). */
+function getUnmatchedNodeSignatures(
+  targetDAG: DAGStructure<ExprNodeData>,
+  matchedIds: Set<string>
+): string[] {
+  const sigs: string[] = [];
+  for (const n of targetDAG.nodes) {
+    if (matchedIds.has(n.id)) continue;
+    const d = n.data as ExprNodeData | undefined;
+    const op = d?.op ?? '';
+    const operands = d?.operands ?? [];
+    if (op === '\\Tc' && operands.length === 1 && operands[0] === '') continue;
+    sigs.push(`${op}|${operands.join(',')}`);
+  }
+  sigs.sort();
+  return sigs;
+}
+
+/** Build canonical signature for unmatched subgraph: nodes + edges between two unmatched nodes only.
+ * Boundary edges (matched↔unmatched) are excluded.
+ * When excludeEdges is true (e.g. empty pattern case), edges are omitted so pairing with
+ * the non-empty-pattern side (where unmatched nodes are separated by matched content) can succeed. */
+function getUnmatchedSubgraphSignature(
+  targetDAG: DAGStructure<ExprNodeData>,
+  matchedIds: Set<string>,
+  excludeEdges?: boolean
+): string {
+  const nodeIdToSig = new Map<string, string>();
+  for (const n of targetDAG.nodes) {
+    if (matchedIds.has(n.id)) continue;
+    const d = n.data as ExprNodeData | undefined;
+    const op = d?.op ?? '';
+    const operands = d?.operands ?? [];
+    if (op === '\\Tc' && operands.length === 1 && operands[0] === '') continue;
+    nodeIdToSig.set(n.id, `${op}|${operands.join(',')}`);
+  }
+  const nodeSigs = [...nodeIdToSig.values()].sort();
+  if (excludeEdges) {
+    return nodeSigs.join(';') + '|';
+  }
+  const edgeEncodings: string[] = [];
+  for (const e of targetDAG.edges) {
+    if (matchedIds.has(e.from) || matchedIds.has(e.to)) continue;
+    const fromSig = nodeIdToSig.get(e.from);
+    const toSig = nodeIdToSig.get(e.to);
+    if (fromSig != null && toSig != null) {
+      const et = (e.edgeType ?? 0) as number;
+      edgeEncodings.push(`e:${fromSig}>${toSig}:${et}`);
+    }
+  }
+  edgeEncodings.sort();
+  return nodeSigs.join(';') + '|' + edgeEncodings.join(';');
+}
+
+/** Match from DAG injection for pairing: unmatched subgraph (nodes+edges) signature, side, and DAG data. */
+export interface InjectionMatchForPairing {
+  unmatchedNodeSignatures: string[];
+  /** Canonical signature: unmatched nodes + edges between two unmatched nodes only (for pairing). */
+  unmatchedSubgraphSignature: string;
+  side: 'left' | 'right';
+  targetDAG: DAGStructure<ExprNodeData>;
+  nodeMapping: Map<string, string>;
+}
+
+/**
+ * Find injection matches for pairing. DAG injection only; no indices, no string comparison,
+ * no prefix/suffix, no boundary. Returns each match with its unmatched target node signatures.
+ */
+export function findInjectionMatchesForPairing(
+  target: string,
+  pattern: string,
+  side: 'left' | 'right'
+): InjectionMatchForPairing[] {
+  const normalizedTarget = normalizeSpacing(target);
+  const normalizedPattern = normalizeSpacing(pattern);
+  const patternDAG = exprToDAG(normalizedPattern);
+  let targetDAG = exprToDAG(normalizedTarget);
+  const hasTc = patternDAG.nodes.some((n) => (n.data as ExprNodeData)?.op === '\\Tc');
+  if (hasTc && patternDAG.nodes.length > targetDAG.nodes.length) {
+    targetDAG = augmentTargetDAGForTcMatching(targetDAG) as DAGStructure<ExprNodeData>;
+  }
+  if (patternDAG.nodes.length > targetDAG.nodes.length) {
+    return [];
+  }
+
+  // Empty pattern (e.g. rule side ","): match nothing, so all target nodes are unmatched.
+  // Exclude edges so pairing succeeds when the other side has a non-empty pattern that
+  // matches content between these nodes (unmatched nodes would have no edge there).
+  if (patternDAG.nodes.length === 0) {
+    const matchedIds = new Set<string>();
+    const unmatchedNodeSignatures = getUnmatchedNodeSignatures(targetDAG, matchedIds);
+    const unmatchedSubgraphSignature = getUnmatchedSubgraphSignature(targetDAG, matchedIds, true);
+    return [{
+      unmatchedNodeSignatures,
+      unmatchedSubgraphSignature,
+      side,
+      targetDAG,
+      nodeMapping: new Map(),
+    }];
+  }
+
+  const matches: InjectionMatchForPairing[] = [];
+  for (const result of SingleRootDAGInjection(patternDAG, targetDAG)) {
+    const matchedIds = new Set(result.mapping.values());
+    const unmatchedNodeSignatures = getUnmatchedNodeSignatures(targetDAG, matchedIds);
+    const unmatchedSubgraphSignature = getUnmatchedSubgraphSignature(targetDAG, matchedIds);
+    matches.push({
+      unmatchedNodeSignatures,
+      unmatchedSubgraphSignature,
+      side,
+      targetDAG,
+      nodeMapping: result.mapping,
+    });
+  }
+  return matches;
+}
+
+function injectionMatchesPair(a: InjectionMatchForPairing, b: InjectionMatchForPairing): boolean {
+  if (a.unmatchedNodeSignatures.length === 0 && b.unmatchedNodeSignatures.length === 0) return true;
+  return a.unmatchedSubgraphSignature === b.unmatchedSubgraphSignature;
+}
+
+function toMatchPosition(m: InjectionMatchForPairing): MatchPosition {
+  return {
+    side: m.side,
+    description: `Rule found (DAG injection) in ${m.side} side`,
+    wasPatternMatch: true,
+    targetDAG: m.targetDAG,
+    nodeMapping: m.nodeMapping,
+    unmatchedTargetNodeSignatures: m.unmatchedNodeSignatures,
+  };
+}
+
+/**
+ * Alternative to trySubstitution: use injection-only and complementary match pairs.
+ * A match pair is valid when the unmatched target subgraph (nodes + edges incident to them)
+ * is identical on both sides. Success when we have (Left,ruleL→ruleR)+(Right,ruleR→ruleL)
+ * or (Left,ruleR→ruleL)+(Right,ruleL→ruleR) with same context structure.
+ */
+export const trySubstitutionByMatchPairs = (
+  targetLeft: string,
+  targetRight: string,
+  ruleLeft: string,
+  ruleRight: string,
+  stepCounter?: { count: number }
+): { match: boolean; position?: MatchPosition; reconstructedExpr?: string; matchDirections?: string[] } | null => {
+  const normL = normalizeSpacing(targetLeft);
+  const normR = normalizeSpacing(targetRight);
+  const targetOrExpectedHasPe = normL.includes('\\Pe') || normR.includes('\\Pe');
+  const ruleHasOe = normalizeSpacing(ruleLeft).includes('\\Oe') || normalizeSpacing(ruleRight).includes('\\Oe');
+
+  const effLeft = targetOrExpectedHasPe && ruleHasOe ? oeToPeInExpression(ruleLeft) : ruleLeft;
+  const effRight = targetOrExpectedHasPe && ruleHasOe ? oeToPeInExpression(ruleRight) : ruleRight;
+
+  const patternFor = (target: string, ruleSide: string, effectiveSide: string) =>
+    targetOrExpectedHasPe && ruleHasOe && target.includes('\\Oe') ? ruleSide : effectiveSide;
+
+  // Pair 1: ruleLeft in targetLeft AND ruleRight in targetRight — same unmatched nodes (op+operands)
+  const leftMatches1 = findInjectionMatchesForPairing(targetLeft, patternFor(targetLeft, ruleLeft, effLeft), 'left');
+  const rightMatches1 = findInjectionMatchesForPairing(targetRight, patternFor(targetRight, ruleRight, effRight), 'right');
+  const pair1 = leftMatches1.find((lm) => rightMatches1.some((rm) => injectionMatchesPair(lm, rm)));
+
+  if (pair1) {
+    return {
+      match: true,
+      position: toMatchPosition(pair1),
+      reconstructedExpr: ensureCommaWrapped(targetRight),
+      matchDirections: ['Left(ruleL→ruleR)', 'Right(ruleR→ruleL)'],
+    };
+  }
+
+  // Pair 2: ruleRight in targetLeft AND ruleLeft in targetRight — same unmatched nodes (op+operands)
+  const leftMatches2 = findInjectionMatchesForPairing(targetLeft, patternFor(targetLeft, ruleRight, effRight), 'left');
+  const rightMatches2 = findInjectionMatchesForPairing(targetRight, patternFor(targetRight, ruleLeft, effLeft), 'right');
+  const pair2 = leftMatches2.find((lm) => rightMatches2.some((rm) => injectionMatchesPair(lm, rm)));
+
+  if (pair2) {
+    return {
+      match: true,
+      position: toMatchPosition(pair2),
+      reconstructedExpr: ensureCommaWrapped(targetRight),
+      matchDirections: ['Left(ruleR→ruleL)', 'Right(ruleL→ruleR)'],
+    };
+  }
+
+  return null;
+};
 
 export const trySubstitution = (
   target: string,
@@ -661,6 +889,8 @@ export const trySubstitution = (
         if (normalizeSpacing(rawInsert) === normalizedExpected) result = rawInsert;
       }
       if (normalizeSpacing(result) === normalizedExpected) {
+        const matchedIds = new Set<string>();
+        const unmatchedTargetNodeSignatures = getUnmatchedNodeSignatures(targetDAG, matchedIds);
         return {
           match: true,
           reconstructedExpr: ensureCommaWrapped(result),
@@ -675,6 +905,7 @@ export const trySubstitution = (
             targetDAG,
             patternDAG,
             nodeMapping: new Map(),
+            unmatchedTargetNodeSignatures,
           },
         };
       }
@@ -741,6 +972,8 @@ export const trySubstitution = (
       }
       const matchesRaw = normSubst === expectedNorm || stripTrailingComma(normSubst) === stripTrailingComma(expectedNorm);
       if (matchesRoundtrip || matchesRaw) {
+        const matchedIds = new Set(vf2Result.mapping.values());
+        const unmatchedTargetNodeSignatures = getUnmatchedNodeSignatures(targetDAG, matchedIds);
         return {
           match: true,
           reconstructedExpr: ensureCommaWrapped(substituted),
@@ -755,6 +988,7 @@ export const trySubstitution = (
             targetDAG,
             patternDAG,
             nodeMapping: vf2Result.mapping,
+            unmatchedTargetNodeSignatures,
           },
         };
       }

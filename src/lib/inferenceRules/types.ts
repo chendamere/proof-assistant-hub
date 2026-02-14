@@ -16,6 +16,8 @@ export interface MatchPosition {
   targetDAG?: DAGStructure<ExprNodeData>;
   patternDAG?: DAGStructure<ExprNodeData>;
   nodeMapping?: Map<string, string>; // patternNodeId -> targetNodeId (VF2 result)
+  /** Unmatched target nodes (op|operands) when check passed; context that stayed the same. */
+  unmatchedTargetNodeSignatures?: string[];
 }
 
 export interface InferenceRuleContext {

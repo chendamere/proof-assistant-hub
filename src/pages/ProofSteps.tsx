@@ -215,6 +215,7 @@ const ProofSteps: React.FC = () => {
                 ruleRight: preferredRule.rightSide,
                 inferenceRuleName: 'Equivalent Substitution',
                 nodeMap: pos?.nodeMapping ? Object.fromEntries(pos.nodeMapping) : undefined,
+                unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,
               };
               setTransitionResults((prev) => ({ ...prev, [key]: { ...prev[key], [transitionIndex]: true } }));
               setTransitionMatchInfo((prev) => ({ ...prev, [key]: { ...prev[key], [transitionIndex]: matchInfo } }));
@@ -412,6 +413,7 @@ const ProofSteps: React.FC = () => {
                     ruleRight: preferredRule.rightSide,
                     inferenceRuleName: 'Equivalent Substitution',
                     nodeMap: pos?.nodeMapping ? Object.fromEntries(pos.nodeMapping) : undefined,
+                    unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,
                   };
                   setTransitionResults((prev) => ({ ...prev, [key]: { ...prev[key], [i]: true } }));
                   setTransitionMatchInfo((prev) => ({ ...prev, [key]: { ...prev[key], [i]: matchInfo } }));
@@ -1371,6 +1373,14 @@ function MatchInfoDisplay({
                     <span>{targetId}</span>
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+          {matchInfo.unmatchedTargetNodeSignatures && matchInfo.unmatchedTargetNodeSignatures.length > 0 && (
+            <div>
+              <div className="font-medium text-foreground/80 mb-1">Unmatched target nodes (context):</div>
+              <div className="font-mono text-muted-foreground text-[11px] max-h-24 overflow-y-auto break-all">
+                {matchInfo.unmatchedTargetNodeSignatures.join('; ')}
               </div>
             </div>
           )}

@@ -137,6 +137,7 @@ function verifyTransitionMainThread(
           ruleRight: rule.rightSide,
           inferenceRuleName: result.inferenceRule,
           nodeMap: pos?.nodeMapping ? Object.fromEntries(pos.nodeMapping) : undefined,
+          unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,
         },
       };
     }

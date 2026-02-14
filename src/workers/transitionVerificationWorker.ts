@@ -30,6 +30,8 @@ export type MatchInfo = {
   inferenceRuleName?: string;
   /** Node map: pattern node id → target node id (VF2 injection result). */
   nodeMap?: Record<string, string>;
+  /** Unmatched target node signatures (op|operands) when check passed. */
+  unmatchedTargetNodeSignatures?: string[];
 };
 
 export type TransitionVerificationResponse = {
@@ -79,6 +81,7 @@ self.onmessage = (e: MessageEvent<TransitionVerificationRequest>) => {
           ruleRight: rule.rightSide,
           inferenceRuleName: result.inferenceRule,
           nodeMap: nodeMapping ? Object.fromEntries(nodeMapping) : undefined,
+          unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,
         };
         const response: TransitionVerificationResponse = {
           id,

@@ -792,7 +792,11 @@ export function substituteInDAG(
     siblingSet,
     matchedIds,
     replacementHeads,
-    replacementTails
+    replacementTails,
+    tAdj,
+    targetDAG,
+    replacementDAG,
+    replacementIdMap
   );
 
   // Ensure branch-head arm order: empty arm (replacement) first, content arm (sibling) second,
@@ -957,6 +961,91 @@ function addPrefixToReplacementEdges(
   }
 }
 
+/** Get arm type (1 or 2) for each matched node based on target branch structure. Returns 0 if not in a branch arm. */
+function getMatchedNodeArmTypes(
+  targetDAG: DAGStructure<ExprNodeData>,
+  matchedIds: Set<string>,
+  tAdj: { outgoing: Map<string, string[]> }
+): Map<string, number> {
+  const result = new Map<string, number>();
+  const condId =
+    targetDAG.nodes.find(
+      (n) => matchedIds.has(n.id) && ((n.data as ExprNodeData)?.op ?? '').includes(':cond')
+    )?.id ?? null;
+  if (!condId) return result;
+  // Trace arm membership from cond via edge types 1 (arm1) and 2 (arm2)
+  const armByNode = new Map<string, number>();
+  armByNode.set(condId, 0);
+  const targetEdges = targetDAG.edges;
+  const worklist: Array<{ id: string; arm: number }> = [];
+  for (const to of tAdj.outgoing.get(condId) ?? []) {
+    const e = targetEdges.find((ed) => ed.from === condId && ed.to === to);
+    const et = (e?.edgeType ?? 0) as number;
+    if (et === 1 || et === 2) {
+      armByNode.set(to, et);
+      worklist.push({ id: to, arm: et });
+    }
+  }
+  while (worklist.length > 0) {
+    const { id, arm } = worklist.pop()!;
+    for (const to of tAdj.outgoing.get(id) ?? []) {
+      if (matchedIds.has(to) && !armByNode.has(to)) {
+        armByNode.set(to, arm);
+        worklist.push({ id: to, arm });
+      }
+    }
+  }
+  for (const id of matchedIds) {
+    const a = armByNode.get(id);
+    if (a != null && a !== 0) result.set(id, a);
+  }
+  return result;
+}
+
+/** Get arm type (1, 2, or 0 for "both") for each replacement tail. Blb with empty arms has one tail serving both. */
+function getReplacementTailArmTypes(
+  replacementDAG: DAGStructure<ExprNodeData>,
+  replacementIdMap: Map<string, string>,
+  replacementTails: Set<string>
+): Map<string, number> {
+  const result = new Map<string, number>();
+  const rAdj = buildAdjacency(replacementDAG);
+  const newIdToOrig = buildNewIdToOriginal(replacementIdMap);
+  const nodeIds = new Set(replacementDAG.nodes.map((n) => n.id));
+  const condId = replacementDAG.nodes.find(
+    (n) => ((n.data as ExprNodeData)?.op ?? '').includes(':cond')
+  )?.id;
+
+  // Propagate arm from cond (edge 1->arm1, 2->arm2) to all nodes
+  const armTypeByNode = new Map<string, number>();
+  if (condId) {
+    armTypeByNode.set(condId, 0);
+    const worklist: Array<{ id: string; arm: number }> = [];
+    for (const e of replacementDAG.edges) {
+      if (e.from === condId && ((e.edgeType ?? 0) === 1 || (e.edgeType ?? 0) === 2)) {
+        const arm = (e.edgeType ?? 0) === 1 ? 1 : 2;
+        armTypeByNode.set(e.to, arm);
+        worklist.push({ id: e.to, arm });
+      }
+    }
+    while (worklist.length > 0) {
+      const { id, arm } = worklist.pop()!;
+      for (const to of rAdj.outgoing.get(id) ?? []) {
+        if (nodeIds.has(to) && !armTypeByNode.has(to)) {
+          armTypeByNode.set(to, arm);
+          worklist.push({ id: to, arm });
+        }
+      }
+    }
+  }
+
+  for (const tailNewId of replacementTails) {
+    const orig = newIdToOrig.get(tailNewId);
+    result.set(tailNewId, orig != null ? (armTypeByNode.get(orig) ?? 0) : 0);
+  }
+  return result;
+}
+
 function addBoundaryEdges(
   targetEdges: DAGEdge[],
   out: DAGEdge[],
@@ -965,22 +1054,81 @@ function addBoundaryEdges(
   siblingSet: Set<string>,
   matchedIds: Set<string>,
   _replacementHeads: Set<string>,
-  replacementTails: Set<string>
+  replacementTails: Set<string>,
+  tAdj: { outgoing: Map<string, string[]> },
+  targetDAG: DAGStructure<ExprNodeData>,
+  replacementDAG: DAGStructure<ExprNodeData>,
+  replacementIdMap: Map<string, string>
 ): void {
   // prefix->replacement already added in addPrefixToReplacementEdges (in type order)
 
-  const suffixFromMatched: Array<{ suffixId: string; edgeType: number }> = [];
+  const suffixFromMatched: Array<{ suffixId: string; edgeType: number; fromMatchedId: string }> = [];
   for (const e of targetEdges) {
     if (matchedIds.has(e.from) && suffixSet.has(e.to)) {
-      suffixFromMatched.push({ suffixId: e.to, edgeType: (e.edgeType ?? 0) as number });
+      suffixFromMatched.push({
+        suffixId: e.to,
+        edgeType: (e.edgeType ?? 0) as number,
+        fromMatchedId: e.from,
+      });
     }
   }
   suffixFromMatched.sort(
     (a, b) => edgeTypeOrder(a.edgeType) - edgeTypeOrder(b.edgeType) || a.edgeType - b.edgeType
   );
+
+  const matchedArmByNode = getMatchedNodeArmTypes(targetDAG, matchedIds, tAdj);
+  const tailArmByNode = getReplacementTailArmTypes(replacementDAG, replacementIdMap, replacementTails);
+
+  // When replacement has arm content, get arm tails: either nodes that feed the structural tail with type 3/4,
+  // or (for Blb with no structural tail) the replacement tails that have arm type 1 or 2.
+  const newIdToOrig = buildNewIdToOriginal(replacementIdMap);
+  const replacementArmTailsByArm = new Map<number, string>(); // arm 1 or 2 -> newId
   for (const tailId of replacementTails) {
-    for (const { suffixId, edgeType } of suffixFromMatched) {
-      out.push({ from: tailId, to: suffixId, edgeType: edgeType as EdgeType });
+    const origId = newIdToOrig.get(tailId);
+    if (origId == null) continue;
+    for (const e of replacementDAG.edges) {
+      if (e.to !== origId || !replacementDAG.nodes.some((n) => n.id === e.from)) continue;
+      const et = (e.edgeType ?? 0) as number;
+      const fromNew = replacementIdMap.get(e.from);
+      if (fromNew != null && (et === 3 || et === 4)) replacementArmTailsByArm.set(et === 3 ? 1 : 2, fromNew);
+    }
+    const arm = tailArmByNode.get(tailId) ?? 0;
+    if (arm >= 1 && arm <= 2) replacementArmTailsByArm.set(arm, tailId); // Blb: tails are the arm tails
+  }
+
+  const addedEdge = new Set<string>();
+  const addEdgeOnce = (from: string, to: string, edgeType: EdgeType) => {
+    const key = `${from}\t${to}\t${edgeType}`;
+    if (!addedEdge.has(key)) {
+      addedEdge.add(key);
+      out.push({ from, to, edgeType });
+    }
+  };
+
+  // First: connect replacement arm tails (j \Os nodes) to arm-specific suffix (\Tc c_1, c_2).
+  // edgeType 1 or 2 from cond indicates arm 1 or 2.
+  for (const { suffixId, edgeType } of suffixFromMatched) {
+    if (edgeType === 1 || edgeType === 2) {
+      const armTail = replacementArmTailsByArm.get(edgeType);
+      if (armTail != null) {
+        addEdgeOnce(armTail, suffixId, (edgeType === 1 ? 3 : 4) as EdgeType);
+      }
+    }
+  }
+
+  // Second: connect structural replacement tail to suffix (for non-arm-specific or when no arm tails)
+  for (const tailId of replacementTails) {
+    const tailArm = tailArmByNode.get(tailId) ?? 0;
+    for (const { suffixId, edgeType, fromMatchedId } of suffixFromMatched) {
+      const suffixArm = matchedArmByNode.get(fromMatchedId) ?? 0;
+      const alreadyViaArmTail = (edgeType === 1 || edgeType === 2) && replacementArmTailsByArm.has(edgeType);
+      if (alreadyViaArmTail) continue; // already connected via arm tail
+      if (tailArm === 0 || suffixArm === 0 || tailArm === suffixArm) {
+        const et = edgeType as EdgeType;
+        const useType =
+          tailArm === 0 && suffixArm >= 1 && suffixArm <= 2 ? (suffixArm as EdgeType) : et;
+        addEdgeOnce(tailId, suffixId, useType);
+      }
     }
   }
 
