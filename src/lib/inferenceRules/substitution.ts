@@ -194,8 +194,19 @@ export const trySubstitutionByMatchPairs = (
 
   // Pair 1: ruleLeft in targetLeft AND ruleRight in targetRight — same unmatched nodes (op+operands)
   const leftMatches1 = findInjectionMatchesForPairing(targetLeft, patternFor(targetLeft, ruleLeft, effLeft), 'left');
-  const rightMatches1 = findInjectionMatchesForPairing(targetRight, patternFor(targetRight, ruleRight, effRight), 'right');
-  const pair1 = leftMatches1.find((lm) => rightMatches1.some((rm) => matchesPair(lm, rm)));
+  let pair1: InjectionMatchForPairing | undefined;
+  for (const lm of leftMatches1) {
+    const rightMatches1 = findInjectionMatchesForPairing(
+      targetRight,
+      patternFor(targetRight, ruleRight, effRight),
+      'right',
+      { fixedOperandMapping: lm.operandMapping }
+    );
+    if (rightMatches1.some((rm) => matchesPair(lm, rm))) {
+      pair1 = lm;
+      break;
+    }
+  }
 
   if (pair1) {
     return {
@@ -208,8 +219,19 @@ export const trySubstitutionByMatchPairs = (
 
   // Pair 2: ruleRight in targetLeft AND ruleLeft in targetRight — same unmatched nodes (op+operands)
   const leftMatches2 = findInjectionMatchesForPairing(targetLeft, patternFor(targetLeft, ruleRight, effRight), 'left');
-  const rightMatches2 = findInjectionMatchesForPairing(targetRight, patternFor(targetRight, ruleLeft, effLeft), 'right');
-  const pair2 = leftMatches2.find((lm) => rightMatches2.some((rm) => matchesPair(lm, rm)));
+  let pair2: InjectionMatchForPairing | undefined;
+  for (const lm of leftMatches2) {
+    const rightMatches2 = findInjectionMatchesForPairing(
+      targetRight,
+      patternFor(targetRight, ruleLeft, effLeft),
+      'right',
+      { fixedOperandMapping: lm.operandMapping }
+    );
+    if (rightMatches2.some((rm) => matchesPair(lm, rm))) {
+      pair2 = lm;
+      break;
+    }
+  }
 
   if (pair2) {
     return {

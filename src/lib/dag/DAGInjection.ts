@@ -96,19 +96,6 @@ function getOutgoingWithTypes(
   return outs.map((to) => [to, edgeTypeMap.get(`${from}\0${to}`) ?? 0] as [string, number]);
 }
 
-/** Find target node reachable from t via edge of given type; null if none. */
-function findOutgoingWithType(
-  from: string,
-  edgeType: number,
-  adj: { outgoing: Map<string, string[]> },
-  edgeTypeMap: Map<string, number>
-): string | null {
-  for (const to of adj.outgoing.get(from) ?? []) {
-    if ((edgeTypeMap.get(`${from}\0${to}`) ?? 0) === edgeType) return to;
-  }
-  return null;
-}
-
 /** All target nodes reachable from from via edge of given type (for backtracking over Tc candidates). */
 function getAllOutgoingWithType(
   from: string,
@@ -131,19 +118,6 @@ function getIncomingWithTypes(
 ): [string, number][] {
   const ins = adj.incoming.get(to) ?? [];
   return ins.map((from) => [from, edgeTypeMap.get(`${from}\0${to}`) ?? 0] as [string, number]);
-}
-
-/** Find target node that has edge of given type into ti; null if none. */
-function findIncomingWithType(
-  to: string,
-  edgeType: number,
-  adj: { incoming: Map<string, string[]> },
-  edgeTypeMap: Map<string, number>
-): string | null {
-  for (const from of adj.incoming.get(to) ?? []) {
-    if ((edgeTypeMap.get(`${from}\0${to}`) ?? 0) === edgeType) return from;
-  }
-  return null;
 }
 
 /** All target nodes that have edge of given type into to (for backtracking over Tc candidates). */

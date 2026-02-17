@@ -34,9 +34,9 @@ const NULLARY_OPERATORS = new Set(['\\Or', '\\Ri', '\\Rq']);
 const PLUS_OP = '\\+';
 const PLUS_PATTERN = /([a-zA-Z](?:_\d+)?|\d+)\s*\+\s*([a-zA-Z](?:_\d+)?|\d+)\s*:\s*([a-zA-Z](?:_\d+)?|\d+)/g;
 
-/** Times operator: "a \\times b : c" form (ignore colon for structure; 3 operands: left, right, result). */
+/** Times operator: "a \\times b : c" or "a × b : c" (Unicode ×). */
 const TIMES_OP = '\\times';
-const TIMES_PATTERN = /([a-zA-Z](?:_\d+)?|\d+)\s*\\times\s*([a-zA-Z](?:_\d+)?|\d+)\s*:\s*([a-zA-Z](?:_\d+)?|\d+)/g;
+const TIMES_PATTERN = /([a-zA-Z](?:_\d+)?|\d+)\s*(?:\\times|×)\s*([a-zA-Z](?:_\d+)?|\d+)\s*:\s*([a-zA-Z](?:_\d+)?|\d+)/g;
 
 /** Extract "a+b:c" plus operations first so they become one node with 3 operands and are not confused with \Op. */
 function extractPlusOperations(expr: string): Array<{ op: string; operands: string[]; start: number; end: number }> {
@@ -64,8 +64,8 @@ function extractTimesOperations(expr: string): Array<{ op: string; operands: str
   return ops;
 }
 
-/** Function-like ops: Ins(t;j), Del(j), In(t;j), R(m), Rc(m;n). No backslash prefix. */
-const FUNCLIKE_PATTERN = /\b(Ins|Del|In|Rc|R)\(([^)]*)\)/g;
+/** Function-like ops: Name(arg1;arg2;...). No backslash prefix. Accepts Rcpm, Rcpo, IsCpo, Rc, R, Ins, Del, In, etc. */
+const FUNCLIKE_PATTERN = /\b([A-Z][a-zA-Z0-9]*)\s*\(([^)]*)\)/g;
 
 function extractFunctionLikeOperations(expr: string): Array<{ op: string; operands: string[]; start: number; end: number }> {
   const ops: Array<{ op: string; operands: string[]; start: number; end: number }> = [];
