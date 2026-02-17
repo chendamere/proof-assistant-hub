@@ -1,0 +1,482 @@
+
+ \chapter{Theorems of Relationship of Node Value Comparison}
+ \section{Branch function to propositions}
+ \[, \Bb{i  \Pe j}{, \Tc c,}{, \Or,},  \Rq ,i  \Pe j,  \Tc c, \]
+ proof:
+ \begin{math}
+    \Rq, \Bb{i  \Pe j}{, \Tc c,}{, \Or, \Tc c,},
+    \Rq, \Bb{i  \Pe j}{,}{, \Or,}, \Tc c,
+    \Rq, i  \Pe j, \Tc c,
+ \end{math}
+
+ \[, \Bb{i  \Pe j}{, \Or,}{, \Tc c,},  \Rq ,i  \nPe j,  \Tc c, \]
+ proof:
+ \begin{math}
+    \Rq, \Bb{i  \Pe j}{, \Or,  \Tc c,}{, \Tc c,},
+    \Rq, \Bb{i  \Pe j}{, \Or,}{,}, \Tc c,
+    \Rq, i  \nPe j,  \Tc c,
+ \end{math}
+
+ \section{Unity}
+ \[,  \Rq ,  \Bs{i  \Pe j}{,}{,}, \]
+ proof:
+ \begin{math}
+    \Rq , \Bs{i  \Oe j}{,}{,}, 
+    \Rq , \Bs{i  \Pe j}{,}{,},
+ \end{math}
+
+ \[, i  \Pe j,  \Or,  \Rq ,  \Or, \]
+proof:  \\
+\begin{math} 
+ \Rq, \Bb{i  \Pe j}{,}{, \Or,},  \Or, 
+ \Rq, \Bb{i  \Pe j}{,\Or, }{, \Or,\Or, }, 
+ \Rq, \Bb{i  \Pe j}{,\Or,}{,\Or,},
+ \Rq, \Bb{i  \Pe j}{,}{,},\Or,
+ \Rq, \Or,
+\end{math}
+
+
+ \[, i  \nPe j,  \Or,  \Rq ,  \Or, \]
+ \begin{math} 
+   \Rq, \Bb{i  \Pe j}{, \Or,}{,},  \Or, 
+   \Rq, \Bb{i  \Pe j}{, \Or, \Or,}{, \Or,},  
+   \Rq, \Bb{i  \Pe j}{,\Or,}{,\Or,},
+   \Rq, \Bb{i  \Pe j}{,}{,}, \Or,
+   \Rq, \Or,
+\end{math}
+
+ \section{Symmetry}
+ \[,  \Bls{i \Pe j}{,}{,}  \Rq ,  \Bls{j  \Pe i}{,}{,}  \]
+ \begin{math} 
+   \Rq, \Bls{i \Oe j}{,}{,} 
+   \Rq, \Bls{j  \Oe i}{,}{,},
+   \Rq, \Bls{j  \Pe i}{,}{,},
+\end{math}
+
+ \[, i  \Pe j,  \Rq , j  \Pe i, \]
+ \begin{math} 
+   \Rq, \Bb{i  \Pe j}{,}{,\Or,} 
+   \Rq, \Bb{j  \Pe i}{,}{,\Or,},
+   \Rq, j  \Pe i,
+\end{math}
+ \[, i  \nPe j,  \Rq , j  \nPe i, \]
+ \begin{math} 
+   \Rq, \Bb{i  \Pe j}{,\Or,}{,} 
+   \Rq, \Bb{j  \Pe i}{,\Or,}{,},
+   \Rq, j  \nPe i,
+\end{math}
+
+ \section {Swap}
+ \subsection{Branch function and operator}
+ \[, \Ot m, \Blb{i \Pe j}{,}{,}  \Rq ,  \Blb{i  \Pe j}{, \Ot m,}{, \Ot m,} \]
+ 
+ \begin{math} 
+   \Rq, \Ot m, \Blb{i  \Oe j}{,}{,} 
+   \Rq, \Blb{i  \Oe j}{, \Ot m,}{, \Ot m,},
+   \Rq, \Blb{i  \Pe j}{, \Ot m,}{, \Ot m,},
+ \end{math}
+
+ \[, \Og m,  \Blb{i \Pe j}{,}{,}  \Rq ,  \Blb{i  \Pe j}{, \Og m,}{, \Og m,} \]
+ \begin{math} 
+   \Rq, \Og m, \Blb{i  \Oe j}{,}{,} 
+   \Rq, \Blb{i  \Oe j}{, \Og m,}{, \Og m,},
+   \Rq, \Blb{i  \Pe j}{, \Og m,}{, \Og m,},
+ \end{math}
+ \[, m  \Oc n,  \Blb{i \Pe j}{,}{,}  \Rq ,  \Blb{i  \Pe j}{, m  \Oc n,}{, m  \Oc n,} \]
+ \begin{math} 
+   \Rq, m  \Oc n, \Blb{i  \Oe j}{,}{,} 
+   \Rq, \Blb{i  \Oe j}{, m  \Oc n,}{,m  \Oc n,},
+   \Rq, \Blb{i  \Pe j}{, m  \Oc n,}{,m  \Oc n,},
+ \end{math}
+
+ 
+ \[, m  \Od n,  \Blb{i  \Pe j}{,}{,}  \Rq ,  \Blb{i  \Pe j}{, m  \Od n,}{, m  \Od n,} \]
+ \begin{math} 
+   \Rq,  m  \Od n, \Blb{i  \Oe j}{,}{,} 
+   \Rq, \Blb{i  \Oe j}{,  m  \Od n,}{,  m  \Od n,},
+   \Rq, \Blb{i  \Pe j}{,  m  \Od n,}{,  m  \Od n,},
+ \end{math}
+ \[, m  \Ob n,  \Blb{i  \Pe j}{,}{,}  \Rq ,  \Blb{i  \Pe j}{, m  \Ob n,}{, m  \Ob n,} \]
+ \begin{math} 
+   \Rq, m  \Ob n, \Blb{i  \Oe j}{,}{,} 
+   \Rq, \Blb{i  \Oe j}{, m  \Ob n,}{, m  \Ob n,},
+   \Rq, \Blb{i  \Pe j}{, m  \Ob n,}{, m  \Ob n,},
+ \end{math}
+ \[, m  \Os,  \Blb{i  \Pe j}{,}{,}  \Rq ,  \Blb{i  \Pe j}{, m  \Os,}{, m  \Os,} \]
+ \begin{math} 
+   \Rq, m  \Os, \Blb{i  \Oe j}{,}{,} 
+   \Rq, \Blb{i  \Oe j}{, m  \Os,}{, m  \Os,},
+   \Rq, \Blb{i  \Pe j}{, m  \Os,}{, m  \Os,},
+ \end{math}
+
+ \[, m  \On,  \Blb{i  \Pe j}{,}{,}  \Rq ,  \Blb{i  \Pe j}{, m  \On,}{, m  \On,} \]
+ \begin{math} 
+   \Rq, m \On, \Blb{i  \Oe j}{,}{,} 
+   \Rq, \Blb{i  \Oe j}{,m \On,}{,m \On,},
+   \Rq, \Blb{i  \Pe j}{,m \On,}{,m \On,},
+ \end{math}
+ \[, m  \Op,  \Blb{i  \Pe j}{,}{,}  \Rq ,  \Blb{i  \Pe j}{, m  \Op,}{, m  \Op,} \]
+ \begin{math} 
+   \Rq,m  \Op, \Blb{i  \Oe j}{,}{,} 
+   \Rq, \Blb{i  \Oe j}{, m  \Op,}{, m  \Op,},
+   \Rq, \Blb{i  \Pe j}{, m  \Op,}{, m  \Op,},
+ \end{math}
+
+
+
+
+
+ \subsection{Branch function and Branch function}
+ \[,  \Bb{i  \Pe j}{, \Bb{m  \Pe n}{, \Tc c_1,}{, \Tc c_2,},}{, \Bb{m  \Pe n}{, \Tc c_3,}{, \Tc c_4,},},  \Rq ,  \Bb{m  \Pe n}{, \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_3,},}{, \Bb{i  \Pe j}{, \Tc c_2,}{, \Tc c_4,},}, \]
+
+ \begin{math} 
+  \Rq, \Bb{i  \Oe j}{, \Bb{m  \Pe n}{, \Tc c_1,}{, \Tc c_2,},}{, \Bb{m  \Pe n}{, \Tc c_3,}{, \Tc c_4,},},
+  \Rq, \Bb{i  \Oe j}{, \Bb{m  \Oe n}{, \Tc c_1,}{, \Tc c_2,},}{, \Bb{m  \Pe n}{, \Tc c_3,}{, \Tc c_4,},},
+  \Rq, \Bb{i  \Oe j}{, \Bb{m  \Oe n}{, \Tc c_1,}{, \Tc c_2,},}{, \Bb{m  \Oe n}{, \Tc c_3,}{, \Tc c_4,},},
+  \Rq, \Bb{m  \Oe n}{, \Bb{i  \Oe j}{, \Tc c_1,}{, \Tc c_3,},}{, \Bb{i  \Oe j}{, \Tc c_2,}{, \Tc c_4,},},
+  \Rq, \Bb{m  \Oe n}{, \Bb{i  \Oe j}{, \Tc c_1,}{, \Tc c_3,},}{, \Bb{i  \Pe j}{, \Tc c_2,}{, \Tc c_4,},},
+  \Rq, \Bb{m  \Oe n}{, \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_3,},}{, \Bb{i  \Pe j}{, \Tc c_2,}{, \Tc c_4,},},
+  \Rq, \Bb{m  \Pe n}{, \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_3,},}{, \Bb{i  \Pe j}{, \Tc c_2,}{, \Tc c_4,},},
+ \end{math}
+
+
+
+
+\subsection{Branch function and Propositions}
+
+
+ \[,m  \Pe n,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,},  \Rq ,  \Bb{i  \Pe j}{,m  \Pe n, \Tc c_1,}{,m  \Pe n, \Tc c_2,}, \]
+ \begin{math} 
+ \Rq,  \Bb{ m  \Pe n}{,}{,  \Or,},  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,},
+ \Rq,  \Bb{ m  \Pe n}{,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,}, }{,  \Or,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,}, }, 
+ \Rq,  \Bb{ m  \Pe n}{,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,}, }{,  \Or,}, 
+ \Rq,  \Bb{ m  \Pe n}{,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,}, }{,  \Bb{i  \Pe j}{,}{,},  \Or,}, 
+ \Rq,  \Bb{ m  \Pe n}{,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,}, }{,  \Bb{i  \Pe j}{,  \Or,}{,  \Or,},},  
+ \Rq,  \Bb{ i  \Pe j}{,  \Bb{,m  \Pe n,} {, \Tc c_1,}{,  \Or,},}{,  \Bb{m  \Pe n}{, \Tc c_2,}{,  \Or,},}, 
+ \Rq,  \Bb{ i  \Pe j}{,  \Bb{,m  \Pe n,} {, \Tc c_1,}{,  \Or,},}{,  \Bb{m  \Pe n}{, \Tc c_2,}{,  \Or,},}, 
+ \Rq,  \Bb{ i  \Pe j}{,  \Bb{,m  \Pe n,} {, \Tc c_1,}{,  \Or, \Tc c_1,},}{,  \Bb{m  \Pe n}{, \Tc c_2,}{,  \Or,},}, 
+ \Rq,  \Bb{ i  \Pe j}{,  \Bb{,m  \Pe n,} {, }{,  \Or,},\Tc c_1,}{,  \Bb{m  \Pe n}{, \Tc c_2,}{,  \Or,},}, 
+ \Rq,  \Bb{ i  \Pe j}{,  m  \Pe n , \Tc c_1,}{,  \Bb{m  \Pe n}{, \Tc c_2,}{,  \Or,},}, 
+ \Rq,  \Bb{ i  \Pe j}{,  m  \Pe n , \Tc c_1,}{,  \Bb{m  \Pe n}{, \Tc c_2,}{,  \Or, \Tc c_2,},}, 
+ \Rq,  \Bb{ i  \Pe j}{,  m  \Pe n , \Tc c_1,}{,  \Bb{m  \Pe n}{,}{,  \Or,},\Tc c_2,}, 
+ \Rq,  \Bb{ i  \Pe j}{,  m  \Pe n , \Tc c_1,}{,  m  \Pe n , \Tc c_2,}, 
+ \end{math}
+
+
+
+
+
+ \[,m  \nPe n,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,},  \Rq ,  \Bb{i  \Pe j}{,m  \nPe n, \Tc c_1,}{,m  \nPe n, \Tc c_2,}, \]
+ \begin{math} 
+  \Rq,  \Bb{ m  \Pe n}{,\Or,}{, },  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,},
+  \Rq,  \Bb{ m  \Pe n}{,  \Or,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,},}{,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,}, }, 
+  \Rq,  \Bb{ m  \Pe n}{,  \Or,}{,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,}, }, 
+  \Rq,  \Bb{ m  \Pe n}{,  \Bb{i  \Pe j}{,}{,},  \Or,}{,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,}, }, 
+  \Rq,  \Bb{ m  \Pe n}{,  \Bb{i  \Pe j}{,  \Or,}{,  \Or,},}{,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,}, },  
+  \Rq,  \Bb{ i  \Pe j}{,  \Bb{m  \Pe n}{, \Or,}{,\Tc c_1 ,},}{,  \Bb{m  \Pe n}{,  \Or,}{, \Tc c_2,}, }, 
+  \Rq,  \Bb{ i  \Pe j}{,m  \nPe n, \Tc c_1,}{,  \Bb{m  \Pe n}{,  \Or,}{, \Tc c_2,}, }, 
+  \Rq,  \Bb{i  \Pe j}{,m  \nPe n, \Tc c_1,}{,m  \nPe n, \Tc c_2,},
+  \end{math}
+
+
+
+
+
+
+
+ \subsection{Propositions and operator}
+ \[, i  \Pe j,  \Ot m,  \Rq ,  \Ot m, i  \Pe j, \]
+proof: 
+ \begin{math} 
+ \Rq,  \Bb{i  \Pe j}{,}{, \Or,},  \Ot m, 
+ \Rq,  \Bb{i  \Pe j}{,  \Ot m,}{, \Or, \Ot m, }, 
+ \Rq,  \Bb{i  \Pe j}{,  \Ot m,}{, \Or,}, 
+ \Rq,  \Bb{i  \Pe j}{,  \Ot m,}{, \Ot m,  \Or,}, 
+ \Rq,  \Ot m,  \Bb{i  \Pe j}{,}{, \Or,}, 
+ \Rq,  \Ot m, i  \Pe j, 
+ \end{math}
+
+
+ \[, i  \Pe j,  \Og m,  \Rq ,  \Og m, i  \Pe j, \]
+
+ \[, i  \Pe j, m  \Oc n,  \Rq , m  \Oc n, i  \Pe j, \]
+ \begin{math} 
+  \Rq,  \Bb{i  \Pe j}{,}{, \Or,},  \Ot m, 
+  \Rq,  \Bb{i  \Pe j}{,  \Ot m,}{, \Or, \Ot m, }, 
+  \Rq,  \Bb{i  \Pe j}{,  \Ot m,}{, \Or,}, 
+  \Rq,  \Bb{i  \Pe j}{,  \Ot m,}{, \Ot m,  \Or,}, 
+  \Rq,  \Ot m,  \Bb{i  \Pe j}{,}{, \Or,},  
+  \Rq,  \Ot m, i  \Pe j, 
+  \end{math}
+  
+ \[, i  \Pe j, m  \Od n,  \Rq , m  \Od n, i  \Pe j, \]
+ \[, i  \Pe j, m  \Ob n,  \Rq , m  \Ob n, i  \Pe j, \]
+
+ \[, i  \Pe j, m  \Os,  \Rq , m  \Os, i  \Pe j, \]
+ \[, i  \Pe j, m  \On,  \Rq , m  \On, i  \Pe j, \]
+ \[, i  \Pe j, m  \Op,  \Rq , m  \Op, i  \Pe j, \]
+
+
+
+ \[, i  \nPe j,  \Ot m,  \Rq ,  \Ot m, i  \nPe j, \]
+  \begin{math} 
+  \Rq,  \Bb{i  \Pe j}{, \Or,}{,},  \Ot m, 
+  \Rq,  \Bb{i  \Pe j}{, \Or,\Ot m, }{,\Ot m, },
+  \Rq,  \Bb{i  \Pe j}{, \Or,}{,  \Ot m,}, 
+  \Rq,  \Bb{i  \Pe j}{, \Ot m,  \Or,}{,  \Ot m,}, 
+  \Rq,  \Ot m,  \Bb{i  \Pe j}{, \Or,}{,}, 
+  \Rq,  \Ot m, i  \nPe j, 
+ \end{math}
+ \[, i  \nPe j,  \Og m,  \Rq ,  \Og m, i  \nPe j, \]
+
+ \[, i  \nPe j, m  \Oc n,  \Rq , m  \Oc n, i  \nPe j, \]
+ \[, i  \nPe j, m  \Od n,  \Rq , m  \Od n, i  \nPe j, \]
+ \[, i  \nPe j, m  \Ob n,  \Rq , m  \Ob n, i  \nPe j, \]
+
+ \[, i  \nPe j, m  \Os,  \Rq , m  \Os, i  \nPe j, \]
+ \[, i  \nPe j, m  \On,  \Rq , m  \On, i  \nPe j, \]
+ \[, i  \nPe j, m  \Op,  \Rq , m  \Op, i  \nPe j, \]
+
+
+
+
+
+ \subsection{ Propositions and Propositions}
+ \[,i  \Pe j, m  \Pe n,  \Rq , m  \Pe n, i  \Pe j, \]
+
+
+
+
+
+proof: \ \
+ \begin{math} 
+,i  \Pe j, m  \Pe n,  
+ \Rq,  \Bb{i  \Pe j}{,}{,  \Or,}, m  \Pe n,  
+ \Rq,  \Bb{i  \Pe j}{,m  \Pe n,}{,  \Or, m  \Pe n,  },   
+ \Rq,  \Bb{i  \Pe j}{,m  \Pe n,}{,  \Or,},   
+ \Rq,  \Bb{i  \Pe j}{,m  \Pe n,}{,m  \Pe n,  \Or,},   
+ \Rq, m  \Pe n,  \Bb{i  \Pe j}{,}{,  \Or,},   
+ \Rq, m  \Pe n, i  \Pe j,
+ \end{math}
+
+
+
+ \[,i  \Pe j, m  \nPe n,  \Rq , m  \nPe n, i  \Pe j, \]
+ \[,i  \nPe j, m  \nPe n,  \Rq , m  \nPe n, i  \nPe j, \]
+
+
+
+
+
+ \subsection{ Propositions to Propositions with branch function}
+ \[,  \Bb{i  \Pe j}{,m  \nPe n,}{,},  \Rq ,  \Bb{m  \Pe n}{,i  \nPe j,}{,}, \]
+
+
+
+
+
+proof: \ \
+ \begin{math} 
+,  \Bb{i  \Pe j}{,m  \nPe n,}{,}, 
+ \Rq,  \Bb{i  \Pe j}{, \Bb{m  \Pe n}{,  \Or,}{,},}{,},  
+ \Rq,  \Bb{i  \Pe j}{, \Bb{m  \Pe n}{,  \Or,}{,},}{, \Bb{m  \Pe n}{, }{, },},  
+ \Rq,  \Bb{m  \Pe n}{, \Bb{i  \Pe j}{,  \Or,}{,},}{, \Bb{i  \Pe j}{, }{, },},  
+ \Rq,   \Bb{m  \Pe n}{,i  \nPe j,}{,},
+ \end{math}
+
+
+
+
+
+ \[,  \Bb{i  \Pe j}{,}{,m  \Pe n,},  \Rq ,  \Bb{m  \Pe n}{,}{,i  \Pe j,}, \]
+
+
+
+
+
+
+ \section{Transitivity}
+ \subsection{Branch function with branch function}
+ \[,  \Bb{i \Pe j}{, \Tc c_1,}{, \Tc c_2,},  \Rq ,  \Bb{i  \Pe j}{, \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_3,},}{, \Tc c_2,}, \]
+
+
+
+ \[,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,},  \Rq ,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Bb{i  \Pe j}{, \Tc c_3,}{, \Tc c_2,},}, \]
+
+
+
+
+
+
+ \subsection{Branch function with propositions}
+ \[,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,},  \Rq ,  \Bb{i  \Pe j}{,i  \Pe j, \Tc c_1,}{, \Tc c_2,}, \]
+
+
+
+
+
+
+proof: \ \
+ \begin{math} 
+,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,}, 
+ \Rq,  \Bb{i  \Pe j}{,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Or,},}{, \Tc c_2,}, 
+ \Rq,  \Bb{i  \Pe j}{,i  \Pe j, \Tc c_1,}{, \Tc c_2,},
+ \end{math}
+
+
+
+
+
+ \[,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,},  \Rq ,  \Bb{i  \Pe j}{, \Tc c_1,}{,i  \nPe j, \Tc c_2,}, \]
+
+
+
+
+
+ \subsection{Propositions with branch function}
+ \[,i  \Pe j,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,},  \Rq , i  \Pe j,  \Tc c_1, \]
+
+
+
+
+
+proof: \ \
+ \begin{math} 
+,i  \Pe j,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,}, 
+ \Rq,  \Bb{i  \Pe j}{,}{, \Or,},  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,}, 
+ \Rq,  \Bb{i  \Pe j}{, \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,}, }{, \Or, \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,}, },
+ \Rq,  \Bb{i  \Pe j}{,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,},}{, \Or,},   
+ \Rq,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Or,},  
+ \Rq, i  \Pe j,  \Tc c_1, 
+ \end{math}
+
+
+
+
+
+
+
+ \[,i  \nPe j,  \Bb{i  \Pe j}{, \Tc c_1,}{, \Tc c_2,},  \Rq , i  \nPe j,  \Tc c_2, \]
+
+
+
+
+ \subsection{Propositions with propositions}
+ \[,i  \Pe j,  \Rq , i  \Pe j, i  \Pe j, \]
+
+
+
+
+
+proof: \ \
+ \begin{math} 
+,i  \Pe j, 
+ \Rq, i  \Pe j,
+ \Rq, i  \Pe j,\Bb{i  \Pe j}{,}{,  \Or,},  
+ \Rq, i  \Pe j, i  \Pe j,
+\end{math}
+
+
+ \[,i  \nPe j,  \Rq , i  \nPe j, i  \nPe j, \]
+
+
+
+
+
+
+ \section{ Substitution}
+ \subsection{Branch function with branch function}
+ \[,  \Blb{i  \Pe j}{,  \Blb{j  \Pe m}{,}{,}}{,}  \Rq ,  \Blb{i  \Pe j}{,  \Blb{i  \Pe m}{,}{,}}{,} \]
+
+
+
+
+
+
+
+ \subsection{Propositions with branch function}
+ \[,i  \Pe j,  \Bb{j  \Pe m}{, \Tc c_1,}{, \Tc c_2,},  \Rq ,i  \Pe j,  \Bb{i  \Pe m}{, \Tc c_1,}{, \Tc c_2,},  \]
+
+
+
+
+
+proof: \ \
+ \begin{math} 
+,i  \Pe j,  \Bb{j  \Pe m}{, \Tc c_1,}{, \Tc c_2,},
+ \Rq,  \Bb{i  \Pe j}{,}{,  \Or,},  \Bb{j  \Pe m}{, \Tc c_1,}{, \Tc c_2,},
+ \Rq,  \Bb{i  \Pe j}{, \Bb{j  \Pe m}{, \Tc c_1,}{, \Tc c_2,},}{,  \Or, \Bb{j  \Pe m}{, \Tc c_1,}{, \Tc c_2,},},
+ \Rq,  \Bb{i  \Pe j}{, \Bb{j  \Pe m}{, \Tc c_1,}{, \Tc c_2,},}{,  \Or,},
+ \Rq,  \Bb{i  \Pe j}{, \Bb{i  \Pe m}{, \Tc c_1,}{, \Tc c_2,},}{,  \Or,},
+ \Rq,  \Bb{i  \Pe j}{,\Bb{i  \Pe m}{, \Tc c_1,}{, \Tc c_2,},}{,  \Or,\Bb{i  \Pe m}{, \Tc c_1,}{, \Tc c_2,},},
+ \Rq,  \Bb{i  \Pe j}{,}{,  \Or,},  \Bb{i  \Pe m}{, \Tc c_1,}{, \Tc c_2,},
+ \Rq, i  \Pe j,  \Bb{i  \Pe m}{, \Tc c_1,}{, \Tc c_2,},
+ \end{math}
+
+
+
+
+
+
+
+ \subsection{Propositions with propositions}
+ \[,i  \Pe j, j  \Pe m,  \Rq , i  \Pe j, i  \Pe m, \]
+
+
+
+
+
+proof: \ \
+ \begin{math} 
+,i  \Pe j, j  \Pe m, 
+ \Rq, i  \Pe j,  \Bb{j  \Pe m}{,}{,  \Or,},  
+ \Rq, i  \Pe j,  \Bb{i  \Pe m}{,}{,  \Or,},   
+ \Rq, i  \Pe j, i  \Pe m,
+ \end{math}
+
+ \[,i  \Pe j, j  \nPe m,  \Rq , i  \Pe j, i  \nPe m, \]
+
+
+
+
+
+
+
+
+ \section{Opposition}
+ \[,i  \Pe j, i  \nPe j,  \Rq ,  \Or, \]
+
+
+
+
+
+
+proof: \ \
+ \begin{math} 
+,i  \Pe j, i  \nPe j, 
+ \Rq, i  \Pe j, \Bb{i  \Pe j}{,  \Or ,}{,},  
+ \Rq, i  \Pe j,  \Or,  
+ \Rq ,  \Or,
+ \end{math}
+
+
+
+ \[,i  \nPe j, i  \Pe j,  \Rq ,  \Or, \]
+
+
+
+
+
+proof : \ \
+ \begin{math} 
+,i  \nPe j, i  \Pe j, 
+ \Rq,  \Bb{i  \Pe j}{,  \Or ,}{,}, i  \Pe j, 
+ \Rq,  \Bb{i  \Pe j}{,  \Or , i  \Pe j,}{, i  \Pe j,}, 
+ \Rq,  \Bb{i  \Pe j}{,  \Or ,}{, i  \Pe j,}, 
+ \Rq,  \Bb{i  \Pe j}{,  \Or ,}{,  \Bb{i  \Pe j}{,}{,  \Or ,},}, 
+ \Rq,  \Bb{i  \Pe j}{,  \Or ,}{,  \Or ,}, 
+ \Rq,  \Bb{i  \Pe j}{,}{,},  \Or , 
+ \Rq ,  \Or,
+ \end{math}
+
+ \newpage

@@ -8,6 +8,12 @@ export const oeToPeInExpression = (expr: string): string => {
   return expr.replace(/\\Oe/g, '\\Pe');
 };
 
+/** Replace operator \Pe with \Oe in an expression (same pattern, different operator). */
+export const peToOeInExpression = (expr: string): string => {
+  if (!expr || !expr.includes('\\Pe')) return expr;
+  return expr.replace(/\\Pe/g, '\\Oe');
+};
+
 /**
  * Generate similar proof steps (or any list of expressions) by replacing \Oe with \Pe in each step.
  * Steps that do not contain \Oe are left unchanged.

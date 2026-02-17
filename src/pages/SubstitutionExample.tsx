@@ -163,23 +163,13 @@ export default function SubstitutionExample() {
         : (fn: () => void) => setTimeout(fn, 0);
     schedule(async () => {
       try {
-        const [leftRuleLeft, leftRuleRight, rightRuleLeft, rightRuleRight] = await Promise.all([
-          trySubstitutionWorker({ target: ex.target, ruleSide: ex.ruleLeft, otherRuleSide: ex.ruleRight, expectedResult: ex.expectedResult, targetSideForOperands: ex.target, side: 'left' }).catch(() => null),
-          trySubstitutionWorker({ target: ex.target, ruleSide: ex.ruleRight, otherRuleSide: ex.ruleLeft, expectedResult: ex.expectedResult, targetSideForOperands: ex.target, side: 'left' }).catch(() => null),
-          trySubstitutionWorker({ target: ex.expectedResult, ruleSide: ex.ruleLeft, otherRuleSide: ex.ruleRight, expectedResult: ex.target, targetSideForOperands: ex.expectedResult, side: 'right' }).catch(() => null),
-          trySubstitutionWorker({ target: ex.expectedResult, ruleSide: ex.ruleRight, otherRuleSide: ex.ruleLeft, expectedResult: ex.target, targetSideForOperands: ex.expectedResult, side: 'right' }).catch(() => null),
-        ]);
-
-        const match = leftRuleLeft ?? leftRuleRight ?? rightRuleLeft ?? rightRuleRight;
-        const direction = leftRuleLeft
-          ? 'target: ruleLeft→ruleRight'
-          : leftRuleRight
-            ? 'target: ruleRight→ruleLeft'
-            : rightRuleLeft
-              ? 'expectedResult: ruleLeft→ruleRight'
-              : rightRuleRight
-                ? 'expectedResult: ruleRight→ruleLeft'
-                : null;
+        const match = await trySubstitutionWorker({
+          targetLeft: ex.target,
+          targetRight: ex.expectedResult,
+          ruleLeft: ex.ruleLeft,
+          ruleRight: ex.ruleRight,
+        }).catch(() => null);
+        const direction = match?.matchDirections?.[0] ?? null;
 
         setResults((prev) => ({ ...prev, [index]: { result: match, direction } }));
       } finally {

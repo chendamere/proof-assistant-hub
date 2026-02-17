@@ -17,7 +17,7 @@ import {
 import { exprToDAG, SingleRootDAGInjection } from '@/lib/dag';
 import { DAGGraphVisual } from '@/components/dag/DAGGraphVisual';
 import { checkInferenceRules } from '@/lib/inferenceRules';
-import { trySubstitution } from '@/lib/inferenceRules/substitution';
+import { trySubstitutionByMatchPairs } from '@/lib/inferenceRules/substitution';
 import { axioms } from '@/data/axioms';
 import { definitions } from '@/data/definitions';
 import { theorems } from '@/data/theorems';
@@ -142,21 +142,25 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
     if (!hasRule || !hasIsomorphismMatch || !snapshot.left.trim() || !snapshot.right.trim()) {
       return { match: false };
     }
-    const attempts: Array<{ target: string; ruleSide: string; otherSide: string; expected: string; targetForOperands: string; side: 'left' | 'right'; direction: string; replace: string }> = [
-      { target: snapshot.left, ruleSide: snapshot.ruleLeft, otherSide: snapshot.ruleRight, expected: snapshot.right, targetForOperands: snapshot.left, side: 'left', direction: 'left → right', replace: `${snapshot.ruleLeft} → ${snapshot.ruleRight}` },
-      { target: snapshot.left, ruleSide: snapshot.ruleRight, otherSide: snapshot.ruleLeft, expected: snapshot.right, targetForOperands: snapshot.left, side: 'left', direction: 'left → right', replace: `${snapshot.ruleRight} → ${snapshot.ruleLeft}` },
-      { target: snapshot.right, ruleSide: snapshot.ruleLeft, otherSide: snapshot.ruleRight, expected: snapshot.left, targetForOperands: snapshot.right, side: 'right', direction: 'right → left', replace: `${snapshot.ruleLeft} → ${snapshot.ruleRight}` },
-      { target: snapshot.right, ruleSide: snapshot.ruleRight, otherSide: snapshot.ruleLeft, expected: snapshot.left, targetForOperands: snapshot.right, side: 'right', direction: 'right → left', replace: `${snapshot.ruleRight} → ${snapshot.ruleLeft}` },
-    ];
-    for (const a of attempts) {
-      try {
-        const r = trySubstitution(a.target, a.ruleSide, a.otherSide, a.expected, a.targetForOperands, a.side);
-        if (r?.match && r.reconstructedExpr != null) {
-          return { match: true, direction: a.direction, substituted: r.reconstructedExpr, replace: a.replace };
-        }
-      } catch {
-        // continue to next attempt
+    try {
+      const r = trySubstitutionByMatchPairs(
+        snapshot.left,
+        snapshot.right,
+        snapshot.ruleLeft,
+        snapshot.ruleRight,
+        undefined
+      );
+      if (r?.match && r.reconstructedExpr != null) {
+        const dir = r.matchDirections?.[0];
+        const isPair1 = dir?.includes('ruleL→ruleR');
+        const replace = isPair1
+          ? `${snapshot.ruleLeft} → ${snapshot.ruleRight}`
+          : `${snapshot.ruleRight} → ${snapshot.ruleLeft}`;
+        const direction = dir?.includes('Left') ? 'left → right' : 'right → left';
+        return { match: true, direction, substituted: r.reconstructedExpr, replace };
       }
+    } catch {
+      // ignore
     }
     return { match: false };
   }, [hasRule, hasIsomorphismMatch, snapshot.left, snapshot.right, snapshot.ruleLeft, snapshot.ruleRight]);

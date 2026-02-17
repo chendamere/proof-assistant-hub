@@ -32,6 +32,8 @@ export type MatchInfo = {
   nodeMap?: Record<string, string>;
   /** Unmatched target node signatures (op|operands) when check passed. */
   unmatchedTargetNodeSignatures?: string[];
+  /** When rule has \Tc: operand → target expression(s) it mapped to. */
+  tcMapping?: Record<string, string[]>;
 };
 
 export type TransitionVerificationResponse = {
@@ -82,6 +84,7 @@ self.onmessage = (e: MessageEvent<TransitionVerificationRequest>) => {
           inferenceRuleName: result.inferenceRule,
           nodeMap: nodeMapping ? Object.fromEntries(nodeMapping) : undefined,
           unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,
+          tcMapping: pos?.tcMapping,
         };
         const response: TransitionVerificationResponse = {
           id,

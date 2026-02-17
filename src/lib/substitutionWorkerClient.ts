@@ -1,6 +1,6 @@
 /**
  * Client for the substitution Web Worker.
- * Provides async trySubstitution that runs off the main thread.
+ * Provides async trySubstitutionByMatchPairs that runs off the main thread.
  */
 
 import type { SubstitutionRequest, SubstitutionResponse } from '@/workers/substitutionWorker';
@@ -20,12 +20,10 @@ function getWorker(): Worker {
 let requestId = 0;
 
 export type TrySubstitutionParams = {
-  target: string;
-  ruleSide: string;
-  otherRuleSide: string;
-  expectedResult: string;
-  targetSideForOperands: string;
-  side: 'left' | 'right';
+  targetLeft: string;
+  targetRight: string;
+  ruleLeft: string;
+  ruleRight: string;
 };
 
 export function trySubstitutionWorker(params: TrySubstitutionParams): Promise<SubstitutionResponse['result']> {

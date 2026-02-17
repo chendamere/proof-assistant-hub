@@ -149,11 +149,14 @@ const parseBranchExpression = (expr: string): { match: boolean; branchData?: Tok
       }
       
       const type = (rawType === 'Bs' ? 'Bb' : rawType) as 'Bb' | 'Blb' | 'Br' | 'Brb' | 'Bls' | 'Brs';
+      // Trim leading/trailing commas and whitespace from condition (e.g. ",m \Pe n," -> "m \Pe n")
+      const condRaw = braceCount === 3 ? braces[0] : '';
+      const condition = condRaw.replace(/^[\s,]+|[\s,]+$/g, '').trim();
       return {
         match: true,
         branchData: {
           type,
-          condition: braceCount === 3 ? braces[0] : '',
+          condition,
           branch1: braceCount === 3 ? braces[1] : braces[0],
           branch2: braceCount === 3 ? braces[2] : braces[1],
         },

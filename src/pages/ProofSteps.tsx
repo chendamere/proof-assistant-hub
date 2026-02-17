@@ -15,7 +15,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { axioms } from '@/data/axioms';
 import { normalizeSpacing } from '@/lib/inferenceRules/utils';
-import { trySubstitution } from '@/lib/inferenceRules/substitution';
+import { trySubstitutionByMatchPairs } from '@/lib/inferenceRules/substitution';
 import { verifyTransitionWorker, type VerifyTransitionResult } from '@/lib/transitionVerificationWorkerClient';
 import type { MatchInfo } from '@/workers/transitionVerificationWorker';
 import type { DiagnosisResult } from '@/lib/inferenceRules/errorDiagnosis';
@@ -23,30 +23,48 @@ import type { DiagnosisResult } from '@/lib/inferenceRules/errorDiagnosis';
 import { definitions } from '@/data/definitions';
 import { theorems } from '@/data/theorems';
 import { Button } from '@/components/ui/button';
-import { Search, ChevronDown, ChevronRight, FileText, ListOrdered, CheckCircle2, Check, X, AlertTriangle, Info, Plus, Trash2, CheckCheck, PlayCircle, Loader2 } from 'lucide-react';
+import { Search, ChevronDown, ChevronRight, FileText, ListOrdered, CheckCircle2, Check, X, AlertTriangle, Info, Plus, Trash2, CheckCheck, PlayCircle, Loader2, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 type ProofStepsTable = Record<string, string[]>;
 
-/** Chapter order and book indices from "The Way of Machine Thinking" (Volume 1). */
+/** Chapter order and book indices (1-based). */
 const CHAPTER_ORDER: string[] = [
-  'axioms', 'relationships', 'Theorems_of_Node_Null_Comparison',
-  'Theorems_of_Identical_Node_Comparison', 'Rules_of_Empty_Branch_Function',
-  'Swap_Theorems_of_Same_Operand', 'Theorems_of_Operators_and_Relationships',
-  'Next_Order_Induction', 'Recursive_Function_R', 'Previous_Order_Induction',
-  'Recursive_Function_R_Prev', 'Rules_of_Node_Ring', 'Rules_of_Node_Connectivity',
-  'Rules_of_Node_Continuity', 'Rules_of_Relationship_of_Subnode',
-  'Tree_Order_Induction', 'Recursive_Function_Rc', 'Rules_of_Number_Equal_Relationship',
-  'Rules_of_Number_More_Less_Than', 'Rules_of_Assign_Operator_Temp_Space',
-  'Axioms_of_Assign_Operator', 'Theorems_of_Insert_Node_Function',
-  'Theorems_of_Delete_Node_Function', 'Theorems_of_Assign_Operator',
-  'Function_Cpo', 'Recursive_Function_Rcpo', 'Addition', 'Recursive_Function_Rcpm',
-  'Multiplication', 'Paradox',
+  'Rules_of_Operators',
+  'Rules of Three Fundamental Relationships',
+  'Theorems_of_Relationship_of_Node_Value_Comparison',
+  'Theorems_of_Node_Null_Comparison',
+  'Theorems_of_Identical_Node_Comparison',
+  'Rules_of_Empty_Branch_Function',
+  'Swap_Theorems_of_Same_Operand',
+  'Theorems_of_Operators_and_Relationships',
+  'Next_Order_Induction',
+  'Recursive_Function_R',
+  'Previous_Order_Induction',
+  'Recursive_Function_R_Prev',
+  'Rules_of_Node_Ring',
+  'Rules_of_Node_Connectivity',
+  'Rules_of_Node_Continuity',
+  'Rules_of_Relationship_of_Subnode',
+  'Tree_Order_Induction',
+  'Recursive_Function_Rc',
+  'Rules_of_Number_Equal_Relationship',
+  'Rules_of_Number_More_Less_Than',
+  'Rules_of_Assign_Operator_Temp_Space',
+  'Axioms_of_Assign_Operator',
+  'Theorems_of_Insert_Node_Function',
+  'Theorems_of_Delete_Node_Function',
+  'Theorems_of_Assign_Operator',
+  'Function_Cpo',
+  'Recursive_Function_Rcpo',
+  'Addition',
+  'Recursive_Function_Rcpm',
+  'Multiplication',
+  'Paradox',
 ];
-/** Book chapter indices (3, 4, 6, 7, ... 32, then appendix). */
+/** Book chapter indices (1-based sequential). */
 const CHAPTER_INDICES: number[] = [
-  3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-  25, 26, 27, 28, 29, 30, 31, 32, 99, // 99 = Paradox (appendix)
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
 ];
 
 function getChapterIndex(filename: string): number {
@@ -60,6 +78,7 @@ interface TheoremWithSteps {
   index: number;
   ruleStr: string;
   steps: string[];
+  ruleName?: string;
 }
 
 interface VerificationResult {
@@ -103,6 +122,44 @@ function parseDroppedRule(e: React.DragEvent): { leftSide: string; rightSide: st
 
 const allRules = [...axioms, ...definitions, ...theorems];
 
+const axiomIds = new Set(axioms.map((r) => r.id));
+const definitionIds = new Set(definitions.map((r) => r.id));
+
+/** Position for ordering: axioms/definitions = -1 (always before), theorems = chapterOrder*100000 + index. */
+function getPositionForRule(rule: { id: string }): number {
+  if (axiomIds.has(rule.id) || definitionIds.has(rule.id)) return -1;
+  const m = rule.id.match(/^(.+)-(\d+)-[a-z0-9]+$/);
+  if (!m) return 999999999;
+  const baseName = m[1];
+  const index = parseInt(m[2], 10);
+  const filename = CHAPTER_ORDER.find(
+    (f) => f.toLowerCase().replace(/[^a-z0-9]+/g, '-') === baseName
+  );
+  if (!filename) return 999999999;
+  const chapterIdx = CHAPTER_ORDER.indexOf(filename);
+  return chapterIdx * 100000 + index;
+}
+
+/** Position for a proof-steps key (Filename::index::...). */
+function getPositionForKey(key: string): number {
+  const { filename, index } = parseKey(key);
+  const chapterIdx = CHAPTER_ORDER.indexOf(filename);
+  if (chapterIdx < 0) return 999999999;
+  return chapterIdx * 100000 + index;
+}
+
+/** Rules that appear before the given theorem key (for pattern sourcing). */
+function getRulesBeforeKey(
+  key: string,
+  rules: Array<{ id: string; leftSide: string; rightSide: string }>
+): Array<{ id: string; leftSide: string; rightSide: string }> {
+  const theoremPos = getPositionForKey(key);
+  return rules.filter((r) => {
+    const pos = getPositionForRule(r);
+    return pos < theoremPos;
+  });
+}
+
 function ruleExistsInDatabase(leftSide: string, rightSide: string): boolean {
   const normLeft = normalizeSpacing(leftSide);
   const normRight = normalizeSpacing(rightSide);
@@ -111,6 +168,21 @@ function ruleExistsInDatabase(leftSide: string, rightSide: string): boolean {
     const rRight = normalizeSpacing(r.rightSide);
     return (rLeft === normLeft && rRight === normRight) || (rLeft === normRight && rRight === normLeft);
   });
+}
+
+function getRuleNameForRuleStr(ruleStr: string): string | undefined {
+  const parts = ruleStr.split(/\s*⟺\s*/);
+  const left = parts[0]?.trim();
+  const right = parts.slice(1).join('⟺').trim();
+  if (!left || !right) return undefined;
+  const normLeft = normalizeSpacing(left);
+  const normRight = normalizeSpacing(right);
+  const found = allRules.find((r) => {
+    const rLeft = normalizeSpacing(r.leftSide);
+    const rRight = normalizeSpacing(r.rightSide);
+    return (rLeft === normLeft && rRight === normRight) || (rLeft === normRight && rRight === normLeft);
+  });
+  return found?.name;
 }
 
 const ProofSteps: React.FC = () => {
@@ -193,38 +265,46 @@ const ProofSteps: React.FC = () => {
             : undefined;
         })();
 
-      // Same match logic as Debug workbench: try preferred rule with trySubstitution (no dagCache) in 4 directions
-      if (preferredRule) {
-        const attempts: Array<{ target: string; ruleSide: string; otherSide: string; expected: string; targetForOperands: string; side: 'left' | 'right' }> = [
-          { target: left, ruleSide: preferredRule.leftSide, otherSide: preferredRule.rightSide, expected: right, targetForOperands: left, side: 'left' },
-          { target: left, ruleSide: preferredRule.rightSide, otherSide: preferredRule.leftSide, expected: right, targetForOperands: left, side: 'left' },
-          { target: right, ruleSide: preferredRule.leftSide, otherSide: preferredRule.rightSide, expected: left, targetForOperands: right, side: 'right' },
-          { target: right, ruleSide: preferredRule.rightSide, otherSide: preferredRule.leftSide, expected: left, targetForOperands: right, side: 'right' },
-        ];
-        for (const a of attempts) {
-          try {
-            const r = trySubstitution(a.target, a.ruleSide, a.otherSide, a.expected, a.targetForOperands, a.side, undefined, undefined);
-            if (r?.match && r.reconstructedExpr != null) {
-              const pos = r.position;
-              const matchInfo: MatchInfo = {
-                matchedRuleId: preferredRule.id,
-                description: pos?.description,
-                startPosition: pos?.position,
-                side: pos?.side,
-                ruleLeft: preferredRule.leftSide,
-                ruleRight: preferredRule.rightSide,
-                inferenceRuleName: 'Equivalent Substitution',
-                nodeMap: pos?.nodeMapping ? Object.fromEntries(pos.nodeMapping) : undefined,
-                unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,
-              };
-              setTransitionResults((prev) => ({ ...prev, [key]: { ...prev[key], [transitionIndex]: true } }));
-              setTransitionMatchInfo((prev) => ({ ...prev, [key]: { ...prev[key], [transitionIndex]: matchInfo } }));
-              setTransitionVerifying(null);
-              return;
-            }
-          } catch {
-            // continue to next attempt
+      // Only try preferred rule if it's not the current theorem (can't use a theorem to prove itself)
+      const preferredRuleIsCurrentTheorem =
+        preferredRule &&
+        !parsedOverride &&
+        (() => {
+          const { ruleStr } = parseKey(key);
+          const [pLeft, pRight] = [preferredRule.leftSide, preferredRule.rightSide].map(normalizeSpacing);
+          const [kLeft, kRight] = ruleStr
+            .split(/\s*⟺\s*/)
+            .map((s) => normalizeSpacing(s.trim()));
+          return (pLeft === kLeft && pRight === kRight) || (pLeft === kRight && pRight === kLeft);
+        })();
+
+      const rulesToUse = getRulesBeforeKey(key, rulesForWorker);
+
+      // Try preferred rule with trySubstitutionByMatchPairs (handles both pair directions)
+      if (preferredRule && !preferredRuleIsCurrentTheorem) {
+        try {
+          const r = trySubstitutionByMatchPairs(left, right, preferredRule.leftSide, preferredRule.rightSide, undefined);
+          if (r?.match && r.reconstructedExpr != null) {
+            const pos = r.position;
+            const matchInfo: MatchInfo = {
+              matchedRuleId: preferredRule.id,
+              description: pos?.description,
+              startPosition: pos?.position,
+              side: pos?.side,
+              ruleLeft: preferredRule.leftSide,
+              ruleRight: preferredRule.rightSide,
+              inferenceRuleName: 'Equivalent Substitution',
+              nodeMap: pos?.nodeMapping ? Object.fromEntries(pos.nodeMapping) : undefined,
+              unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,
+              tcMapping: pos?.tcMapping,
+            };
+            setTransitionResults((prev) => ({ ...prev, [key]: { ...prev[key], [transitionIndex]: true } }));
+            setTransitionMatchInfo((prev) => ({ ...prev, [key]: { ...prev[key], [transitionIndex]: matchInfo } }));
+            setTransitionVerifying(null);
+            return;
           }
+        } catch {
+          // fall through to worker
         }
       }
 
@@ -232,7 +312,7 @@ const ProofSteps: React.FC = () => {
         const result: VerifyTransitionResult = await verifyTransitionWorker({
           targetLeft: left,
           targetRight: right,
-          rules: rulesForWorker,
+          rules: rulesToUse,
         });
         setTransitionResults((prev) => ({
           ...prev,
@@ -305,25 +385,20 @@ const ProofSteps: React.FC = () => {
       setCustomTransitionVerifying(customId);
       const preferredRule = parsedOverride;
 
-      // Same match logic as Debug workbench: try preferred rule with trySubstitution (no dagCache) in 4 directions
+      // Extract theorem key from customId (e.g. "key::0::insert" -> "key") for rule filtering
+      const theoremKey = customId.replace(/::\d+::(?:insert|insert-above)$/, '');
+      const rulesToUse = getRulesBeforeKey(theoremKey, rulesForWorker);
+
       if (preferredRule) {
-        const attempts: Array<{ target: string; ruleSide: string; otherSide: string; expected: string; targetForOperands: string; side: 'left' | 'right' }> = [
-          { target: left, ruleSide: preferredRule.leftSide, otherSide: preferredRule.rightSide, expected: right, targetForOperands: left, side: 'left' },
-          { target: left, ruleSide: preferredRule.rightSide, otherSide: preferredRule.leftSide, expected: right, targetForOperands: left, side: 'left' },
-          { target: right, ruleSide: preferredRule.leftSide, otherSide: preferredRule.rightSide, expected: left, targetForOperands: right, side: 'right' },
-          { target: right, ruleSide: preferredRule.rightSide, otherSide: preferredRule.leftSide, expected: left, targetForOperands: right, side: 'right' },
-        ];
-        for (const a of attempts) {
-          try {
-            const r = trySubstitution(a.target, a.ruleSide, a.otherSide, a.expected, a.targetForOperands, a.side, undefined, undefined);
-            if (r?.match && r.reconstructedExpr != null) {
-              setCustomTransitionResults((prev) => ({ ...prev, [customId]: true }));
-              setCustomTransitionVerifying(null);
-              return;
-            }
-          } catch {
-            // continue to next attempt
+        try {
+          const r = trySubstitutionByMatchPairs(left, right, preferredRule.leftSide, preferredRule.rightSide, undefined);
+          if (r?.match && r.reconstructedExpr != null) {
+            setCustomTransitionResults((prev) => ({ ...prev, [customId]: true }));
+            setCustomTransitionVerifying(null);
+            return;
           }
+        } catch {
+          // fall through to worker
         }
       }
 
@@ -331,7 +406,7 @@ const ProofSteps: React.FC = () => {
         const result: VerifyTransitionResult = await verifyTransitionWorker({
           targetLeft: left,
           targetRight: right,
-          rules: rulesForWorker,
+          rules: rulesToUse,
         });
         setCustomTransitionResults((prev) => ({ ...prev, [customId]: result.matched }));
       } catch (err) {
@@ -390,39 +465,45 @@ const ProofSteps: React.FC = () => {
                 : undefined;
             })();
 
+          const preferredRuleIsCurrentTheorem =
+            preferredRule &&
+            !parsedOverride &&
+            (() => {
+              const { ruleStr } = parseKey(key);
+              const [pLeft, pRight] = [preferredRule.leftSide, preferredRule.rightSide].map(normalizeSpacing);
+              const [kLeft, kRight] = ruleStr
+                .split(/\s*⟺\s*/)
+                .map((s) => normalizeSpacing(s.trim()));
+              return (pLeft === kLeft && pRight === kRight) || (pLeft === kRight && pRight === kLeft);
+            })();
+
+          const rulesToUse = getRulesBeforeKey(key, rulesForWorker);
+
           // Try preferred rule first (same as verifySingleTransition)
           let matched = false;
-          if (preferredRule) {
-            const attempts: Array<{ target: string; ruleSide: string; otherSide: string; expected: string; targetForOperands: string; side: 'left' | 'right' }> = [
-              { target: left, ruleSide: preferredRule.leftSide, otherSide: preferredRule.rightSide, expected: right, targetForOperands: left, side: 'left' },
-              { target: left, ruleSide: preferredRule.rightSide, otherSide: preferredRule.leftSide, expected: right, targetForOperands: left, side: 'left' },
-              { target: right, ruleSide: preferredRule.leftSide, otherSide: preferredRule.rightSide, expected: left, targetForOperands: right, side: 'right' },
-              { target: right, ruleSide: preferredRule.rightSide, otherSide: preferredRule.leftSide, expected: left, targetForOperands: right, side: 'right' },
-            ];
-            for (const a of attempts) {
-              try {
-                const r = trySubstitution(a.target, a.ruleSide, a.otherSide, a.expected, a.targetForOperands, a.side, undefined, undefined);
-                if (r?.match && r.reconstructedExpr != null) {
-                  const pos = r.position;
-                  const matchInfo: MatchInfo = {
-                    matchedRuleId: preferredRule.id,
-                    description: pos?.description,
-                    startPosition: pos?.position,
-                    side: pos?.side,
-                    ruleLeft: preferredRule.leftSide,
-                    ruleRight: preferredRule.rightSide,
-                    inferenceRuleName: 'Equivalent Substitution',
-                    nodeMap: pos?.nodeMapping ? Object.fromEntries(pos.nodeMapping) : undefined,
-                    unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,
-                  };
-                  setTransitionResults((prev) => ({ ...prev, [key]: { ...prev[key], [i]: true } }));
-                  setTransitionMatchInfo((prev) => ({ ...prev, [key]: { ...prev[key], [i]: matchInfo } }));
-                  matched = true;
-                  break;
-                }
-              } catch {
-                // continue to next attempt
+          if (preferredRule && !preferredRuleIsCurrentTheorem) {
+            try {
+              const r = trySubstitutionByMatchPairs(left, right, preferredRule.leftSide, preferredRule.rightSide, undefined);
+              if (r?.match && r.reconstructedExpr != null) {
+                const pos = r.position;
+                const matchInfo: MatchInfo = {
+                  matchedRuleId: preferredRule.id,
+                  description: pos?.description,
+                  startPosition: pos?.position,
+                  side: pos?.side,
+                  ruleLeft: preferredRule.leftSide,
+                  ruleRight: preferredRule.rightSide,
+                  inferenceRuleName: 'Equivalent Substitution',
+                  nodeMap: pos?.nodeMapping ? Object.fromEntries(pos.nodeMapping) : undefined,
+                  unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,
+                  tcMapping: pos?.tcMapping,
+                };
+                setTransitionResults((prev) => ({ ...prev, [key]: { ...prev[key], [i]: true } }));
+                setTransitionMatchInfo((prev) => ({ ...prev, [key]: { ...prev[key], [i]: matchInfo } }));
+                matched = true;
               }
+            } catch {
+              // fall through to worker
             }
           }
           
@@ -432,7 +513,7 @@ const ProofSteps: React.FC = () => {
               const result: VerifyTransitionResult = await verifyTransitionWorker({
                 targetLeft: left,
                 targetRight: right,
-                rules: rulesForWorker,
+                rules: rulesToUse,
               });
               setTransitionResults((prev) => ({
                 ...prev,
@@ -473,6 +554,8 @@ const ProofSteps: React.FC = () => {
     },
     [table, theoremVerifyingAll, transitionVerifying, rulesForWorker, customRuleInputs]
   );
+
+  const [chapterCheckingAll, setChapterCheckingAll] = useState(false);
 
   const handleInsertStep = React.useCallback((key: string, insertAtIndex: number, newExpr: string) => {
     setTable((prev) => {
@@ -515,7 +598,7 @@ const ProofSteps: React.FC = () => {
       .filter(([, steps]) => steps.length > 0)
       .map(([key, steps]) => {
         const { filename, index, ruleStr } = parseKey(key);
-        return { key, filename, index, ruleStr, steps };
+        return { key, filename, index, ruleStr, steps, ruleName: getRuleNameForRuleStr(ruleStr) };
       })
       .sort((a, b) => {
         const cmp = getChapterIndex(a.filename) - getChapterIndex(b.filename);
@@ -529,6 +612,13 @@ const ProofSteps: React.FC = () => {
     return Array.from(set).sort((a, b) => getChapterIndex(a) - getChapterIndex(b));
   }, [theoremsWithSteps]);
 
+  /** Sequential 1-based index for displayed chapters (no gaps). */
+  const chapterDisplayIndex = React.useMemo(() => {
+    const map: Record<string, number> = {};
+    chapters.forEach((ch, idx) => { map[ch] = idx + 1; });
+    return map;
+  }, [chapters]);
+
   const filtered = React.useMemo(() => {
     let list = theoremsWithSteps;
     if (chapter !== 'all') {
@@ -539,11 +629,73 @@ const ProofSteps: React.FC = () => {
       list = list.filter(
         (t) =>
           t.filename.toLowerCase().includes(q) ||
-          t.ruleStr.toLowerCase().includes(q)
+          t.ruleStr.toLowerCase().includes(q) ||
+          (t.ruleName?.toLowerCase().includes(q) ?? false)
       );
     }
     return list;
   }, [theoremsWithSteps, chapter, search]);
+
+  const checkAllProofStepsInChapter = React.useCallback(async () => {
+    if (chapter === 'all' || chapterCheckingAll || theoremVerifyingAll || transitionVerifying) return;
+    const toCheck = filtered.filter((t) => (table?.[t.key]?.length ?? 0) >= 2);
+    if (toCheck.length === 0) return;
+    setChapterCheckingAll(true);
+    try {
+      for (const t of toCheck) {
+        await verifyAllTransitions(t.key);
+      }
+    } finally {
+      setChapterCheckingAll(false);
+    }
+  }, [chapter, chapterCheckingAll, theoremVerifyingAll, transitionVerifying, filtered, table, verifyAllTransitions]);
+
+  const downloadChapterResults = React.useCallback(() => {
+    if (chapter === 'all') return;
+    const results: Array<{
+      key: string;
+      ruleStr: string;
+      ruleName?: string;
+      steps: string[];
+      transitions: Array<{
+        index: number;
+        left: string;
+        right: string;
+        matched: boolean;
+        patternLeft?: string;
+        patternRight?: string;
+        tcMapping?: Record<string, string[]>;
+      }>;
+    }> = [];
+    for (const t of filtered) {
+      const steps = table?.[t.key] ?? [];
+      const transitions: (typeof results)[0]['transitions'] = [];
+      for (let i = 0; i < steps.length - 1; i++) {
+        const left = steps[i] ?? '';
+        const right = steps[i + 1] ?? '';
+        const matched = transitionResults[t.key]?.[i] === true;
+        const matchInfo = transitionMatchInfo[t.key]?.[i];
+        transitions.push({
+          index: i,
+          left,
+          right,
+          matched,
+          patternLeft: matchInfo?.ruleLeft,
+          patternRight: matchInfo?.ruleRight,
+          tcMapping: matchInfo?.tcMapping,
+        });
+      }
+      results.push({ key: t.key, ruleStr: t.ruleStr, ruleName: t.ruleName, steps, transitions });
+    }
+    const blob = new Blob([JSON.stringify({ chapter, theorems: results }, null, 2)], {
+      type: 'application/json',
+    });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `proof-steps-${chapter.replace(/[^a-z0-9]+/gi, '-')}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }, [chapter, filtered, table, transitionResults, transitionMatchInfo]);
 
   const groupedByChapter = React.useMemo(() => {
     const groups: Record<string, TheoremWithSteps[]> = {};
@@ -676,11 +828,37 @@ const ProofSteps: React.FC = () => {
                 <SelectItem value="all">All chapters</SelectItem>
                 {chapters.map((ch) => (
                   <SelectItem key={ch} value={ch}>
-                    {getChapterIndex(ch) < 99 ? `${getChapterIndex(ch)}. ` : ''}{ch}
+                    {chapterDisplayIndex[ch]}. {ch}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            {chapter !== 'all' && (
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={checkAllProofStepsInChapter}
+                  disabled={chapterCheckingAll || !!theoremVerifyingAll || !!transitionVerifying || filtered.filter((t) => (table?.[t.key]?.length ?? 0) >= 2).length === 0}
+                >
+                  {chapterCheckingAll ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
+                  ) : (
+                    <CheckCheck className="h-4 w-4 mr-1.5" />
+                  )}
+                  Check all
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={downloadChapterResults}
+                  disabled={filtered.length === 0}
+                >
+                  <Download className="h-4 w-4 mr-1.5" />
+                  Download
+                </Button>
+              </div>
+            )}
           </div>
 
           <ScrollArea className="h-[calc(100vh-14rem)]">
@@ -692,7 +870,7 @@ const ProofSteps: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <ChevronRight className="h-4 w-4 transition-transform" />
                         <span className="font-semibold text-sm">
-                          {getChapterIndex(chapterName) < 99 ? `Ch. ${getChapterIndex(chapterName)}: ` : ''}
+                          {chapterDisplayIndex[chapterName] != null ? `Ch. ${chapterDisplayIndex[chapterName]}: ` : ''}
                           {chapterName.replace(/_/g, ' ')}
                         </span>
                         <Badge variant="secondary" className="text-xs">{theorems.length}</Badge>
@@ -821,6 +999,11 @@ function TheoremCard({
                   <FileText className="w-3 h-3 mr-1" />
                   {theorem.filename}
                 </Badge>
+                {theorem.ruleName && (
+                  <Badge variant="outline" className="text-xs" title="Searchable in Rules panel">
+                    {theorem.ruleName}
+                  </Badge>
+                )}
                 <Badge variant="outline" className="text-xs">
                   <ListOrdered className="w-3 h-3 mr-1" />
                   {theorem.steps.length} steps
@@ -1330,7 +1513,14 @@ function MatchInfoDisplay({
       >
         <CheckCircle2 className="w-3.5 h-3.5 text-green-600 dark:text-green-400 shrink-0" />
         <span className="font-medium text-green-700 dark:text-green-300">Check passed</span>
-        <span className="text-muted-foreground ml-auto">
+        {(matchInfo.ruleLeft != null || matchInfo.ruleRight != null) && (
+          <span className="text-muted-foreground font-mono text-[11px] truncate flex-1 min-w-0 inline-flex items-center gap-0.5">
+            <ExpressionRenderer expression={matchInfo.ruleLeft ?? ','} size={11} />
+            <EquivalenceSymbol size={11} className="shrink-0" />
+            <ExpressionRenderer expression={matchInfo.ruleRight ?? ','} size={11} />
+          </span>
+        )}
+        <span className="text-muted-foreground shrink-0">
           {expanded ? <ChevronDown className="w-3 h-3 inline" /> : <ChevronRight className="w-3 h-3 inline" />}
         </span>
       </button>
@@ -1348,11 +1538,9 @@ function MatchInfoDisplay({
           )}
           {(matchInfo.ruleLeft != null || matchInfo.ruleRight != null) && (
             <div>
-              <div className="font-medium text-foreground/80 mb-1">Pattern rule:</div>
-              <div className="font-mono text-muted-foreground flex flex-wrap items-center gap-1">
-                <ExpressionRenderer expression={matchInfo.ruleLeft ?? ','} size={12} />
-                <EquivalenceSymbol size={12} className="shrink-0 text-muted-foreground" />
-                <ExpressionRenderer expression={matchInfo.ruleRight ?? ','} size={12} />
+              <div className="font-medium text-foreground/80 mb-1">Pattern rule (exact string):</div>
+              <div className="font-mono text-muted-foreground text-[11px] break-all">
+                {`${matchInfo.ruleLeft ?? ','} ⇔ ${matchInfo.ruleRight ?? ','}`}
               </div>
             </div>
           )}
@@ -1371,6 +1559,28 @@ function MatchInfoDisplay({
                     <span className="shrink-0">{patternId}</span>
                     <span className="text-muted-foreground/80">→</span>
                     <span>{targetId}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {matchInfo.tcMapping && Object.keys(matchInfo.tcMapping).length > 0 && (
+            <div>
+              <div className="font-medium text-foreground/80 mb-1">\Tc mapping (operand → target expression):</div>
+              <div className="font-mono text-muted-foreground space-y-1 max-h-40 overflow-y-auto">
+                {Object.entries(matchInfo.tcMapping).map(([op, exprs]) => (
+                  <div key={op} className="flex flex-col gap-0.5">
+                    <span className="text-foreground/90">
+                      <span className="text-primary">\Tc {op}</span>
+                      <span className="text-muted-foreground/80 mx-1">→</span>
+                    </span>
+                    <div className="pl-2 space-y-0.5">
+                      {exprs.map((e, i) => (
+                        <div key={i} className="text-[11px] break-all">
+                          <ExpressionRenderer expression={e || ','} size={11} />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>

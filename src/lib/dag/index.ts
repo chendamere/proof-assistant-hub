@@ -7,4 +7,4 @@ export { exprToDAG } from './exprToDAG';
 export { dagToExpr } from './dagToExpr';
 export { SingleRootDAGInjection } from './DAGInjection';
 export { substituteInDAG, substituteInDAGPartialFactor, getPrefixAndSuffixDAG } from './dagSubstitute';
-export { extractSubgraphFromNode, extractSubgraphIncomingFromNode, augmentTargetDAGForTcMatching, addTcShortcutEdges, countOperations, extractOperators, patternOpMultisetContainedInTarget, trimEdges } from './utils';
+export { extractSubgraphFromNode, extractSubgraphFromNodeExcludingTail, extractSubgraphIncomingFromNode, countOperations, extractOperators, patternOpMultisetContainedInTarget, trimEdges } from './utils';

@@ -1,37 +1,28 @@
 /**
- * Web Worker for trySubstitution.
+ * Web Worker for trySubstitutionByMatchPairs.
  * Offloads heavy VF2/DAG work from the main thread to avoid UI freezes.
  */
 
-import { trySubstitution } from '@/lib/inferenceRules/substitution';
+import { trySubstitutionByMatchPairs } from '@/lib/inferenceRules/substitution';
 
 export type SubstitutionRequest = {
   id: string;
-  target: string;
-  ruleSide: string;
-  otherRuleSide: string;
-  expectedResult: string;
-  targetSideForOperands: string;
-  side: 'left' | 'right';
+  targetLeft: string;
+  targetRight: string;
+  ruleLeft: string;
+  ruleRight: string;
 };
 
 export type SubstitutionResponse = {
   id: string;
-  result: ReturnType<typeof trySubstitution>;
+  result: ReturnType<typeof trySubstitutionByMatchPairs>;
   error?: string;
 };
 
 self.onmessage = (e: MessageEvent<SubstitutionRequest>) => {
-  const { id, target, ruleSide, otherRuleSide, expectedResult, targetSideForOperands, side } = e.data;
+  const { id, targetLeft, targetRight, ruleLeft, ruleRight } = e.data;
   try {
-    const result = trySubstitution(
-      target,
-      ruleSide,
-      otherRuleSide,
-      expectedResult,
-      targetSideForOperands,
-      side
-    );
+    const result = trySubstitutionByMatchPairs(targetLeft, targetRight, ruleLeft, ruleRight, undefined);
     const response: SubstitutionResponse = { id, result };
     self.postMessage(response);
   } catch (err) {

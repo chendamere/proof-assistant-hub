@@ -18,6 +18,8 @@ export interface MatchPosition {
   nodeMapping?: Map<string, string>; // patternNodeId -> targetNodeId (VF2 result)
   /** Unmatched target nodes (op|operands) when check passed; context that stayed the same. */
   unmatchedTargetNodeSignatures?: string[];
+  /** When rule has \\Tc: operand → target expression(s) it mapped to (for display). */
+  tcMapping?: Record<string, string[]>;
 }
 
 export interface InferenceRuleContext {

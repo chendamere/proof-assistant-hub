@@ -8,7 +8,6 @@ import { useState, useEffect, useCallback } from 'react';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import { exprToDAG, SingleRootDAGInjection } from '@/lib/dag';
-import { findSubstitution as findSubst } from '@/lib/inferenceRules/substitution';
 import { trySubstitutionWorker } from '@/lib/substitutionWorkerClient';
 import { normalizeSpacing } from '@/lib/inferenceRules/utils';
 import { DAGGraphVisual } from '@/components/dag/DAGGraphVisual';
@@ -162,51 +161,18 @@ function TrySubstitutionSection() {
   const [selected, setSelected] = useState(TRY_SUB_EXAMPLES[0].name);
   const ex = TRY_SUB_EXAMPLES.find((e) => e.name === selected) ?? TRY_SUB_EXAMPLES[0];
   const [loading, setLoading] = useState(true);
-  const [results, setResults] = useState<{
-    leftRuleLeft: Awaited<ReturnType<typeof trySubstitutionWorker>>;
-    leftRuleRight: Awaited<ReturnType<typeof trySubstitutionWorker>>;
-    rightRuleLeft: Awaited<ReturnType<typeof trySubstitutionWorker>>;
-    rightRuleRight: Awaited<ReturnType<typeof trySubstitutionWorker>>;
-  } | null>(null);
+  const [result, setResult] = useState<Awaited<ReturnType<typeof trySubstitutionWorker>> | null>(null);
 
   const runSubstitutions = useCallback(async () => {
     setLoading(true);
     try {
-      const [leftRuleLeft, leftRuleRight, rightRuleLeft, rightRuleRight] = await Promise.all([
-        trySubstitutionWorker({
-          target: ex.targetLeft,
-          ruleSide: ex.ruleLeft,
-          otherRuleSide: ex.ruleRight,
-          expectedResult: ex.targetRight,
-          targetSideForOperands: ex.targetLeft,
-          side: 'left',
-        }).catch(() => null),
-        trySubstitutionWorker({
-          target: ex.targetLeft,
-          ruleSide: ex.ruleRight,
-          otherRuleSide: ex.ruleLeft,
-          expectedResult: ex.targetRight,
-          targetSideForOperands: ex.targetLeft,
-          side: 'left',
-        }).catch(() => null),
-        trySubstitutionWorker({
-          target: ex.targetRight,
-          ruleSide: ex.ruleLeft,
-          otherRuleSide: ex.ruleRight,
-          expectedResult: ex.targetLeft,
-          targetSideForOperands: ex.targetRight,
-          side: 'right',
-        }).catch(() => null),
-        trySubstitutionWorker({
-          target: ex.targetRight,
-          ruleSide: ex.ruleRight,
-          otherRuleSide: ex.ruleLeft,
-          expectedResult: ex.targetLeft,
-          targetSideForOperands: ex.targetRight,
-          side: 'right',
-        }).catch(() => null),
-      ]);
-      setResults({ leftRuleLeft, leftRuleRight, rightRuleLeft, rightRuleRight });
+      const r = await trySubstitutionWorker({
+        targetLeft: ex.targetLeft,
+        targetRight: ex.targetRight,
+        ruleLeft: ex.ruleLeft,
+        ruleRight: ex.ruleRight,
+      }).catch(() => null);
+      setResult(r);
     } finally {
       setLoading(false);
     }
@@ -216,17 +182,8 @@ function TrySubstitutionSection() {
     runSubstitutions();
   }, [runSubstitutions]);
 
-  const matchResult = results?.leftRuleLeft ?? results?.leftRuleRight ?? results?.rightRuleLeft ?? results?.rightRuleRight ?? null;
-  const matchDirection =
-    results?.leftRuleLeft
-      ? 'targetLeft: ruleLeft→ruleRight'
-      : results?.leftRuleRight
-        ? 'targetLeft: ruleRight→ruleLeft'
-        : results?.rightRuleLeft
-          ? 'targetRight: ruleLeft→ruleRight'
-          : results?.rightRuleRight
-            ? 'targetRight: ruleRight→ruleLeft'
-            : null;
+  const matchResult = result;
+  const matchDirection = result?.matchDirections?.[0] ?? null;
 
   return (
     <div className="space-y-6">
@@ -310,10 +267,6 @@ export default function SubstitutionDAGDemo() {
   const normalizedTarget = normalizeSpacing(targetExpr);
   const patternDAG = exprToDAG(ruleExpr);
   const targetDAG = exprToDAG(normalizedTarget);
-
-  // Try to find substitution match in target
-  const subResult = findSubst(normalizedTarget, ruleExpr, 'left');
-  const matchFound = subResult.match;
 
   // Check if rule DAG is isomorphic to (subgraph of) target DAG
   let vf2Result: { mapping: Map<string, string>; operandMapping: Map<string, string> } | null = null;
@@ -457,23 +410,15 @@ export default function SubstitutionDAGDemo() {
                 )}
               </div>
               <div className="flex items-center gap-4">
-                <Badge variant={matchFound ? 'default' : 'secondary'}>
-                  findSubstitution: {matchFound ? 'Match found' : 'No match'}
+                <Badge variant={vf2Result ? 'default' : 'secondary'}>
+                  Match: {vf2Result ? 'Found' : 'None'}
                 </Badge>
               </div>
             </div>
           </AccordionContent>
         </AccordionItem>
 
-        {/* Try Substitution */}
-        <AccordionItem value="try-sub" className="border rounded-lg">
-          <AccordionTrigger className="px-4 py-3 hover:no-underline text-base font-semibold">
-            Try Substitution Demo
-          </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4">
-            <TrySubstitutionSection />
-          </AccordionContent>
-        </AccordionItem>
+        {/* Try Substitution - disabled */}
       </Accordion>
       </div>
       <Footer />

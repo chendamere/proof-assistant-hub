@@ -21,6 +21,8 @@ function formatOp(data: ExprNodeData, subst?: Map<string, string>, literalTc?: b
   if (op === '\\+' && ops.length === 3) return `${ops[0]}+${ops[1]}:${ops[2]}`;
   // \times: "a \times b : c" form (3 operands: left, right, result)
   if (op === '\\times' && ops.length === 3) return `${ops[0]} \\times ${ops[1]} : ${ops[2]}`;
+  // Function-like: Ins(t;j), Del(j), In(t;j), R(m), Rc(m;n)
+  if (['Ins', 'Del', 'In', 'R', 'Rc'].includes(op) && ops.length >= 1) return `${op}(${ops.join(';')})`;
   if (ops.length >= 2) return `${ops[0]} ${op} ${ops[1]}`;
   if (ops.length === 1 && OPERAND_FIRST_UNARY_OPS.has(op)) return `${ops[0]} ${op}`;
   if (ops.length === 1) return `${op} ${ops[0]}`;
@@ -266,10 +268,9 @@ export function dagToExpr(
     const [r0, r1] = roots;
     visited.add(r0);
     visited.add(r1);
-    const topParts = serializeChainUntilBranch(r0).parts;
-    const botParts = serializeChainUntilBranch(r1).parts;
-    const topStr = topParts.length ? ',' + topParts.join(', ') + ',' : '';
-    const botStr = botParts.length ? ',' + botParts.join(', ') + ',' : '';
+    // Use serializeArmContent so arms can be chains (\Or, \Tc c) or nested branches (:cond)
+    const topStr = serializeArmContent(r0);
+    const botStr = serializeArmContent(r1);
     const tailKind = getReachableTailBranchKind([r0, r1]);
     const brOp = tailKind === 'Brs' ? 'Brs' : 'Brb';
     itemParts.push(`, \\${brOp}{${topStr}}{${botStr}}`);

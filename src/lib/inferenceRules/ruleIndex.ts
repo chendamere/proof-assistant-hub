@@ -5,6 +5,7 @@
 
 import type { DAGStructure } from '../dag';
 import type { ExprNodeData } from '../dag/types';
+
 import { exprToDAG, countOperations, extractOperators } from '../dag';
 import { normalizeSpacing } from './utils';
 import { ruleStatistics } from './ruleStatistics';

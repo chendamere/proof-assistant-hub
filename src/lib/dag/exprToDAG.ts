@@ -64,13 +64,32 @@ function extractTimesOperations(expr: string): Array<{ op: string; operands: str
   return ops;
 }
 
+/** Function-like ops: Ins(t;j), Del(j), In(t;j), R(m), Rc(m;n). No backslash prefix. */
+const FUNCLIKE_PATTERN = /\b(Ins|Del|In|Rc|R)\(([^)]*)\)/g;
+
+function extractFunctionLikeOperations(expr: string): Array<{ op: string; operands: string[]; start: number; end: number }> {
+  const ops: Array<{ op: string; operands: string[]; start: number; end: number }> = [];
+  let m: RegExpExecArray | null;
+  FUNCLIKE_PATTERN.lastIndex = 0;
+  while ((m = FUNCLIKE_PATTERN.exec(expr)) !== null) {
+    const opName = m[1]!;
+    const args = m[2]!.split(';').map((s) => s.trim()).filter(Boolean);
+    const start = m.index;
+    const end = m.index + m[0].length;
+    ops.push({ op: opName, operands: args, start, end });
+  }
+  return ops;
+}
+
 /** Extract operations from a flat (no branches) comma-separated expression */
 function extractOperations(expr: string): Array<{ op: string; operands: string[]; start: number; end: number }> {
   const plusOps = extractPlusOperations(expr);
   const timesOps = extractTimesOperations(expr);
-  const specialOps = [...plusOps, ...timesOps];
+  const funcLikeOps = extractFunctionLikeOperations(expr);
+  const specialOps = [...plusOps, ...timesOps, ...funcLikeOps];
   const ops: Array<{ op: string; operands: string[]; start: number; end: number }> = [];
-  const operatorPattern = /\\([A-Z][a-z]*)\b/g;
+  // Match \Op, \On, \nPs, \nPu, etc. The optional leading 'n' captures negated operators (\nPs, \nPu, \nPe, ...).
+  const operatorPattern = /\\(n?[A-Z][a-z]*)\b/g;
   let match;
 
   while ((match = operatorPattern.exec(expr)) !== null) {
@@ -144,9 +163,9 @@ function extractOperations(expr: string): Array<{ op: string; operands: string[]
   return merged;
 }
 
-/** If condition is if(...), extract only the content between parentheses. */
+/** If condition is if(...), extract only the content between parentheses. Trim leading/trailing commas (e.g. ",m \\Pe n," -> "m \\Pe n"). */
 function normalizeBranchCondition(cond: string): string {
-  const t = cond.trim();
+  let t = cond.trim().replace(/^[\s,]+|[\s,]+$/g, '').trim();
   if (t.startsWith('if(')) {
     let depth = 1;
     let i = 3;
@@ -154,12 +173,12 @@ function normalizeBranchCondition(cond: string): string {
       if (t[i] === '(') depth++;
       else if (t[i] === ')') {
         depth--;
-        if (depth === 0) return t.substring(3, i).trim();
+        if (depth === 0) return t.substring(3, i).trim().replace(/^[\s,]+|[\s,]+$/g, '').trim();
       }
       i++;
     }
   }
-  return cond;
+  return t;
 }
 
 /** Parse a condition like "i \\Oe j" into { op: "\\Oe", operands: ["i","j"] }. Returns null if no op found. */
@@ -192,15 +211,17 @@ function parseBranchAtStart(
   const bb = trimmed.match(/^[\s,]*\\Bb\s*\{/);
   const bs = trimmed.match(/^[\s,]*\\Bs\s*\{/);
   const blb = trimmed.match(/^[\s,]*\\Blb\s*\{/);
+  const bls = trimmed.match(/^[\s,]*\\Bls\s*\{/);
   const brb = trimmed.match(/^[\s,]*\\Brb\s*\{/);
   const brs = trimmed.match(/^[\s,]*\\Brs\s*\{/);
 
-  const candidates: { m: RegExpMatchArray; kind: 'Bb' | 'Blb' | 'Brb' | 'Brs' }[] = [];
+  const candidates: { m: RegExpMatchArray; kind: 'Bb' | 'Blb' | 'Brb' }[] = [];
   if (bb) candidates.push({ m: bb, kind: 'Bb' });
   if (bs) candidates.push({ m: bs, kind: 'Bb' });
   if (blb) candidates.push({ m: blb, kind: 'Blb' });
+  if (bls) candidates.push({ m: bls, kind: 'Blb' });
   if (brb) candidates.push({ m: brb, kind: 'Brb' });
-  if (brs) candidates.push({ m: brs, kind: 'Brs' });
+  if (brs) candidates.push({ m: brs, kind: 'Brb' });
   if (candidates.length === 0) return null;
 
   candidates.sort((a, b) => a.m.index! - b.m.index!);
@@ -274,8 +295,9 @@ function buildItem(
   const trimmedOffset = offset + (trimStart >= 0 ? trimStart : 0);
 
   const branch = parseBranchAtStart(trimmed);
-  if (branch) {
-    if (branch.kind === 'Brb' || branch.kind === 'Brs') {
+  const hasRemainderAfterBranch = branch != null && trimmed.substring(branch.bottomEnd).trim().length > 0;
+  if (branch && !hasRemainderAfterBranch) {
+    if (branch.kind === 'Brb') {
       const topBracePos = trimmed.indexOf('{');
       const topRes = topBracePos >= 0 ? parseOneBraced(trimmed, topBracePos) : null;
       const botRes = topRes ? parseOneBraced(trimmed, topRes.end) : null;
@@ -372,8 +394,9 @@ function buildItem(
     return { firstId: condHeadId, lastId: tailId };
   }
 
-  // When item contains a branch not at the start (e.g. ",\Os j, \Bb{...},"), split and build each part so branches are parsed correctly.
-  if (/[{}]/.test(trimmed) && hasBranch(trimmed)) {
+  // When item contains a branch not at the start (e.g. ",\Os j, \Bb{...},"), or "branch, more" (e.g. ", \Bb{...}{,}{,}, \Or,"),
+  // split and build each part so we don't drop content after the branch.
+  if (/[{}]/.test(trimmed) && hasBranch(trimmed) && (hasRemainderAfterBranch || !branch)) {
     const parts = splitSequence(trimmed);
     let first: BuildResult = null;
     let prev: BuildResult = null;
@@ -393,7 +416,7 @@ function buildItem(
       const lid = prev.lastId ?? prev.lastIds?.[0] ?? prev.firstId!;
       return { firstId: fid, lastId: lid };
     }
-    return prev;
+    if (prev) return prev;
   }
 
   const ops = extractOperations(trimmed);

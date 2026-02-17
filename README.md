@@ -91,7 +91,7 @@ Expression string
 | Module | Entry | Purpose |
 |--------|-------|---------|
 | `inferenceRules` | `checkInferenceRules` | Apply all inference rules |
-| `substitution` | `findSubstitution`, `trySubstitution` | DAG-based rule matching and substitution |
+| `substitution` | `trySubstitutionByMatchPairs` | DAG-based rule matching and substitution |
 | `dag` | `exprToDAG`, `dagToExpr` | Expression ↔ DAG conversion |
 | `dag` | `SingleRootDAGInjection` | Subgraph injection with operand binding |
 | `dag` | `substituteInDAG` | Replace matched subgraph with replacement DAG |

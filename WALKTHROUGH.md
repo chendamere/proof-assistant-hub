@@ -48,7 +48,7 @@ The `check()` function receives:
 The code tries 4 cases:
 
 ### Case 1: targetLeft contains ruleLeft
-`findSubstitution(",1  \Oc 2,", ",", 'left')`
+Case 1: Match `,` in targetLeft
 
 **Process:**
 1. Extract operand tokens:
@@ -66,7 +66,7 @@ The code tries 4 cases:
    - ❌ NO MATCH (different patterns)
 
 ### Case 2: targetLeft contains ruleRight
-`findSubstitution(",1  \Oc 2,", ", 1 \Oc 2, 2 \Os,", 'left')`
+Case 2: Match `, 1 \Oc 2, 2 \Os,` in targetLeft
 
 **Process:**
 1. Extract operand tokens:
@@ -76,7 +76,7 @@ The code tries 4 cases:
 2. Check: `ruleTokens.length (3) > targetTokens.length (2)` → ❌ NO MATCH
 
 ### Case 3: targetRight contains ruleLeft
-`findSubstitution(",1  \Oc 2, 3 \Oc 4, 4 \Os,", ",", 'right')`
+Case 3: Match `,` in targetRight
 
 **Process:**
 1. Extract operand tokens:
@@ -92,7 +92,7 @@ The code tries 4 cases:
    - ❌ NO MATCH
 
 ### Case 4: targetRight contains ruleRight ⭐
-`findSubstitution(",1  \Oc 2, 3 \Oc 4, 4 \Os,", ", 1 \Oc 2, 2 \Os,", 'right')`
+Case 4: Match `, 1 \Oc 2, 2 \Os,` in targetRight
 
 **Process:**
 1. Extract operand tokens:

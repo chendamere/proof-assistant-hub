@@ -8,7 +8,7 @@
  */
 
 import { InferenceRule } from './types';
-import { trySubstitution, trySubstitutionByMatchPairs } from './substitution';
+import { trySubstitutionByMatchPairs } from './substitution';
 import { normalizeSpacing } from './utils';
 import { normalizeRule as normalizeRuleOperands } from '../operandNormalizer';
 
@@ -108,20 +108,6 @@ export const InferenceRules: InferenceRule[] = [
       // AND ruleRight in targetRight), reconstruction exists—skip expensive construction.
       const matchPairsResult = trySubstitutionByMatchPairs(targetLeft, targetRight, ruleLeft, ruleRight, stepCounter);
       if (matchPairsResult?.match) return matchPairsResult;
-
-      // Fallback: try all 4 substitution directions with full construction
-      // let result = trySubstitution(targetLeft, ruleLeft, ruleRight, targetRight, targetLeft, 'left', stepCounter, dagCache);
-      // if (result) return result;
-
-      // result = trySubstitution(targetLeft, ruleRight, ruleLeft, targetRight, targetLeft, 'left', stepCounter, dagCache);
-      // if (result) return result;
-
-      // result = trySubstitution(targetRight, ruleLeft, ruleRight, targetLeft, ruleRight, 'right', stepCounter, dagCache);
-      // if (result) return result;
-
-      // result = trySubstitution(targetRight, ruleRight, ruleLeft, targetLeft, ruleRight, 'right', stepCounter, dagCache);
-      // if (result) return result;
-
       return { match: false };
     },
   },
