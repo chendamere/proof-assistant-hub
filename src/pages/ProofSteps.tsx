@@ -25,6 +25,7 @@ import { theorems } from '@/data/theorems';
 import { Button } from '@/components/ui/button';
 import { Search, ChevronDown, ChevronRight, FileText, ListOrdered, CheckCircle2, Check, X, AlertTriangle, Info, Plus, Trash2, CheckCheck, PlayCircle, Loader2, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 type ProofStepsTable = Record<string, string[]>;
 
@@ -188,6 +189,7 @@ function getRuleNameForRuleStr(ruleStr: string): string | undefined {
 const ProofSteps: React.FC = () => {
   const { isWorkbenchExpanded, isRulesPanelOpen, setDebugWorkbenchExpressions } = usePanelContext();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [table, setTable] = useState<ProofStepsTable | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -420,12 +422,13 @@ const ProofSteps: React.FC = () => {
   );
 
   const verifyAllTransitions = React.useCallback(
-    async (key: string) => {
-      if (theoremVerifyingAll || transitionVerifying) return;
+    async (key: string): Promise<Record<number, boolean>> => {
+      if (theoremVerifyingAll || transitionVerifying) return {};
       const steps = table?.[key];
-      if (!steps || steps.length < 2) return;
+      if (!steps || steps.length < 2) return {};
       
       setTheoremVerifyingAll(key);
+      const results: Record<number, boolean> = {};
       
       try {
         // Verify all transitions sequentially
@@ -443,6 +446,7 @@ const ProofSteps: React.FC = () => {
           const parsedOverride = parseRuleOverride(ruleOverride ?? '', `${key}-override`);
           if (parsedOverride && !ruleExistsInDatabase(parsedOverride.leftSide, parsedOverride.rightSide)) {
             setRuleValidationError((prev) => ({ ...prev, [transitionId]: 'Rule not found in database' }));
+            results[i] = false;
             setTransitionResults((prev) => ({
               ...prev,
               [key]: { ...prev[key], [i]: false },
@@ -498,6 +502,7 @@ const ProofSteps: React.FC = () => {
                   unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,
                   tcMapping: pos?.tcMapping,
                 };
+                results[i] = true;
                 setTransitionResults((prev) => ({ ...prev, [key]: { ...prev[key], [i]: true } }));
                 setTransitionMatchInfo((prev) => ({ ...prev, [key]: { ...prev[key], [i]: matchInfo } }));
                 matched = true;
@@ -515,6 +520,7 @@ const ProofSteps: React.FC = () => {
                 targetRight: right,
                 rules: rulesToUse,
               });
+              results[i] = result.matched;
               setTransitionResults((prev) => ({
                 ...prev,
                 [key]: { ...prev[key], [i]: result.matched },
@@ -541,6 +547,7 @@ const ProofSteps: React.FC = () => {
               }
             } catch (err) {
               console.error(`Transition ${i} verification error:`, err);
+              results[i] = false;
               setTransitionResults((prev) => ({
                 ...prev,
                 [key]: { ...prev[key], [i]: false },
@@ -548,6 +555,7 @@ const ProofSteps: React.FC = () => {
             }
           }
         }
+        return results;
       } finally {
         setTheoremVerifyingAll(null);
       }
@@ -642,13 +650,29 @@ const ProofSteps: React.FC = () => {
     if (toCheck.length === 0) return;
     setChapterCheckingAll(true);
     try {
+      let theoremsWithFailures = 0;
       for (const t of toCheck) {
-        await verifyAllTransitions(t.key);
+        const results = await verifyAllTransitions(t.key);
+        const hasFailure = Object.values(results).some((v) => v === false);
+        if (hasFailure) theoremsWithFailures++;
+      }
+      if (theoremsWithFailures > 0) {
+        toast({
+          title: 'Check complete',
+          description: `${theoremsWithFailures} of ${toCheck.length} theorem(s) contain failing step(s).`,
+          variant: 'default',
+        });
+      } else {
+        toast({
+          title: 'Check complete',
+          description: `All ${toCheck.length} theorems verified successfully.`,
+          variant: 'default',
+        });
       }
     } finally {
       setChapterCheckingAll(false);
     }
-  }, [chapter, chapterCheckingAll, theoremVerifyingAll, transitionVerifying, filtered, table, verifyAllTransitions]);
+  }, [chapter, chapterCheckingAll, theoremVerifyingAll, transitionVerifying, filtered, table, verifyAllTransitions, toast]);
 
   const downloadChapterResults = React.useCallback(() => {
     if (chapter === 'all') return;
@@ -707,6 +731,18 @@ const ProofSteps: React.FC = () => {
       ([a], [b]) => getChapterIndex(a) - getChapterIndex(b)
     );
   }, [filtered]);
+
+  /** Sequential 1-based number for each theorem in display order */
+  const theoremDisplayNumber = React.useMemo(() => {
+    const map: Record<string, number> = {};
+    let n = 0;
+    for (const [, thms] of groupedByChapter) {
+      for (const t of thms) {
+        map[t.key] = ++n;
+      }
+    }
+    return map;
+  }, [groupedByChapter]);
 
   const handleBeginProof = React.useCallback(() => {
     const parts = ruleInput.split(/\s*⟺\s*/);
@@ -882,6 +918,7 @@ const ProofSteps: React.FC = () => {
                           <TheoremCard
                             key={t.key}
                             theorem={t}
+                            theoremNumber={theoremDisplayNumber[t.key]}
                             verification={verificationResults[t.key]}
                             transitionMatchInfo={transitionMatchInfo[t.key]}
                             onVerifyTransition={verifySingleTransition}
@@ -924,6 +961,7 @@ const ProofSteps: React.FC = () => {
 
 function TheoremCard({
   theorem,
+  theoremNumber,
   verification,
   transitionMatchInfo = {},
   onVerifyTransition,
@@ -944,6 +982,7 @@ function TheoremCard({
   setRuleValidationError,
 }: {
   theorem: TheoremWithSteps;
+  theoremNumber?: number;
   verification?: VerificationResult;
   transitionMatchInfo?: Record<number, MatchInfo>;
   onVerifyTransition?: (key: string, transitionIndex: number, ruleOverride?: string) => void;
@@ -995,6 +1034,11 @@ function TheoremCard({
             </CollapsibleTrigger>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap mb-1">
+                {theoremNumber != null && (
+                  <Badge variant="outline" className="text-xs font-mono shrink-0">
+                    #{theoremNumber}
+                  </Badge>
+                )}
                 <Badge variant="secondary" className="text-xs font-mono">
                   <FileText className="w-3 h-3 mr-1" />
                   {theorem.filename}

@@ -4,7 +4,7 @@
  */
 
 import type { DAGStructure, ExprNodeData } from './types';
-import { buildAdjacency, buildEdgeTypeMap } from './utils';
+import { buildAdjacency, buildEdgeTypeMap, reachableFrom } from './utils';
 
 /**
  * Normalize branch structural op for comparison.
@@ -86,6 +86,22 @@ function canMatchAsRoot(pData: ExprNodeData, tData: ExprNodeData): boolean {
   return exprDataMatches(pData, tData, new Map(), new Map());
 }
 
+/** True iff pattern node is \Tc with a non-empty operand. */
+function isTcNode(pData: ExprNodeData): boolean {
+  return pData.op === '\\Tc' && (pData.operands?.length ?? 0) >= 1 && (pData.operands?.[0] ?? '') !== '';
+}
+
+/** Get Tc operand from node data, or '' if not a Tc node. */
+function getTcOperand(pData: ExprNodeData): string {
+  return isTcNode(pData) ? (pData.operands?.[0] ?? '') : '';
+}
+
+/** True iff target node is a tail or cond head (branch structural). */
+function isTailOrCond(tData: ExprNodeData): boolean {
+  const op = tData.op ?? '';
+  return op.endsWith(':tail') || op.includes(':cond');
+}
+
 /** Outgoing edges with types: [(toId, edgeType), ...] */
 function getOutgoingWithTypes(
   from: string,
@@ -157,6 +173,8 @@ export interface SingleRootDAGInjectionOptions {
   maxRootAttempts?: number;
   /** Fixed operand bindings from a prior match. For keys in this map, only accept candidates that match; do not add new bindings. */
   fixedOperandMapping?: Map<string, string>;
+  /** When true, log Tc candidate attempts and rejections to the given array (for diagnostics). */
+  logTcCandidates?: { lines: string[] };
 }
 
 /**
@@ -171,6 +189,9 @@ export function* SingleRootDAGInjection(
   options?: SingleRootDAGInjectionOptions
 ): Generator<{ mapping: Map<string, string>; operandMapping: Map<string, string> }> {
   const fixedOperandMapping = options?.fixedOperandMapping;
+  const logTc = options?.logTcCandidates;
+  const log = logTc ? (s: string) => logTc.lines.push(s) : () => {};
+
   if (pattern.nodes.length === 0) {
     yield { mapping: new Map(), operandMapping: new Map() };
     return;
@@ -246,6 +267,7 @@ export function* SingleRootDAGInjection(
 
   const mapping = new Map<string, string>();
   const reverseMapping = new Map<string, string>();
+
   const varToTarget = new Map<string, string>();
   const targetToVar = new Map<string, string>();
   const mappedPatternCounts = new Map<string, number>();
@@ -273,7 +295,6 @@ export function* SingleRootDAGInjection(
     return new Map(varToTarget);
   }
 
-  /** Returns false if the current partial mapping cannot extend to a full match (prune). O(keys) not O(nodes). */
   function canExtend(): boolean {
     const unmappedP = pNodes.length - mapping.size;
     const unmappedT = tNodeMap.size - reverseMapping.size;
@@ -293,13 +314,13 @@ export function* SingleRootDAGInjection(
     const savedTarget = new Map(targetToVar);
 
     if (!exprDataMatches(pData, tData, varToTarget, targetToVar, fixedOperandMapping)) {
+      if (logTc) log(`  REJECT: exprDataMatches(pi=${pi} op=${pData.op}, ti=${ti} op=${tData.op}) failed`);
       varToTarget.clear();
       targetToVar.clear();
       savedVar.forEach((v, k) => varToTarget.set(k, v));
       savedTarget.forEach((v, k) => targetToVar.set(k, v));
       return;
     }
-
     addMapping(pi, ti);
 
     if (mapping.size === pNodes.length) {
@@ -312,6 +333,7 @@ export function* SingleRootDAGInjection(
       return;
     }
     if (!canExtend()) {
+      if (logTc) log(`  REJECT: canExtend() false (unmapped P/T or count mismatch)`);
       removeMapping(pi, ti);
       varToTarget.clear();
       targetToVar.clear();
@@ -326,6 +348,7 @@ export function* SingleRootDAGInjection(
       if (mapping.has(p_out)) {
         const t_out = mapping.get(p_out)!;
         if (!tOutCandidates.includes(t_out)) {
+          if (logTc) log(`  REJECT: p_out=${p_out} already mapped to t_out=${t_out} but not in tOutCandidates from ti=${ti}`);
           removeMapping(pi, ti);
           varToTarget.clear();
           targetToVar.clear();
@@ -344,6 +367,7 @@ export function* SingleRootDAGInjection(
         yield* fillMap(p_out, t_out);
       }
       if (!hadCandidates) {
+        if (logTc) log(`  REJECT: no outgoing candidate for p_out=${p_out} from ti=${ti} (edgeType=${edgeType})`);
         removeMapping(pi, ti);
         varToTarget.clear();
         targetToVar.clear();
@@ -365,13 +389,13 @@ export function* SingleRootDAGInjection(
     const savedTarget = new Map(targetToVar);
 
     if (!exprDataMatches(pData, tData, varToTarget, targetToVar, fixedOperandMapping)) {
+      if (logTc) log(`  REJECT (incoming): exprDataMatches(pi=${pi} op=${pData.op}, ti=${ti} op=${tData.op}) failed`);
       varToTarget.clear();
       targetToVar.clear();
       savedVar.forEach((v, k) => varToTarget.set(k, v));
       savedTarget.forEach((v, k) => targetToVar.set(k, v));
       return;
     }
-
     if (!addedByCaller) addMapping(pi, ti);
 
     if (mapping.size === pNodes.length) {
@@ -384,6 +408,7 @@ export function* SingleRootDAGInjection(
       return;
     }
     if (!canExtend()) {
+      if (logTc) log(`  REJECT (incoming): canExtend() false`);
       if (!addedByCaller) removeMapping(pi, ti);
       varToTarget.clear();
       targetToVar.clear();
@@ -398,6 +423,7 @@ export function* SingleRootDAGInjection(
       const t_in = mapping.get(p_in)!;
       const tInCandidates = getAllIncomingWithType(ti, edgeType, tAdj, tEdgeTypeMap);
       if (!tInCandidates.includes(t_in)) {
+        if (logTc) log(`  REJECT (incoming): p_in=${p_in} mapped to t_in=${t_in} but t_in not in tInCandidates for ti=${ti} edgeType=${edgeType}`);
         if (!addedByCaller) removeMapping(pi, ti);
         varToTarget.clear();
         targetToVar.clear();
@@ -411,27 +437,23 @@ export function* SingleRootDAGInjection(
 
     if (unmapped.length === 1) {
       const [[p_in, edgeType]] = unmapped;
-      const tInCandidates = getAllIncomingWithType(ti, edgeType, tAdj, tEdgeTypeMap);
+      const tInCands = getAllIncomingWithType(ti, edgeType, tAdj, tEdgeTypeMap);
       let hadCandidates = false;
-      for (const t_in of tInCandidates) {
+      for (const t_in of tInCands) {
         if (reverseMapping.has(t_in)) continue;
         hadCandidates = true;
         const prev = mapping.get(p_in);
         if (prev != null) removeMapping(p_in, prev);
         yield* fillMapIncoming(p_in, t_in);
       }
-      if (!hadCandidates) {
-        if (!addedByCaller) removeMapping(pi, ti);
-        varToTarget.clear();
-        targetToVar.clear();
-        savedVar.forEach((v, k) => varToTarget.set(k, v));
-        savedTarget.forEach((v, k) => targetToVar.set(k, v));
-        return;
-      }
+      if (!hadCandidates && !addedByCaller) removeMapping(pi, ti);
+      varToTarget.clear();
+      targetToVar.clear();
+      savedVar.forEach((v, k) => varToTarget.set(k, v));
+      savedTarget.forEach((v, k) => targetToVar.set(k, v));
       return;
     }
 
-    // Multiple sibling incomings: map ALL before recursing (Cartesian product of valid assignments)
     const withCandidates = unmapped.map(([p_in, edgeType]) => ({
       p_in,
       edgeType,
@@ -467,6 +489,11 @@ export function* SingleRootDAGInjection(
       }
     }
     yield* tryAssignments(0, new Set());
+    if (!addedByCaller) removeMapping(pi, ti);
+    varToTarget.clear();
+    targetToVar.clear();
+    savedVar.forEach((v, k) => varToTarget.set(k, v));
+    savedTarget.forEach((v, k) => targetToVar.set(k, v));
   }
 
   const fill = useIncoming ? fillMapIncoming : fillMap;
@@ -484,7 +511,10 @@ export function* SingleRootDAGInjection(
         targetToVar.set(v, k);
       }
     }
-
+    if (logTc) {
+      const tOp = ((tNodeMap.get(tStart)?.data ?? {}) as ExprNodeData).op ?? '';
+      log(`--- Trying tStart=${tStart} (op: ${tOp}) ---`);
+    }
     yield* fill(pStart, tStart);
   }
 }
