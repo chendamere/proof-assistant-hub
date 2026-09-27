@@ -1,4 +1,4 @@
-import { exprToDAG, dagToExpr } from '../src/lib/dag';
+import { exprToDAG, dagToExpr } from '../src/dag';
 
 // Simple chain
 const s1 = ', 1 \\Oc 2, 2 \\Os,';

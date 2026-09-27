@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
-import { normalizeOperands, normalizeRule, NormalizedOperand } from '@/lib/operandNormalizer';
+import { normalizeOperands, normalizeRule, NormalizedOperand } from '@engine/operandNormalizer';
 import { axioms } from '@/data/axioms';
 import { ArrowRight, Play, RotateCcw, FileText } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';

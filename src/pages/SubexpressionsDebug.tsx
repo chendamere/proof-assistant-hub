@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { generateSubexpressions, formatBranchTree } from '@/lib/inferenceRules';
+import { generateSubexpressions, formatBranchTree } from '@engine/inferenceRules';
 import { ChevronDown, ChevronRight, Bug } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

@@ -10,6 +10,9 @@
   ],
   "compilerOptions": {
     "paths": {
+      "@engine/*": [
+        "./engine/src/*"
+      ],
       "@/*": [
         "./src/*"
       ]

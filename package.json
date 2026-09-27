@@ -12,9 +12,10 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
+    "prove": "npx tsx engine/src/cli.ts",
     "extract-theorems": "node scripts/extract-theorems.js",
-    "test-substitution": "npx ts-node --esm scripts/test-substitution.ts",
-    "debug-convert-rule": "npx tsx scripts/debug-convert-rule-blb-bb.ts"
+    "test-substitution": "npx tsx engine/scripts/test-substitution.ts",
+    "debug-convert-rule": "npx tsx engine/scripts/debug-convert-rule-blb-bb.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

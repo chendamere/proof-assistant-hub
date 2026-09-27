@@ -11,11 +11,11 @@ import type {
   TransitionVerificationResponse,
   MatchInfo,
 } from '@/workers/transitionVerificationWorker';
-import { buildRuleIndex, getRulesForTransition } from '@/lib/inferenceRules/ruleIndex';
-import { ruleStatistics } from '@/lib/inferenceRules/ruleStatistics';
-import { diagnoseFailure } from '@/lib/inferenceRules/errorDiagnosis';
-import { normalizeSpacing } from '@/lib/inferenceRules/utils';
-import { checkInferenceRules } from '@/lib/inferenceRules';
+import { buildRuleIndex, getRulesForTransition } from '@engine/inferenceRules/ruleIndex';
+import { ruleStatistics } from '@engine/inferenceRules/ruleStatistics';
+import { diagnoseFailure } from '@engine/inferenceRules/errorDiagnosis';
+import { normalizeSpacing } from '@engine/inferenceRules/utils';
+import { checkInferenceRules } from '@engine/inferenceRules';
 
 // Relative path so Vite resolves the worker correctly in dev and production (avoids alias/MIME issues)
 const WORKER_URL = new URL('../workers/transitionVerificationWorker.ts', import.meta.url);
@@ -100,7 +100,7 @@ export interface VerifyTransitionResult {
   matched: boolean;
   /** When matched: which rule and where it matched (for collapsible success details). */
   matchInfo?: MatchInfo;
-  diagnosis?: import('@/lib/inferenceRules/errorDiagnosis').DiagnosisResult;
+  diagnosis?: import('@engine/inferenceRules/errorDiagnosis').DiagnosisResult;
 }
 
 /** Run transition verification on the main thread (fallback when worker fails to load). */

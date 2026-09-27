@@ -4,8 +4,8 @@
  * Branch-containing results are displayed in tree format.
  */
 
-import { generateSubexpressions } from '../src/lib/inferenceRules/subexpressions.ts';
-import { formatBranchTree } from '../src/lib/inferenceRules/branchTreeFormat.ts';
+import { generateSubexpressions } from '../src/inferenceRules/subexpressions.ts';
+import { formatBranchTree } from '../src/inferenceRules/branchTreeFormat.ts';
 
 const tests = [
   {

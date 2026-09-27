@@ -38,16 +38,29 @@ export interface LLMProviderConfig {
   enabled?: boolean;
 }
 
+function readEnv(name: string): string | undefined {
+  const meta = import.meta as ImportMeta & { env?: Record<string, string | undefined> };
+  const fromMeta = meta.env?.[name];
+  if (fromMeta) return fromMeta;
+  const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env;
+  return env?.[name] || undefined;
+}
+
+function runningInBrowser(): boolean {
+  return typeof (globalThis as { window?: unknown }).window !== 'undefined';
+}
+
 /**
- * Get LLM configuration from environment variables
+ * Get LLM configuration from environment variables.
+ * In a browser the default endpoint is the site proxy (`/api/ollama`).
+ * In a terminal it is a local Ollama server. The engine does not import the website.
  */
 function getLLMConfig(): LLMProviderConfig {
   // LLM diagnosis disabled by default. Set VITE_ENABLE_LLM_DIAGNOSIS=true to enable.
-  const llmEnabled = import.meta.env.VITE_ENABLE_LLM_DIAGNOSIS === 'true';
+  const llmEnabled = readEnv('VITE_ENABLE_LLM_DIAGNOSIS') === 'true';
 
-  // Use relative URL so Vite proxy is used (avoids CORS when app is on localhost:8080)
-  const ollamaEndpoint = import.meta.env.VITE_OLLAMA_ENDPOINT || (typeof window !== "undefined" ? "/api/ollama" : "http://localhost:11434");
-  const ollamaModel = import.meta.env.VITE_OLLAMA_MODEL || "llama3:8b";
+  const ollamaEndpoint = readEnv('VITE_OLLAMA_ENDPOINT') || (runningInBrowser() ? '/api/ollama' : 'http://localhost:11434');
+  const ollamaModel = readEnv('VITE_OLLAMA_MODEL') || 'llama3:8b';
 
   if (!llmEnabled) {
     return {
@@ -168,7 +181,7 @@ async function callOllamaAPI(
     throw new Error(`Ollama API error: ${response.status} ${error}`);
   }
 
-  const data = await response.json();
+  const data = (await response.json()) as { response?: string };
   return data.response || '';
 }
 

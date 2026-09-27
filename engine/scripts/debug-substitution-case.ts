@@ -4,8 +4,8 @@
  * Axiom: ", <=>  ,\Og m, m \Os,"
  */
 
-import { normalizeRule } from '../src/lib/operandNormalizer';
-import { checkInferenceRules } from '../src/lib/inferenceRules';
+import { normalizeRule } from '../src/operandNormalizer';
+import { checkInferenceRules } from '../src/inferenceRules';
 
 const ruleToProveLeft = ",  \\Og x,";
 const ruleToProveRight = ",\\Og x, \\Og m, m \\Os,";

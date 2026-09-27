@@ -7,9 +7,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
-import { exprToDAG, SingleRootDAGInjection } from '@/lib/dag';
+import { exprToDAG, SingleRootDAGInjection } from '@engine/dag';
 import { trySubstitutionWorker } from '@/lib/substitutionWorkerClient';
-import { normalizeSpacing } from '@/lib/inferenceRules/utils';
+import { normalizeSpacing } from '@engine/inferenceRules/utils';
 import { DAGGraphVisual } from '@/components/dag/DAGGraphVisual';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { Input } from '@/components/ui/input';

@@ -21,6 +21,9 @@
     "noImplicitAny": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
+      "@engine/*": [
+        "./engine/src/*"
+      ],
       "@/*": [
         "./src/*"
       ]

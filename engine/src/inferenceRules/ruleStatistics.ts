@@ -3,6 +3,21 @@
  * Tracks success rates and match times to improve rule ordering.
  */
 
+type KeyValueStore = {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+};
+
+/** Browser persistence when present. The engine still runs in a terminal without it. */
+function optionalLocalStorage(): KeyValueStore | null {
+  try {
+    const storage = (globalThis as { localStorage?: KeyValueStore }).localStorage;
+    return storage ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export interface RuleStatistics {
   /** Rule ID */
   ruleId: string;
@@ -138,10 +153,10 @@ export class RuleStatisticsTracker {
 
   private saveToStorage(): void {
     try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        const data = Array.from(this.stats.values());
-        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
-      }
+      const storage = optionalLocalStorage();
+      if (!storage) return;
+      const data = Array.from(this.stats.values());
+      storage.setItem(this.STORAGE_KEY, JSON.stringify(data));
     } catch (e) {
       console.warn('Failed to save rule statistics:', e);
     }
@@ -149,13 +164,13 @@ export class RuleStatisticsTracker {
 
   private loadFromStorage(): void {
     try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        const stored = localStorage.getItem(this.STORAGE_KEY);
-        if (stored) {
-          const data: RuleStatistics[] = JSON.parse(stored);
-          for (const stat of data) {
-            this.stats.set(stat.ruleId, stat);
-          }
+      const storage = optionalLocalStorage();
+      if (!storage) return;
+      const stored = storage.getItem(this.STORAGE_KEY);
+      if (stored) {
+        const data: RuleStatistics[] = JSON.parse(stored);
+        for (const stat of data) {
+          this.stats.set(stat.ruleId, stat);
         }
       }
     } catch (e) {

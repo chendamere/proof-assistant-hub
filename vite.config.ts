@@ -19,8 +19,10 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
+    alias: [
+      // More specific alias first so "@" does not swallow "@engine".
+      { find: "@engine", replacement: path.resolve(__dirname, "./engine/src") },
+      { find: "@", replacement: path.resolve(__dirname, "./src") },
+    ],
   },
 }));

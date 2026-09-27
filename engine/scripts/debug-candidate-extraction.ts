@@ -3,7 +3,7 @@
  * Example: Rule ",  \Og x, <=> ,\Og x, \Og m, m \Os," with Axiom ", <=>  ,\Og m, m \Os,"
  */
 
-import { normalizeRule } from '../src/lib/operandNormalizer';
+import { normalizeRule } from '../src/operandNormalizer';
 
 // Test case
 const ruleToProveLeft = ",  \\Og x,";

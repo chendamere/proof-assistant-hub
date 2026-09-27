@@ -5,8 +5,8 @@
  *   Rule: ",i \Od j, n \Oc m, <=> , n \Oc m,i \Od j,"
  */
 
-import { normalizeRule } from '../src/lib/operandNormalizer.ts';
-import { checkInferenceRules } from '../src/lib/inferenceRules';
+import { normalizeRule } from '../src/operandNormalizer.ts';
+import { checkInferenceRules } from '../src/inferenceRules';
 
 // Test case
 const targetLeft = ",x \\Op ,x \\Od y, a \\Oc b,";

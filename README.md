@@ -2,13 +2,29 @@
 
 A web-based proof assistant for formal reasoning with expression parsing, rule inference, and DAG-based substitution.
 
+The proof engine is a separate program from the website. It lives in `engine/` and runs from a terminal without the site. The website imports that same code. The engine does not import the website.
+
+```
+engine/     parser, inference rules, grammar, operand normalizer, terminal entry, manual scripts
+src/        website: pages, components, and web workers that call the engine
+scripts/    extract site content (theorems, proof-step tables) from LaTeX
+```
+
+Terminal (from the repo root):
+
+```
+npm run prove -- parse ",i \Od m,"
+npm run prove -- grammar ",i \Od m,"
+npm run prove -- check "<targetLeft>" "<targetRight>" "<ruleLeft>" "<ruleRight>"
+```
+
 ---
 
 ## Core Algorithms
 
 ### 1. Expression Parsing
 
-**Location:** `src/lib/dag/exprToDAG.ts`
+**Location:** `engine/src/dag/exprToDAG.ts`
 
 Expressions use a comma-separated format with LaTeX-style operators and optional branching.
 
@@ -22,7 +38,7 @@ The parser produces a DAG: nodes for operations (with `op`, `operands`), edges f
 
 ### 2. Rule Inference
 
-**Location:** `src/lib/inferenceRules/`
+**Location:** `engine/src/inferenceRules/`
 
 Rules are proven by applying inference rules in order:
 
@@ -42,7 +58,7 @@ Rules are proven by applying inference rules in order:
 
 ### 3. DAG Substitution
 
-**Location:** `src/lib/dag/`, `src/lib/inferenceRules/substitution.ts`
+**Location:** `engine/src/dag/`, `engine/src/inferenceRules/substitution.ts`
 
 Substitution uses VF2 subgraph injection on DAGs. Operand binding (rule operands like `i`, `m` → target operands) is resolved during the VF2 matching, not via integer normalization.
 
@@ -90,8 +106,9 @@ Expression string
 
 | Module | Entry | Purpose |
 |--------|-------|---------|
-| `inferenceRules` | `checkInferenceRules` | Apply all inference rules |
-| `substitution` | `trySubstitutionByMatchPairs` | DAG-based rule matching and substitution |
-| `dag` | `exprToDAG`, `dagToExpr` | Expression ↔ DAG conversion |
-| `dag` | `SingleRootDAGInjection` | Subgraph injection with operand binding |
-| `dag` | `substituteInDAG` | Replace matched subgraph with replacement DAG |
+| `engine/src/cli.ts` | `parse`, `grammar`, `check` | Terminal entry; no website required |
+| `engine/src/inferenceRules` | `checkInferenceRules` | Apply all inference rules |
+| `engine/src/inferenceRules/substitution.ts` | `trySubstitutionByMatchPairs` | DAG-based rule matching and substitution |
+| `engine/src/dag` | `exprToDAG`, `dagToExpr` | Expression ↔ DAG conversion |
+| `engine/src/dag` | `SingleRootDAGInjection` | Subgraph injection with operand binding |
+| `engine/src/dag` | `substituteInDAG` | Replace matched subgraph with replacement DAG |
