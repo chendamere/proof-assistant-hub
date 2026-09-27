@@ -124,7 +124,6 @@ const IntroductionSection: React.FC = () => {
                   <span className="mx-2">·</span>
                   <span>by Weili Chen</span>
                 </div>
-              </div>
             </AccordionContent>
           </AccordionItem>
 
