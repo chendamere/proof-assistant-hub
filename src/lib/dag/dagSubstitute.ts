@@ -562,7 +562,7 @@ export function substituteInDAGPartialFactor(
     if (siblingSet.has(e.from) && suffixSet.has(e.to)) mergedEdges.push(e);
   }
 
-  if (typeof process !== 'undefined' && process.env.DEBUG_PARTIAL_FACTOR === '1') {
+  if ((globalThis as Record<string, unknown>).process && (globalThis as Record<string, unknown>).DEBUG_PARTIAL_FACTOR === '1') {
     const mergedAdj = buildAdjacency({ nodes: mergedNodes, edges: mergedEdges });
     const roots = mergedNodes
       .filter((n) => (mergedAdj.incoming.get(n.id)?.length ?? 0) === 0)
