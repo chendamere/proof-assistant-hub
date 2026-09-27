@@ -125,6 +125,7 @@ const IntroductionSection: React.FC = () => {
                   <span>by Weili Chen</span>
                 </div>
               </div>
+              </div>
             </AccordionContent>
           </AccordionItem>
 
