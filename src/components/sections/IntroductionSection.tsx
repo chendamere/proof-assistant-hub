@@ -1,3 +1,4 @@
+import freePdfAsset from '@/assets/TheWayOfMachineThinking.pdf.asset.json';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
