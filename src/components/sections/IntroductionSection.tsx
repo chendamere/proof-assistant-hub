@@ -106,6 +106,15 @@ const IntroductionSection: React.FC = () => {
                     <ExternalLink className="w-4 h-4" />
                   </Button>
                 </a>
+                <a 
+                  href={freePdfAsset.url} 
+                  download="TheWayOfMachineThinking.pdf"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  <span>Free PDF version</span>
+                </a>
+              </div>
                 <div className="font-bold text-sm text-amber-600 dark:text-amber-500">
                   ⚠ Warning: The book consists primarily of proofs in UL
                 </div>
