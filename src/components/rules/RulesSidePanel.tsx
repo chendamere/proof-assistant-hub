@@ -10,7 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { usePanelContext } from '@/contexts/PanelContext';
 import { useDebounce } from '@/hooks/useDebounce';
-import { ensureCommaWrapped } from '@/lib/inferenceRules/utils';
+import { ensureCommaWrapped } from '@engine/inferenceRules/utils';
 
 // Lazy load theorems
 const loadTheorems = () => import('@/data/theorems').then(m => m.theorems);

@@ -2,13 +2,13 @@
  * Debug why a proof step is slow.
  */
 
-import { exprToDAG, countOperations } from '../src/lib/dag';
-import { normalizeSpacing } from '../src/lib/inferenceRules/utils';
-import { buildRuleIndex, getRulesForTransition } from '../src/lib/inferenceRules/ruleIndex';
-import { checkInferenceRules } from '../src/lib/inferenceRules';
-import { axioms } from '../src/data/axioms';
-import { definitions } from '../src/data/definitions';
-import { theorems } from '../src/data/theorems';
+import { exprToDAG, countOperations } from '../src/dag';
+import { normalizeSpacing } from '../src/inferenceRules/utils';
+import { buildRuleIndex, getRulesForTransition } from '../src/inferenceRules/ruleIndex';
+import { checkInferenceRules } from '../src/inferenceRules';
+import { axioms } from '../../src/data/axioms';
+import { definitions } from '../../src/data/definitions';
+import { theorems } from '../../src/data/theorems';
 
 const targetLeft = ',j \\Od t_2, i \\Od t_1, \\Blb{if(t_1 \\Pe t_2)}{,t_1 \\Os, t_2 \\Os,}{,t_1 \\Os, t_2 \\Os,},';
 const targetRight = ',j \\Od t_2, i \\Od t_1, \\Blb{if(t_2 \\Pe t_1)}{,t_1 \\Os, t_2 \\Os,}{,t_1 \\Os, t_2 \\Os,},';

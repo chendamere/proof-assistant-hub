@@ -378,11 +378,16 @@ export function* SingleRootDAGInjection(
     }
   }
 
+  type InjectionMatch = { mapping: Map<string, string>; operandMapping: Map<string, string> };
+  /** Called when this node's incoming subtree is fully mapped, before that subtree is backtracked. */
+  type AfterSubtree = () => Generator<InjectionMatch>;
+
   function* fillMapIncoming(
     pi: string,
     ti: string,
-    addedByCaller = false
-  ): Generator<{ mapping: Map<string, string>; operandMapping: Map<string, string> }> {
+    addedByCaller = false,
+    done?: AfterSubtree
+  ): Generator<InjectionMatch> {
     const pData = (pNodeMap.get(pi)?.data ?? {}) as ExprNodeData;
     const tData = (tNodeMap.get(ti)?.data ?? {}) as ExprNodeData;
     const savedVar = new Map(varToTarget);
@@ -433,7 +438,19 @@ export function* SingleRootDAGInjection(
       }
     }
     const unmapped = pIncoming.filter(([p_in]) => !mapping.has(p_in));
-    if (unmapped.length === 0) return;
+    if (unmapped.length === 0) {
+      // Sibling subtrees must still be mapped. `done` fills them before this frame backtracks.
+      if (done) yield* done();
+      else if (mapping.size === pNodes.length) {
+        yield { mapping: new Map(mapping), operandMapping: buildOperandMapping() };
+      }
+      if (!addedByCaller) removeMapping(pi, ti);
+      varToTarget.clear();
+      targetToVar.clear();
+      savedVar.forEach((v, k) => varToTarget.set(k, v));
+      savedTarget.forEach((v, k) => targetToVar.set(k, v));
+      return;
+    }
 
     if (unmapped.length === 1) {
       const [[p_in, edgeType]] = unmapped;
@@ -444,7 +461,7 @@ export function* SingleRootDAGInjection(
         hadCandidates = true;
         const prev = mapping.get(p_in);
         if (prev != null) removeMapping(p_in, prev);
-        yield* fillMapIncoming(p_in, t_in);
+        yield* fillMapIncoming(p_in, t_in, false, done);
       }
       if (!hadCandidates && !addedByCaller) removeMapping(pi, ti);
       varToTarget.clear();
@@ -470,12 +487,20 @@ export function* SingleRootDAGInjection(
       }
     }
 
-    function* tryAssignments(idx: number, used: Set<string>): Generator<{ mapping: Map<string, string>; operandMapping: Map<string, string> }> {
+    function* tryAssignments(idx: number, used: Set<string>): Generator<InjectionMatch> {
       if (idx === withCandidates.length) {
-        for (const { p_in } of withCandidates) {
-          const t_in = mapping.get(p_in)!;
-          yield* fillMapIncoming(p_in, t_in, true);
+        function* fillNested(i: number): Generator<InjectionMatch> {
+          if (i === withCandidates.length) {
+            if (done) yield* done();
+            else if (mapping.size === pNodes.length) {
+              yield { mapping: new Map(mapping), operandMapping: buildOperandMapping() };
+            }
+            return;
+          }
+          const { p_in } = withCandidates[i]!;
+          yield* fillMapIncoming(p_in, mapping.get(p_in)!, true, () => fillNested(i + 1));
         }
+        yield* fillNested(0);
         return;
       }
       const { p_in, candidates } = withCandidates[idx]!;

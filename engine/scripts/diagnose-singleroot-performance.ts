@@ -7,15 +7,15 @@ import {
   exprToDAG,
   SingleRootDAGInjection,
   augmentTargetDAGForTcMatching,
-} from '../src/lib/dag';
-import { trySubstitution } from '../src/lib/inferenceRules/substitution';
-import { checkInferenceRules } from '../src/lib/inferenceRules';
-import { buildRuleIndex, getRulesForTransition } from '../src/lib/inferenceRules/ruleIndex';
-import { normalizeSpacing } from '../src/lib/inferenceRules/utils';
-import { axioms } from '../src/data/axioms';
-import { definitions } from '../src/data/definitions';
-import { theorems } from '../src/data/theorems';
-import type { DAGStructure, ExprNodeData } from '../src/lib/dag/types';
+} from '../src/dag';
+import { trySubstitution } from '../src/inferenceRules/substitution';
+import { checkInferenceRules } from '../src/inferenceRules';
+import { buildRuleIndex, getRulesForTransition } from '../src/inferenceRules/ruleIndex';
+import { normalizeSpacing } from '../src/inferenceRules/utils';
+import { axioms } from '../../src/data/axioms';
+import { definitions } from '../../src/data/definitions';
+import { theorems } from '../../src/data/theorems';
+import type { DAGStructure, ExprNodeData } from '../src/dag/types';
 
 function timeMs(): number {
   return performance.now();

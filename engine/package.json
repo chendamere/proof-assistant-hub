@@ -1,0 +1,14 @@
+{
+  "name": "@proof-assistant/engine",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Standalone proof engine: parser, inference rules, and a terminal entry. Does not depend on the website.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./dag": "./src/dag/index.ts",
+    "./inferenceRules": "./src/inferenceRules/index.ts",
+    "./grammarChecker": "./src/grammarChecker.ts",
+    "./operandNormalizer": "./src/operandNormalizer.ts"
+  }
+}

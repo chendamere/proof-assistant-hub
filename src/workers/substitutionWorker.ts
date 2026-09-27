@@ -3,7 +3,7 @@
  * Offloads heavy VF2/DAG work from the main thread to avoid UI freezes.
  */
 
-import { trySubstitutionByMatchPairs } from '@/lib/inferenceRules/substitution';
+import { trySubstitutionByMatchPairs } from '@engine/inferenceRules/substitution';
 
 export type SubstitutionRequest = {
   id: string;

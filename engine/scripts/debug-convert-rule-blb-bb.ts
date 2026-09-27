@@ -9,10 +9,10 @@
  * Isomorphism found but equivalent substitution fails after conversion.
  */
 
-import { exprToDAG, dagToExpr, SingleRootDAGInjection, substituteInDAG } from '../src/lib/dag';
-import { normalizeSpacing } from '../src/lib/inferenceRules/utils';
-import { trySubstitution } from '../src/lib/inferenceRules/substitution';
-import type { ExprNodeData } from '../src/lib/dag/types';
+import { exprToDAG, dagToExpr, SingleRootDAGInjection, substituteInDAG } from '../src/dag';
+import { normalizeSpacing } from '../src/inferenceRules/utils';
+import { trySubstitution } from '../src/inferenceRules/substitution';
+import type { ExprNodeData } from '../src/dag/types';
 
 const targetLeft = ',\\Bb{if(i \\Ps j)}{, }{, \\Or,},';
 const targetRight = ',i \\Od m, j \\Od n, \\Bb{if(m \\Pe n)}{,m \\Os, n \\Os, }{,m \\Os, n \\Os, \\Or,},';

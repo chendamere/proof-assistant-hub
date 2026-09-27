@@ -7,8 +7,8 @@
  * The rule should match within the branch content and substitute it.
  */
 
-import { normalizeRule } from '../src/lib/operandNormalizer.ts';
-import { checkInferenceRules } from '../src/lib/inferenceRules.ts';
+import { normalizeRule } from '../src/operandNormalizer.ts';
+import { checkInferenceRules } from '../src/inferenceRules/index.ts';
 
 // Test case
 const targetLeft = ",\\Bb{i \\Oe j}{,x \\Od m, x \\Od n,}{,},";

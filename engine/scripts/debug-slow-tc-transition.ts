@@ -2,13 +2,13 @@
  * Debug why the Tc-heavy transition is slow or appears to hang.
  */
 
-import { exprToDAG, countOperations } from '../src/lib/dag';
-import { normalizeSpacing } from '../src/lib/inferenceRules/utils';
-import { buildRuleIndex, getRulesForTransition } from '../src/lib/inferenceRules/ruleIndex';
-import { checkInferenceRules } from '../src/lib/inferenceRules';
-import { axioms } from '../src/data/axioms';
-import { definitions } from '../src/data/definitions';
-import { theorems } from '../src/data/theorems';
+import { exprToDAG, countOperations } from '../src/dag';
+import { normalizeSpacing } from '../src/inferenceRules/utils';
+import { buildRuleIndex, getRulesForTransition } from '../src/inferenceRules/ruleIndex';
+import { checkInferenceRules } from '../src/inferenceRules';
+import { axioms } from '../../src/data/axioms';
+import { definitions } from '../../src/data/definitions';
+import { theorems } from '../../src/data/theorems';
 
 const targetLeft = `,i \\Od t_1, j \\Od t_2, m \\Od t_3, n \\Od t_4, \\Bb{if(t_1 \\Pe t_2)}{, \\Bb{if(t_3 \\Pe t_4)}{,t_1 \\Os, t_2 \\Os,t_3 \\Os, t_4 \\Os,\\Tc c_1,}{,t_1 \\Os, t_2 \\Os,t_3 \\Os, t_4 \\Os,\\Tc c_2,},}{, \\Bb{if(t_3 \\Pe t_4)}{,t_1 \\Os, t_2 \\Os,t_3 \\Os, t_4 \\Os,\\Tc c_3,}{,t_1 \\Os, t_2 \\Os,t_3 \\Os, t_4 \\Os,\\Tc c_4,},},`;
 const targetRight = `,i \\Od t_1, j \\Od t_2, m \\Od t_3, n \\Od t_4, \\Bb{if(t_3 \\Pe t_4)}{, \\Bb{if(t_1 \\Pe t_2)}{,t_1 \\Os, t_2 \\Os,t_3 \\Os, t_4 \\Os,\\Tc c_1,}{,t_1 \\Os, t_2 \\Os,t_3 \\Os, t_4 \\Os,\\Tc c_3,},}{, \\Bb{if(t_1 \\Pe t_2)}{,t_1 \\Os, t_2 \\Os,t_3 \\Os, t_4 \\Os,\\Tc c_2,}{,t_1 \\Os, t_2 \\Os,t_3 \\Os, t_4 \\Os,\\Tc c_4,},},`;

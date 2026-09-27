@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { OperatorLegend } from '@/components/operators/OperatorSymbols';
-import { checkGrammar, GrammarError } from '@/lib/grammarChecker';
+import { checkGrammar, GrammarError } from '@engine/grammarChecker';
 import { CheckCircle2, XCircle, AlertCircle, Info } from 'lucide-react';
 
 const Grammar: React.FC = () => {

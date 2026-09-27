@@ -8,8 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
-import { checkInferenceRules, MatchPosition } from '@/lib/inferenceRules';
-import { checkGrammar } from '@/lib/grammarChecker';
+import { checkInferenceRules, MatchPosition } from '@engine/inferenceRules';
+import { checkGrammar } from '@engine/grammarChecker';
 import { axioms, Rule } from '@/data/axioms';
 import { definitions } from '@/data/definitions';
 import { theorems } from '@/data/theorems';

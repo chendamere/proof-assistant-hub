@@ -1,5 +1,5 @@
 // Test nested branch matching
-import { checkInferenceRules } from '../src/lib/inferenceRules.ts';
+import { checkInferenceRules } from '../src/inferenceRules/index.ts';
 
 const testCases = [
   {

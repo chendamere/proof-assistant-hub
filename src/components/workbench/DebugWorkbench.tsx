@@ -14,15 +14,15 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { exprToDAG, SingleRootDAGInjection } from '@/lib/dag';
+import { exprToDAG, SingleRootDAGInjection } from '@engine/dag';
 import { DAGGraphVisual } from '@/components/dag/DAGGraphVisual';
-import { checkInferenceRules } from '@/lib/inferenceRules';
-import { trySubstitutionByMatchPairs } from '@/lib/inferenceRules/substitution';
+import { checkInferenceRules } from '@engine/inferenceRules';
+import { trySubstitutionByMatchPairs } from '@engine/inferenceRules/substitution';
 import { axioms } from '@/data/axioms';
 import { definitions } from '@/data/definitions';
 import { theorems } from '@/data/theorems';
-import type { DAGStructure, ExprNodeData } from '@/lib/dag';
-import { normalizeSpacing } from '@/lib/inferenceRules/utils';
+import type { DAGStructure, ExprNodeData } from '@engine/dag';
+import { normalizeSpacing } from '@engine/inferenceRules/utils';
 import { usePanelContext } from '@/contexts/PanelContext';
 
 function safeExprToDAG(expr: string): DAGStructure<ExprNodeData> | null {

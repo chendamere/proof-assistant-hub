@@ -1,8 +1,8 @@
 /**
  * Diagnose why Branch arm swap4 is not matching
  */
-import { exprToDAG, dagToExpr, SingleRootDAGInjection, substituteInDAG } from '../src/lib/dag';
-import { normalizeSpacing } from '../src/lib/inferenceRules/utils';
+import { exprToDAG, dagToExpr, SingleRootDAGInjection, substituteInDAG } from '../src/dag';
+import { normalizeSpacing } from '../src/inferenceRules/utils';
 
 const ex = {
   targetLeft: ', \\Bb{a \\Oe b}{, \\Bb{a \\Oe b}{,c \\Od e, e \\Oc f,}{,},}{,},',

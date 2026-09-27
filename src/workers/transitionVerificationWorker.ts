@@ -4,8 +4,8 @@
  * Rules are filtered by op-count delta before checking for faster verification.
  */
 
-import { checkInferenceRules } from '@/lib/inferenceRules';
-import { buildRuleIndex, getRulesForTransition } from '@/lib/inferenceRules/ruleIndex';
+import { checkInferenceRules } from '@engine/inferenceRules';
+import { buildRuleIndex, getRulesForTransition } from '@engine/inferenceRules/ruleIndex';
 
 export type TransitionVerificationRequest = {
   id: string;

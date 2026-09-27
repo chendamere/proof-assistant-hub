@@ -4,7 +4,7 @@
  */
 
 import { useId, useMemo } from 'react';
-import type { DAGStructure, ExprNodeData } from '@/lib/dag';
+import type { DAGStructure, ExprNodeData } from '@engine/dag';
 
 const NODE_WIDTH = 90;
 const NODE_HEIGHT = 40;

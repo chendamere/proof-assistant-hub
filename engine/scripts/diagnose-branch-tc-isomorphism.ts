@@ -6,9 +6,9 @@
  * Rule right:   ", \Bb{m \Oe n}{,\Bb{i \Oe j}{,\Tc c_1,}{,\Tc c_3,},}{, \Bb{i \Oe j}{,\Tc c_2,}{,\Tc c_4,},},"
  */
 
-import { exprToDAG, dagToExpr, SingleRootDAGInjection, augmentTargetDAGForTcMatching } from '../src/lib/dag';
-import { normalizeSpacing } from '../src/lib/inferenceRules/utils';
-import type { ExprNodeData } from '../src/lib/dag/types';
+import { exprToDAG, dagToExpr, SingleRootDAGInjection, augmentTargetDAGForTcMatching } from '../src/dag';
+import { normalizeSpacing } from '../src/inferenceRules/utils';
+import type { ExprNodeData } from '../src/dag/types';
 
 const targetLeft =
   ',\\Bb{if(i \\Pu)}{, \\Bb{if(m \\Pu)}{,}{,\\Or,},}{, \\Bb{if(m \\Pu)}{, \\Or,}{, \\Or,},},';
