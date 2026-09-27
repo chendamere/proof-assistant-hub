@@ -254,16 +254,78 @@ export function computeTcMappings(
   /** Candidates collected during current fill; cleared each root. */
   let fillCandidates: Map<string, string[]>[] = [];
 
+  function chainNodeKey(id: string): string {
+    const d = (tNodeMap.get(id)?.data ?? {}) as ExprNodeData;
+    return `${d.op ?? ''}|${(d.operands ?? []).join(',')}|${d.branchKind ?? ''}`;
+  }
+
+  /**
+   * Code bound to \Tc may be a branch, not a type-0 path. Keep every induced edge, and
+   * put the subgraph entry first so a following branch stays `\Bb{...}` rather than a line of nodes.
+   */
   function chainToContent(chain: string[]): TcChainContent {
-    const nodes = chain.map((nid) => {
-      const d = (tNodeMap.get(nid)?.data ?? {}) as ExprNodeData;
-      return { op: d.op ?? '', operands: [...(d.operands ?? [])] };
-    });
-    const edgeTypes: number[] = [];
-    for (let i = 0; i < chain.length - 1; i++) {
-      edgeTypes.push(tEdgeTypeMap.get(`${chain[i]}\0${chain[i + 1]}`) ?? 0);
+    const unique = [...new Set(chain)];
+    if (unique.length === 0) return { nodes: [], edgeTypes: [], edges: [], entry: 0, exit: 0 };
+
+    const idSet = new Set(unique);
+    const outgoing = new Map<string, { to: string; edgeType: number }[]>();
+    for (const id of unique) outgoing.set(id, []);
+    const internalIn = new Set<string>();
+    for (const from of unique) {
+      for (const to of tAdj.outgoing.get(from) ?? []) {
+        if (!idSet.has(to)) continue;
+        const edgeType = tEdgeTypeMap.get(`${from}\0${to}`) ?? 0;
+        outgoing.get(from)!.push({ to, edgeType });
+        internalIn.add(to);
+      }
     }
-    return { nodes, edgeTypes };
+
+    const sources = unique.filter((id) => !internalIn.has(id));
+    sources.sort((a, b) => chainNodeKey(a).localeCompare(chainNodeKey(b)));
+    const start = sources.length > 0 ? sources : [unique[0]!];
+
+    const order: string[] = [];
+    const seen = new Set<string>();
+    const queue = [...start];
+    while (queue.length > 0) {
+      const id = queue.shift()!;
+      if (seen.has(id)) continue;
+      seen.add(id);
+      order.push(id);
+      const outs = [...(outgoing.get(id) ?? [])].sort(
+        (a, b) => a.edgeType - b.edgeType || chainNodeKey(a.to).localeCompare(chainNodeKey(b.to))
+      );
+      for (const o of outs) if (!seen.has(o.to)) queue.push(o.to);
+    }
+    for (const id of unique) if (!seen.has(id)) order.push(id);
+
+    const sinks = order.filter((id) => (outgoing.get(id) ?? []).length === 0);
+    const entryId = start[0]!;
+    const exitId = sinks.length === 1 ? sinks[0]! : order[order.length - 1]!;
+    const indexOf = new Map(order.map((id, i) => [id, i]));
+
+    const nodes = order.map((nid) => {
+      const d = (tNodeMap.get(nid)?.data ?? {}) as ExprNodeData;
+      return { op: d.op ?? '', operands: [...(d.operands ?? [])], branchKind: d.branchKind };
+    });
+    const edges = order.flatMap((from) =>
+      (outgoing.get(from) ?? []).map((o) => ({
+        from: indexOf.get(from)!,
+        to: indexOf.get(o.to)!,
+        edgeType: o.edgeType,
+      }))
+    );
+    const edgeTypes: number[] = [];
+    for (let i = 0; i < order.length - 1; i++) {
+      edgeTypes.push(tEdgeTypeMap.get(`${order[i]}\0${order[i + 1]}`) ?? 0);
+    }
+    return {
+      nodes,
+      edgeTypes,
+      edges,
+      entry: indexOf.get(entryId) ?? 0,
+      exit: indexOf.get(exitId) ?? order.length - 1,
+    };
   }
 
   /** Reachable from seed following only given edge types in the given direction. */
@@ -876,11 +938,24 @@ export function computeTcMappings(
   return snapshots;
 }
 
-/** Content chain: nodes and edge types between consecutive nodes. Portable, no node IDs. */
+export interface TcChainEdge {
+  /** Indexes into `nodes`. */
+  from: number;
+  to: number;
+  edgeType: number;
+}
+
+/** Content bound to one \Tc operand. A branch is stored as its induced subgraph, not a path. */
 export interface TcChainContent {
   nodes: ExprNodeData[];
-  /** edgeTypes[i] = edge type from nodes[i] to nodes[i+1]; length = max(0, nodes.length - 1). */
+  /** edgeTypes[i] = edge type from nodes[i] to nodes[i+1] when that path edge exists; otherwise 0. */
   edgeTypes: number[];
+  /** All edges among `nodes`. Absent on older contents; then `edgeTypes` is a path. */
+  edges?: TcChainEdge[];
+  /** Index of the node a preceding pattern edge attaches to. */
+  entry?: number;
+  /** Index of the node a following pattern edge attaches from. */
+  exit?: number;
 }
 
 /** Yield each choice of one chain per operand from a snapshot (Map<op, list of chains>). */
@@ -945,8 +1020,10 @@ export function buildPatternWithTcChains(
       const chain = tcMapping.get(op);
       if (!chain || chain.nodes.length === 0) continue;
       const prefix = `tc_${sanitize(op)}_${sanitize(n.id)}`;
-      const entryId = `${prefix}_0`;
-      const exitId = `${prefix}_${chain.nodes.length - 1}`;
+      const entryIdx = chain.entry ?? 0;
+      const exitIdx = chain.exit ?? chain.nodes.length - 1;
+      const entryId = `${prefix}_${entryIdx}`;
+      const exitId = `${prefix}_${exitIdx}`;
       tcEntryExitByPatternNode.set(n.id, { entry: entryId, exit: exitId });
       for (let i = 0; i < chain.nodes.length; i++) {
         const content = chain.nodes[i]!;
@@ -963,6 +1040,16 @@ export function buildPatternWithTcChains(
     const chain = tcMapping.get(op);
     if (!chain || chain.nodes.length === 0) continue;
     const prefix = `tc_${sanitize(op)}_${sanitize(n.id)}`;
+    if (chain.edges) {
+      for (const e of chain.edges) {
+        edges.push({
+          from: `${prefix}_${e.from}`,
+          to: `${prefix}_${e.to}`,
+          edgeType: e.edgeType as 0 | 1 | 2 | 3 | 4,
+        });
+      }
+      continue;
+    }
     for (let i = 0; i < chain.nodes.length - 1; i++) {
       const et = (chain.edgeTypes[i] ?? 0) as 0 | 1 | 2 | 3 | 4;
       edges.push({

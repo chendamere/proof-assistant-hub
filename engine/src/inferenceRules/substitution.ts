@@ -10,19 +10,25 @@ import { normalizeSpacing, ensureCommaWrapped, oeToPeInExpression, peToOeInExpre
 import type { TcChainContent } from '../dag';
 import { exprToDAG, dagToExpr, SingleRootDAGInjection, hasTcInPattern, computeTcMappings, buildPatternWithTcChains, eachTcMappingChoice } from '../dag';
 
+function chainEdgeKey(e: { from: number; to: number; edgeType: number }): string {
+  return `${e.from}\t${e.to}\t${e.edgeType}`;
+}
+
 function chainContentEqual(a: TcChainContent, b: TcChainContent): boolean {
   if (a.nodes.length !== b.nodes.length) return false;
-  if (a.edgeTypes.length !== b.edgeTypes.length) return false;
+  if ((a.entry ?? 0) !== (b.entry ?? 0) || (a.exit ?? a.nodes.length - 1) !== (b.exit ?? b.nodes.length - 1)) return false;
   for (let i = 0; i < a.nodes.length; i++) {
     const x = a.nodes[i]!;
     const y = b.nodes[i]!;
     if ((x.op ?? '') !== (y.op ?? '')) return false;
     if ((x.operands ?? []).join(',') !== (y.operands ?? []).join(',')) return false;
+    if ((x.branchKind ?? '') !== (y.branchKind ?? '')) return false;
   }
-  for (let i = 0; i < a.edgeTypes.length; i++) {
-    if ((a.edgeTypes[i] ?? 0) !== (b.edgeTypes[i] ?? 0)) return false;
-  }
-  return true;
+  const aEdges = a.edges ?? a.edgeTypes.map((edgeType, i) => ({ from: i, to: i + 1, edgeType }));
+  const bEdges = b.edges ?? b.edgeTypes.map((edgeType, i) => ({ from: i, to: i + 1, edgeType }));
+  if (aEdges.length !== bEdges.length) return false;
+  const bSet = new Set(bEdges.map(chainEdgeKey));
+  return aEdges.every((e) => bSet.has(chainEdgeKey(e)));
 }
 
 /** Fixed is a single choice (one chain per op). Snapshot has list of chains per op; we need at least one choice in snapshot that equals fixed. */
@@ -42,6 +48,18 @@ function tcChainContentMatches(
 function tcChainContentToDisplayRecord(m: Map<string, TcChainContent>): Record<string, string[]> {
   const r: Record<string, string[]> = {};
   for (const [op, chain] of m) {
+    if ((chain.edges?.length ?? 0) > 0) {
+      const dag: DAGStructure<ExprNodeData> = {
+        nodes: chain.nodes.map((data, i) => ({ id: `n${i}`, data })),
+        edges: chain.edges!.map((e) => ({
+          from: `n${e.from}`,
+          to: `n${e.to}`,
+          edgeType: e.edgeType as 0 | 1 | 2 | 3 | 4,
+        })),
+      };
+      r[op] = [dagToExpr(dag)];
+      continue;
+    }
     r[op] = chain.nodes.map((d) => {
       if (d.op?.endsWith(':tail')) return ':tail';
       if (d.op?.includes(':cond')) return d.op ?? '';
@@ -391,6 +409,92 @@ export function debugTcPairingComparison(
   };
 }
 
+function tcMappingHasEmptyChain(
+  tcMapping: Map<string, TcChainContent> | undefined
+): tcMapping is Map<string, TcChainContent> {
+  if (!tcMapping) return false;
+  for (const chain of tcMapping.values()) {
+    if (chain.nodes.length === 0) return true;
+  }
+  return false;
+}
+
+function exprNodeKey(d: ExprNodeData | undefined): string {
+  return `${d?.op ?? ''}|${(d?.operands ?? []).join(',')}|${d?.branchKind ?? ''}`;
+}
+
+/** Structural equality of instantiated rule DAGs. Node ids are ignored; op, operands, branch kind, and edge types are not. */
+function dagStructurallyEqual(
+  a: DAGStructure<ExprNodeData>,
+  b: DAGStructure<ExprNodeData>
+): boolean {
+  if (a.nodes.length !== b.nodes.length || a.edges.length !== b.edges.length) return false;
+  if (a.nodes.length === 0) return true;
+
+  const aKeys = a.nodes.map((n) => exprNodeKey(n.data)).sort();
+  const bKeys = b.nodes.map((n) => exprNodeKey(n.data)).sort();
+  for (let i = 0; i < aKeys.length; i++) {
+    if (aKeys[i] !== bKeys[i]) return false;
+  }
+
+  const aType = new Map<string, number>();
+  const bType = new Map<string, number>();
+  for (const e of a.edges) aType.set(`${e.from}\0${e.to}`, e.edgeType ?? 0);
+  for (const e of b.edges) bType.set(`${e.from}\0${e.to}`, e.edgeType ?? 0);
+
+  const aIds = a.nodes.map((n) => n.id);
+  const bIds = b.nodes.map((n) => n.id);
+  const aKeyById = new Map(a.nodes.map((n) => [n.id, exprNodeKey(n.data)]));
+  const bKeyById = new Map(b.nodes.map((n) => [n.id, exprNodeKey(n.data)]));
+  const map = new Map<string, string>();
+  const usedB = new Set<string>();
+
+  const edgeType = (table: Map<string, number>, from: string, to: string): number =>
+    table.get(`${from}\0${to}`) ?? -1;
+
+  function edgesMatch(aId: string, bId: string): boolean {
+    for (const [aOther, bOther] of map) {
+      if (edgeType(aType, aId, aOther) !== edgeType(bType, bId, bOther)) return false;
+      if (edgeType(aType, aOther, aId) !== edgeType(bType, bOther, bId)) return false;
+    }
+    return true;
+  }
+
+  function assign(index: number): boolean {
+    if (index === aIds.length) return true;
+    const aId = aIds[index]!;
+    const aKey = aKeyById.get(aId);
+    for (const bId of bIds) {
+      if (usedB.has(bId) || bKeyById.get(bId) !== aKey) continue;
+      if (!edgesMatch(aId, bId)) continue;
+      usedB.add(bId);
+      map.set(aId, bId);
+      if (assign(index + 1)) return true;
+      map.delete(aId);
+      usedB.delete(bId);
+    }
+    return false;
+  }
+
+  return assign(0);
+}
+
+/**
+ * An empty \Tc chain deletes those nodes from both rule sides. The binding justifies a
+ * step only when the two instantiated patterns are still different graphs. A non-empty
+ * binding is left to the existing pair check.
+ */
+function emptyTcBindingJustifiesChange(
+  patternA: string,
+  patternB: string,
+  tcMapping: Map<string, TcChainContent> | undefined
+): boolean {
+  if (!tcMappingHasEmptyChain(tcMapping)) return true;
+  const a = buildPatternWithTcChains(exprToDAG(normalizeSpacing(patternA)), tcMapping);
+  const b = buildPatternWithTcChains(exprToDAG(normalizeSpacing(patternB)), tcMapping);
+  return !dagStructurallyEqual(a, b);
+}
+
 function toMatchPosition(m: InjectionMatchForPairing): MatchPosition {
   return {
     side: m.side,
@@ -437,12 +541,15 @@ export const trySubstitutionByMatchPairs = (
     targetOrExpectedHasPe && ruleHasOe && target.includes('\\Oe') ? ruleSide : effectiveSide;
 
   // Pair 1: ruleLeft in targetLeft AND ruleRight in targetRight — same unmatched nodes (op+operands)
-  const leftMatches1 = findInjectionMatchesForPairing(targetLeft, patternFor(targetLeft, ruleLeft, effLeft), 'left');
+  const pair1PatternA = patternFor(targetLeft, ruleLeft, effLeft);
+  const pair1PatternB = patternFor(targetRight, ruleRight, effRight);
+  const leftMatches1 = findInjectionMatchesForPairing(targetLeft, pair1PatternA, 'left');
   let pair1: InjectionMatchForPairing | undefined;
   for (const lm of leftMatches1) {
+    if (!emptyTcBindingJustifiesChange(pair1PatternA, pair1PatternB, lm.tcMappingContent)) continue;
     const rightMatches1 = findInjectionMatchesForPairing(
       targetRight,
-      patternFor(targetRight, ruleRight, effRight),
+      pair1PatternB,
       'right',
       {
         fixedOperandMapping: lm.operandMapping,
@@ -465,12 +572,15 @@ export const trySubstitutionByMatchPairs = (
   }
 
   // Pair 2: ruleRight in targetLeft AND ruleLeft in targetRight — same unmatched nodes (op+operands)
-  const leftMatches2 = findInjectionMatchesForPairing(targetLeft, patternFor(targetLeft, ruleRight, effRight), 'left');
+  const pair2PatternA = patternFor(targetLeft, ruleRight, effRight);
+  const pair2PatternB = patternFor(targetRight, ruleLeft, effLeft);
+  const leftMatches2 = findInjectionMatchesForPairing(targetLeft, pair2PatternA, 'left');
   let pair2: InjectionMatchForPairing | undefined;
   for (const lm of leftMatches2) {
+    if (!emptyTcBindingJustifiesChange(pair2PatternA, pair2PatternB, lm.tcMappingContent)) continue;
     const rightMatches2 = findInjectionMatchesForPairing(
       targetRight,
-      patternFor(targetRight, ruleLeft, effLeft),
+      pair2PatternB,
       'right',
       {
         fixedOperandMapping: lm.operandMapping,
