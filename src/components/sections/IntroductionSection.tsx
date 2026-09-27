@@ -1,3 +1,4 @@
+import freePdfAsset from '@/assets/TheWayOfMachineThinking.pdf.asset.json';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
@@ -106,6 +107,15 @@ const IntroductionSection: React.FC = () => {
                     <ExternalLink className="w-4 h-4" />
                   </Button>
                 </a>
+                <a 
+                  href={freePdfAsset.url} 
+                  download="TheWayOfMachineThinking.pdf"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  <span>Free PDF version</span>
+                </a>
+              </div>
                 <div className="font-bold text-sm text-amber-600 dark:text-amber-500">
                   ⚠ Warning: The book consists primarily of proofs in UL
                 </div>
@@ -114,7 +124,6 @@ const IntroductionSection: React.FC = () => {
                   <span className="mx-2">·</span>
                   <span>by Weili Chen</span>
                 </div>
-              </div>
             </AccordionContent>
           </AccordionItem>
 

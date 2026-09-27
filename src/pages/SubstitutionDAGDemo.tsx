@@ -249,10 +249,11 @@ function TrySubstitutionSection() {
       <div className="rounded-md border bg-muted/30 p-3 text-xs font-mono">
         <p className="font-semibold mb-2">Tried directions:</p>
         <ul className="space-y-1 text-muted-foreground">
-          <li>targetLeft, replace ruleLeft→ruleRight: {results?.leftRuleLeft ? '✓' : '—'}</li>
-          <li>targetLeft, replace ruleRight→ruleLeft: {results?.leftRuleRight ? '✓' : '—'}</li>
-          <li>targetRight, replace ruleLeft→ruleRight: {results?.rightRuleLeft ? '✓' : '—'}</li>
-          <li>targetRight, replace ruleRight→ruleLeft: {results?.rightRuleRight ? '✓' : '—'}</li>
+          {matchResult?.matchDirections?.length ? (
+            matchResult.matchDirections.map((d) => <li key={d}>{d}</li>)
+          ) : (
+            <li>{loading ? 'Computing...' : 'No matching direction found'}</li>
+          )}
         </ul>
       </div>
     </div>
