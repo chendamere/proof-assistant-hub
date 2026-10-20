@@ -266,8 +266,8 @@ export function dagToExpr(
   let worklist = [...roots];
   if (roots.length === 2 && isBrbDualRoots(roots[0], roots[1])) {
     const [r0, r1] = roots;
-    visited.add(r0);
-    visited.add(r1);
+    // Do not mark the roots visited yet. serializeArmContent walks each arm and marks
+    // those nodes itself; marking them first makes both arms serialize as empty.
     // Use serializeArmContent so arms can be chains (\Or, \Tc c) or nested branches (:cond)
     const topStr = serializeArmContent(r0);
     const botStr = serializeArmContent(r1);

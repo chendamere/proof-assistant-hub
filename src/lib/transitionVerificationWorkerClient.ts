@@ -133,11 +133,12 @@ function verifyTransitionMainThread(
           description: pos?.description,
           startPosition: pos?.position,
           side: pos?.side,
-          ruleLeft: rule.leftSide,
-          ruleRight: rule.rightSide,
+          ruleLeft: pos?.instantiatedPatternLeft ?? rule.leftSide,
+          ruleRight: pos?.instantiatedPatternRight ?? rule.rightSide,
           inferenceRuleName: result.inferenceRule,
           nodeMap: pos?.nodeMapping ? Object.fromEntries(pos.nodeMapping) : undefined,
           unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,
+          tcMapping: pos?.tcMapping,
         },
       };
     }

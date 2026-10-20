@@ -20,6 +20,12 @@ export interface MatchPosition {
   unmatchedTargetNodeSignatures?: string[];
   /** When rule has \\Tc: operand → target expression(s) it mapped to (for display). */
   tcMapping?: Record<string, string[]>;
+  /**
+   * Concrete pattern after \\Tc holes are replaced by subexpressions.
+   * This is the rule that substitution actually applied.
+   */
+  instantiatedPatternLeft?: string;
+  instantiatedPatternRight?: string;
 }
 
 export interface InferenceRuleContext {

@@ -1,74 +1,15 @@
 /**
- * Substitution logic for inference rules
- * Uses DAG injection (VF2) for rule applicability after operand normalization.
- * A single VF2 pass on the full target finds the match and operand mapping.
+ * Substitution logic for inference rules.
+ * Rules without \\Tc use DAG injection. A \\Tc hole is replaced by a subexpression
+ * of the proof step, and the concrete rule must itself be a substitution step.
  */
 
 import type { DAGStructure, ExprNodeData } from '../dag';
 import { MatchPosition } from './types';
 import { normalizeSpacing, ensureCommaWrapped, oeToPeInExpression, peToOeInExpression } from './utils';
 import type { TcChainContent } from '../dag';
-import { exprToDAG, dagToExpr, SingleRootDAGInjection, hasTcInPattern, computeTcMappings, buildPatternWithTcChains, eachTcMappingChoice } from '../dag';
-
-function chainEdgeKey(e: { from: number; to: number; edgeType: number }): string {
-  return `${e.from}\t${e.to}\t${e.edgeType}`;
-}
-
-function chainContentEqual(a: TcChainContent, b: TcChainContent): boolean {
-  if (a.nodes.length !== b.nodes.length) return false;
-  if ((a.entry ?? 0) !== (b.entry ?? 0) || (a.exit ?? a.nodes.length - 1) !== (b.exit ?? b.nodes.length - 1)) return false;
-  for (let i = 0; i < a.nodes.length; i++) {
-    const x = a.nodes[i]!;
-    const y = b.nodes[i]!;
-    if ((x.op ?? '') !== (y.op ?? '')) return false;
-    if ((x.operands ?? []).join(',') !== (y.operands ?? []).join(',')) return false;
-    if ((x.branchKind ?? '') !== (y.branchKind ?? '')) return false;
-  }
-  const aEdges = a.edges ?? a.edgeTypes.map((edgeType, i) => ({ from: i, to: i + 1, edgeType }));
-  const bEdges = b.edges ?? b.edgeTypes.map((edgeType, i) => ({ from: i, to: i + 1, edgeType }));
-  if (aEdges.length !== bEdges.length) return false;
-  const bSet = new Set(bEdges.map(chainEdgeKey));
-  return aEdges.every((e) => bSet.has(chainEdgeKey(e)));
-}
-
-/** Fixed is a single choice (one chain per op). Snapshot has list of chains per op; we need at least one choice in snapshot that equals fixed. */
-function tcChainContentMatches(
-  snapshot: Map<string, TcChainContent[]>,
-  fixed: Map<string, TcChainContent>
-): boolean {
-  for (const [op, fixedChain] of fixed) {
-    const list = snapshot.get(op);
-    if (!list) return false;
-    const found = list.some((snapChain) => chainContentEqual(snapChain, fixedChain));
-    if (!found) return false;
-  }
-  return true;
-}
-
-function tcChainContentToDisplayRecord(m: Map<string, TcChainContent>): Record<string, string[]> {
-  const r: Record<string, string[]> = {};
-  for (const [op, chain] of m) {
-    if ((chain.edges?.length ?? 0) > 0) {
-      const dag: DAGStructure<ExprNodeData> = {
-        nodes: chain.nodes.map((data, i) => ({ id: `n${i}`, data })),
-        edges: chain.edges!.map((e) => ({
-          from: `n${e.from}`,
-          to: `n${e.to}`,
-          edgeType: e.edgeType as 0 | 1 | 2 | 3 | 4,
-        })),
-      };
-      r[op] = [dagToExpr(dag)];
-      continue;
-    }
-    r[op] = chain.nodes.map((d) => {
-      if (d.op?.endsWith(':tail')) return ':tail';
-      if (d.op?.includes(':cond')) return d.op ?? '';
-      return `${d.op ?? ''} ${(d.operands ?? []).join(' ')}`.trim();
-    });
-  }
-  return r;
-}
-
+import { exprToDAG, SingleRootDAGInjection, hasTcInPattern, buildPatternWithTcChains } from '../dag';
+import { tryTcSubexpressionSubstitution } from './tcSubstitution';
 
 /** Single match from injection: position, root target node id, and boundary signature for pairing. */
 export interface SubstitutionMatch {
@@ -155,7 +96,7 @@ export interface InjectionMatchForPairing {
 export interface FindInjectionMatchesOptions {
   /** Use these operand bindings as fixed constraints; only accept matches consistent with them. */
   fixedOperandMapping?: Map<string, string>;
-  /** Use this Tc mapping from the other side; only accept snapshots whose content matches. */
+  /** Retained for callers. \\Tc rules are checked by subexpression instantiation, not by this injection. */
   fixedTcMapping?: Map<string, TcChainContent>;
 }
 
@@ -196,60 +137,10 @@ export function findInjectionMatchesForPairing(
   const matches: InjectionMatchForPairing[] = [];
 
   if (hasTcInPattern(patternDAG)) {
-    const fixedTcMapping = options?.fixedTcMapping;
-    if (fixedTcMapping) {
-      // Use the provided mapping as the only choice (e.g. when pairing right with left).
-      for (const tcMappingResult of [fixedTcMapping]) {
-        const convertedPattern = buildPatternWithTcChains(patternDAG, tcMappingResult);
-        for (const result of SingleRootDAGInjection(convertedPattern, targetDAG, {
-          fixedOperandMapping: options?.fixedOperandMapping,
-        })) {
-          const matchedIds = new Set(result.mapping.values());
-          const unmatchedNodeSignatures = getUnmatchedNodeSignatures(targetDAG, matchedIds);
-          const idToSig = getUnmatchedIdToSig(targetDAG, matchedIds);
-          const unmatchedEdgeSignature = getUnmatchedEdgeSignature(targetDAG, matchedIds, idToSig);
-          matches.push({
-            unmatchedNodeSignatures,
-            unmatchedEdgeSignature,
-            operandMapping: result.operandMapping,
-            tcOperandKeys: new Set(tcMappingResult.keys()),
-            tcMapping: tcChainContentToDisplayRecord(tcMappingResult),
-            tcMappingContent: tcMappingResult,
-            side,
-            targetDAG,
-            nodeMapping: result.mapping,
-          });
-        }
-      }
-    } else {
-      const snapshots = computeTcMappings(patternDAG, targetDAG, {
-        fixedOperandMapping: options?.fixedOperandMapping,
-      });
-      for (const snap of snapshots) {
-        for (const tcMappingResult of eachTcMappingChoice(snap)) {
-          const convertedPattern = buildPatternWithTcChains(patternDAG, tcMappingResult);
-          for (const result of SingleRootDAGInjection(convertedPattern, targetDAG, {
-            fixedOperandMapping: options?.fixedOperandMapping,
-          })) {
-            const matchedIds = new Set(result.mapping.values());
-            const unmatchedNodeSignatures = getUnmatchedNodeSignatures(targetDAG, matchedIds);
-            const idToSig = getUnmatchedIdToSig(targetDAG, matchedIds);
-            const unmatchedEdgeSignature = getUnmatchedEdgeSignature(targetDAG, matchedIds, idToSig);
-            matches.push({
-              unmatchedNodeSignatures,
-              unmatchedEdgeSignature,
-              operandMapping: result.operandMapping,
-              tcOperandKeys: new Set(tcMappingResult.keys()),
-              tcMapping: tcChainContentToDisplayRecord(tcMappingResult),
-              tcMappingContent: tcMappingResult,
-              side,
-              targetDAG,
-              nodeMapping: result.mapping,
-            });
-          }
-        }
-      }
-    }
+    // \\Tc is not a subgraph wildcard. tryTcSubexpressionSubstitution instantiates each
+    // hole with a subexpression and then requires ordinary substitution. Returning no
+    // injection match here keeps the old chain-wildcard search from accepting a step
+    // whose leftover context is only similar.
     return matches;
   }
 
@@ -307,7 +198,18 @@ function isEmptyArmEdge(edgePart: string): boolean {
   return parts.length >= 3 && parts[1] === ':tail|' && parts[2] === '0';
 }
 
-/** True when node sigs match and the only edge difference is empty-arm edges (cond→tail type 0). For create-branch pairing. */
+/**
+ * Edge absorbed when create-branch splices an empty Bb/Bs into an arm:
+ * parent cond → former first content (type 1 = left arm, type 2 = right arm)
+ * disappears from the unmatched view because that content now hangs off the
+ * new branch instead of the parent.
+ */
+function isCreateBranchSpliceEdge(edgePart: string): boolean {
+  const parts = edgePart.split('\t');
+  return parts.length >= 3 && (parts[2] === '1' || parts[2] === '2');
+}
+
+/** True when node sigs match and edge diffs are only empty-arm or create-branch splice edges. */
 function emptyArmEdgeCompatible(a: InjectionMatchForPairing, b: InjectionMatchForPairing): boolean {
   if (sigKey(a.unmatchedNodeSignatures) !== sigKey(b.unmatchedNodeSignatures)) return false;
   const edgesA = parseEdgeParts(a.unmatchedEdgeSignature);
@@ -317,7 +219,7 @@ function emptyArmEdgeCompatible(a: InjectionMatchForPairing, b: InjectionMatchFo
   const larger = edgesA.size <= edgesB.size ? edgesB : edgesA;
   for (const e of smaller) if (!larger.has(e)) return false;
   const extra = [...larger].filter((e) => !smaller.has(e));
-  return extra.every(isEmptyArmEdge);
+  return extra.every((e) => isEmptyArmEdge(e) || isCreateBranchSpliceEdge(e));
 }
 
 /** True when one side's unmatched nodes (and their induced edges) are a subset of the other. Reduces Tc false positives. */
@@ -539,6 +441,10 @@ export const trySubstitutionByMatchPairs = (
 
   const patternFor = (target: string, ruleSide: string, effectiveSide: string) =>
     targetOrExpectedHasPe && ruleHasOe && target.includes('\\Oe') ? ruleSide : effectiveSide;
+
+  if (/\\Tc\b/.test(effLeft) || /\\Tc\b/.test(effRight)) {
+    return tryTcSubexpressionSubstitution(normL, normR, normalizeSpacing(effLeft), normalizeSpacing(effRight));
+  }
 
   // Pair 1: ruleLeft in targetLeft AND ruleRight in targetRight — same unmatched nodes (op+operands)
   const pair1PatternA = patternFor(targetLeft, ruleLeft, effLeft);

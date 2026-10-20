@@ -182,7 +182,8 @@ function buildProofStepsTable(filePaths) {
     const theorems = parseFile(filePath);
     theorems.forEach((t, idx) => {
       const baseKey = t.ruleStr || `, ${t.left}, ⟺ , ${t.right},`;
-      const key = `${t.filename}::${idx}::${baseKey}`;
+      // 1-based theorem index within the chapter file (matches site display #N)
+      const key = `${t.filename}::${idx + 1}::${baseKey}`;
       table[key] = t.steps;
       allTheorems.push({ ...t, tableKey: key });
     });

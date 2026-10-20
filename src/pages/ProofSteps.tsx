@@ -126,13 +126,16 @@ const allRules = [...axioms, ...definitions, ...theorems];
 const axiomIds = new Set(axioms.map((r) => r.id));
 const definitionIds = new Set(definitions.map((r) => r.id));
 
-/** Position for ordering: axioms/definitions = -1 (always before), theorems = chapterOrder*100000 + index. */
+/**
+ * Position for ordering: axioms/definitions = -1 (always before).
+ * Theorem IDs in theorems.ts are 0-based; JSON/site keys are 1-based — add 1 so they align.
+ */
 function getPositionForRule(rule: { id: string }): number {
   if (axiomIds.has(rule.id) || definitionIds.has(rule.id)) return -1;
   const m = rule.id.match(/^(.+)-(\d+)-[a-z0-9]+$/);
   if (!m) return 999999999;
   const baseName = m[1];
-  const index = parseInt(m[2], 10);
+  const index = parseInt(m[2], 10) + 1; // 0-based id → 1-based site/JSON number
   const filename = CHAPTER_ORDER.find(
     (f) => f.toLowerCase().replace(/[^a-z0-9]+/g, '-') === baseName
   );
@@ -293,8 +296,8 @@ const ProofSteps: React.FC = () => {
               description: pos?.description,
               startPosition: pos?.position,
               side: pos?.side,
-              ruleLeft: preferredRule.leftSide,
-              ruleRight: preferredRule.rightSide,
+              ruleLeft: pos?.instantiatedPatternLeft ?? preferredRule.leftSide,
+              ruleRight: pos?.instantiatedPatternRight ?? preferredRule.rightSide,
               inferenceRuleName: 'Equivalent Substitution',
               nodeMap: pos?.nodeMapping ? Object.fromEntries(pos.nodeMapping) : undefined,
               unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,
@@ -495,8 +498,8 @@ const ProofSteps: React.FC = () => {
                   description: pos?.description,
                   startPosition: pos?.position,
                   side: pos?.side,
-                  ruleLeft: preferredRule.leftSide,
-                  ruleRight: preferredRule.rightSide,
+                  ruleLeft: pos?.instantiatedPatternLeft ?? preferredRule.leftSide,
+                  ruleRight: pos?.instantiatedPatternRight ?? preferredRule.rightSide,
                   inferenceRuleName: 'Equivalent Substitution',
                   nodeMap: pos?.nodeMapping ? Object.fromEntries(pos.nodeMapping) : undefined,
                   unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,
@@ -600,13 +603,13 @@ const ProofSteps: React.FC = () => {
     return out;
   }, [transitionResults]);
 
+  /** All theorems from the table, including those with no proof steps (e.g. chapter 2 definitions). */
   const theoremsWithSteps: TheoremWithSteps[] = React.useMemo(() => {
     if (!table) return [];
     return Object.entries(table)
-      .filter(([, steps]) => steps.length > 0)
       .map(([key, steps]) => {
         const { filename, index, ruleStr } = parseKey(key);
-        return { key, filename, index, ruleStr, steps, ruleName: getRuleNameForRuleStr(ruleStr) };
+        return { key, filename, index, ruleStr, steps: steps ?? [], ruleName: getRuleNameForRuleStr(ruleStr) };
       })
       .sort((a, b) => {
         const cmp = getChapterIndex(a.filename) - getChapterIndex(b.filename);
@@ -615,15 +618,16 @@ const ProofSteps: React.FC = () => {
       });
   }, [table]);
 
+  /** Chapters in book order (CHAPTER_ORDER), including chapters that only have empty proofs. */
   const chapters = React.useMemo(() => {
-    const set = new Set(theoremsWithSteps.map((t) => t.filename));
-    return Array.from(set).sort((a, b) => getChapterIndex(a) - getChapterIndex(b));
+    const present = new Set(theoremsWithSteps.map((t) => t.filename));
+    return CHAPTER_ORDER.filter((ch) => present.has(ch));
   }, [theoremsWithSteps]);
 
-  /** Sequential 1-based index for displayed chapters (no gaps). */
+  /** Book chapter index as on the site (1 = Operators, 2 = Three Fundamental Relationships, …). */
   const chapterDisplayIndex = React.useMemo(() => {
     const map: Record<string, number> = {};
-    chapters.forEach((ch, idx) => { map[ch] = idx + 1; });
+    for (const ch of chapters) map[ch] = getChapterIndex(ch);
     return map;
   }, [chapters]);
 
@@ -732,17 +736,14 @@ const ProofSteps: React.FC = () => {
     );
   }, [filtered]);
 
-  /** Sequential 1-based number for each theorem in display order */
+  /** Theorem # as on the site: 1-based index within the chapter (same as JSON key ::N::). */
   const theoremDisplayNumber = React.useMemo(() => {
     const map: Record<string, number> = {};
-    let n = 0;
-    for (const [, thms] of groupedByChapter) {
-      for (const t of thms) {
-        map[t.key] = ++n;
-      }
+    for (const t of theoremsWithSteps) {
+      map[t.key] = t.index;
     }
     return map;
-  }, [groupedByChapter]);
+  }, [theoremsWithSteps]);
 
   const handleBeginProof = React.useCallback(() => {
     const parts = ruleInput.split(/\s*⟺\s*/);
