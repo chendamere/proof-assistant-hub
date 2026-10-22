@@ -15,6 +15,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { axioms } from '@/data/axioms';
 import { normalizeSpacing } from '@engine/inferenceRules/utils';
+import { normalizeOperands } from '@engine/operandNormalizer';
 import { trySubstitutionByMatchPairs } from '@engine/inferenceRules/substitution';
 import { verifyTransitionWorker, type VerifyTransitionResult } from '@/lib/transitionVerificationWorkerClient';
 import type { MatchInfo } from '@/workers/transitionVerificationWorker';
@@ -85,6 +86,28 @@ interface TheoremWithSteps {
 interface VerificationResult {
   passed: number;
   total: number;
+}
+
+/** True when the query contains an operator (\\Pe, \\Bb, \\Or, …), so operand names should be ignored. */
+const OPERATOR_IN_QUERY = /\\[A-Za-z]+/;
+
+function collapseWhitespace(expr: string): string {
+  return expr
+    .replace(/\s+/g, ' ')
+    .replace(/\s+,/g, ',')
+    .replace(/,\s+/g, ',')
+    .trim();
+}
+
+/** Replace operands with first-seen integers so i \\Pe j and m \\Pe n share the same search form. */
+function operandNormalized(expr: string): string {
+  const collapsed = collapseWhitespace(expr);
+  if (!collapsed) return '';
+  try {
+    return collapseWhitespace(normalizeOperands(collapsed).integerExpression);
+  } catch {
+    return collapsed;
+  }
 }
 
 function parseKey(key: string): { filename: string; index: number; ruleStr: string } {
@@ -249,6 +272,19 @@ const ProofSteps: React.FC = () => {
       setTransitionVerifying(transitionId);
       const left = steps[transitionIndex];
       const right = steps[transitionIndex + 1];
+      if (left != null && right != null && normalizeSpacing(left) === normalizeSpacing(right)) {
+        const matchInfo: MatchInfo = {
+          matchedRuleId: 'spacing',
+          description: 'Same expression after spacing is normalized',
+          ruleLeft: left,
+          ruleRight: right,
+          inferenceRuleName: 'Spacing',
+        };
+        setTransitionResults((prev) => ({ ...prev, [key]: { ...prev[key], [transitionIndex]: true } }));
+        setTransitionMatchInfo((prev) => ({ ...prev, [key]: { ...prev[key], [transitionIndex]: matchInfo } }));
+        setTransitionVerifying(null);
+        return;
+      }
       const parsedOverride = parseRuleOverride(ruleOverride ?? '', `${key}-override`);
       if (parsedOverride && !ruleExistsInDatabase(parsedOverride.leftSide, parsedOverride.rightSide)) {
         setRuleValidationError((prev) => ({ ...prev, [transitionId]: 'Rule not found in database' }));
@@ -296,8 +332,10 @@ const ProofSteps: React.FC = () => {
               description: pos?.description,
               startPosition: pos?.position,
               side: pos?.side,
-              ruleLeft: pos?.instantiatedPatternLeft ?? preferredRule.leftSide,
-              ruleRight: pos?.instantiatedPatternRight ?? preferredRule.rightSide,
+              ruleLeft: preferredRule.leftSide,
+              ruleRight: preferredRule.rightSide,
+              instantiatedPatternLeft: pos?.instantiatedPatternLeft,
+              instantiatedPatternRight: pos?.instantiatedPatternRight,
               inferenceRuleName: 'Equivalent Substitution',
               nodeMap: pos?.nodeMapping ? Object.fromEntries(pos.nodeMapping) : undefined,
               unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,
@@ -439,6 +477,19 @@ const ProofSteps: React.FC = () => {
           const transitionId = `${key}::${i}`;
           const left = steps[i];
           const right = steps[i + 1];
+          if (left != null && right != null && normalizeSpacing(left) === normalizeSpacing(right)) {
+            results[i] = true;
+            const matchInfo: MatchInfo = {
+              matchedRuleId: 'spacing',
+              description: 'Same expression after spacing is normalized',
+              ruleLeft: left,
+              ruleRight: right,
+              inferenceRuleName: 'Spacing',
+            };
+            setTransitionResults((prev) => ({ ...prev, [key]: { ...prev[key], [i]: true } }));
+            setTransitionMatchInfo((prev) => ({ ...prev, [key]: { ...prev[key], [i]: matchInfo } }));
+            continue;
+          }
           
           // Check if there's a custom rule override for this transition
           const ruleOverride = (() => {
@@ -498,8 +549,10 @@ const ProofSteps: React.FC = () => {
                   description: pos?.description,
                   startPosition: pos?.position,
                   side: pos?.side,
-                  ruleLeft: pos?.instantiatedPatternLeft ?? preferredRule.leftSide,
-                  ruleRight: pos?.instantiatedPatternRight ?? preferredRule.rightSide,
+                  ruleLeft: preferredRule.leftSide,
+                  ruleRight: preferredRule.rightSide,
+                  instantiatedPatternLeft: pos?.instantiatedPatternLeft,
+                  instantiatedPatternRight: pos?.instantiatedPatternRight,
                   inferenceRuleName: 'Equivalent Substitution',
                   nodeMap: pos?.nodeMapping ? Object.fromEntries(pos.nodeMapping) : undefined,
                   unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,
@@ -631,22 +684,40 @@ const ProofSteps: React.FC = () => {
     return map;
   }, [chapters]);
 
+  /** Operand-normalized rule and proof steps, keyed by theorem, for structural search. */
+  const normalizedContent = React.useMemo(() => {
+    const map = new Map<string, string[]>();
+    for (const t of theoremsWithSteps) {
+      map.set(t.key, [t.ruleStr, ...t.steps].map(operandNormalized));
+    }
+    return map;
+  }, [theoremsWithSteps]);
+
   const filtered = React.useMemo(() => {
     let list = theoremsWithSteps;
     if (chapter !== 'all') {
       list = list.filter((t) => t.filename === chapter);
     }
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter(
-        (t) =>
+    const qRaw = search.trim();
+    if (qRaw) {
+      const q = qRaw.toLowerCase();
+      const structural = OPERATOR_IN_QUERY.test(qRaw) ? operandNormalized(qRaw) : '';
+      list = list.filter((t) => {
+        if (
           t.filename.toLowerCase().includes(q) ||
           t.ruleStr.toLowerCase().includes(q) ||
-          (t.ruleName?.toLowerCase().includes(q) ?? false)
-      );
+          (t.ruleName?.toLowerCase().includes(q) ?? false) ||
+          t.steps.some((step) => step.toLowerCase().includes(q))
+        ) {
+          return true;
+        }
+        if (!structural) return false;
+        const forms = normalizedContent.get(t.key);
+        return forms?.some((form) => form.includes(structural)) ?? false;
+      });
     }
     return list;
-  }, [theoremsWithSteps, chapter, search]);
+  }, [theoremsWithSteps, chapter, search, normalizedContent]);
 
   const checkAllProofStepsInChapter = React.useCallback(async () => {
     if (chapter === 'all' || chapterCheckingAll || theoremVerifyingAll || transitionVerifying) return;
@@ -851,7 +922,7 @@ const ProofSteps: React.FC = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search by filename or rule..."
+                placeholder="Search by filename, rule, or proof content..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9"
@@ -1547,6 +1618,12 @@ function MatchInfoDisplay({
         ? `${matchInfo.side} side`
         : null);
   const nodeMapEntries = matchInfo.nodeMap ? Object.entries(matchInfo.nodeMap) : [];
+  const originalPattern = `${matchInfo.ruleLeft ?? ','} ⇔ ${matchInfo.ruleRight ?? ','}`;
+  const instantiatedLeft = matchInfo.instantiatedPatternLeft;
+  const instantiatedRight = matchInfo.instantiatedPatternRight;
+  const hasTcInstantiation =
+    (instantiatedLeft != null || instantiatedRight != null) &&
+    (instantiatedLeft !== matchInfo.ruleLeft || instantiatedRight !== matchInfo.ruleRight);
   return (
     <div className="border border-green-200 dark:border-green-800 rounded-md bg-green-500/5 dark:bg-green-950/30 p-2 text-xs">
       <button
@@ -1583,9 +1660,22 @@ function MatchInfoDisplay({
           )}
           {(matchInfo.ruleLeft != null || matchInfo.ruleRight != null) && (
             <div>
-              <div className="font-medium text-foreground/80 mb-1">Pattern rule (exact string):</div>
-              <div className="font-mono text-muted-foreground text-[11px] break-all">
-                {`${matchInfo.ruleLeft ?? ','} ⇔ ${matchInfo.ruleRight ?? ','}`}
+              <div className="font-medium text-foreground/80 mb-1">Pattern rule (before \Tc substitution):</div>
+              <div className="text-muted-foreground text-[11px] break-all inline-flex items-center gap-0.5 flex-wrap">
+                <ExpressionRenderer expression={matchInfo.ruleLeft ?? ','} size={11} />
+                <EquivalenceSymbol size={11} className="shrink-0" />
+                <ExpressionRenderer expression={matchInfo.ruleRight ?? ','} size={11} />
+              </div>
+              <div className="font-mono text-muted-foreground text-[11px] break-all mt-1">{originalPattern}</div>
+            </div>
+          )}
+          {hasTcInstantiation && (
+            <div>
+              <div className="font-medium text-foreground/80 mb-1">Pattern after \Tc substitution:</div>
+              <div className="text-muted-foreground text-[11px] break-all inline-flex items-center gap-0.5 flex-wrap">
+                <ExpressionRenderer expression={instantiatedLeft ?? matchInfo.ruleLeft ?? ','} size={11} />
+                <EquivalenceSymbol size={11} className="shrink-0" />
+                <ExpressionRenderer expression={instantiatedRight ?? matchInfo.ruleRight ?? ','} size={11} />
               </div>
             </div>
           )}

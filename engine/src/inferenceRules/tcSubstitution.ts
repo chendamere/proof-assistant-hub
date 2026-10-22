@@ -18,7 +18,9 @@ import { ensureCommaWrapped, normalizeSpacing } from './utils';
 import { tcBindings, type TcBindingEntry } from './tcBindings';
 
 const NULLARY = new Set(['\\Or', '\\Ri', '\\Rq']);
-const OPERAND_FIRST = new Set(['\\Os', '\\Oc', '\\Od', '\\Ob', '\\Og', '\\Oa']);
+const OPERAND_FIRST = new Set(['\\Os', '\\Oc', '\\Od', '\\Ob', '\\Og', '\\Oa', '\\Pu', '\\nPu']);
+/** \\Pu / \\nPu: one operand, which points to null. */
+const UNARY_NULL = new Set(['\\Pu', '\\nPu']);
 
 /** Stop automatic enumeration past this many hole/fragment combinations. */
 const MAX_COMBINATIONS = 20000;
@@ -127,13 +129,19 @@ function parseAtom(item: string, tcAsHole: boolean): Item | null {
     return { type: 'atom', op, operands: [], ground: false };
   }
   const operands: string[] = [];
-  if (before) {
-    if (!isIdent(before)) return null;
-    operands.push(before);
-  }
-  if (after) {
-    if (!isIdent(after)) return null;
-    operands.push(after);
+  if (UNARY_NULL.has(op)) {
+    const operand = before || after;
+    if (!operand || !isIdent(operand)) return null;
+    operands.push(operand);
+  } else {
+    if (before) {
+      if (!isIdent(before)) return null;
+      operands.push(before);
+    }
+    if (after) {
+      if (!isIdent(after)) return null;
+      operands.push(after);
+    }
   }
   if (tcAsHole && op === '\\Tc' && operands.length === 1) return { type: 'hole', name: operands[0]! };
   return { type: 'atom', op, operands, ground: false };
@@ -663,6 +671,241 @@ function resultFor(
   };
 }
 
+function restoreMap<K, V>(dst: Map<K, V>, src: Map<K, V>): void {
+  dst.clear();
+  for (const [k, v] of src) dst.set(k, v);
+}
+
+/** Match one pattern item, allowing \\Tc holes to consume slices of branch arms. */
+function matchStructured(
+  p: Item,
+  t: Item,
+  holes: Map<string, Seq>,
+  bind: Map<string, string>,
+  used: Map<string, string>
+): boolean {
+  if (p.type === 'hole') return false;
+  if (p.type === 'atom') return t.type === 'atom' && matchAtom(p, t, bind, used);
+  if (t.type !== 'branch') return false;
+  if (p.kind === 'Brb') return matchBrsOverlay(p, t, bind, used) != null;
+  if (p.kind !== t.kind) return false;
+  if ((p.cond == null) !== (t.cond == null)) return false;
+  if (p.cond && t.cond && !matchAtom(p.cond, t.cond, bind, used)) return false;
+  const topEnd = consumeSeq(p.top, t.top, 0, 0, holes, bind, used, () => true, true);
+  if (topEnd !== t.top.length) return false;
+  const botEnd = consumeSeq(p.bottom, t.bottom, 0, 0, holes, bind, used, () => true, true);
+  return botEnd === t.bottom.length;
+}
+
+/**
+ * Consume pattern[pi..] as a prefix of target[ti..].
+ * Returns the target index after the first consumption for which accept() is true,
+ * or the end index when accept is the default success check.
+ */
+function consumeSeq(
+  pattern: Seq,
+  target: Seq,
+  pi: number,
+  ti: number,
+  holes: Map<string, Seq>,
+  bind: Map<string, string>,
+  used: Map<string, string>,
+  accept: () => boolean,
+  full: boolean
+): number | null {
+  if (pi === pattern.length) {
+    if (full && ti !== target.length) return null;
+    return accept() ? ti : null;
+  }
+  const p = pattern[pi]!;
+  if (p.type === 'hole') {
+    const existing = holes.get(p.name);
+    if (existing) {
+      const end = ti + existing.length;
+      if (end > target.length || !equalSeq(existing, target.slice(ti, end))) return null;
+      return consumeSeq(pattern, target, pi + 1, end, holes, bind, used, accept, full);
+    }
+    for (let len = 0; len <= target.length - ti; len++) {
+      const holeSnap = new Map(holes);
+      const bindSnap = new Map(bind);
+      const usedSnap = new Map(used);
+      holes.set(p.name, cloneGround(target.slice(ti, ti + len)));
+      const end = consumeSeq(pattern, target, pi + 1, ti + len, holes, bind, used, accept, full);
+      if (end != null) return end;
+      restoreMap(holes, holeSnap);
+      restoreMap(bind, bindSnap);
+      restoreMap(used, usedSnap);
+    }
+    return null;
+  }
+  if (ti >= target.length) return null;
+  const holeSnap = new Map(holes);
+  const bindSnap = new Map(bind);
+  const usedSnap = new Map(used);
+  if (!matchStructured(p, target[ti]!, holes, bind, used)) {
+    restoreMap(holes, holeSnap);
+    restoreMap(bind, bindSnap);
+    restoreMap(used, usedSnap);
+    return null;
+  }
+  const end = consumeSeq(pattern, target, pi + 1, ti + 1, holes, bind, used, accept, full);
+  if (end == null) {
+    restoreMap(holes, holeSnap);
+    restoreMap(bind, bindSnap);
+    restoreMap(used, usedSnap);
+  }
+  return end;
+}
+
+/** Bind \\Tc holes by aligning the rule with one side, then keep the binding only if substitution works. */
+function alignHoleBindings(stepL: Seq, stepR: Seq, ruleL: Seq, ruleR: Seq): Map<string, Seq> | null {
+  const sources: Array<[Seq, Seq]> = [
+    [ruleL, stepL],
+    [ruleR, stepL],
+    [ruleL, stepR],
+    [ruleR, stepR],
+  ];
+  for (const [pattern, target] of sources) {
+    for (let start = 0; start <= target.length; start++) {
+      const holes = new Map<string, Seq>();
+      const bind = new Map<string, string>();
+      const used = new Map<string, string>();
+      let found: Map<string, Seq> | null = null;
+      consumeSeq(pattern, target, 0, start, holes, bind, used, () => {
+        if (!matchedInstance(stepL, stepR, ruleL, ruleR, holes)) return false;
+        found = new Map(holes);
+        return true;
+      }, false);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+function eqFamily(op: string): string {
+  if (op === '\\Pe' || op === '\\Oe') return 'eq';
+  if (op === '\\nPe' || op === '\\nOe') return 'neq';
+  return op;
+}
+
+function atomSame(a: Atom, b: Atom): boolean {
+  return eqFamily(a.op) === eqFamily(b.op) && a.operands.join('\0') === b.operands.join('\0');
+}
+
+function seqEmpty(seq: Seq): boolean {
+  return seq.length === 0;
+}
+
+/** One arm is a single empty-armed branch; the other arm is empty. */
+function nestedEmptyBranch(seq: Seq): Branch | null {
+  if (seq.length !== 1 || seq[0]!.type !== 'branch') return null;
+  const branch = seq[0] as Branch;
+  if (!seqEmpty(branch.top) || !seqEmpty(branch.bottom) || !branch.cond) return null;
+  return branch;
+}
+
+/**
+ * Equivalence substitution: under outer i=j, nested i=m and j=m are interchangeable.
+ * Pe and Oe are the same family.
+ */
+function isEquivSubstShape(ruleLeft: string, ruleRight: string): boolean {
+  const left = parseExpr(ruleLeft, false);
+  const right = parseExpr(ruleRight, false);
+  if (!left || !right || left.length !== 1 || right.length !== 1) return false;
+  const lb = left[0]!;
+  const rb = right[0]!;
+  if (lb.type !== 'branch' || rb.type !== 'branch' || !lb.cond || !rb.cond) return false;
+  if (!atomSame(lb.cond, rb.cond) || lb.cond.operands.length !== 2) return false;
+  const topL = nestedEmptyBranch(lb.top);
+  const topR = nestedEmptyBranch(rb.top);
+  const botL = nestedEmptyBranch(lb.bottom);
+  const botR = nestedEmptyBranch(rb.bottom);
+  const onTop = topL && topR && seqEmpty(lb.bottom) && seqEmpty(rb.bottom);
+  const onBot = botL && botR && seqEmpty(lb.top) && seqEmpty(rb.top);
+  const nL = onTop ? topL : onBot ? botL : null;
+  const nR = onTop ? topR : onBot ? botR : null;
+  if (!nL?.cond || !nR?.cond) return false;
+  const [i, j] = lb.cond.operands;
+  const inner = (a: Atom, b: Atom): boolean => {
+    if (eqFamily(a.op) !== 'eq' || eqFamily(a.op) !== eqFamily(b.op)) return false;
+    if (a.operands.length !== 2 || b.operands.length !== 2) return false;
+    if (a.operands[0] !== i || b.operands[0] !== j) return false;
+    const m = a.operands[1]!;
+    return m === b.operands[1] && m !== i && m !== j;
+  };
+  return inner(nL.cond, nR.cond) || inner(nR.cond, nL.cond);
+}
+
+function siblingJustifies(eq: Atom, before: Atom, after: Atom): boolean {
+  if (eqFamily(eq.op) !== 'eq' || eq.operands.length !== 2) return false;
+  if (eqFamily(before.op) !== 'eq' || eqFamily(before.op) !== eqFamily(after.op)) return false;
+  if (before.operands.length !== 2 || after.operands.length !== 2) return false;
+  const [e1, e2] = eq.operands;
+  const [b1, b2] = before.operands;
+  const [a1, a2] = after.operands;
+  const pair = (x: string, y: string) => (x === e1 && y === e2) || (x === e2 && y === e1);
+  if (b1 === a1 && b2 !== a2 && pair(b2, a2)) return true;
+  if (b2 === a2 && b1 !== a1 && pair(b1, a1)) return true;
+  return false;
+}
+
+/**
+ * Equivalence substitution also rewrites a branch condition from a sibling equality.
+ * `j \Pe m, \Bb{i \Pe j}{c1}{c2}` ⟺ `j \Pe m, \Bb{i \Pe m}{c1}{c2}`.
+ * Symmetry of \Pe / \Oe is the equiv-symmetric axiom, so either operand of the equality may move.
+ */
+export function trySiblingEqualityOnCondition(
+  targetLeft: string,
+  targetRight: string,
+  ruleLeft: string,
+  ruleRight: string
+): { match: boolean; position?: MatchPosition } | null {
+  if (!isEquivSubstShape(ruleLeft, ruleRight)) return null;
+  const left = parseExpr(targetLeft, false);
+  const right = parseExpr(targetRight, false);
+  if (!left || !right) return null;
+
+  const diffs: Array<{ before: Atom; after: Atom; context: Atom[] }> = [];
+
+  const walk = (a: Seq, b: Seq, context: Atom[]): boolean => {
+    if (a.length !== b.length) return false;
+    const here = context.concat(a.filter((item): item is Atom => item.type === 'atom'));
+    for (let i = 0; i < a.length; i++) {
+      const x = a[i]!;
+      const y = b[i]!;
+      if (x.type !== y.type) return false;
+      if (x.type === 'atom') {
+        if (!atomSame(x, y as Atom)) return false;
+        continue;
+      }
+      if (x.type === 'hole' || y.type === 'hole') return false;
+      if (x.kind !== y.kind) return false;
+      if (!x.cond || !y.cond) {
+        if (x.cond || y.cond) return false;
+      } else if (!atomSame(x.cond, y.cond)) {
+        diffs.push({ before: x.cond, after: y.cond, context: here });
+      }
+      if (!walk(x.top, y.top, here) || !walk(x.bottom, y.bottom, here)) return false;
+    }
+    return true;
+  };
+
+  if (!walk(left, right, [])) return null;
+  if (diffs.length !== 1) return null;
+  const diff = diffs[0]!;
+  if (!diff.context.some((atom) => siblingJustifies(atom, diff.before, diff.after))) return null;
+  return {
+    match: true,
+    position: {
+      side: 'both',
+      description: 'Sibling equality rewrites the branch condition',
+      wasPatternMatch: true,
+      instantiatedPatternLeft: normalizeSpacing(ruleLeft),
+      instantiatedPatternRight: normalizeSpacing(ruleRight),
+    },
+  };
+}
+
 /**
  * Bind each \\Tc hole to a subexpression of the step, then accept only if substitution
  * of the instantiated rule turns one side into the other (with Brs suffix matching).
@@ -690,6 +933,12 @@ export function tryTcSubexpressionSubstitution(
   if (manual && names.every((n) => manual.has(n))) {
     const hit = matchedInstance(stepL, stepR, ruleL, ruleR, manual);
     if (hit) return resultFor(manual, targetRight, { ...hit, direction: `manual \\Tc binding; ${hit.direction}` });
+  }
+
+  const aligned = alignHoleBindings(stepL, stepR, ruleL, ruleR);
+  if (aligned) {
+    const hit = matchedInstance(stepL, stepR, ruleL, ruleR, aligned);
+    if (hit) return resultFor(aligned, targetRight, hit);
   }
 
   const candidates = candidateFragments(stepL, stepR);

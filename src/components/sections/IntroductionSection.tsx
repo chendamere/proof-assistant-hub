@@ -1,6 +1,5 @@
 import freePdfAsset from '@/assets/TheWayOfMachineThinking.pdf.asset.json';
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import NodeDiagram from '@/components/visuals/NodeDiagram';
 import TreeStructureDiagram from '@/components/visuals/TreeStructureDiagram';
@@ -217,8 +216,8 @@ const IntroductionSection: React.FC = () => {
                       <div>
                         <span className="font-semibold">Equivalent Substitution</span>
                         <p className="text-muted-foreground">
-                          A ⟺ B allows inserting A with B in any context M·A·N → M·B·N. 
-                          This is the most used inference step — <Link to="/substitution-dag" className="text-primary hover:underline">see how it's implemented →</Link>
+                          A ⟺ B allows inserting A with B in any context M·A·N → M·B·N.
+                          This is the most used inference step.
                         </p>
                       </div>
                     </div>

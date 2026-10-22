@@ -40,9 +40,41 @@ export function ensureCommaWrapped(expr: string): string {
  * Handles cases like ", 3 \Oc 4," vs ",3 \Oc 4," or ",3 \Oc 4, 1 \Od 2," vs ",3 \Oc 4,1 \Od 2,"
  * Always returns a comma-wrapped expression (starts and ends with comma).
  */
+/**
+ * Branch conditions written as if(...) are display-only.
+ * Evaluation uses the inner condition: \\Bb{if(i \\Pe j)} → \\Bb{i \\Pe j}.
+ */
+export function stripDisplayIfConditions(expr: string): string {
+  if (!expr || !expr.includes('if(')) return expr;
+  const re = /\\B(?:lb|ls|rb|rs|b|s)\s*\{/g;
+  let out = '';
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(expr)) !== null) {
+    const brace = m.index + m[0].length - 1;
+    let i = brace + 1;
+    while (i < expr.length && /[\s,]/.test(expr[i]!)) i++;
+    if (!expr.startsWith('if(', i)) continue;
+    let depth = 1;
+    let j = i + 3;
+    while (j < expr.length && depth > 0) {
+      if (expr[j] === '(') depth++;
+      else if (expr[j] === ')') depth--;
+      j++;
+    }
+    if (depth !== 0) continue;
+    out += expr.slice(last, i);
+    out += expr.slice(i + 3, j - 1);
+    last = j;
+    re.lastIndex = j;
+  }
+  if (last === 0) return expr;
+  return out + expr.slice(last);
+}
+
 export const normalizeSpacing = (expr: string): string => {
   if (!expr) return ensureCommaWrapped(expr);
-  const result = expr
+  const result = stripDisplayIfConditions(expr)
     // Normalize all whitespace sequences (tabs, multiple spaces, newlines, etc.) to single spaces
     .replace(/\s+/g, ' ')
     // Remove space before comma (handles ", 3" -> ",3" and " ,3" -> ",3")

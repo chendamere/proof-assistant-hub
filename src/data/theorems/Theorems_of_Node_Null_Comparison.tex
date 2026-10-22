@@ -272,11 +272,10 @@ proof:\\
 \Rq, \Bb{if(i \Pu)}{,}{, \Or,},  m \Pu,\\\\\\\\
 \Rq, \Bb{if(i \Pu)}{,}{, \Or,}, \Bb{if(m \Pu)}{,}{,\Or,},\\\\\\\\
 \Rq, \Bb{if(i \Pu)}{, \Bb{if(m \Pu)}{,}{,\Or,},}{, \Or,\Bb{if(m \Pu)}{,}{,\Or,},},\\\\\\\\
-\Rq, \Bb{if(i \Pu)}{, \Bb{if(m \Pu)}{,}{,\Or,},}{, \Bb{if(m \Pu)}{,}{,}, \Or,},\\\\\\\\
-\Rq, \Bb{if(i \Pu)}{, \Bb{if(m \Pu)}{,}{,\Or,},}{, \Bb{if(m \Pu)}{, \Or,}{, \Or,},},\\\\\\\\
-\Rq, \Bb{if(m \Pu)}{, \Bb{if(i \Pu)}{,}{,\Or,},}{, \Bb{if(i \Pu)}{, \Or,}{, \Or,},},\\\\\\\\
-\Rq, \Bb{if(m \Pu)}{, \Bb{if(i \Pu)}{,}{,\Or,},}{, \Bb{if(i \Pu)}{,}{,},\Or,}, \\\\\\\\
-\Rq, \Bb{if(m \Pu)}{, \Bb{if(i \Pu)}{,}{,\Or,},}{, \Or,}, \\\\\\\\
+\Rq, \Bb{if(i \Pu)}{, \Bb{if(m \Pu)}{,}{,\Or,},}{, \Or,},\\\\\\\\
+\Rq, \Bb{if(i \Pu)}{, m \Pu,}{, \Or,},\\\\\\\\
+\Rq, \Bb{if(i \Pu)}{, m \Pu,}{, m \Pu, \Or,},\\\\\\\\
+\Rq, m \Pu, \Bb{if(i \Pu)}{,}{, \Or,},\\\\\\\\
 \Rq, \Bb{if(m \Pu)}{, }{, \Or,}, \Bb{if(i \Pu)}{,}{,\Or,},\\\\\\\\
 \Rq, \Bb{if(m \Pu)}{, }{, \Or,}, i \Pu,\\\\\\\\
 \Rq,  m \Pu, i \Pu,
@@ -333,8 +332,10 @@ proof:\\
 \Rq, \Ot j, \Ot m,  \Bb{if(i \Pe m)}{, m \Os, \Bb{if(i \Pe j)}{, j \Os, \Tc c_1,}{, j \Os, \Tc c_3,},}{, m \Os, j \Os, \Tc c_2,}, \\\\\\\\
 \Rq, \Ot m, \Ot j,  \Bb{if(i \Pe m)}{, m \Os, \Bb{if(i \Pe j)}{, j \Os, \Tc c_1,}{, j \Os, \Tc c_3,},}{, m \Os, j \Os, \Tc c_2,}, \\\\\\\\
 \Rq, \Ot m,  \Bb{if(i \Pe m)}{, \Ot j, m \Os, \Bb{if(i \Pe j)}{, j \Os, \Tc c_1,}{, j \Os, \Tc c_3,},}{, \Ot j, m \Os, j \Os, \Tc c_2,}, \\\\\\\\
+\Rq, \Ot m,  \Bb{if(i \Pe m)}{, m \Os, \Ot j, \Bb{if(i \Pe j)}{, j \Os, \Tc c_1,}{, j \Os, \Tc c_3,},}{, \Ot j, m \Os, j \Os, \Tc c_2,}, \\\\\\\\
 \Rq, \Ot m,  \Bb{if(i \Pe m)}{, m \Os, \Ot j, \Bb{if(i \Pe j)}{, j \Os, \Tc c_1,}{, j \Os, \Tc c_3,},}{, m \Os, \Ot j, j \Os, \Tc c_2,}, \\\\\\\\
 \Rq, \Ot m,  \Bb{if(i \Pe m)}{, m \Os,  \Ot j,\Bb{if(i \Pe j)}{, j \Os, \Tc c_1,}{, j \Os, \Tc c_3,},}{, m \Os, \Tc c_2,}, \\\\\\\\
+\Rq, \Ot m, \Bb{if(i \Pe m)}{, m \Os, \Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_3,},}{, m \Os, \Tc c_2,}, \\\\\\\\
 \Rq,  \Bb{if(i \Pu)}{,\Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_3,},}{,\Tc c_2,},
 \end{math}
 
@@ -385,6 +386,7 @@ proof:\\
 ,i \Pu, \Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,}, \\\\\\\\
 \Rq, \Bb{if(i \Pu)}{,}{, \Or,}, \Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,},  \\\\\\\\
 \Rq, \Bb{if(i \Pu)}{, \Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,},}{, \Or,\Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,},},  \\\\\\\\
+\Rq, \Bb{if(i \Pu)}{, \Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,},}{, \Or,},  \\\\\\\\
 \Rq, \Bb{if(i \Pu)}{,\Tc c_1,}{, \Or,},  \\\\\\\\
 \Rq, i \Pu, \Tc c_1,
 \end{math}
@@ -461,6 +463,8 @@ proof:\\
 \Rq, \Ot m , \Ot n, m \Pe n, m \Pe i , n \Os,  \Bb{if(j \Pe m)}{, m \Os, \Tc c_1,}{, m \Os, \Tc c_2,},\\\\\\
 \Rq, \Ot m , \Ot n, m \Pe n, n \Pe i , n \Os,  \Bb{if(j \Pe m)}{, m \Os, \Tc c_1,}{, m \Os, \Tc c_2,},\\\\\\
 \Rq, \Ot m , \Ot n,  n \Pe i , n \Os,  \Bb{if(j \Pe m)}{, m \Os, \Tc c_1,}{, m \Os, \Tc c_2,},\\\\\\
+\Rq, \Ot n , \Ot m,  n \Pe i , n \Os,  \Bb{if(j \Pe m)}{, m \Os, \Tc c_1,}{, m \Os, \Tc c_2,},\\\\\\
+\Rq, \Ot n , n \Pe i , \Ot m, n \Os,  \Bb{if(j \Pe m)}{, m \Os, \Tc c_1,}{, m \Os, \Tc c_2,},\\\\\\
 \Rq,  \Ot n,  n \Pe i , n \Os, \Ot m , \Bb{if(j \Pe m)}{, m \Os, \Tc c_1,}{, m \Os, \Tc c_2,},\\\\\\
 \Rq,  \Ot n,  i \Pe n , n \Os, \Ot m , \Bb{if(j \Pe m)}{, m \Os, \Tc c_1,}{, m \Os, \Tc c_2,},\\\\\\
 \Rq,  \Ot n,  i \Pe n , n \Os,  \Bb{if(j \Pu)}{, \Tc c_1,}{, \Tc c_2,},\\\\\\

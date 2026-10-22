@@ -111,6 +111,18 @@ function verifyTransitionMainThread(
   index: ReturnType<typeof buildRuleIndex>,
   rulesToTry: Array<{ id: string; leftSide: string; rightSide: string }>
 ): VerifyTransitionResult {
+  if (normalizeSpacing(targetLeft) === normalizeSpacing(targetRight)) {
+    return {
+      matched: true,
+      matchInfo: {
+        matchedRuleId: 'spacing',
+        description: 'Same expression after spacing is normalized',
+        ruleLeft: targetLeft,
+        ruleRight: targetRight,
+        inferenceRuleName: 'Spacing',
+      },
+    };
+  }
   const rulesTried: Array<{ ruleId: string; matched: boolean; matchTime: number }> = [];
   for (const rule of rulesToTry) {
     const ruleStartTime = performance.now();
@@ -133,8 +145,10 @@ function verifyTransitionMainThread(
           description: pos?.description,
           startPosition: pos?.position,
           side: pos?.side,
-          ruleLeft: pos?.instantiatedPatternLeft ?? rule.leftSide,
-          ruleRight: pos?.instantiatedPatternRight ?? rule.rightSide,
+          ruleLeft: rule.leftSide,
+          ruleRight: rule.rightSide,
+          instantiatedPatternLeft: pos?.instantiatedPatternLeft,
+          instantiatedPatternRight: pos?.instantiatedPatternRight,
           inferenceRuleName: result.inferenceRule,
           nodeMap: pos?.nodeMapping ? Object.fromEntries(pos.nodeMapping) : undefined,
           unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,

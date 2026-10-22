@@ -219,7 +219,13 @@ function emptyArmEdgeCompatible(a: InjectionMatchForPairing, b: InjectionMatchFo
   const larger = edgesA.size <= edgesB.size ? edgesB : edgesA;
   for (const e of smaller) if (!larger.has(e)) return false;
   const extra = [...larger].filter((e) => !smaller.has(e));
-  return extra.every((e) => isEmptyArmEdge(e) || isCreateBranchSpliceEdge(e));
+  // Type 0 also covers the sequence link between two formulas that an insertion splits.
+  return extra.every((e) => isEmptyArmEdge(e) || isCreateBranchSpliceEdge(e) || isSequenceEdge(e));
+}
+
+function isSequenceEdge(edgePart: string): boolean {
+  const parts = edgePart.split('\t');
+  return parts.length >= 3 && parts[2] === '0';
 }
 
 /** True when one side's unmatched nodes (and their induced edges) are a subset of the other. Reduces Tc false positives. */

@@ -9,6 +9,7 @@
 
 import { InferenceRule } from './types';
 import { trySubstitutionByMatchPairs } from './substitution';
+import { trySiblingEqualityOnCondition } from './tcSubstitution';
 import { normalizeSpacing } from './utils';
 import { normalizeRule as normalizeRuleOperands } from '../operandNormalizer';
 
@@ -108,6 +109,8 @@ export const InferenceRules: InferenceRule[] = [
       // AND ruleRight in targetRight), reconstruction exists—skip expensive construction.
       const matchPairsResult = trySubstitutionByMatchPairs(targetLeft, targetRight, ruleLeft, ruleRight, stepCounter);
       if (matchPairsResult?.match) return matchPairsResult;
+      const sibling = trySiblingEqualityOnCondition(targetLeft, targetRight, ruleLeft, ruleRight);
+      if (sibling?.match) return sibling;
       return { match: false };
     },
   },

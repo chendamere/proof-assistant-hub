@@ -30,6 +30,9 @@ function parseOneBraced(expr: string, pos: number): { content: string; end: numb
 /** Operators that take no operands (nullary) */
 const NULLARY_OPERATORS = new Set(['\\Or', '\\Ri', '\\Rq']);
 
+/** \\Pu / \\nPu take one operand: that operand points to null (unary form of \\Pe / \\nPe). */
+const UNARY_NULL_OPS = new Set(['\\Pu', '\\nPu']);
+
 /** Plus operator: "a+b:c" form (ignore colon for structure; 3 operands: left, right, result). */
 const PLUS_OP = '\\+';
 const PLUS_PATTERN = /([a-zA-Z](?:_\d+)?|\d+)\s*\+\s*([a-zA-Z](?:_\d+)?|\d+)\s*:\s*([a-zA-Z](?:_\d+)?|\d+)/g;
@@ -127,12 +130,15 @@ function extractOperations(expr: string): Array<{ op: string; operands: string[]
         }
       }
 
-      // Look forwards for operand after
-      while (afterEnd < expr.length && /\s/.test(expr[afterEnd])) afterEnd++;
-      if (afterEnd < expr.length) {
-        const afterText = expr.substring(afterEnd);
-        const am = afterText.match(/^([a-zA-Z](?:_\d+)?|\d+)/);
-        if (am) operandAfter = am[1];
+      // \\Pu is unary: keep a following operand only when there is no operand before ("\\Pu i").
+      const allowAfter = !UNARY_NULL_OPS.has(opFull) || operandBefore === undefined;
+      if (allowAfter) {
+        while (afterEnd < expr.length && /\s/.test(expr[afterEnd])) afterEnd++;
+        if (afterEnd < expr.length) {
+          const afterText = expr.substring(afterEnd);
+          const am = afterText.match(/^([a-zA-Z](?:_\d+)?|\d+)/);
+          if (am) operandAfter = am[1];
+        }
       }
     }
 

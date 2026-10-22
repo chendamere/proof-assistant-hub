@@ -8,7 +8,7 @@ import { buildAdjacency } from './utils';
 import { ensureCommaWrapped } from '../inferenceRules/utils';
 
 /** Unary ops written "operand op" in axioms/theorems (e.g. m \Os). \Ot stays "op operand" (\Ot m). */
-const OPERAND_FIRST_UNARY_OPS = new Set(['\\Os', '\\Oc', '\\Od', '\\Ob', '\\Og', '\\Oa']);
+const OPERAND_FIRST_UNARY_OPS = new Set(['\\Os', '\\Oc', '\\Od', '\\Ob', '\\Og', '\\Oa', '\\Pu', '\\nPu']);
 
 function formatOp(data: ExprNodeData, subst?: Map<string, string>, literalTc?: boolean): string {
   const op = data.op;

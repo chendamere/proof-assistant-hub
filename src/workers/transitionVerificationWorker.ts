@@ -6,6 +6,7 @@
 
 import { checkInferenceRules } from '@engine/inferenceRules';
 import { buildRuleIndex, getRulesForTransition } from '@engine/inferenceRules/ruleIndex';
+import { normalizeSpacing } from '@engine/inferenceRules/utils';
 
 export type TransitionVerificationRequest = {
   id: string;
@@ -22,10 +23,13 @@ export type MatchInfo = {
   description?: string;
   startPosition?: number;
   side?: 'left' | 'right' | 'both';
-  /** Exact pattern rule: left side (e.g. axiom LHS). */
+  /** Original pattern rule before \\Tc holes are filled (e.g. axiom LHS). */
   ruleLeft?: string;
-  /** Exact pattern rule: right side (e.g. axiom RHS). */
+  /** Original pattern rule before \\Tc holes are filled (e.g. axiom RHS). */
   ruleRight?: string;
+  /** Pattern after \\Tc operands are replaced by the matched subexpressions. */
+  instantiatedPatternLeft?: string;
+  instantiatedPatternRight?: string;
   /** Name of the inference rule that matched (e.g. "Equivalent Substitution"). */
   inferenceRuleName?: string;
   /** Node map: pattern node id → target node id (VF2 injection result). */
@@ -48,6 +52,23 @@ export type TransitionVerificationResponse = {
 self.onmessage = (e: MessageEvent<TransitionVerificationRequest>) => {
   const { id, targetLeft, targetRight, rules, rulesToTry } = e.data;
   try {
+    if (normalizeSpacing(targetLeft) === normalizeSpacing(targetRight)) {
+      const response: TransitionVerificationResponse = {
+        id,
+        matched: true,
+        matchedRuleId: 'spacing',
+        matchInfo: {
+          matchedRuleId: 'spacing',
+          description: 'Same expression after spacing is normalized',
+          ruleLeft: targetLeft,
+          ruleRight: targetRight,
+          inferenceRuleName: 'Spacing',
+        },
+      };
+      self.postMessage(response);
+      return;
+    }
+
     const rulesForIndex = rulesToTry ?? rules;
     const index = buildRuleIndex(rulesForIndex);
     const toTry = rulesToTry ?? getRulesForTransition(index, targetLeft, targetRight);
@@ -79,8 +100,10 @@ self.onmessage = (e: MessageEvent<TransitionVerificationRequest>) => {
           description: pos?.description,
           startPosition: pos?.position,
           side: pos?.side,
-          ruleLeft: pos?.instantiatedPatternLeft ?? rule.leftSide,
-          ruleRight: pos?.instantiatedPatternRight ?? rule.rightSide,
+          ruleLeft: rule.leftSide,
+          ruleRight: rule.rightSide,
+          instantiatedPatternLeft: pos?.instantiatedPatternLeft,
+          instantiatedPatternRight: pos?.instantiatedPatternRight,
           inferenceRuleName: result.inferenceRule,
           nodeMap: nodeMapping ? Object.fromEntries(nodeMapping) : undefined,
           unmatchedTargetNodeSignatures: pos?.unmatchedTargetNodeSignatures,

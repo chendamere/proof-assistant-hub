@@ -14,11 +14,12 @@ import { checkInferenceRules } from '../src/inferenceRules';
 import { buildRuleIndex, getRulesForTransition } from '../src/inferenceRules/ruleIndex';
 import { normalizeSpacing } from '../src/inferenceRules/utils';
 
-/** Book chapters to verify: Ch1 Operators, Ch2 Three Fundamental (often empty), Ch3 Node Value Comparison. */
+/** Book chapters to verify: Ch1–Ch4. */
 const CHAPTERS = [
   'Rules_of_Operators',
   'Rules of Three Fundamental Relationships',
   'Theorems_of_Relationship_of_Node_Value_Comparison',
+  'Theorems_of_Node_Null_Comparison',
 ];
 
 const CHAPTER_ORDER = [
@@ -105,6 +106,11 @@ for (const [key, steps] of Object.entries(table)) {
   for (let i = 0; i < steps.length - 1; i++) {
     const left = steps[i]!;
     const right = steps[i + 1]!;
+    if (normalizeSpacing(left) === normalizeSpacing(right)) {
+      passed++;
+      console.log(`  [PASS] step ${i} 0ms via spacing (same expression)`);
+      continue;
+    }
     const t0 = performance.now();
     const toTry = getRulesForTransition(index, left, right);
     let matchedId: string | undefined;

@@ -8,7 +8,6 @@ import { PanelProvider } from "@/contexts/PanelContext";
 import Index from "./pages/Index";
 import ProofStep from "./pages/ProofStep";
 import ProofSteps from "./pages/ProofSteps";
-import SubstitutionDAGDemo from "./pages/SubstitutionDAGDemo";
 import SubstitutionExample from "./pages/SubstitutionExample";
 import Glossary from "./pages/Glossary";
 import Bibliography from "./pages/Bibliography";
@@ -28,7 +27,6 @@ const App = () => (
             {/* Auth route removed – all pages are publicly accessible */}
             <Route path="/" element={<Index />} />
             <Route path="/proof-steps" element={<ProofSteps />} />
-            <Route path="/substitution-dag" element={<SubstitutionDAGDemo />} />
             <Route path="/bibliography" element={<Bibliography />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
