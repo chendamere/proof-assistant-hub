@@ -293,8 +293,10 @@ function buildItem(
   nodes: DAGNode<ExprNodeData>[],
   edges: DAGEdge[],
   nextId: { n: number },
-  offset = 0
+  offset = 0,
+  depth = 0
 ): BuildResult {
+  if (depth > 100) throw new Error('expression nest too deep');
   const trimmed = item.trim();
   if (!trimmed) return null;
   const trimStart = item.search(/\S/);
@@ -315,8 +317,8 @@ function buildItem(
         data: { op: ':tail', operands: [], start: trimmedOffset, end: trimmedOffset + trimmed.length, branchKind: branch.kind },
       });
 
-      const topResult = buildItem(branch.top, nodes, edges, nextId, topOffset);
-      const botResult = buildItem(branch.bottom, nodes, edges, nextId, botOffset);
+      const topResult = buildItem(branch.top, nodes, edges, nextId, topOffset, depth + 1);
+      const botResult = buildItem(branch.bottom, nodes, edges, nextId, botOffset, depth + 1);
 
       const firstIds: string[] = [];
       if (topResult) {
@@ -345,14 +347,14 @@ function buildItem(
       });
 
       const lastIds: string[] = [];
-      const topResult = buildItem(branch.top, nodes, edges, nextId, topOffset);
+      const topResult = buildItem(branch.top, nodes, edges, nextId, topOffset, depth + 1);
       if (topResult) {
         pushEdge(edges, condHeadId, topResult.firstId!, 1); // cond→top
         lastIds.push(topResult.lastId!);
       } else {
         lastIds.push(condHeadId);
       }
-      const botResult = buildItem(branch.bottom, nodes, edges, nextId, botOffset);
+      const botResult = buildItem(branch.bottom, nodes, edges, nextId, botOffset, depth + 1);
       if (botResult) {
         pushEdge(edges, condHeadId, botResult.firstId!, 2); // cond→bottom
         lastIds.push(botResult.lastId!);
@@ -382,14 +384,14 @@ function buildItem(
       data: { op: ':tail', operands: [], start: trimmedOffset, end: trimmedOffset + trimmed.length, branchKind: 'Bb' },
     });
 
-    const topResult = buildItem(branch.top, nodes, edges, nextId, topOffset);
+    const topResult = buildItem(branch.top, nodes, edges, nextId, topOffset, depth + 1);
     if (topResult) {
       pushEdge(edges, condHeadId, topResult.firstId!, 1); // cond→top
       pushEdge(edges, topResult.lastId!, tailId, 3); // top→tail
     } else {
       pushEdge(edges, condHeadId, tailId, 0); // empty top arm
     }
-    const botResult = buildItem(branch.bottom, nodes, edges, nextId, botOffset);
+    const botResult = buildItem(branch.bottom, nodes, edges, nextId, botOffset, depth + 1);
     if (botResult) {
       pushEdge(edges, condHeadId, botResult.firstId!, 2); // cond→bottom
       pushEdge(edges, botResult.lastId!, tailId, 4); // bottom→tail
@@ -404,13 +406,16 @@ function buildItem(
   // split and build each part so we don't drop content after the branch.
   if (/[{}]/.test(trimmed) && hasBranch(trimmed) && (hasRemainderAfterBranch || !branch)) {
     const parts = splitSequence(trimmed);
+    if (parts.length <= 1 || parts.every((p) => p.item.trim() === trimmed)) {
+      throw new Error('unparsed branch');
+    }
     let first: BuildResult = null;
     let prev: BuildResult = null;
     for (const { item, start } of parts) {
       const partTrimmed = item.trim();
       if (!partTrimmed) continue;
       const partOffset = trimmedOffset + start;
-      const result = buildItem(partTrimmed, nodes, edges, nextId, partOffset);
+      const result = buildItem(partTrimmed, nodes, edges, nextId, partOffset, depth + 1);
       if (result) {
         if (prev) chain(prev, result, edges);
         if (!first) first = result;

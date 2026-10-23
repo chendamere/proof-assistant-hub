@@ -15,11 +15,53 @@ proof:\\
 \begin{math} 
 , \Bb{if(i \Ps j)}{,\Bb{if(j \Ps k)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(j \Ps k)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\
 \Rq, i \Od t_1, j \Od t_2,  \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Bb{if(j \Ps k)}{,\Tc c_1,}{,\Tc c_2,},}{, t_1 \Os, t_2 \Os, \Bb{if(j \Ps k)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_3 \Os,t_4 \Os,\Tc c_2,},}{,t_1 \Os,t_2 \Os,\Bb{j \Ps k}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\\\
 \Rq, i \Od t_1, j \Od t_2,  \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, j \Od t_3, k \Od t_4, \Bb{if(t_3 \Pe t_4)}{, t_3 \Os, t_4 \Os, \Tc c_1,}{, t_3 \Os, t_4 \Os, \Tc c_2,},}{, t_1 \Os, t_2 \Os, j \Od t_3, k \Od t_4, \Bb{if(t_3 \Pe t_4)}{, t_3 \Os, t_4 \Os, \Tc c_3,}{, t_3 \Os, t_4 \Os, \Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,j \Od t_3,t_2 \Os,k \Od t_4,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_3 \Os,t_4 \Os,\Tc c_2,},}{,t_1 \Os,t_2 \Os,j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_3,}{,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,j \Od t_3,t_1 \Os,t_2 \Os,k \Od t_4,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_3 \Os,t_4 \Os,\Tc c_2,},}{,t_1 \Os,t_2 \Os,j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_3,}{,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,j \Od t_3,t_1 \Os,t_2 \Os,k \Od t_4,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_3 \Os,t_4 \Os,\Tc c_2,},}{,t_1 \Os,j \Od t_3,t_2 \Os,k \Od t_4,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_3,}{,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,j \Od t_3,t_1 \Os,t_2 \Os,k \Od t_4,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_3 \Os,t_4 \Os,\Tc c_2,},}{,j \Od t_3,t_1 \Os,t_2 \Os,k \Od t_4,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_3,}{,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1,j \Od t_2,j \Od t_3,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,k \Od t_4,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_3 \Os,t_4 \Os,\Tc c_2,},}{,t_1 \Os,t_2 \Os,k \Od t_4,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_3,}{,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1,j \Od t_2,j \Od t_3,\Bb{t_1 \Pe t_2}{,t_1 \Os,k \Od t_4,t_2 \Os,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_3 \Os,t_4 \Os,\Tc c_2,},}{,t_1 \Os,t_2 \Os,k \Od t_4,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_3,}{,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1,j \Od t_2,j \Od t_3,\Bb{t_1 \Pe t_2}{,k \Od t_4,t_1 \Os,t_2 \Os,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_3 \Os,t_4 \Os,\Tc c_2,},}{,t_1 \Os,t_2 \Os,k \Od t_4,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_3,}{,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1,j \Od t_2,j \Od t_3,\Bb{t_1 \Pe t_2}{,k \Od t_4,t_1 \Os,t_2 \Os,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_3 \Os,t_4 \Os,\Tc c_2,},}{,t_1 \Os,k \Od t_4,t_2 \Os,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_3,}{,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1,j \Od t_2,j \Od t_3,\Bb{t_1 \Pe t_2}{,k \Od t_4,t_1 \Os,t_2 \Os,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_3 \Os,t_4 \Os,\Tc c_2,},}{,k \Od t_4,t_1 \Os,t_2 \Os,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_3,}{,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
 \Rq, i \Od t_1, j \Od t_2,  j \Od t_3, k \Od t_4, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Bb{if(t_3 \Pe t_4)}{, t_3 \Os, t_4 \Os, \Tc c_1,}{, t_3 \Os, t_4 \Os, \Tc c_2,},}{, t_1 \Os, t_2 \Os, \Bb{if(t_3 \Pe t_4)}{, t_3 \Os, t_4 \Os, \Tc c_3,}{, t_3 \Os, t_4 \Os, \Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1,j \Od t_2,j \Od t_3,k \Od t_4,\Bb{t_1 \Pe t_2}{,t_1 \Os,\Bb{t_3 \Pe t_4}{,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,},}{,t_1 \Os,t_2 \Os,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_3,}{,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1,j \Od t_2,j \Od t_3,k \Od t_4,\Bb{t_1 \Pe t_2}{,\Bb{t_3 \Pe t_4}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,},}{,t_1 \Os,t_2 \Os,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,\Tc c_3,}{,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1,j \Od t_2,j \Od t_3,k \Od t_4,\Bb{t_1 \Pe t_2}{,\Bb{t_3 \Pe t_4}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,},}{,t_1 \Os,\Bb{t_3 \Pe t_4}{,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_3,}{,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
 \Rq, i \Od t_1, j \Od t_2,  j \Od t_3, k \Od t_4, \Bb{if(t_1 \Pe t_2)}{, \Bb{if(t_3 \Pe t_4)}{, t_1 \Os, t_2 \Os, t_3 \Os, t_4 \Os, \Tc c_1,}{, t_1 \Os, t_2 \Os, t_3 \Os, t_4 \Os, \Tc c_2,},}{, \Bb{if(t_3 \Pe t_4)}{, t_1 \Os, t_2 \Os, t_3 \Os, t_4 \Os, \Tc c_3,}{, t_1 \Os, t_2 \Os, t_3 \Os, t_4 \Os, \Tc c_4,},},\\\\\\\\
 \Rq, i \Od t_1, j \Od t_2,  j \Od t_3, k \Od t_4, \Bb{if(t_3 \Pe t_4)}{, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, t_3 \Os, t_4 \Os, \Tc c_1,}{, t_1 \Os, t_2 \Os, t_3 \Os, t_4 \Os, \Tc c_3,},}{, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, t_3 \Os, t_4 \Os, \Tc c_2,}{, t_1 \Os, t_2 \Os, t_3 \Os, t_4 \Os, \Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1,j \Od t_3,j \Od t_2,k \Od t_4,\Bb{t_3 \Pe t_4}{,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_3,},}{,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1,j \Od t_3,k \Od t_4,j \Od t_2,\Bb{t_3 \Pe t_4}{,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_3,},}{,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Od t_1,j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_3,},}{,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,i \Od t_1,k \Od t_4,\Bb{t_3 \Pe t_4}{,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_3,},}{,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,i \Od t_1,\Bb{t_3 \Pe t_4}{,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_3,},}{,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_3 \Os,t_2 \Os,t_4 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_3 \Os,t_1 \Os,t_2 \Os,t_4 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_3 \Os,t_1 \Os,t_2 \Os,t_4 \Os,\Tc c_1,}{,t_1 \Os,t_3 \Os,t_2 \Os,t_4 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_3 \Os,t_1 \Os,t_2 \Os,t_4 \Os,\Tc c_1,}{,t_3 \Os,t_1 \Os,t_2 \Os,t_4 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,t_3 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_4 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,t_4 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,t_3 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_4 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,t_4 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,t_3 \Os,\Bb{t_1 \Pe t_2}{,t_4 \Os,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,t_4 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,t_3 \Os,\Bb{t_1 \Pe t_2}{,t_4 \Os,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_4 \Os,t_2 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,t_3 \Os,\Bb{t_1 \Pe t_2}{,t_4 \Os,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_4 \Os,t_1 \Os,t_2 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,t_3 \Os,t_4 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,t_3 \Os,t_4 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_3 \Os,t_2 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,t_3 \Os,t_4 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_3 \Os,t_1 \Os,t_2 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_3 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,t_3 \Os,t_4 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_3 \Os,t_1 \Os,t_2 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_3 \Os,t_2 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,t_3 \Os,t_4 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_3 \Os,t_1 \Os,t_2 \Os,t_4 \Os,\Tc c_2,}{,t_3 \Os,t_1 \Os,t_2 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,t_3 \Os,t_4 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,t_3 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,t_4 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,t_3 \Os,t_4 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,t_3 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_4 \Os,t_2 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,t_3 \Os,t_4 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,t_3 \Os,\Bb{t_1 \Pe t_2}{,t_4 \Os,t_1 \Os,t_2 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,t_4 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,t_3 \Os,t_4 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,t_3 \Os,\Bb{t_1 \Pe t_2}{,t_4 \Os,t_1 \Os,t_2 \Os,\Tc c_2,}{,t_1 \Os,t_4 \Os,t_2 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,t_3 \Os,t_4 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,t_3 \Os,\Bb{t_1 \Pe t_2}{,t_4 \Os,t_1 \Os,t_2 \Os,\Tc c_2,}{,t_4 \Os,t_1 \Os,t_2 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,i \Od t_1,j \Od t_2,t_3 \Os,t_4 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,t_3 \Os,t_4 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Od t_3,k \Od t_4,\Bb{t_3 \Pe t_4}{,t_3 \Os,t_4 \Os,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,t_3 \Os,t_4 \Os,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,\Tc c_4,},},\\\\\\\\
 \Rq,  j \Od t_3, k \Od t_4, \Bb{if(t_3 \Pe t_4)}{, t_3 \Os, t_4 \Os, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_3,},}{, t_3 \Os, t_4 \Os, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_2,}{, t_1 \Os, t_2 \Os, \Tc c_4,},},\\\\\\\\
+\Rq, \Bb{j \Ps k}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,\Tc c_4,},},\\
+\Rq, \Bb{j \Ps k}{,\Bb{i \Ps j}{,\Tc c_1,}{,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,\Tc c_4,},},\\
 \Rq,  \Bb{if(j \Ps k)}{,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Ps j)}{,\Tc c_2,}{,\Tc c_4,},},
 \end{math}
 \newpage
@@ -67,6 +109,11 @@ proof:\\
 , i \Od n, \Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,},\\\\
 \Rq, i \Od n, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_2,},\\\\\\
 \Rq, i \Od t_1, i \Od n, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Od t_1,j \Od t_2,i \Od n,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_2,},\\\\\\
+\Rq, i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,i \Od n,t_1 \Os,t_2 \Os,\Tc c_1,}{,i \Od n,t_1 \Os,t_2 \Os,\Tc c_2,},\\\\\\
+\Rq, i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,i \Od n,t_2 \Os,\Tc c_1,}{,i \Od n,t_1 \Os,t_2 \Os,\Tc c_2,},\\\\\\
+\Rq, i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,i \Od n,\Tc c_1,}{,i \Od n,t_1 \Os,t_2 \Os,\Tc c_2,},\\\\\\
+\Rq, i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,i \Od n,\Tc c_1,}{,t_1 \Os,i \Od n,t_2 \Os,\Tc c_2,},\\\\\\
 \Rq, i \Od t_1,j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, i \Od n, \Tc c_1,}{, t_1 \Os, t_2 \Os, i \Od n, \Tc c_2,},\\\\\\
 \Rq, \Bb{if(i \Ps j)}{, i \Od n,\Tc c_1,}{, i \Od n,\Tc c_2,}, 
 \end{math}
@@ -96,6 +143,7 @@ proof:\\
 \begin{math} 
 ,i \Od m, i \Oc n,\\\\
 \Rq, i \Oc j, j \Os, i \Od m, i \Oc n, \\\\
+\Rq, i \Oc j,i \Od m,j \Os,i \Oc n,\\\\
 \Rq, i \Oc j, i \Od m, i \Oc n, j \Os, \\\\
 \Rq, i \Oc j, i \Ps j, i \Od m, i \Oc n, j \Os, \\\\
 \Rq, i \Oc j, i \Od m, i \Ps j, i \Oc n, j \Os, \\\\
@@ -104,6 +152,7 @@ proof:\\
 \Rq, i \Oc j, i \Ps j, j \Oc n, i \Od m, j \Os, \\\\
 \Rq, i \Oc j, i \Ps j, i \Oc n, i \Od m, j \Os, \\\\
 \Rq, i \Oc j, i \Oc n, i \Od m, j \Os, \\\\
+\Rq, i \Oc j,i \Oc n,j \Os,i \Od m,\\\\
 \Rq, i \Oc j, j \Os, i \Oc n, i \Od m, \\\\
 \Rq, i \Oc n, i \Od m,
 \end{math}
@@ -131,6 +180,11 @@ proof:\\
 , i \Oc n, \Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_2,},\\\\
 \Rq, i \Oc n, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_2,},\\\\\\
 \Rq, i \Od t_1, i \Oc n, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Od t_1,j \Od t_2,i \Oc n,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_2,},\\\\\\
+\Rq, i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,i \Oc n,t_1 \Os,t_2 \Os,\Tc c_1,}{,i \Oc n,t_1 \Os,t_2 \Os,\Tc c_2,},\\\\\\
+\Rq, i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,i \Oc n,t_2 \Os,\Tc c_1,}{,i \Oc n,t_1 \Os,t_2 \Os,\Tc c_2,},\\\\\\
+\Rq, i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,i \Oc n,\Tc c_1,}{,i \Oc n,t_1 \Os,t_2 \Os,\Tc c_2,},\\\\\\
+\Rq, i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,i \Oc n,\Tc c_1,}{,t_1 \Os,i \Oc n,t_2 \Os,\Tc c_2,},\\\\\\
 \Rq, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, i \Oc n, \Tc c_1,}{, t_1 \Os, t_2 \Os, i \Oc n, \Tc c_2,},\\\\\\
 \Rq, \Bb{if(i \Ps j)}{, i \Oc n,\Tc c_1,}{, i \Oc n,\Tc c_2,},
 \end{math}
@@ -172,6 +226,7 @@ proof:\\
 \begin{math} 
 ,i \Oc m, i \Oc n,\\\\
 \Rq, i \Oc j, j \Os, i \Oc m, i \Oc n,\\\\
+\Rq, i \Oc j,i \Oc m,j \Os,i \Oc n,\\\\
 \Rq, i \Oc j, i \Oc m, i \Oc n, j \Os,\\\\
 \Rq, i \Oc j, i \Ps j, i \Oc m, i \Oc n, j \Os,\\\\
 \Rq, i \Oc j, i \Ps j, j \Oc m, i \Oc n, j \Os,\\\\
@@ -180,6 +235,7 @@ proof:\\
 \Rq, i \Oc j, i \Oc n, i \Ps j, i \Oc m, j \Os,\\\\
 \Rq, i \Oc j, i \Ps j, i \Oc n, i \Oc m, j \Os,\\\\
 \Rq, i \Oc j, i \Oc n, i \Oc m, j \Os,\\\\
+\Rq, i \Oc j,i \Oc n,j \Os,i \Oc m,\\\\
 \Rq, i \Oc j, j \Os, i \Oc n, i \Oc m,\\\\
 \Rq, i \Oc n, i \Oc m,
 \end{math}
@@ -208,11 +264,14 @@ proof:\\
 \begin{math} 
 , i \Od m, \Bb{if(i \Pe j)}{, \Tc c_1,}{, \Tc c_2,},\\\\
 \Rq, i \Oc i_0, i_0 \Os, i \Od m, \Bb{if(i \Pe j)}{, \Tc c_1,}{, \Tc c_2,}, \\\\\\
+\Rq, i \Oc i_0,i \Od m,i_0 \Os,\Bb{i \Pe j}{,\Tc c_1,}{,\Tc c_2,},\\\\\\
 \Rq, i \Oc i_0, i \Od m, \Bb{if(i \Pe j)}{, i_0 \Os, \Tc c_1,}{, i_0 \Os, \Tc c_2,}, \\\\\\
 \Rq, i \Oc i_0, i \Ps i_0, i \Od m, \Bb{if(i \Pe j)}{, i_0 \Os, \Tc c_1,}{, i_0 \Os, \Tc c_2,}, \\\\\\
 \Rq, i \Oc i_0, i \Od m, i \Ps i_0, \Bb{if(i \Pe j)}{, i_0 \Os, \Tc c_1,}{, i_0 \Os, \Tc c_2,}, \\\\\\
 \Rq, i \Oc i_0, i \Od m, i \Ps i_0, \Bb{if(i_0 \Pe j)}{, i_0 \Os, \Tc c_1,}{, i_0 \Os, \Tc c_2,}, \\\\\\
 \Rq, i \Oc i_0, i \Ps i_0, i \Od m, \Bb{if(i_0 \Pe j)}{, i_0 \Os, \Tc c_1,}{, i_0 \Os, \Tc c_2,}, \\\\\\
+\Rq, i \Oc i_0,i \Ps i_0,\Bb{i_0 \Pe j}{,i \Od m,i_0 \Os,\Tc c_1,}{,i \Od m,i_0 \Os,\Tc c_2,},\\\\\\
+\Rq, i \Oc i_0,i \Ps i_0,\Bb{i_0 \Pe j}{,i_0 \Os,i \Od m,\Tc c_1,}{,i \Od m,i_0 \Os,\Tc c_2,},\\\\\\
 \Rq, i \Oc i_0, i \Ps i_0, \Bb{if(i_0 \Pe j)}{, i_0 \Os, i \Od m, \Tc c_1,}{, i_0 \Os, i \Od m, \Tc c_2,}, \\\\\\
 \Rq, i \Oc i_0, i \Ps i_0, \Bb{if(i \Pe j)}{, i_0 \Os, i \Od m, \Tc c_1,}{, i_0 \Os, i \Od m, \Tc c_2,}, \\\\\\
 \Rq, i \Oc i_0, \Bb{if(i \Pe j)}{, i_0 \Os, i \Od m, \Tc c_1,}{, i_0 \Os, i \Od m, \Tc c_2,}, \\\\\\
@@ -264,10 +323,14 @@ proof:\\
 \begin{math} 
 , \Bb{if(i \Ps j)}{,\Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(j \Pe m)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\
 \Rq, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_2,},}{, t_1 \Os, t_2 \Os, \Bb{if(j \Pe m)}{,\Tc c_3,}{,\Tc c_4,},}, \\\\\\\\\\
+\Rq, i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,\Bb{j \Pe m}{,t_2 \Os,\Tc c_1,}{,t_2 \Os,\Tc c_2,},}{,t_1 \Os,t_2 \Os,\Bb{j \Pe m}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\\\\\
+\Rq, i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,\Bb{j \Pe m}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_2,},}{,t_1 \Os,t_2 \Os,\Bb{j \Pe m}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\\\\\
+\Rq, i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,\Bb{j \Pe m}{,t_1 \Os,t_2 \Os,\Tc c_1,}{,t_1 \Os,t_2 \Os,\Tc c_2,},}{,t_1 \Os,\Bb{j \Pe m}{,t_2 \Os,\Tc c_3,}{,t_2 \Os,\Tc c_4,},},\\\\\\\\\\
 \Rq, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, \Bb{if(j \Pe m)}{, t_1 \Os, t_2 \Os,\Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_2,},}{, \Bb{if(j \Pe m)}{, t_1 \Os, t_2 \Os, \Tc c_3,}{, t_1 \Os, t_2 \Os, \Tc c_4,},}, \\\\\\\\\\
 \Rq, i \Od t_1, j \Od t_2, \Bb{if(j \Pe m)}{, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os,\Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_3,},}{, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_2,}{, t_1 \Os, t_2 \Os, \Tc c_4,},}, \\\\\\\\\\
 \Rq, i \Od t_1, \Bb{if(j \Pe m)}{, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os,\Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_3,},}{, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_2,}{, t_1 \Os, t_2 \Os, \Tc c_4,},}, \\\\\\\\\\
 \Rq, \Bb{if(j \Pe m)}{, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os,\Tc c_1,}{, t_1 \Os, t_2 \Os, \Tc c_3,},}{, i \Od t_1, j \Od t_2, \Bb{if(t_1 \Pe t_2)}{, t_1 \Os, t_2 \Os, \Tc c_2,}{, t_1 \Os, t_2 \Os, \Tc c_4,},}, \\\\\\\\\\
+\Rq, \Bb{j \Pe m}{,\Bb{i \Ps j}{,\Tc c_1,}{,\Tc c_3,},}{,i \Od t_1,j \Od t_2,\Bb{t_1 \Pe t_2}{,t_1 \Os,t_2 \Os,\Tc c_2,}{,t_1 \Os,t_2 \Os,\Tc c_4,},},\\
 \Rq, \Bb{if(j \Pe m)}{,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Ps j)}{,\Tc c_2,}{,\Tc c_4,},},
 \end{math}
 \newpage
@@ -319,14 +382,27 @@ proof:\\
 , \Bb{if(i \Ps j)}{,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(i \Pe j)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\
 \Rq, i \Oc i_0, i_0 \Os, \Bb{if(i \Ps j)}{,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(i \Pe j)}{,\Tc c_3,}{,\Tc c_4,},}, \\\\\\\\
 \Rq, i \Oc i_0, \Bb{if(i \Ps j)}{, i_0 \Os, \Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,},}{, i_0 \Os, \Bb{if(i \Pe j)}{,\Tc c_3,}{,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0,\Bb{i \Ps j}{,\Bb{i \Pe j}{,i_0 \Os,\Tc c_1,}{,i_0 \Os,\Tc c_2,},}{,i_0 \Os,\Bb{i \Pe j}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\\\
 \Rq, i \Oc i_0, \Bb{if(i \Ps j)}{, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_2,},}{, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_3,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
 \Rq, i \Oc i_0, i \Ps i_0, \Bb{if(i \Ps j)}{, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_2,},}{, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_3,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
 \Rq, i \Oc i_0, i \Ps i_0, \Bb{if(i_0 \Ps j)}{, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_2,},}{, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_3,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0, i \Ps i_0, \Bb{if(i_0 \Ps j)}{, \Bb{if(j \Pe i)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_2,},}{, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_3,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0, i \Ps i_0, \Bb{if(i_0 \Ps j)}{, \Bb{if(j \Pe i)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_2,},}{, \Bb{if(j \Pe i)}{, i_0 \Os,\Tc c_3,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0, i \Ps i_0, \Bb{if(j \Pe i)}{, \Bb{if(i_0 \Ps j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_3,},}{, \Bb{if(i_0 \Ps j)}{, i_0 \Os,\Tc c_2,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
 \Rq, i \Oc i_0, i \Ps i_0, \Bb{if(i \Pe j)}{, \Bb{if(i_0 \Ps j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_3,},}{, \Bb{if(i_0 \Ps j)}{, i_0 \Os,\Tc c_2,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0,i_0 \Ps i,\Bb{i \Pe j}{,\Bb{i_0 \Ps j}{,i_0 \Os,\Tc c_1,}{,i_0 \Os,\Tc c_3,},}{,\Bb{i_0 \Ps j}{,i_0 \Os,\Tc c_2,}{,i_0 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Oc i_0,\Bb{i \Pe j}{,i_0 \Ps i,\Bb{i_0 \Ps j}{,i_0 \Os,\Tc c_1,}{,i_0 \Os,\Tc c_3,},}{,i_0 \Ps i,\Bb{i_0 \Ps j}{,i_0 \Os,\Tc c_2,}{,i_0 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Oc i_0,\Bb{i \Pe j}{,i \Ps i_0,\Bb{i_0 \Ps j}{,i_0 \Os,\Tc c_1,}{,i_0 \Os,\Tc c_3,},}{,i_0 \Ps i,\Bb{i_0 \Ps j}{,i_0 \Os,\Tc c_2,}{,i_0 \Os,\Tc c_4,},},\\\\\\\\
 \Rq, i \Oc i_0, \Bb{if(i \Pe j)}{, i \Ps i_0, \Bb{if(i_0 \Ps j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_3,},}{, i \Ps i_0, \Bb{if(i_0 \Ps j)}{, i_0 \Os,\Tc c_2,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0,\Bb{i \Pe j}{,i \Ps i_0,\Bb{i \Ps j}{,i_0 \Os,\Tc c_1,}{,i_0 \Os,\Tc c_3,},}{,i \Ps i_0,\Bb{i_0 \Ps j}{,i_0 \Os,\Tc c_2,}{,i_0 \Os,\Tc c_4,},},\\\\\\\\
 \Rq, i \Oc i_0, \Bb{if(i \Pe j)}{, i \Ps i_0, \Bb{if(i \Ps j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_3,},}{, i \Ps i_0, \Bb{if(i \Ps j)}{, i_0 \Os,\Tc c_2,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0,\Bb{i \Pe j}{,i \Ps i_0,\Bb{i \Ps j}{,i_0 \Os,\Tc c_1,}{,i_0 \Os,\Tc c_3,},}{,i_0 \Ps i,\Bb{i \Ps j}{,i_0 \Os,\Tc c_2,}{,i_0 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Oc i_0,\Bb{i \Pe j}{,i_0 \Ps i,\Bb{i \Ps j}{,i_0 \Os,\Tc c_1,}{,i_0 \Os,\Tc c_3,},}{,i_0 \Ps i,\Bb{i \Ps j}{,i_0 \Os,\Tc c_2,}{,i_0 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Oc i_0,i_0 \Ps i,\Bb{i \Pe j}{,\Bb{i \Ps j}{,i_0 \Os,\Tc c_1,}{,i_0 \Os,\Tc c_3,},}{,\Bb{i \Ps j}{,i_0 \Os,\Tc c_2,}{,i_0 \Os,\Tc c_4,},},\\\\\\\\
 \Rq, i \Oc i_0,  i \Ps i_0,\Bb{if(i \Pe j)}{, \Bb{if(i \Ps j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_3,},}{, \Bb{if(i \Ps j)}{, i_0 \Os,\Tc c_2,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
 \Rq, i \Oc i_0, \Bb{if(i \Pe j)}{, \Bb{if(i \Ps j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_3,},}{, \Bb{if(i \Ps j)}{, i_0 \Os,\Tc c_2,}{, i_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, i \Oc i_0,\Bb{i \Pe j}{,i_0 \Os,\Bb{i \Ps j}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{i \Ps j}{,i_0 \Os,\Tc c_2,}{,i_0 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, i \Oc i_0,\Bb{i \Pe j}{,i_0 \Os,\Bb{i \Ps j}{,\Tc c_1,}{,\Tc c_3,},}{,i_0 \Os,\Bb{i \Ps j}{,\Tc c_2,}{,\Tc c_4,},},\\\\\\\\
 \Rq, i \Oc i_0, i_0 \Os, \Bb{if(i \Pe j)}{, \Bb{if(i \Ps j)}{,\Tc c_1,}{, \Tc c_3,},}{, \Bb{if(i \Ps j)}{,\Tc c_2,}{,\Tc c_4,},}, \\\\\\\\
 \Rq,  \Bb{if(i \Pe j)}{,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Ps j)}{,\Tc c_2,}{,\Tc c_4,},},
 \end{math}
@@ -384,17 +460,32 @@ proof:\\
 , \Bb{if(i \Pe j)}{,\Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(j \Pe m)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\
 \Rq, j \Oc j_0, j_0 \Os, \Bb{if(i \Pe j)}{,\Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(j \Pe m)}{,\Tc c_3,}{,\Tc c_4,},}, \\\\\\\\
 \Rq, j \Oc j_0, \Bb{if(i \Pe j)}{, j_0 \Os,\Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_2,},}{, j_0 \Os,\Bb{if(j \Pe m)}{,\Tc c_3,}{,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0,\Bb{i \Pe j}{,\Bb{j \Pe m}{,j_0 \Os,\Tc c_1,}{,j_0 \Os,\Tc c_2,},}{,j_0 \Os,\Bb{j \Pe m}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\\\
 \Rq, j \Oc j_0, \Bb{if(i \Pe j)}{,\Bb{if(j \Pe m)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_2,},}{,\Bb{if(j \Pe m)}{, j_0 \Os,\Tc c_3,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
 \Rq, j \Oc j_0, j \Ps j_0, \Bb{if(i \Pe j)}{,\Bb{if(j \Pe m)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_2,},}{,\Bb{if(j \Pe m)}{, j_0 \Os,\Tc c_3,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, j \Ps j_0, \Bb{if(j \Pe i)}{,\Bb{if(j \Pe m)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_2,},}{,\Bb{if(j \Pe m)}{, j_0 \Os,\Tc c_3,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, j \Ps j_0, \Bb{if(j_0 \Pe i)}{,\Bb{if(j \Pe m)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_2,},}{,\Bb{if(j \Pe m)}{, j_0 \Os,\Tc c_3,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
 \Rq, j \Oc j_0, j \Ps j_0, \Bb{if(i \Pe j_0)}{,\Bb{if(j \Pe m)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_2,},}{,\Bb{if(j \Pe m)}{, j_0 \Os,\Tc c_3,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
 \Rq, j \Oc j_0, j \Ps j_0, \Bb{if(j \Pe m)}{,\Bb{if(i \Pe j_0)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{,\Bb{if(i \Pe j_0)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0,j_0 \Ps j,\Bb{j \Pe m}{,\Bb{i \Pe j_0}{,j_0 \Os,\Tc c_1,}{,j_0 \Os,\Tc c_3,},}{,\Bb{i \Pe j_0}{,j_0 \Os,\Tc c_2,}{,j_0 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Oc j_0,\Bb{j \Pe m}{,j_0 \Ps j,\Bb{i \Pe j_0}{,j_0 \Os,\Tc c_1,}{,j_0 \Os,\Tc c_3,},}{,j_0 \Ps j,\Bb{i \Pe j_0}{,j_0 \Os,\Tc c_2,}{,j_0 \Os,\Tc c_4,},},\\\\\\\\
+\Rq, j \Oc j_0,\Bb{j \Pe m}{,j \Ps j_0,\Bb{i \Pe j_0}{,j_0 \Os,\Tc c_1,}{,j_0 \Os,\Tc c_3,},}{,j_0 \Ps j,\Bb{i \Pe j_0}{,j_0 \Os,\Tc c_2,}{,j_0 \Os,\Tc c_4,},},\\\\\\\\
 \Rq, j \Oc j_0, \Bb{if(j \Pe m)}{, j \Ps j_0,\Bb{if(i \Pe j_0)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{, j \Ps j_0,\Bb{if(i \Pe j_0)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, \Bb{if(j \Pe m)}{, j \Ps j_0,\Bb{if(j_0 \Pe i)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{, j \Ps j_0,\Bb{if(i \Pe j_0)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, \Bb{if(j \Pe m)}{, j \Ps j_0,\Bb{if(j \Pe i)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{, j \Ps j_0,\Bb{if(i \Pe j_0)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, \Bb{if(j \Pe m)}{, j \Ps j_0,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{, j \Ps j_0,\Bb{if(i \Pe j_0)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, \Bb{if(j \Pe m)}{, j \Ps j_0,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{, j \Ps j_0,\Bb{if(j_0 \Pe i)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, \Bb{if(j \Pe m)}{, j \Ps j_0,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{, j \Ps j_0,\Bb{if(j \Pe i)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
 \Rq, j \Oc j_0, \Bb{if(j \Pe m)}{, j \Ps j_0,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{, j \Ps j_0,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, \Bb{if(j \Pe m)}{, j_0 \Ps j,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{, j \Ps j_0,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, \Bb{if(j \Pe m)}{, j_0 \Ps j,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{, j_0 \Ps j,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0, j_0 \Ps j, \Bb{if(j \Pe m)}{,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
 \Rq, j \Oc j_0, j \Ps j_0, \Bb{if(j \Pe m)}{,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
 \Rq, j \Oc j_0, \Bb{if(j \Pe m)}{,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_1,}{, j_0 \Os,\Tc c_3,},}{,\Bb{if(i \Pe j)}{, j_0 \Os,\Tc c_2,}{, j_0 \Os,\Tc c_4,},}, \\\\\\\\
+\Rq, j \Oc j_0,\Bb{j \Pe m}{,j_0 \Os,\Bb{i \Pe j}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{i \Pe j}{,j_0 \Os,\Tc c_2,}{,j_0 \Os,\Tc c_4,},},\\\\\\\\
 \Rq, j \Oc j_0, \Bb{if(j \Pe m)}{, j_0 \Os,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_3,},}{, j_0 \Os,\Bb{if(i \Pe j)}{,\Tc c_2,}{,\Tc c_4,},}, \\\\\\\\
 \Rq, j \Oc j_0, j_0 \Os, \Bb{if(j \Pe m)}{,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pe j)}{,\Tc c_2,}{,\Tc c_4,},}, \\\\\\\\
-\Rq,  \Bb{if(i \Pe j)}{,\Bb{if(j \Pe m)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(j \Pe m)}{,\Tc c_2,}{,\Tc c_4,},}, 
+\Rq,  \Bb{if(j \Pe m)}{,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pe j)}{,\Tc c_2,}{,\Tc c_4,},}, 
 \end{math}
 \newpage
 
@@ -440,6 +531,7 @@ proof:\\
 \Rq, i \Od m, \Ot j, \Bb{if(i \Pe j)}{, j \Os, \Tc c_1,}{, j \Os, \Tc c_2,},\\\\\\
 \Rq, \Ot j, i \Od m, \Bb{if(i \Pe j)}{, j \Os, \Tc c_1,}{, j \Os, \Tc c_2,},\\\\\\
 \Rq, \Ot j, \Bb{if(i \Pe j)}{, i \Od m, j \Os, \Tc c_1,}{, i \Od m, j \Os, \Tc c_2,},\\\\\\
+\Rq, \Ot j,\Bb{i \Pe j}{,j \Os,i \Od m,\Tc c_1,}{,i \Od m,j \Os,\Tc c_2,},\\\\\\
 \Rq, \Ot j, \Bb{if(i \Pe j)}{, j \Os, i \Od m, \Tc c_1,}{, j \Os, i \Od m, \Tc c_2,},\\\\\\
 \Rq,  \Bb{if(i \Pu)}{,i \Od m, \Tc c_1,}{,i \Od m, \Tc c_2,},
 \end{math}
@@ -489,9 +581,14 @@ proof:\\
 proof:\\
 \begin{math} 
 , \Bb{if(i \Ps j)}{,\Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(i \Pu)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\\\
+\Rq, \Bb{i \Ps j}{,\Ot t,\Bb{i \Pe t}{,t \Os,\Tc c_1,}{,t \Os,\Tc c_2,},}{,\Bb{i \Pu}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\\\\\
 \Rq, \Bb{if(i \Ps j)}{, \Ot t, \Bb{if(i \Pe t)}{, t \Os, \Tc c_1,}{, t \Os, \Tc c_2,},}{, \Ot t, \Bb{if(i \Pe t)}{, t \Os, \Tc c_3,}{, t \Os, \Tc c_4,},},\\\\\\\\\\
 \Rq, \Ot t, \Bb{if(i \Ps j)}{, \Bb{if(i \Pe t)}{, t \Os, \Tc c_1,}{, t \Os, \Tc c_2,},}{,\Bb{if(i \Pe t)}{, t \Os, \Tc c_3,}{, t \Os, \Tc c_4,},},\\\\\\\\\\
+\Rq, \Ot t,\Bb{j \Ps i}{,\Bb{i \Pe t}{,t \Os,\Tc c_1,}{,t \Os,\Tc c_2,},}{,\Bb{i \Pe t}{,t \Os,\Tc c_3,}{,t \Os,\Tc c_4,},},\\\\\\\\\\
+\Rq, \Ot t,\Bb{i \Pe t}{,\Bb{j \Ps i}{,t \Os,\Tc c_1,}{,t \Os,\Tc c_3,},}{,\Bb{j \Ps i}{,t \Os,\Tc c_2,}{,t \Os,\Tc c_4,},},\\\\\\\\\\
+\Rq, \Ot t,\Bb{i \Pe t}{,\Bb{i \Ps j}{,t \Os,\Tc c_1,}{,t \Os,\Tc c_3,},}{,\Bb{j \Ps i}{,t \Os,\Tc c_2,}{,t \Os,\Tc c_4,},},\\\\\\\\\\
 \Rq, \Ot t, \Bb{if(i \Pe t)}{, \Bb{if(i \Ps j)}{, t \Os, \Tc c_1,}{, t \Os, \Tc c_3,},}{,\Bb{if(i \Ps j)}{, t \Os, \Tc c_2,}{, t \Os, \Tc c_4,},},\\\\\\\\\\
+\Rq, \Ot t,\Bb{i \Pe t}{,t \Os,\Bb{i \Ps j}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{i \Ps j}{,t \Os,\Tc c_2,}{,t \Os,\Tc c_4,},},\\\\\\\\\\
 \Rq, \Ot t, \Bb{if(i \Pe t)}{, t \Os, \Bb{if(i \Ps j)}{, \Tc c_1,}{, \Tc c_3,},}{, t \Os,\Bb{if(i \Ps j)}{, \Tc c_2,}{, \Tc c_4,},},\\\\\\\\\\
 \Rq,  \Bb{if(i \Pu)}{,\Bb{if(i \Ps j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Ps j)}{,\Tc c_2,}{,\Tc c_4,},},
 \end{math}
@@ -547,9 +644,14 @@ proof:\\
 proof:\\
 \begin{math} 
 , \Bb{if(i \Pe j)}{,\Bb{if(i \Pu)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(i \Pu)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\\\
+\Rq, \Bb{i \Pe j}{,\Ot t,\Bb{i \Pe t}{,t \Os,\Tc c_1,}{,t \Os,\Tc c_2,},}{,\Bb{i \Pu}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\\\\\
 \Rq, \Bb{if(i \Pe j)}{, \Ot t, \Bb{if(i \Pe t)}{, t \Os, \Tc c_1,}{, t \Os, \Tc c_2,},}{, \Ot t, \Bb{if(i \Pe t)}{, t \Os, \Tc c_3,}{, t \Os, \Tc c_4,},},\\\\\\\\\\
 \Rq, \Ot t, \Bb{if(i \Pe j)}{, \Bb{if(i \Pe t)}{, t \Os, \Tc c_1,}{, t \Os, \Tc c_2,},}{, \Bb{if(i \Pe t)}{, t \Os, \Tc c_3,}{, t \Os, \Tc c_4,},},\\\\\\\\\\
+\Rq, \Ot t,\Bb{j \Pe i}{,\Bb{i \Pe t}{,t \Os,\Tc c_1,}{,t \Os,\Tc c_2,},}{,\Bb{i \Pe t}{,t \Os,\Tc c_3,}{,t \Os,\Tc c_4,},},\\\\\\\\\\
+\Rq, \Ot t,\Bb{i \Pe t}{,\Bb{j \Pe i}{,t \Os,\Tc c_1,}{,t \Os,\Tc c_3,},}{,\Bb{j \Pe i}{,t \Os,\Tc c_2,}{,t \Os,\Tc c_4,},},\\\\\\\\\\
+\Rq, \Ot t,\Bb{i \Pe t}{,\Bb{i \Pe j}{,t \Os,\Tc c_1,}{,t \Os,\Tc c_3,},}{,\Bb{j \Pe i}{,t \Os,\Tc c_2,}{,t \Os,\Tc c_4,},},\\\\\\\\\\
 \Rq, \Ot t, \Bb{if(i \Pe t)}{, \Bb{if(i \Pe j)}{, t \Os, \Tc c_1,}{, t \Os, \Tc c_3,},}{, \Bb{if(i \Pe j)}{, t \Os, \Tc c_2,}{, t \Os, \Tc c_4,},},\\\\\\\\\\
+\Rq, \Ot t,\Bb{i \Pe t}{,t \Os,\Bb{i \Pe j}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{i \Pe j}{,t \Os,\Tc c_2,}{,t \Os,\Tc c_4,},},\\\\\\\\\\
 \Rq, \Ot t, \Bb{if(i \Pe t)}{, t \Os, \Bb{if(i \Pe j)}{, \Tc c_1,}{, \Tc c_3,},}{, t \Os, \Bb{if(i \Pe j)}{, \Tc c_2,}{, \Tc c_4,},},\\\\\\\\\\
 \Rq,  \Bb{if(i \Pu)}{,\Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pe j)}{,\Tc c_2,}{,\Tc c_4,},},
 \end{math}

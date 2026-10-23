@@ -36,21 +36,32 @@ function hasTc(expr: string): boolean {
 /**
  * Build an index of rules by operation-count delta, with operator sets and DAG cache.
  */
-export function buildRuleIndex(rules: IndexedRule[]): RuleIndex {
+export function buildRuleIndex(
+  rules: IndexedRule[],
+  sharedDagCache?: Map<string, DAGStructure<ExprNodeData>>
+): RuleIndex {
   const byDelta = new Map<number, IndexedRule[]>();
   const tcRules: IndexedRule[] = [];
   const ruleOpSets = new Map<string, Set<string>>();
   const rulePatternSize = new Map<string, number>();
-  const dagCache = new Map<string, DAGStructure<ExprNodeData>>();
+  const dagCache = sharedDagCache ?? new Map<string, DAGStructure<ExprNodeData>>();
+
+  const cachedDag = (expr: string): { norm: string; dag: DAGStructure<ExprNodeData> } => {
+    const norm = normalizeSpacing(expr);
+    let dag = dagCache.get(norm);
+    if (!dag) {
+      dag = exprToDAG(norm) as DAGStructure<ExprNodeData>;
+      dagCache.set(norm, dag);
+    }
+    return { norm, dag };
+  };
 
   for (const rule of rules) {
     if (hasTc(rule.leftSide) || hasTc(rule.rightSide)) {
       tcRules.push(rule);
       try {
-        const normLeft = normalizeSpacing(rule.leftSide);
-        const normRight = normalizeSpacing(rule.rightSide);
-        dagCache.set(normLeft, exprToDAG(normLeft) as DAGStructure<ExprNodeData>);
-        dagCache.set(normRight, exprToDAG(normRight) as DAGStructure<ExprNodeData>);
+        cachedDag(rule.leftSide);
+        cachedDag(rule.rightSide);
       } catch {
         /* ignore */
       }
@@ -58,13 +69,8 @@ export function buildRuleIndex(rules: IndexedRule[]): RuleIndex {
     }
 
     try {
-      const normLeft = normalizeSpacing(rule.leftSide);
-      const normRight = normalizeSpacing(rule.rightSide);
-      const leftDAG = exprToDAG(normLeft);
-      const rightDAG = exprToDAG(normRight);
-
-      dagCache.set(normLeft, leftDAG);
-      dagCache.set(normRight, rightDAG);
+      const { dag: leftDAG } = cachedDag(rule.leftSide);
+      const { dag: rightDAG } = cachedDag(rule.rightSide);
 
       const opLeft = countOperations(leftDAG);
       const opRight = countOperations(rightDAG);

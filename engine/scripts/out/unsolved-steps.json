@@ -1,0 +1,415 @@
+[
+  {
+    "key": "Recursive_Function_R::5::, R(i), ⟺ , R(i), i \\Pu,",
+    "step": 2,
+    "rulesTried": 109,
+    "left": ",i \\Pu,i \\Pu,",
+    "right": ",i \\Pu,R(i),i \\Pu,,\\In \\Pn i,R(i),"
+  },
+  {
+    "key": "Recursive_Function_R::5::, R(i), ⟺ , R(i), i \\Pu,",
+    "step": 3,
+    "rulesTried": 115,
+    "left": ",i \\Pu,R(i),i \\Pu,,\\In \\Pn i,R(i),",
+    "right": ",\\In \\Pn i,R(i),i \\Pu,\\Ri,i \\nPu,\\In \\Ps i,R(i),"
+  },
+  {
+    "key": "Recursive_Function_R::5::, R(i), ⟺ , R(i), i \\Pu,",
+    "step": 4,
+    "rulesTried": 109,
+    "left": ",\\In \\Pn i,R(i),i \\Pu,\\Ri,i \\nPu,\\In \\Ps i,R(i),",
+    "right": ",\\In \\Ps i,i \\nPu,R(i),"
+  },
+  {
+    "key": "Recursive_Function_R::5::, R(i), ⟺ , R(i), i \\Pu,",
+    "step": 12,
+    "rulesTried": 183,
+    "left": ",\\In \\Ps i,i \\nPu,R(i),i \\Pu,",
+    "right": ",i \\nPu,\\In \\Ps i,R(i),i \\Pu,,R(i),"
+  },
+  {
+    "key": "Recursive_Function_R::5::, R(i), ⟺ , R(i), i \\Pu,",
+    "step": 13,
+    "rulesTried": 110,
+    "left": ",i \\nPu,\\In \\Ps i,R(i),i \\Pu,,R(i),",
+    "right": ",R(i),i \\Pu,"
+  },
+  {
+    "key": "Recursive_Function_R::6::, R(i), i \\Os, ⟺ , i \\Os,",
+    "step": 0,
+    "rulesTried": 117,
+    "left": ",i \\Pu,R(i),i \\Os,",
+    "right": ",i \\Pu,i \\Os,,\\In \\Pn i,R(i),i \\Os,"
+  },
+  {
+    "key": "Recursive_Function_R::6::, R(i), i \\Os, ⟺ , i \\Os,",
+    "step": 1,
+    "rulesTried": 117,
+    "left": ",i \\Pu,i \\Os,,\\In \\Pn i,R(i),i \\Os,",
+    "right": ",\\In \\Pn i,i \\Os,\\Ri,i \\nPu,\\In \\Ps i,R(i),i \\Os,"
+  },
+  {
+    "key": "Recursive_Function_R::6::, R(i), i \\Os, ⟺ , i \\Os,",
+    "step": 2,
+    "rulesTried": 110,
+    "left": ",\\In \\Pn i,i \\Os,\\Ri,i \\nPu,\\In \\Ps i,R(i),i \\Os,",
+    "right": ",\\In \\Ps i,i \\nPu,R(i),i \\Os,"
+  },
+  {
+    "key": "Recursive_Function_R::6::, R(i), i \\Os, ⟺ , i \\Os,",
+    "step": 8,
+    "rulesTried": 172,
+    "left": ",i \\nPu,\\In \\Ps i,i \\On,i \\Os,",
+    "right": ",i \\nPu,\\In \\Ps i,i \\Os,,R(i),i \\Os,"
+  },
+  {
+    "key": "Recursive_Function_R::6::, R(i), i \\Os, ⟺ , i \\Os,",
+    "step": 9,
+    "rulesTried": 110,
+    "left": ",i \\nPu,\\In \\Ps i,i \\Os,,R(i),i \\Os,",
+    "right": ",i \\Os,"
+  },
+  {
+    "key": "Recursive_Function_R::7::, R(i), \\Or, ⟺ , \\Or,",
+    "step": 0,
+    "rulesTried": 113,
+    "left": ",i \\Pu,R(i),\\Or,",
+    "right": ",i \\Pu,\\Or,,\\In \\Pn i,R(i),\\Or,"
+  },
+  {
+    "key": "Recursive_Function_R::7::, R(i), \\Or, ⟺ , \\Or,",
+    "step": 1,
+    "rulesTried": 115,
+    "left": ",i \\Pu,\\Or,,\\In \\Pn i,R(i),\\Or,",
+    "right": ",\\In \\Pn i,\\Or,\\Ri,i \\nPu,\\In \\Ps i,R(i),\\Or,"
+  },
+  {
+    "key": "Recursive_Function_R::7::, R(i), \\Or, ⟺ , \\Or,",
+    "step": 2,
+    "rulesTried": 109,
+    "left": ",\\In \\Pn i,\\Or,\\Ri,i \\nPu,\\In \\Ps i,R(i),\\Or,",
+    "right": ",\\In \\Ps i,i \\nPu,R(i),\\Or,"
+  },
+  {
+    "key": "Recursive_Function_R::7::, R(i), \\Or, ⟺ , \\Or,",
+    "step": 6,
+    "rulesTried": 177,
+    "left": ",i \\nPu,i \\On,\\In \\Pn i,R(i),\\Or,",
+    "right": ",i \\nPu,i \\On,\\In \\Pn i,\\Or,"
+  },
+  {
+    "key": "Recursive_Function_R::7::, R(i), \\Or, ⟺ , \\Or,",
+    "step": 8,
+    "rulesTried": 195,
+    "left": ",i \\nPu,\\In \\Ps i,i \\On,\\Or,",
+    "right": ",i \\nPu,\\In \\Ps i,\\Or,,R(i),\\Or,"
+  },
+  {
+    "key": "Recursive_Function_R::7::, R(i), \\Or, ⟺ , \\Or,",
+    "step": 9,
+    "rulesTried": 109,
+    "left": ",i \\nPu,\\In \\Ps i,\\Or,,R(i),\\Or,",
+    "right": ",\\Or,"
+  },
+  {
+    "key": "Recursive_Function_R::13::, R(i), j \\On, ⟺ , j \\On, R(i),",
+    "step": 3,
+    "rulesTried": 109,
+    "left": ",j \\On,i \\Pu,R(i),",
+    "right": ",i \\Pu,j \\On,R(i),,\\In \\Pn i,R(i),j \\On,"
+  },
+  {
+    "key": "Recursive_Function_R::13::, R(i), j \\On, ⟺ , j \\On, R(i),",
+    "step": 4,
+    "rulesTried": 115,
+    "left": ",i \\Pu,j \\On,R(i),,\\In \\Pn i,R(i),j \\On,",
+    "right": ",\\In \\Pn i,j \\On,R(i),\\Ri,i \\nPu,\\In \\Ps i,R(i),j \\On,"
+  },
+  {
+    "key": "Recursive_Function_R::13::, R(i), j \\On, ⟺ , j \\On, R(i),",
+    "step": 5,
+    "rulesTried": 109,
+    "left": ",\\In \\Pn i,j \\On,R(i),\\Ri,i \\nPu,\\In \\Ps i,R(i),j \\On,",
+    "right": ",\\In \\Ps i,i \\nPu,R(i),j \\On,"
+  },
+  {
+    "key": "Recursive_Function_R::13::, R(i), j \\On, ⟺ , j \\On, R(i),",
+    "step": 9,
+    "rulesTried": 213,
+    "left": ",i \\nPu,i \\On,\\In \\Pn i,R(i),j \\On,",
+    "right": ",i \\nPu,i \\On,\\In \\Pn i,j \\On,R(i),"
+  },
+  {
+    "key": "Recursive_Function_R::13::, R(i), j \\On, ⟺ , j \\On, R(i),",
+    "step": 12,
+    "rulesTried": 260,
+    "left": ",i \\nPu,\\In \\Ps i,j \\On,i \\On,R(i),",
+    "right": ",\\In \\Ps i,j \\On,i \\nPu,i \\On,R(i),"
+  },
+  {
+    "key": "Recursive_Function_R::13::, R(i), j \\On, ⟺ , j \\On, R(i),",
+    "step": 14,
+    "rulesTried": 123,
+    "left": ",\\In \\Ps i,j \\On,i \\nPu,R(i),",
+    "right": ",i \\nPu,\\In \\Ps i,j \\On,R(i),,R(i),j \\On,"
+  },
+  {
+    "key": "Recursive_Function_R::13::, R(i), j \\On, ⟺ , j \\On, R(i),",
+    "step": 15,
+    "rulesTried": 109,
+    "left": ",i \\nPu,\\In \\Ps i,j \\On,R(i),,R(i),j \\On,",
+    "right": ",j \\On,R(i),"
+  },
+  {
+    "key": "Recursive_Function_R::16::, R(i), \\Bb{if(m \\Pe n)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , \\Bb{if(m \\Pe n)}{, R(i), \\Tc c_1,}{, R(i), \\Tc c_2,},",
+    "step": 2,
+    "rulesTried": 114,
+    "left": ",\\Bb{m \\Pe n}{,i \\Pu,\\Tc c_1,}{,i \\Pu,\\Tc c_2,},",
+    "right": ",\\Bb{m \\Pe n}{,i \\Pu,R(i),\\Tc c_1,}{,i \\Pu,R(i),\\Tc c_2,},"
+  },
+  {
+    "key": "Recursive_Function_R::16::, R(i), \\Bb{if(m \\Pe n)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , \\Bb{if(m \\Pe n)}{, R(i), \\Tc c_1,}{, R(i), \\Tc c_2,},",
+    "step": 3,
+    "rulesTried": 109,
+    "left": ",\\Bb{m \\Pe n}{,i \\Pu,R(i),\\Tc c_1,}{,i \\Pu,R(i),\\Tc c_2,},",
+    "right": ",i \\Pu,\\Bb{m \\Pe n}{,R(i),\\Tc c_1,}{,R(i),\\Tc c_2,},,\\In \\Pn i,R(i),\\Bb{m \\Pe n}{,\\Tc c_1,}{,\\Tc c_2,},"
+  },
+  {
+    "key": "Recursive_Function_R::16::, R(i), \\Bb{if(m \\Pe n)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , \\Bb{if(m \\Pe n)}{, R(i), \\Tc c_1,}{, R(i), \\Tc c_2,},",
+    "step": 4,
+    "rulesTried": 115,
+    "left": ",i \\Pu,\\Bb{m \\Pe n}{,R(i),\\Tc c_1,}{,R(i),\\Tc c_2,},,\\In \\Pn i,R(i),\\Bb{m \\Pe n}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "right": ",\\In \\Pn i,\\Bb{m \\Pe n}{,R(i),\\Tc c_1,}{,R(i),\\Tc c_2,},\\Ri,i \\nPu,\\In \\Ps i,R(i),\\Bb{m \\Pe n}{,\\Tc c_1,}{,\\Tc c_2,},"
+  },
+  {
+    "key": "Recursive_Function_R::16::, R(i), \\Bb{if(m \\Pe n)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , \\Bb{if(m \\Pe n)}{, R(i), \\Tc c_1,}{, R(i), \\Tc c_2,},",
+    "step": 5,
+    "rulesTried": 108,
+    "left": ",\\In \\Pn i,\\Bb{m \\Pe n}{,R(i),\\Tc c_1,}{,R(i),\\Tc c_2,},\\Ri,i \\nPu,\\In \\Ps i,R(i),\\Bb{m \\Pe n}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "right": ",\\In \\Ps i,i \\nPu,R(i),\\Bb{m \\Pe n}{,\\Tc c_1,}{,\\Tc c_2,},"
+  },
+  {
+    "key": "Recursive_Function_R::16::, R(i), \\Bb{if(m \\Pe n)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , \\Bb{if(m \\Pe n)}{, R(i), \\Tc c_1,}{, R(i), \\Tc c_2,},",
+    "step": 9,
+    "rulesTried": 171,
+    "left": ",i \\nPu,i \\On,\\In \\Pn i,R(i),\\Bb{m \\Pe n}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "right": ",i \\nPu,i \\On,\\In \\Pn i,\\Bb{m \\Pe n}{,R(i),\\Tc c_1,}{,R(i),\\Tc c_2,},"
+  },
+  {
+    "key": "Recursive_Function_R::16::, R(i), \\Bb{if(m \\Pe n)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , \\Bb{if(m \\Pe n)}{, R(i), \\Tc c_1,}{, R(i), \\Tc c_2,},",
+    "step": 13,
+    "rulesTried": 196,
+    "left": ",\\In \\Ps i,i \\nPu,\\Bb{m \\Pe n}{,i \\On,R(i),\\Tc c_1,}{,i \\On,R(i),\\Tc c_2,},",
+    "right": ",\\In \\Ps i,\\Bb{m \\Pe n}{,i \\nPu,i \\On,R(i),\\Tc c_1,}{,i \\nPu,i \\On,R(i),\\Tc c_2,},"
+  },
+  {
+    "key": "Recursive_Function_R::16::, R(i), \\Bb{if(m \\Pe n)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , \\Bb{if(m \\Pe n)}{, R(i), \\Tc c_1,}{, R(i), \\Tc c_2,},",
+    "step": 14,
+    "rulesTried": 125,
+    "left": ",\\In \\Ps i,\\Bb{m \\Pe n}{,i \\nPu,i \\On,R(i),\\Tc c_1,}{,i \\nPu,i \\On,R(i),\\Tc c_2,},",
+    "right": ",\\In \\Ps i,\\Bb{m \\Pe n}{,i \\nPu,R(i),\\Tc c_1,}{,i \\nPu,R(i),\\Tc c_2,},"
+  },
+  {
+    "key": "Recursive_Function_R::16::, R(i), \\Bb{if(m \\Pe n)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , \\Bb{if(m \\Pe n)}{, R(i), \\Tc c_1,}{, R(i), \\Tc c_2,},",
+    "step": 15,
+    "rulesTried": 190,
+    "left": ",\\In \\Ps i,\\Bb{m \\Pe n}{,i \\nPu,R(i),\\Tc c_1,}{,i \\nPu,R(i),\\Tc c_2,},",
+    "right": ",\\In \\Ps i,i \\nPu,\\Bb{m \\Pe n}{,R(i),\\Tc c_1,}{,R(i),\\Tc c_2,},"
+  },
+  {
+    "key": "Recursive_Function_R::16::, R(i), \\Bb{if(m \\Pe n)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , \\Bb{if(m \\Pe n)}{, R(i), \\Tc c_1,}{, R(i), \\Tc c_2,},",
+    "step": 16,
+    "rulesTried": 109,
+    "left": ",\\In \\Ps i,i \\nPu,\\Bb{m \\Pe n}{,R(i),\\Tc c_1,}{,R(i),\\Tc c_2,},",
+    "right": ",i \\nPu,\\In \\Ps i,\\Bb{m \\Pe n}{,R(i),\\Tc c_1,}{,R(i),\\Tc c_2,},,R(i),\\Bb{m \\Pe n}{,\\Tc c_1,}{,\\Tc c_2,},"
+  },
+  {
+    "key": "Recursive_Function_R::16::, R(i), \\Bb{if(m \\Pe n)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , \\Bb{if(m \\Pe n)}{, R(i), \\Tc c_1,}{, R(i), \\Tc c_2,},",
+    "step": 17,
+    "rulesTried": 108,
+    "left": ",i \\nPu,\\In \\Ps i,\\Bb{m \\Pe n}{,R(i),\\Tc c_1,}{,R(i),\\Tc c_2,},,R(i),\\Bb{m \\Pe n}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "right": ",\\Bb{m \\Pe n}{,R(i),\\Tc c_1,}{,R(i),\\Tc c_2,},"
+  },
+  {
+    "key": "Recursive_Function_R::19::, m \\Pe n, R(i), ⟺ , R(i), m \\Pe n,",
+    "step": 1,
+    "rulesTried": 178,
+    "left": ",\\Bb{m \\Pe n}{,}{,\\Or,},R(i),",
+    "right": ",\\Bb{m \\Pe n}{,R(i),}{,\\Or,},"
+  },
+  {
+    "key": "Recursive_Function_R::25::, R(i), R(j), ⟺ , R(j), R(i),",
+    "step": 3,
+    "rulesTried": 112,
+    "left": ",R(j),i \\Pu,R(i),",
+    "right": ",i \\Pu,R(j),R(i),,\\In \\Pn i,R(i),R(j),"
+  },
+  {
+    "key": "Recursive_Function_R::25::, R(i), R(j), ⟺ , R(j), R(i),",
+    "step": 4,
+    "rulesTried": 118,
+    "left": ",i \\Pu,R(j),R(i),,\\In \\Pn i,R(i),R(j),",
+    "right": ",\\In \\Pn i,R(j),R(i),\\Ri,i \\nPu,\\In \\Ps i,R(i),R(j),"
+  },
+  {
+    "key": "Recursive_Function_R::25::, R(i), R(j), ⟺ , R(j), R(i),",
+    "step": 5,
+    "rulesTried": 112,
+    "left": ",\\In \\Pn i,R(j),R(i),\\Ri,i \\nPu,\\In \\Ps i,R(i),R(j),",
+    "right": ",\\In \\Ps i,i \\nPu,R(i),R(j),"
+  },
+  {
+    "key": "Recursive_Function_R::25::, R(i), R(j), ⟺ , R(j), R(i),",
+    "step": 9,
+    "rulesTried": 225,
+    "left": ",i \\nPu,i \\On,\\In \\Pn i,R(i),R(j),",
+    "right": ",i \\nPu,i \\On,\\In \\Pn i,R(j),R(i),"
+  },
+  {
+    "key": "Recursive_Function_R::25::, R(i), R(j), ⟺ , R(j), R(i),",
+    "step": 12,
+    "rulesTried": 272,
+    "left": ",i \\nPu,\\In \\Ps i,R(j),i \\On,R(i),",
+    "right": ",\\In \\Ps i,R(j),i \\nPu,i \\On,R(i),"
+  },
+  {
+    "key": "Recursive_Function_R::25::, R(i), R(j), ⟺ , R(j), R(i),",
+    "step": 14,
+    "rulesTried": 125,
+    "left": ",\\In \\Ps i,R(j),i \\nPu,R(i),",
+    "right": ",i \\nPu,\\In \\Ps i,R(j),R(i),,R(i),R(j),"
+  },
+  {
+    "key": "Recursive_Function_R::25::, R(i), R(j), ⟺ , R(j), R(i),",
+    "step": 15,
+    "rulesTried": 112,
+    "left": ",i \\nPu,\\In \\Ps i,R(j),R(i),,R(i),R(j),",
+    "right": ",R(j),R(i),"
+  },
+  {
+    "key": "Recursive_Function_R::26::, R(i), \\In \\Ps j, ⟺ , \\In \\Ps j, R(i),",
+    "step": 3,
+    "rulesTried": 112,
+    "left": ",\\In \\Ps j,i \\Pu,R(i),",
+    "right": ",i \\Pu,\\In \\Ps j,R(i),,\\In \\Pn i,R(i),\\In \\Ps j,"
+  },
+  {
+    "key": "Recursive_Function_R::26::, R(i), \\In \\Ps j, ⟺ , \\In \\Ps j, R(i),",
+    "step": 4,
+    "rulesTried": 118,
+    "left": ",i \\Pu,\\In \\Ps j,R(i),,\\In \\Pn i,R(i),\\In \\Ps j,",
+    "right": ",\\In \\Pn i,\\In \\Ps j,R(i),\\Ri,i \\nPu,\\In \\Ps i,R(i),\\In \\Ps j,"
+  },
+  {
+    "key": "Recursive_Function_R::26::, R(i), \\In \\Ps j, ⟺ , \\In \\Ps j, R(i),",
+    "step": 5,
+    "rulesTried": 113,
+    "left": ",\\In \\Pn i,\\In \\Ps j,R(i),\\Ri,i \\nPu,\\In \\Ps i,R(i),\\In \\Ps j,",
+    "right": ",\\In \\Ps i,i \\nPu,R(i),\\In \\Ps j,"
+  },
+  {
+    "key": "Recursive_Function_R::26::, R(i), \\In \\Ps j, ⟺ , \\In \\Ps j, R(i),",
+    "step": 9,
+    "rulesTried": 273,
+    "left": ",i \\nPu,i \\On,\\In \\Pn i,R(i),\\In \\Ps j,",
+    "right": ",i \\nPu,i \\On,\\In \\Pn i,\\In \\Ps j,R(i),"
+  },
+  {
+    "key": "Recursive_Function_R::26::, R(i), \\In \\Ps j, ⟺ , \\In \\Ps j, R(i),",
+    "step": 12,
+    "rulesTried": 273,
+    "left": ",i \\nPu,\\In \\Ps i,\\In \\Ps j,i \\On,R(i),",
+    "right": ",\\In \\Ps i,\\In \\Ps j,i \\nPu,i \\On,R(i),"
+  },
+  {
+    "key": "Recursive_Function_R::26::, R(i), \\In \\Ps j, ⟺ , \\In \\Ps j, R(i),",
+    "step": 14,
+    "rulesTried": 116,
+    "left": ",\\In \\Ps i,\\In \\Ps j,i \\nPu,R(i),",
+    "right": ",i \\nPu,\\In \\Ps i,\\In \\Ps j,R(i),,R(i),\\In \\Ps j,"
+  },
+  {
+    "key": "Recursive_Function_R::26::, R(i), \\In \\Ps j, ⟺ , \\In \\Ps j, R(i),",
+    "step": 15,
+    "rulesTried": 113,
+    "left": ",i \\nPu,\\In \\Ps i,\\In \\Ps j,R(i),,R(i),\\In \\Ps j,",
+    "right": ",\\In \\Ps j,R(i),"
+  },
+  {
+    "key": "Recursive_Function_R::28::, i \\Ps j, R(i), R(j), ⟺ , i \\Ps j, R(i), R(j), i \\Ps j,",
+    "step": 11,
+    "rulesTried": 112,
+    "left": ",i \\Ps j,i \\Pu,R(i),R(j),i \\Ps j,",
+    "right": ",i \\Pu,i \\Ps j,R(i),R(j),i \\Ps j,,\\In \\Pn i,i \\Ps j,R(i),R(j),"
+  },
+  {
+    "key": "Recursive_Function_R::28::, i \\Ps j, R(i), R(j), ⟺ , i \\Ps j, R(i), R(j), i \\Ps j,",
+    "step": 12,
+    "rulesTried": 118,
+    "left": ",i \\Pu,i \\Ps j,R(i),R(j),i \\Ps j,,\\In \\Pn i,i \\Ps j,R(i),R(j),",
+    "right": ",\\In \\Pn i,i \\Ps j,R(i),R(j),i \\Ps j,\\Ri,i \\nPu,\\In \\Ps i,i \\Ps j,R(i),R(j),"
+  },
+  {
+    "key": "Recursive_Function_R::28::, i \\Ps j, R(i), R(j), ⟺ , i \\Ps j, R(i), R(j), i \\Ps j,",
+    "step": 13,
+    "rulesTried": 111,
+    "left": ",\\In \\Pn i,i \\Ps j,R(i),R(j),i \\Ps j,\\Ri,i \\nPu,\\In \\Ps i,i \\Ps j,R(i),R(j),",
+    "right": ",\\In \\Ps i,i \\nPu,i \\Ps j,R(i),R(j),"
+  },
+  {
+    "key": "Recursive_Function_R::28::, i \\Ps j, R(i), R(j), ⟺ , i \\Ps j, R(i), R(j), i \\Ps j,",
+    "step": 20,
+    "rulesTried": 275,
+    "left": ",\\In \\Ps i,i \\Ps j,i \\On,R(i),j \\nPu,j \\On,R(j),",
+    "right": ",j \\nPu,\\In \\Ps i,i \\Ps j,i \\On,R(i),j \\On,R(j),"
+  },
+  {
+    "key": "Recursive_Function_R::28::, i \\Ps j, R(i), R(j), ⟺ , i \\Ps j, R(i), R(j), i \\Ps j,",
+    "step": 25,
+    "rulesTried": 171,
+    "left": ",j \\nPu,i \\On,j \\On,\\In \\Pn i,i \\Ps j,R(i),R(j),",
+    "right": ",j \\nPu,i \\On,j \\On,\\In \\Pn i,i \\Ps j,R(i),R(j),i \\Ps j,"
+  },
+  {
+    "key": "Recursive_Function_R::28::, i \\Ps j, R(i), R(j), ⟺ , i \\Ps j, R(i), R(j), i \\Ps j,",
+    "step": 26,
+    "rulesTried": 275,
+    "left": ",j \\nPu,i \\On,j \\On,\\In \\Pn i,i \\Ps j,R(i),R(j),i \\Ps j,",
+    "right": ",\\In \\Ps i,j \\nPu,i \\On,j \\On,i \\Ps j,R(i),R(j),i \\Ps j,"
+  },
+  {
+    "key": "Recursive_Function_R::28::, i \\Ps j, R(i), R(j), ⟺ , i \\Ps j, R(i), R(j), i \\Ps j,",
+    "step": 27,
+    "rulesTried": 275,
+    "left": ",\\In \\Ps i,j \\nPu,i \\On,j \\On,i \\Ps j,R(i),R(j),i \\Ps j,",
+    "right": ",\\In \\Ps i,i \\Ps j,j \\nPu,i \\On,j \\On,R(i),R(j),i \\Ps j,"
+  },
+  {
+    "key": "Recursive_Function_R::28::, i \\Ps j, R(i), R(j), ⟺ , i \\Ps j, R(i), R(j), i \\Ps j,",
+    "step": 29,
+    "rulesTried": 275,
+    "left": ",\\In \\Ps i,i \\Ps j,j \\nPu,i \\On,R(i),j \\On,R(j),i \\Ps j,",
+    "right": ",\\In \\Ps i,i \\Ps j,i \\On,R(i),j \\nPu,j \\On,R(j),i \\Ps j,"
+  },
+  {
+    "key": "Recursive_Function_R::28::, i \\Ps j, R(i), R(j), ⟺ , i \\Ps j, R(i), R(j), i \\Ps j,",
+    "step": 31,
+    "rulesTried": 275,
+    "left": ",\\In \\Ps i,i \\Ps j,i \\On,R(i),j \\nPu,R(j),i \\Ps j,",
+    "right": ",\\In \\Ps i,i \\Ps j,j \\nPu,i \\On,R(i),R(j),i \\Ps j,"
+  },
+  {
+    "key": "Recursive_Function_R::28::, i \\Ps j, R(i), R(j), ⟺ , i \\Ps j, R(i), R(j), i \\Ps j,",
+    "step": 34,
+    "rulesTried": 116,
+    "left": ",\\In \\Ps i,i \\Ps j,i \\nPu,R(i),R(j),i \\Ps j,",
+    "right": ",i \\nPu,\\In \\Ps i,i \\Ps j,R(i),R(j),i \\Ps j,,i \\Ps j,R(i),R(j),"
+  },
+  {
+    "key": "Recursive_Function_R::28::, i \\Ps j, R(i), R(j), ⟺ , i \\Ps j, R(i), R(j), i \\Ps j,",
+    "step": 35,
+    "rulesTried": 113,
+    "left": ",i \\nPu,\\In \\Ps i,i \\Ps j,R(i),R(j),i \\Ps j,,i \\Ps j,R(i),R(j),",
+    "right": ",i \\Ps j,R(i),R(j),i \\Ps j,"
+  }
+]

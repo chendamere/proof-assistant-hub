@@ -13,6 +13,7 @@ proof:\\
 \Rq, i \Oc j,  \Bb{if(i \Pe i)}{,}{,}, j \Os,\\\\\\
 \Rq, i \Oc j,  \Bb{i \Oe i}{,}{,}, j \Os,\\\\\\
 \Rq, i \Oc j,  \Bb{i \Oe i}{,}{, \Or,}, j \Os,\\\\\\
+\Rq, i \Oc j,  \Bb{i \Oe i}{, j \Os,}{, \Or, j \Os,},\\\\\\
 \Rq, i \Oc j,  \Bb{i \Oe i}{, j \Os,}{, \Or,},\\\\\\
 \Rq, i \Oc j,  \Bb{i \Oe i}{, j \Os,}{, j \Os, \Or,},\\\\\\
 \Rq, i \Oc j, j \Os,  \Bb{i \Oe i}{,}{, \Or,},\\\\\\
@@ -43,6 +44,7 @@ proof:\\
 \Rq, \Ot i, \Ot j, j \Os,\\\\
 \Rq, \Ot i, \Ot j, i \Pe j, j \Os,\\\\\\
 \Rq, \Ot i, \Ot j, \Bb{if(i \Pe j)}{,}{, \Or,}, j \Os,\\\\\\
+\Rq, \Ot i, \Ot j, \Bb{if(i \Pe j)}{, j \Os,}{, \Or, j \Os,},\\\\\\
 \Rq, \Ot i, \Ot j, \Bb{if(i \Pe j)}{, j \Os,}{, \Or,},\\\\\\
 \Rq, \Ot i, \Ot j, \Bb{if(i \Pe j)}{, j \Os,}{,j \Os, \Or,},\\\\\\
 \Rq, \Ot i, \Bb{if(i \Pu)}{,}{, \Or,},\\\\\\
@@ -66,6 +68,7 @@ proof:\\
 \Rq, i \Oc j, i \Od t, i \Ps j, i \nPs t, j \Os,\\\\
 \Rq, i \Oc j, i \Ps j, i \Od t, i \nPs t, j \Os,\\\\
 \Rq, i \Oc j, i \Od t, i \nPs t, j \Os,\\\\
+\Rq, i \Oc j,i \Od t,j \Os,i \nPs t,\\\\
 \Rq, i \Oc j, j \Os, i \Od t, i \nPs t,\\\\
 \Rq,  i \Od t, i \nPs t,
 \end{math}
@@ -100,7 +103,9 @@ proof:\\
 \begin{math} 
 ,i \Ps j, i \On , j \On,\\\\
 \Rq, \Bb{if(i \Ps j)}{,}{, \Or,}, i \On , j \On,\\\\\\
+\Rq, \Bb{if(i \Ps j)}{, i \On , j \On,}{, \Or, i \On , j \On,},\\\\\\
 \Rq, \Bb{if(i \Ps j)}{, i \On , j \On,}{, \Or,},\\\\\\
+\Rq, \Bb{if(i \Ps j)}{, i \On , j \On,}{, i \On, \Or,},\\\\\\
 \Rq, \Bb{if(i \Ps j)}{, i \On , j \On,}{, i \On , j \On, \Or,},\\\\\\
 \Rq, i \On , j \On, \Bb{if(i \Ps j)}{,}{, \Or,},\\\\\\
 \Rq, i \On , j \On, i \Ps j,
@@ -117,8 +122,11 @@ proof:\\
 proof:\\
 \begin{math} 
 ,i \Op , j \Op, \Blb{if(i \Ps j)}{,}{,}\\\\
+\Rq,i \Op , j \Op, \Blb{if(i \Ps j)}{,i \On, i \Op,}{,}\\\\\\
 \Rq,i \Op , j \Op, \Blb{if(i \Ps j)}{,i \On, i \Op,}{,i \On, i \Op,}\\\\\\
+\Rq,i \Op , j \Op, \Blb{if(i \Ps j)}{,i \On, i \Op, j \On, j \Op,}{,i \On, i \Op,}\\\\\\
 \Rq,i \Op , j \Op, \Blb{if(i \Ps j)}{,i \On, i \Op, j \On, j \Op,}{,i \On, i \Op, j \On, j \Op,}\\\\\\
+\Rq, \Op i,\Op j,\Blb{i \Ps j}{,\On i,\On j,\Op i,\Op j,}{,\On i,\Op i,\On j,\Op j,},\\\\\\
 \Rq,i \Op , j \Op, \Blb{if(i \Ps j)}{,i \On, j \On, i \Op, j \Op,}{,i \On, j \On, i \Op, j \Op,}\\\\\\
 \Rq,i \Op , j \Op, i \On, j \On, \Blb{if(i \Ps j)}{, i \Op, j \Op,}{, i \Op, j \Op,}\\\\\\
 \Rq,i \Op , i \On, j \Op, j \On, \Blb{if(i \Ps j)}{, i \Op, j \Op,}{, i \Op, j \Op,}\\\\\\
@@ -155,14 +163,22 @@ proof:\\
 \Rq, \Bb{if(i \Pu)}{,i \Ps j, i \Pu, i \Oc t_1, j \Ob t_2,}{, i \Ps j, i \Ob t_1, j \Ob t_2,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{,i \Ps j, i \Pu, i \Oc t_1, i \Ps t_1, j \Ob t_2,}{, i \Ps j, i \Ob t_1, j \Ob t_2,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{,i \Ps j, i \Pu, i \Ob t_1, i \Ps t_1, j \Ob t_2,}{, i \Ps j, i \Ob t_1, j \Ob t_2,},\\\\\\
+\Rq, \Bb{i \Pu}{,i \Ps j,i \Ob t_1,i \Pu,i \Ps t_1,j \Ob t_2,}{,i \Ps j,i \Ob t_1,j \Ob t_2,},\\\\\\
+\Rq, \Bb{i \Pu}{,i \Ob t_1,i \Ps j,i \Pu,i \Ps t_1,j \Ob t_2,}{,i \Ps j,i \Ob t_1,j \Ob t_2,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, i \Ob t_1, i \Ps j, i \Pu, j \Ob t_2, i \Ps t_1,}{, i \Ps j, i \Ob t_1, j \Ob t_2,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, i \Ob t_1, i \Ps j, j \Pu, j \Ob t_2, i \Ps t_1,}{, i \Ps j, i \Ob t_1, j \Ob t_2,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, i \Ob t_1, i \Ps j, j \Pu, j \Oc t_2, i \Ps t_1,}{, i \Ps j, i \Ob t_1, j \Ob t_2,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, i \Ob t_1, i \Ps j, j \Pu, j \Oc t_2, j \Ps t_2, i \Ps t_1,}{, i \Ps j, i \Ob t_1, j \Ob t_2,},\\\\\\
+\Rq, \Bb{i \Pu}{,i \Ob t_1,j \Ps i,j \Pu,j \Oc t_2,j \Ps t_2,i \Ps t_1,}{,i \Ps j,i \Ob t_1,j \Ob t_2,},\\\\\\
+\Rq, \Bb{i \Pu}{,i \Ob t_1,j \Pu,j \Ps i,j \Oc t_2,j \Ps t_2,i \Ps t_1,}{,i \Ps j,i \Ob t_1,j \Ob t_2,},\\\\\\
+\Rq, \Bb{i \Pu}{,i \Ob t_1,j \Pu,j \Oc t_2,j \Ps i,j \Ps t_2,i \Ps t_1,}{,i \Ps j,i \Ob t_1,j \Ob t_2,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, i \Ob t_1, j \Pu, j \Oc t_2, i \Ps j, j \Ps t_2, i \Ps t_1,}{, i \Ps j, i \Ob t_1, j \Ob t_2,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, i \Ob t_1, j \Pu, j \Oc t_2, i \Ps j, i \Ps t_2, i \Ps t_1,}{, i \Ps j, i \Ob t_1, j \Ob t_2,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, i \Ob t_1, j \Pu, j \Oc t_2, i \Ps j, i \Ps t_2, t_2 \Ps t_1,}{, i \Ps j, i \Ob t_1, j \Ob t_2,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, i \Ob t_1, j \Pu, j \Oc t_2, i \Ps j, j \Ps t_2, t_2 \Ps t_1,}{, i \Ps j, i \Ob t_1, j \Ob t_2,},\\\\\\
+\Rq, \Bb{i \Pu}{,i \Ob t_1,j \Pu,j \Oc t_2,j \Ps i,j \Ps t_2,t_2 \Ps t_1,}{,i \Ps j,i \Ob t_1,j \Ob t_2,},\\\\\\
+\Rq, \Bb{i \Pu}{,i \Ob t_1,j \Pu,j \Ps i,j \Oc t_2,j \Ps t_2,t_2 \Ps t_1,}{,i \Ps j,i \Ob t_1,j \Ob t_2,},\\\\\\
+\Rq, \Bb{i \Pu}{,i \Ob t_1,j \Ps i,j \Pu,j \Oc t_2,j \Ps t_2,t_2 \Ps t_1,}{,i \Ps j,i \Ob t_1,j \Ob t_2,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, i \Ob t_1, i \Ps j, j \Pu, j \Oc t_2, j \Ps t_2, t_2 \Ps t_1,}{, i \Ps j, i \Ob t_1, j \Ob t_2,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, i \Ob t_1, i \Ps j, j \Pu, j \Oc t_2, t_2 \Ps t_1,}{, i \Ps j, i \Ob t_1, j \Ob t_2,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, i \Ob t_1, i \Ps j, j \Pu, j \Ob t_2, t_2 \Ps t_1,}{, i \Ps j, i \Ob t_1, j \Ob t_2,},\\\\\\
@@ -175,6 +191,14 @@ proof:\\
 \Rq, \Bb{if(i \Pu)}{, i \Ps j, i \Ob t_1, j \Ob t_2, t_1 \Ps t_2,}{, i \Ps j, i \nPu,  i \nPu,i \Ob t_1, j \Ob t_2,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, i \Ps j, i \Ob t_1, j \Ob t_2, t_1 \Ps t_2,}{, i \Ps j, j \nPu,  i \nPu,i \Ob t_1, j \Ob t_2,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, i \Ps j, i \Ob t_1, j \Ob t_2, t_1 \Ps t_2,}{, i \Ps j, i \Ps j, j \nPu,  i \nPu,i \Ob t_1, j \Ob t_2,},\\\\\\
+\Rq, \Bb{if(i \Pu)}{, i \Ps j, i \Ob t_1, j \Ob t_2, t_1 \Ps t_2,}{, i \Ps j, j \Ps i, j \nPu, i \nPu, i \Ob t_1, j \Ob t_2,},\\\\\\
+\Rq, \Bb{if(i \Pu)}{, i \Ps j, i \Ob t_1, j \Ob t_2, t_1 \Ps t_2,}{, i \Ps j, j \nPu, j \Ps i, i \nPu, i \Ob t_1, j \Ob t_2,},\\\\\\
+\Rq, \Bb{if(i \Pu)}{, i \Ps j, i \Ob t_1, j \Ob t_2, t_1 \Ps t_2,}{, i \Ps j, j \nPu, i \Ps j, i \nPu, i \Ob t_1, j \Ob t_2,},\\\\\\
+\Rq, \Bb{if(i \Pu)}{, i \Ps j, i \Ob t_1, j \Ob t_2, t_1 \Ps t_2,}{, i \Ps j, j \nPu, i \nPu, i \Ps j, i \Ob t_1, j \Ob t_2,},\\\\\\
+\Rq, \Bb{if(i \Pu)}{, i \Ps j, i \Ob t_1, j \Ob t_2, t_1 \Ps t_2,}{, i \Ps j, j \nPu, i \nPu, i \Ob t_1, i \Ps j, j \Ob t_2,},\\\\\\
+\Rq, \Bb{if(i \Pu)}{, i \Ps j, i \Ob t_1, j \Ob t_2, t_1 \Ps t_2,}{, i \Ps j, j \nPu, i \nPu, i \Ob t_1, j \Ps i, j \Ob t_2,},\\\\\\
+\Rq, \Bb{if(i \Pu)}{, i \Ps j, i \Ob t_1, j \Ob t_2, t_1 \Ps t_2,}{, i \Ps j, j \nPu, i \nPu, i \Ob t_1, j \Ob t_2, j \Ps i,},\\\\\\
+\Rq, \Bb{if(i \Pu)}{, i \Ps j, i \Ob t_1, j \Ob t_2, t_1 \Ps t_2,}{, i \Ps j, j \nPu, i \nPu, i \Ob t_1, j \Ob t_2, i \Ps j,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, i \Ps j, i \Ob t_1, j \Ob t_2, t_1 \Ps t_2,}{, i \Ps j, i \nPu, j \nPu,i \Ob t_1, j \Ob t_2,i \Ps j,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, i \Ps j, i \Ob t_1, j \Ob t_2, t_1 \Ps t_2,}{, i \Ps j, i \nPu, j \nPu,i \Ob t_1, j \Ob t_2, t_1 \Ps t_2,},\\\\\\
 \Rq, \Bb{if(i \Pu)}{, i \Ps j, i \Ob t_1, j \Ob t_2, t_1 \Ps t_2,}{, i \Ps j, j \nPu, i \nPu,i \Ob t_1, j \Ob t_2, t_1 \Ps t_2,},\\\\\\
@@ -194,6 +218,7 @@ proof:\\
 \begin{math} 
 , i \Ob t_1, i \Ob t_2,\\\\
 \Rq, i \Oc j, j \Os, i \Ob t_1, i \Ob t_2,\\\\
+\Rq, i \Oc j,i \Ob t_1,j \Os,i \Ob t_2,\\\\
 \Rq, i \Oc j, i \Ob t_1, i \Ob t_2, j \Os,\\\\
 \Rq, i \Oc j, i \Ps j, i \Ob t_1, i \Ob t_2, j \Os,\\\\
 \Rq, i \Oc j, i \Ps j, j \Ob t_1, i \Ob t_2, j \Os,\\\\
@@ -202,6 +227,8 @@ proof:\\
 \Rq, i \Oc j, i \Ps j, j \Ob t_1, i \Ob t_2, t_1 \Ps t_2, j \Os,\\\\
 \Rq, i \Oc j, i \Ps j, i \Ob t_1, i \Ob t_2, t_1 \Ps t_2, j \Os,\\\\
 \Rq, i \Oc j, i \Ob t_1, i \Ob t_2, t_1 \Ps t_2, j \Os,\\\\
+\Rq, i \Oc j,i \Ob t_1,i \Ob t_2,j \Os,t_1 \Ps t_2,\\\\
+\Rq, i \Oc j,i \Ob t_1,j \Os,i \Ob t_2,t_1 \Ps t_2,\\\\
 \Rq, i \Oc j, j \Os, i \Ob t_1, i \Ob t_2, t_1 \Ps t_2,\\\\
 \Rq,  i \Ob t_1, i \Ob t_2, t_1 \Ps t_2,
 \end{math}
@@ -221,9 +248,15 @@ proof:\\
 \Rq, \Bb{if(i \Ps j)}{,i \Ps j, i \Ob t_1, j \Ob t_2, t_1 \Ps t_2, t_1 \nPs t_2,}{, i \Ob t_1, j \Ob t_2, t_1 \nPs t_2,},\\\\\\
 \Rq, \Bb{if(i \Ps j)}{,i \Ps j, i \Ob t_1, j \Ob t_2, \Or,}{, i \Ob t_1, j \Ob t_2, t_1 \nPs t_2,},\\\\\\
 \Rq, \Bb{if(i \Ps j)}{, i \Ob t_1, j \Ob t_2, \Or,}{, i \Ob t_1, j \Ob t_2, t_1 \nPs t_2,},\\\\\\
+\Rq, \Bb{i \Ps j}{,i \Ob t_1,\Or,}{,i \Ob t_1,j \Ob t_2,t_1 \nPs t_2,},\\\\\\
 \Rq, \Bb{if(i \Ps j)}{, \Or,}{, i \Ob t_1, j \Ob t_2, t_1 \nPs t_2,},\\\\\\
+\Rq, i \nPs j,i \Ob t_1,j \Ob t_2,t_1 \nPs t_2,\\\\\\
 \Rq, \Bb{if(i \Ps j)}{, \Or,}{,}, i \Ob t_1, j \Ob t_2, t_1 \nPs t_2,\\\\\\
 \Rq, i \nPs j, i \Ob t_1, j \Ob t_2, t_1 \nPs t_2,\\\\\\
+\Rq, i \Ob t_1, i \nPs j, j \Ob t_2, t_1 \nPs t_2,\\\\\\
+\Rq, i \Ob t_1, j \nPs i, j \Ob t_2, t_1 \nPs t_2,\\\\\\
+\Rq, i \Ob t_1, j \Ob t_2, j \nPs i, t_1 \nPs t_2,\\\\\\
+\Rq, i \Ob t_1, j \Ob t_2, i \nPs j, t_1 \nPs t_2,\\\\\\
 \Rq, i \Ob t_1, j \Ob t_2, t_1 \nPs t_2, i \nPs j,
 \end{math}
 \bigskip
@@ -246,6 +279,7 @@ proof:\\
 \Rq, \Bb{if(i \Ps j)}{, i \Ps j, i \Pe j,  i \nPe j,}{, i \nPe j,},\\\\
 \Rq, \Bb{if(i \Ps j)}{, i \Ps j, \Or ,}{, i \nPe j,},\\\\
 \Rq, \Bb{if(i \Ps j)}{, \Or ,}{, i \nPe j,},\\\\
+\Rq, i \nPs j, i \nPe j,\\\\
 \Rq, \Bb{if(i \Ps j)}{, \Or ,}{,}, i \nPe j,\\\\
 \Rq,  i \nPs j,  i \nPe j,\\\\\\
 \Rq,  i \nPe j, i \nPs j,
@@ -260,6 +294,7 @@ proof:\\
 \begin{math} 
 ,  i \Pu, j \nPu,\\
 \Rq, i \Pu, i \nPe j, \\\\
+\Rq, i \Pu,i \nPe j,i \nPe j,\\\\
 \Rq, i \Pu, i \nPe j,  i \nPs j,\\\\
 \Rq,  i \Pu, j \nPu, i \nPs j,
 \end{math}

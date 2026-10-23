@@ -121,8 +121,8 @@ function parseFile(filePath) {
 
     if (inProofBlock) {
       if (isProofStepLine(line) || (pendingStep && line.match(/^\s*,?\s*[\w\s\\{}();,]+/))) {
-        const continues = /\\\\\s*$/.test(line) || /\\\s*$/.test(line);
-        const stepPart = line.replace(/\\\\\s*$/, '').replace(/\\\s*$/, '').trim();
+        const continues = /\\+\s*$/.test(line);
+        const stepPart = line.replace(/\\+\s*$/, '').trim();
         if (stepPart && !/^(premise|conclusion)\s*[\\;:]?/i.test(stepPart)) {
           if (pendingStep) {
             pendingStep += ' ' + stepPart;

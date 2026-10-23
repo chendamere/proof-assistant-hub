@@ -180,9 +180,12 @@ function parseBranch(expr: string, tcAsHole: boolean): { item: Branch; end: numb
     const c = parseBrace(expr, pos);
     if (!c) return null;
     pos = c.end;
-    const condSeq = parseSequence(stripCond(c.content), tcAsHole);
-    if (!condSeq || condSeq.length !== 1 || condSeq[0]!.type !== 'atom') return null;
-    cond = condSeq[0] as Atom;
+    const condText = stripCond(c.content);
+    if (condText) {
+      const condSeq = parseSequence(condText, tcAsHole);
+      if (!condSeq || condSeq.length !== 1 || condSeq[0]!.type !== 'atom') return null;
+      cond = condSeq[0] as Atom;
+    }
   }
   const topBrace = parseBrace(expr, pos);
   if (!topBrace) return null;
@@ -570,6 +573,11 @@ function replacements(seq: Seq, pattern: Seq, replacement: Seq): Seq[] {
 
 function substitutionHolds(from: Seq, to: Seq, pattern: Seq, replacement: Seq): boolean {
   for (const next of replacements(from, pattern, replacement)) {
+    if (equalSeq(next, to)) return true;
+  }
+  // An instantiated \\Tc rule may sit on a branch whose arms already hold code.
+  // The unmatched tail stays, the same way a non-\\Tc pattern keeps an arm suffix.
+  for (const next of keptArmRewrites(from, pattern, replacement)) {
     if (equalSeq(next, to)) return true;
   }
   return false;
@@ -969,4 +977,598 @@ export function tryTcSubexpressionSubstitution(
   const found = search(0);
   if (!found) return null;
   return resultFor(found.holes, targetRight, found);
+}
+
+/** True when every \\Tc hole sits inside a branch arm, so its fragment is fixed by the arm. */
+function holesAreArmed(seq: Seq, insideArm: boolean): boolean {
+  for (const item of seq) {
+    if (item.type === 'hole') {
+      if (!insideArm) return false;
+    } else if (item.type === 'branch') {
+      if (!holesAreArmed(item.top, true) || !holesAreArmed(item.bottom, true)) return false;
+    }
+  }
+  return true;
+}
+
+function realize(seq: Seq, holes: Map<string, Seq>, bind: Map<string, string>): Seq | null {
+  const inst = instantiate(seq, holes);
+  if (!inst) return null;
+  return applySeq(inst, bind);
+}
+
+/** One substitution of a rule whose holes are confined to branch arms. */
+function armedTcRewrites(seq: Seq, pattern: Seq, replacement: Seq): Seq[] {
+  if (!holesAreArmed(pattern, false)) return [];
+  const out: Seq[] = [];
+  const addAt = (target: Seq, write: (next: Seq) => void) => {
+    for (let start = 0; start <= target.length; start++) {
+      const holes = new Map<string, Seq>();
+      const bind = new Map<string, string>();
+      const used = new Map<string, string>();
+      const end = consumeSeq(pattern, target, 0, start, holes, bind, used, () => true, false);
+      if (end == null) continue;
+      const repl = realize(replacement, holes, bind);
+      if (!repl) continue;
+      write([...target.slice(0, start), ...repl, ...target.slice(end)]);
+      if (out.length > 12) return;
+    }
+  };
+  const walk = (target: Seq, write: (next: Seq) => void) => {
+    addAt(target, write);
+    for (let i = 0; i < target.length; i++) {
+      const item = target[i]!;
+      if (item.type !== 'branch') continue;
+      walk(item.top, (top) => {
+        const copy = target.slice();
+        copy[i] = { ...cloneBranch(item), top };
+        write(copy);
+      });
+      walk(item.bottom, (bottom) => {
+        const copy = target.slice();
+        copy[i] = { ...cloneBranch(item), bottom };
+        write(copy);
+      });
+    }
+  };
+  walk(seq, (next) => out.push(next));
+  return out;
+}
+
+function seqHasBranch(seq: Seq): boolean {
+  return seq.some((item) => item.type === 'branch');
+}
+
+/** Bb and Blb pair here because a definition written as an empty \\Blb is applied to a \\Bb that already holds arm code. The checker accepts that pairing. */
+function branchKindsPair(pattern: BranchKind, target: BranchKind): boolean {
+  if (pattern === target) return true;
+  return (pattern === 'Bb' || pattern === 'Blb') && (target === 'Bb' || target === 'Blb');
+}
+
+type ArmKeep = { top: Seq; bottom: Seq; hostKind: BranchKind };
+
+function matchItemKeep(
+  pattern: Item,
+  target: Item,
+  bind: Map<string, string>,
+  used: Map<string, string>
+): { keep: ArmKeep | null } | null {
+  if (pattern.type === 'hole' || target.type === 'hole') return null;
+  if (pattern.type === 'atom' || target.type === 'atom') {
+    if (pattern.type !== 'atom' || target.type !== 'atom') return null;
+    return matchAtom(pattern, target, bind, used) ? { keep: null } : null;
+  }
+  if (!branchKindsPair(pattern.kind, target.kind)) return null;
+  if ((pattern.cond == null) !== (target.cond == null)) return null;
+  if (pattern.cond && target.cond && !matchAtom(pattern.cond, target.cond, bind, used)) return null;
+  if (pattern.top.length > target.top.length || pattern.bottom.length > target.bottom.length) return null;
+  for (let i = 0; i < pattern.top.length; i++) {
+    const inner = matchItemKeep(pattern.top[i]!, target.top[i]!, bind, used);
+    if (!inner || inner.keep) return null;
+  }
+  for (let i = 0; i < pattern.bottom.length; i++) {
+    const inner = matchItemKeep(pattern.bottom[i]!, target.bottom[i]!, bind, used);
+    if (!inner || inner.keep) return null;
+  }
+  const top = target.top.slice(pattern.top.length);
+  const bottom = target.bottom.slice(pattern.bottom.length);
+  if (top.length === 0 && bottom.length === 0 && pattern.kind === target.kind) return { keep: null };
+  return { keep: { top, bottom, hostKind: target.kind } };
+}
+
+function collectOperandNames(seq: Seq, into: Set<string>): void {
+  for (const item of seq) {
+    if (item.type === 'atom') for (const op of item.operands) into.add(op);
+    else if (item.type === 'branch') {
+      if (item.cond) for (const op of item.cond.operands) into.add(op);
+      collectOperandNames(item.top, into);
+      collectOperandNames(item.bottom, into);
+    }
+  }
+}
+
+function applyFresh(seq: Seq, bind: Map<string, string>, usedNames: Set<string>): Seq | null {
+  const local = new Map(bind);
+  const fresh = (name: string): string => {
+    const have = local.get(name);
+    if (have) return have;
+    let k = 1;
+    let nameFresh = `t_${k}`;
+    while (usedNames.has(nameFresh) || [...local.values()].includes(nameFresh)) {
+      k++;
+      nameFresh = `t_${k}`;
+    }
+    local.set(name, nameFresh);
+    usedNames.add(nameFresh);
+    return nameFresh;
+  };
+  const walkAtom = (atom: Atom): Atom | null => {
+    if (atom.ground) return { type: 'atom', op: atom.op, operands: [...atom.operands], ground: true };
+    const operands: string[] = [];
+    for (const pv of atom.operands) operands.push(local.get(pv) ?? fresh(pv));
+    return { type: 'atom', op: atom.op, operands, ground: true };
+  };
+  const walk = (items: Seq): Seq | null => {
+    const out: Item[] = [];
+    for (const item of items) {
+      if (item.type === 'hole') return null;
+      if (item.type === 'atom') {
+        const atom = walkAtom(item);
+        if (!atom) return null;
+        out.push(atom);
+        continue;
+      }
+      const top = walk(item.top);
+      const bottom = walk(item.bottom);
+      if (!top || !bottom) return null;
+      let cond: Atom | null = null;
+      if (item.cond) {
+        cond = walkAtom(item.cond);
+        if (!cond) return null;
+      }
+      out.push({ type: 'branch', kind: item.kind, cond, top, bottom });
+    }
+    return out;
+  };
+  return walk(seq);
+}
+
+function odRights(seq: Seq, left: string, into: Set<string>): void {
+  for (const item of seq) {
+    if (item.type === 'atom' && item.op === '\\Od' && item.operands[0] === left && item.operands[1]) into.add(item.operands[1]!);
+    else if (item.type === 'branch') {
+      odRights(item.top, left, into);
+      odRights(item.bottom, left, into);
+    }
+  }
+}
+
+function renameSeq(seq: Seq, map: Map<string, string>): Seq {
+  const ren = (s: string) => map.get(s) ?? s;
+  const walk = (items: Seq): Seq =>
+    items.map((item) => {
+      if (item.type === 'atom') return { ...item, operands: item.operands.map(ren) };
+      if (item.type === 'hole') return item;
+      return {
+        ...item,
+        cond: item.cond ? { ...item.cond, operands: item.cond.operands.map(ren) } : null,
+        top: walk(item.top),
+        bottom: walk(item.bottom),
+      };
+    });
+  return walk(seq);
+}
+
+/** A later arm often reuses the temporaries an earlier arm already introduced for the same \\Od. */
+function reusedOdVariant(applied: Seq, original: Seq, introduced: string[]): Seq | null {
+  if (introduced.length === 0) return null;
+  const map = new Map<string, string>();
+  for (const name of introduced) {
+    let left = '';
+    const findLeft = (items: Seq) => {
+      for (const item of items) {
+        if (item.type === 'atom' && item.op === '\\Od' && item.operands[1] === name) left = item.operands[0] ?? '';
+        else if (item.type === 'branch') {
+          findLeft(item.top);
+          findLeft(item.bottom);
+        }
+      }
+    };
+    findLeft(applied);
+    if (!left) return null;
+    const rights = new Set<string>();
+    odRights(original, left, rights);
+    rights.delete(name);
+    if (rights.size !== 1) return null;
+    map.set(name, [...rights][0]!);
+  }
+  return renameSeq(applied, map);
+}
+
+function attachKeep(seq: Seq, keep: ArmKeep): Seq | null {
+  let found = 0;
+  const walk = (items: Seq): Seq | null => {
+    const out: Item[] = [];
+    for (const item of items) {
+      if (item.type !== 'branch') {
+        out.push(item);
+        continue;
+      }
+      const top = walk(item.top);
+      const bottom = walk(item.bottom);
+      if (!top || !bottom) return null;
+      if (found === 0 && top.length === item.top.length && bottom.length === item.bottom.length) {
+        found++;
+        out.push({
+          type: 'branch',
+          kind: keep.hostKind,
+          cond: item.cond,
+          top: [...item.top, ...keep.top],
+          bottom: [...item.bottom, ...keep.bottom],
+        });
+        continue;
+      }
+      out.push({ ...item, top, bottom });
+    }
+    return out;
+  };
+  const next = walk(seq);
+  if (!next || found !== 1) return null;
+  return next;
+}
+
+/**
+ * One substitution where a pattern branch's arms are a prefix of the target arms.
+ * The unmatched arm tail stays on the replacement branch. Exact matches are left to replacements().
+ */
+function keptArmRewrites(seq: Seq, pattern: Seq, replacement: Seq): Seq[] {
+  if (!seqHasBranch(pattern) || !seqHasBranch(replacement)) return [];
+  const out: Seq[] = [];
+  const usedNames = new Set<string>();
+  collectOperandNames(seq, usedNames);
+
+  const at = (target: Seq, write: (next: Seq) => void) => {
+    const n = pattern.length;
+    if (n === 0 || n > target.length) return;
+    for (let i = 0; i <= target.length - n; i++) {
+      const bind = new Map<string, string>();
+      const used = new Map<string, string>();
+      let keep: ArmKeep | null = null;
+      let ok = true;
+      for (let j = 0; j < n; j++) {
+        const hit = matchItemKeep(pattern[j]!, target[i + j]!, bind, used);
+        if (!hit) {
+          ok = false;
+          break;
+        }
+        if (hit.keep) {
+          if (keep) {
+            ok = false;
+            break;
+          }
+          keep = hit.keep;
+        }
+      }
+      if (!ok || !keep) continue;
+      const before = new Set(usedNames);
+      const applied = applyFresh(replacement, bind, usedNames);
+      if (!applied) continue;
+      const withKeep = attachKeep(applied, keep);
+      if (!withKeep) continue;
+      const introduced = [...usedNames].filter((name) => !before.has(name));
+      const reused = reusedOdVariant(withKeep, seq, introduced);
+      write([...target.slice(0, i), ...withKeep, ...target.slice(i + n)]);
+      if (reused) write([...target.slice(0, i), ...reused, ...target.slice(i + n)]);
+      if (out.length > 12) return;
+    }
+  };
+
+  const walk = (target: Seq, write: (next: Seq) => void) => {
+    at(target, write);
+    for (let i = 0; i < target.length; i++) {
+      const item = target[i]!;
+      if (item.type !== 'branch') continue;
+      walk(item.top, (top) => {
+        const copy = target.slice();
+        copy[i] = { ...item, top };
+        write(copy);
+      });
+      walk(item.bottom, (bottom) => {
+        const copy = target.slice();
+        copy[i] = { ...item, bottom };
+        write(copy);
+      });
+    }
+  };
+  walk(seq, (next) => out.push(next));
+  return out;
+}
+
+/**
+ * Every expression one substitution of this rule produces from `expr`.
+ * \\Tc rules are included only when every hole on the matched side sits inside a branch arm,
+ * so the fragment is the arm contents rather than an arbitrary slice.
+ */
+const parsedRuleCache = new Map<string, { l: Seq; r: Seq } | null>();
+const parsedTcRuleCache = new Map<string, { l: Seq; r: Seq } | null>();
+
+export function oneStepRewrites(expr: string, ruleLeft: string, ruleRight: string): string[] {
+  const seq = parseExpr(expr, false);
+  if (!seq) return [];
+  const out = new Set<string>();
+  const add = (nexts: Seq[]) => {
+    for (const next of nexts) out.add(normalizeSpacing(ensureCommaWrapped(showSeq(next))));
+  };
+  if (!/\\Tc\b/.test(ruleLeft) && !/\\Tc\b/.test(ruleRight)) {
+    const key = ruleLeft + '\n' + ruleRight;
+    let parsed = parsedRuleCache.get(key);
+    if (parsed === undefined) {
+      const ruleL = parseExpr(ruleLeft, false);
+      const ruleR = parseExpr(ruleRight, false);
+      parsed = ruleL && ruleR && ruleL.length > 0 && ruleR.length > 0 ? { l: ruleL, r: ruleR } : null;
+      parsedRuleCache.set(key, parsed);
+    }
+    if (parsed) {
+      add([
+        ...replacements(seq, parsed.l, parsed.r),
+        ...replacements(seq, parsed.r, parsed.l),
+        ...keptArmRewrites(seq, parsed.l, parsed.r),
+        ...keptArmRewrites(seq, parsed.r, parsed.l),
+      ]);
+    }
+  } else {
+    const key = ruleLeft + '\n' + ruleRight;
+    let parsed = parsedTcRuleCache.get(key);
+    if (parsed === undefined) {
+      const ruleL = parseExpr(ruleLeft, true);
+      const ruleR = parseExpr(ruleRight, true);
+      parsed = ruleL && ruleR && ruleL.length > 0 && ruleR.length > 0 ? { l: ruleL, r: ruleR } : null;
+      parsedTcRuleCache.set(key, parsed);
+    }
+    if (parsed) add([...armedTcRewrites(seq, parsed.l, parsed.r), ...armedTcRewrites(seq, parsed.r, parsed.l)]);
+  }
+  out.delete(normalizeSpacing(ensureCommaWrapped(showSeq(seq))));
+  return [...out];
+}
+
+/**
+ * One expression between `left` and `right` that changes a single arm.
+ * Both arms of a branch are updated one at a time. Nested arms are updated first.
+ */
+export function oneSiteToward(left: string, right: string): string | null {
+  const a = parseExpr(left, false);
+  const b = parseExpr(right, false);
+  if (!a || !b || equalSeq(a, b)) return null;
+  const next = stepToward(a, b);
+  if (!next || equalSeq(next, a) || equalSeq(next, b)) return null;
+  return normalizeSpacing(ensureCommaWrapped(showSeq(next)));
+}
+
+function stepToward(a: Seq, b: Seq): Seq | null {
+  if (equalSeq(a, b) || a.length !== b.length) return null;
+  const diffs: number[] = [];
+  for (let i = 0; i < a.length; i++) if (!equalItem(a[i]!, b[i]!)) diffs.push(i);
+  for (const i of diffs) {
+    const inner = stepItem(a[i]!, b[i]!);
+    if (!inner || equalItem(inner, a[i]!)) continue;
+    const out = a.slice();
+    out[i] = inner;
+    return out;
+  }
+  if (diffs.length === 1) {
+    const out = a.slice();
+    out[diffs[0]!] = b[diffs[0]!]!;
+    return out;
+  }
+  return adjacentSwapToward(a, b);
+}
+
+function adjacentSwapToward(a: Seq, b: Seq): Seq | null {
+  if (a.length !== b.length || a.length < 2) return null;
+  const key = (item: Item) => showItem(item);
+  const target = b.map(key);
+  const ak = a.map(key).slice().sort().join('\n');
+  const bk = target.slice().sort().join('\n');
+  if (ak !== bk) return null;
+  const dist = (seq: Seq) => {
+    let d = 0;
+    for (let i = 0; i < seq.length; i++) if (key(seq[i]!) !== target[i]) d++;
+    return d;
+  };
+  const start = dist(a);
+  let best: Seq | null = null;
+  let bestDist = start;
+  for (let i = 0; i < a.length - 1; i++) {
+    if (key(a[i]!) === key(a[i + 1]!)) continue;
+    const swapped = a.slice();
+    const tmp = swapped[i]!;
+    swapped[i] = swapped[i + 1]!;
+    swapped[i + 1] = tmp;
+    const d = dist(swapped);
+    if (d < bestDist) {
+      bestDist = d;
+      best = swapped;
+    }
+  }
+  return best;
+}
+
+function stepItem(a: Item, b: Item): Item | null {
+  if (a.type !== 'branch' || b.type !== 'branch') return null;
+  if (a.kind !== b.kind) return null;
+  if ((a.cond == null) !== (b.cond == null)) return null;
+  if (a.cond && b.cond && !equalAtom(a.cond, b.cond)) return null;
+  if (!equalSeq(a.top, b.top)) {
+    const peeled = stepToward(a.top, b.top);
+    if (peeled) return { ...a, top: peeled, bottom: a.bottom };
+    return { ...a, top: b.top, bottom: a.bottom };
+  }
+  if (!equalSeq(a.bottom, b.bottom)) {
+    const peeled = stepToward(a.bottom, b.bottom);
+    if (peeled) return { ...a, top: a.top, bottom: peeled };
+    return { ...a, top: a.top, bottom: b.bottom };
+  }
+  return null;
+}
+
+function sameBranchShape(a: Branch, b: Branch): boolean {
+  if (a.kind !== b.kind) return false;
+  if ((a.cond == null) !== (b.cond == null)) return false;
+  if (a.cond && b.cond && !equalAtom(a.cond, b.cond)) return false;
+  return true;
+}
+
+function atomKey(item: Item | undefined): string | null {
+  return item?.type === 'atom' ? showItem(item) : null;
+}
+
+function countAtoms(seq: Seq): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const item of seq) {
+    const key = atomKey(item);
+    if (!key) continue;
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  return counts;
+}
+
+function exitingAtom(from: Branch, to: Branch, goalParent: Seq, goalIndex: number): string | null {
+  const topFrom = countAtoms(from.top);
+  const botFrom = countAtoms(from.bottom);
+  const topTo = countAtoms(to.top);
+  const botTo = countAtoms(to.bottom);
+  let best: { key: string; index: number } | null = null;
+  for (const [key, nTop] of topFrom) {
+    const have = Math.min(nTop, botFrom.get(key) ?? 0);
+    const remain = Math.min(topTo.get(key) ?? 0, botTo.get(key) ?? 0);
+    if (have <= remain) continue;
+    if (!goalParent.some((item, i) => i !== goalIndex && atomKey(item) === key)) continue;
+    const index = from.top.findIndex((item) => atomKey(item) === key);
+    if (index < 0) continue;
+    if (!best || index < best.index) best = { key, index };
+  }
+  return best?.key ?? null;
+}
+
+function enteringAtom(from: Branch, to: Branch, parent: Seq, index: number): string | null {
+  const topFrom = countAtoms(from.top);
+  const botFrom = countAtoms(from.bottom);
+  const topTo = countAtoms(to.top);
+  const botTo = countAtoms(to.bottom);
+  let best: { key: string; index: number } | null = null;
+  for (let i = index - 1; i >= 0; i--) {
+    const key = atomKey(parent[i]);
+    if (!key) break;
+    const have = Math.min(topFrom.get(key) ?? 0, botFrom.get(key) ?? 0);
+    const need = Math.min(topTo.get(key) ?? 0, botTo.get(key) ?? 0);
+    if (need <= have) continue;
+    if (!best || i > best.index) best = { key, index: i };
+  }
+  return best?.key ?? null;
+}
+
+function swapWithNeighbor(seq: Seq, key: string, direction: -1 | 1): Seq | null {
+  const index = seq.findIndex((item) => atomKey(item) === key);
+  const j = index + direction;
+  if (index < 0 || j < 0 || j >= seq.length) return null;
+  const out = seq.slice();
+  const tmp = out[index]!;
+  out[index] = out[j]!;
+  out[j] = tmp;
+  return out;
+}
+
+/** One bubble or one both-arm move of an atom into or out of a branch, toward `right`. */
+export function armFactorStep(left: string, right: string): string | null {
+  const a = parseExpr(left, false);
+  const b = parseExpr(right, false);
+  if (!a || !b || equalSeq(a, b)) return null;
+  const next = factorSeq(a, b);
+  if (!next || equalSeq(next, a)) return null;
+  return normalizeSpacing(ensureCommaWrapped(showSeq(next)));
+}
+
+function factorSeq(a: Seq, b: Seq): Seq | null {
+  if (a.length === b.length) {
+    for (let i = 0; i < a.length; i++) {
+      const left = a[i]!;
+      const right = b[i]!;
+      if (left.type !== 'branch' || right.type !== 'branch' || !sameBranchShape(left, right)) continue;
+      const stepped = factorAt(a, i, b, i);
+      if (stepped) return stepped;
+    }
+    return null;
+  }
+  for (let i = 0; i < a.length; i++) {
+    const left = a[i]!;
+    if (left.type !== 'branch') continue;
+    for (let j = 0; j < b.length; j++) {
+      const right = b[j]!;
+      if (right.type !== 'branch' || !sameBranchShape(left, right)) continue;
+      const stepped = factorAt(a, i, b, j);
+      if (stepped) return stepped;
+    }
+  }
+  return null;
+}
+
+function factorAt(parent: Seq, index: number, goalParent: Seq, goalIndex: number): Seq | null {
+  const branch = parent[index] as Branch;
+  const goal = goalParent[goalIndex] as Branch;
+  const leaving = exitingAtom(branch, goal, goalParent, goalIndex);
+  if (leaving) {
+    if (atomKey(branch.top[0]) !== leaving) {
+      const top = swapWithNeighbor(branch.top, leaving, -1);
+      if (!top) return null;
+      const out = parent.slice();
+      out[index] = { ...branch, top };
+      return out;
+    }
+    if (atomKey(branch.bottom[0]) !== leaving) {
+      const bottom = swapWithNeighbor(branch.bottom, leaving, -1);
+      if (!bottom) return null;
+      const out = parent.slice();
+      out[index] = { ...branch, bottom };
+      return out;
+    }
+    const pulled = branch.top[0]!;
+    const out = parent.slice();
+    out[index] = { ...branch, top: branch.top.slice(1), bottom: branch.bottom.slice(1) };
+    out.splice(index, 0, pulled);
+    return out;
+  }
+  const entering = enteringAtom(branch, goal, parent, index);
+  if (entering) {
+    const at = (() => {
+      for (let i = index - 1; i >= 0; i--) if (atomKey(parent[i]) === entering) return i;
+      return -1;
+    })();
+    if (at < 0) return null;
+    if (at < index - 1) {
+      const out = parent.slice();
+      const tmp = out[at]!;
+      out[at] = out[at + 1]!;
+      out[at + 1] = tmp;
+      return out;
+    }
+    const moved = parent[at]!;
+    const out = parent.slice();
+    out.splice(at, 1);
+    const host = out[at] as Branch;
+    out[at] = { ...host, top: [moved, ...host.top], bottom: [moved, ...host.bottom] };
+    return out;
+  }
+  const top = factorSeq(branch.top, goal.top);
+  if (top) {
+    const out = parent.slice();
+    out[index] = { ...branch, top };
+    return out;
+  }
+  const bottom = factorSeq(branch.bottom, goal.bottom);
+  if (bottom) {
+    const out = parent.slice();
+    out[index] = { ...branch, bottom };
+    return out;
+  }
+  return null;
 }
