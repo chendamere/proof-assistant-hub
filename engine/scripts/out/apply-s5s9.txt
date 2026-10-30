@@ -1,0 +1,28 @@
+﻿s5 dup theorems-of-identical-node-comparison-70-isjisj
+s5 bubble1 recursive-function-r-22-msnii
+s5 bubble2 recursive-function-r-prev-22-msni
+s5 rules [
+  'theorems-of-identical-node-comparison-70-isjisj',
+  'recursive-function-r-22-msnii',
+  'recursive-function-r-prev-22-msni'
+]
+s5 matches []
+FAIL unique anchor
+s9 bubble left1 recursive-function-r-prev-22-msni
+s9 bubble left2 recursive-function-r-22-msnii
+s9 drop theorems-of-identical-node-comparison-70-isjisj
+s9 rules [
+  'recursive-function-r-prev-22-msni',
+  'recursive-function-r-22-msnii',
+  'theorems-of-identical-node-comparison-70-isjisj'
+]
+s9 matches []
+FAIL unique anchor
+line 1494 nPs 1 blb i_1 \Ps j_2 fp ,i \Oc i_1,R(i_1),j \Oc j_2,j \Oc j_1,j_2 \Ps j_1,R(j_2),R\_(j_1),\Blb{i_1 \Ps j_2}{,i_1 \Os,j_1 \Os,j_2 \Os,}{,i_1 \Os,
+line 1495 nPs 2 blb i_1 \Ps j_2 fp ,i \Oc i_1,R(i_1),j \Oc j_2,j \Oc j_1,j_2 \Ps j_1,j_2 \Ps j_1,R(j_2),R\_(j_1),\Blb{i_1 \Ps j_2}{,i_1 \Os,j_1 \Os,j_2 \Os
+line 1496 nPs 2 blb i_1 \Ps j_2 fp ,i \Oc i_1,R(i_1),j \Oc j_2,j \Oc j_1,j_2 \Ps j_1,R(j_2),R\_(j_1),j_2 \Ps j_1,\Blb{i_1 \Ps j_2}{,i_1 \Os,j_1 \Os,j_2 \Os
+line 1497 nPs 2 blb j_2 \Ps i_1 fp ,i \Oc i_1,R(i_1),j \Oc j_2,j \Oc j_1,j_2 \Ps j_1,R(j_2),R\_(j_1),j_2 \Ps j_1,\Blb{j_2 \Ps i_1}{,i_1 \Os,j_1 \Os,j_2 \Os
+line 1498 nPs 2 blb j_1 \Ps i_1 fp ,i \Oc i_1,R(i_1),j \Oc j_2,j \Oc j_1,j_2 \Ps j_1,R(j_2),R\_(j_1),j_2 \Ps j_1,\Blb{j_1 \Ps i_1}{,i_1 \Os,j_1 \Os,j_2 \Os
+line 1499 nPs 2 blb i_1 \Ps j_1 fp ,i \Oc i_1,R(i_1),j \Oc j_2,j \Oc j_1,j_2 \Ps j_1,R(j_2),R\_(j_1),j_2 \Ps j_1,\Blb{i_1 \Ps j_1}{,i_1 \Os,j_1 \Os,j_2 \Os
+line 1500 nPs 2 blb i_1 \Ps j_1 fp ,i \Oc i_1,R(i_1),j \Oc j_2,j \Oc j_1,j_2 \Ps j_1,j_2 \Ps j_1,R(j_2),R\_(j_1),\Blb{i_1 \Ps j_1}{,i_1 \Os,j_1 \Os,j_2 \Os
+line 1501 nPs 1 blb i_1 \Ps j_1 fp ,i \Oc i_1,R(i_1),j \Oc j_2,j \Oc j_1,j_2 \Ps j_1,R(j_2),R\_(j_1),\Blb{i_1 \Ps j_1}{,i_1 \Os,j_1 \Os,j_2 \Os,}{,i_1 \Os,

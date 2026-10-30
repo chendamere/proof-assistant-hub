@@ -23,17 +23,13 @@ function parseTheoremRule(line) {
   if (startIdx === -1 || endIdx === -1 || endIdx <= startIdx) return null;
 
   const content = line.substring(startIdx + 2, endIdx);
-  const rqMatch = content.match(/,\s*\\Rq(?:\s*\\sim)?\s*,/);
-  if (!rqMatch) {
-    const alt = content.match(/\s+\\Rq(?:\s*\\sim)?\s*,/);
-    if (!alt) return null;
-  }
-  const match = content.match(/,\s*\\Rq(?:\s*\\sim)?\s*,/) || content.match(/\s+\\Rq(?:\s*\\sim)?\s*,/);
+  const match = content.match(/,\s*\\Rq(\s*\\sim)?\s*,/) || content.match(/\s+\\Rq(\s*\\sim)?\s*,/);
   if (!match) return null;
 
   const rqPos = content.indexOf(match[0]);
   let left = content.substring(0, rqPos).trim().replace(/^,\s*|,\s*$/g, '').trim();
   let right = content.substring(rqPos + match[0].length).trim().replace(/,\s*$/, '').trim();
+  if (match[1]) right = right ? `\\sim, ${right}` : '\\sim';
   return { left, right };
 }
 
@@ -58,14 +54,52 @@ function normalizeExpr(s) {
 }
 
 /** Split accumulated text by \Rq (or \\Rq etc) into individual proof steps, normalize each. */
+function lastTopLevelJoin(text) {
+  let depth = 0;
+  let gap = -1;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (c === '{' || c === '(') depth++;
+    else if ((c === '}' || c === ')') && depth > 0) depth--;
+    if (depth === 0 && c === ',' && /^\s*,/.test(text.slice(i + 1))) gap = i;
+  }
+  if (gap < 0) return null;
+  const head = text.slice(0, gap).replace(/,\s*$/, '').trim();
+  const tail = text.slice(gap).replace(/^\s*,\s*,\s*/, '').trim();
+  if (!head || !tail) return null;
+  return { head, tail };
+}
+
 function extractProofSteps(accumulated) {
+  const re = /\s*\\+Rq(\s*\\sim)?\s*,/g;
+  const raw = [];
+  let last = 0;
+  let sim = false;
+  let m;
+  while ((m = re.exec(accumulated))) {
+    raw.push({ text: accumulated.slice(last, m.index), sim });
+    sim = Boolean(m[1]);
+    last = m.index + m[0].length;
+  }
+  raw.push({ text: accumulated.slice(last), sim });
+
   const steps = [];
-  const parts = accumulated.split(/\s*\\+Rq\s*,/);
-  for (const p of parts) {
-    const expr = normalizeExpr(p.replace(/^\s*\\+Rq\s*,?\s*/, ''));
+  for (let i = 0; i < raw.length; i++) {
+    const part = raw[i];
+    let text = part.text.replace(/^\s*\\+Rq\s*,?\s*/, '');
+    if (raw[i + 1]?.sim) {
+      const split = lastTopLevelJoin(text);
+      if (split) {
+        const head = normalizeExpr(split.head);
+        if (head && head.length > 2) steps.push(head);
+        text = split.tail;
+      }
+    }
+    if (part.sim) text = text ? `\\sim, ${text}` : '\\sim';
+    const expr = normalizeExpr(text);
     if (expr && expr.length > 2) steps.push(expr);
   }
-  return steps;
+  return steps.filter((expr) => expr && expr.length > 2);
 }
 
 /** Parse a LaTeX file and extract theorems with their proof steps. */
@@ -80,6 +114,8 @@ function parseFile(filePath) {
   let currentSubsection = '';
   let lastTheorem = null;
   let inProofBlock = false;
+  let inductionNext = false;
+  let inductionMath = false;
   let proofBlockStart = -1;
   let pendingStep = '';
 
@@ -101,16 +137,26 @@ function parseFile(filePath) {
       currentSubsection = '';
     }
     const subsectionMatch = trimmed.match(/\\subsection\{([^}]+)\}/);
-    if (subsectionMatch) currentSubsection = subsectionMatch[1];
+    if (subsectionMatch) {
+      currentSubsection = subsectionMatch[1];
+      // Axiom-of-inference math describes the induction method. Do not attach it
+      // to the previous theorem or store it as a rule.
+      if (/axiom of inference/i.test(currentSubsection)) lastTheorem = null;
+    }
+
+    if (!inProofBlock && /induction/i.test(trimmed) && /proof/i.test(trimmed)) inductionNext = true;
 
     if (trimmed.includes('\\begin{math}')) {
       inProofBlock = true;
+      inductionMath = inductionNext;
+      inductionNext = false;
       proofBlockStart = i;
       continue;
     }
 
     if (inProofBlock && trimmed.includes('\\end{math}')) {
       inProofBlock = false;
+      inductionMath = false;
       if (pendingStep && lastTheorem) {
         for (const expr of extractProofSteps(pendingStep)) lastTheorem.steps.push(expr);
       }
@@ -120,23 +166,41 @@ function parseFile(filePath) {
     }
 
     if (inProofBlock) {
+      const flushPending = () => {
+        if (pendingStep && lastTheorem) {
+          for (const expr of extractProofSteps(pendingStep)) lastTheorem.steps.push(expr);
+        }
+        pendingStep = '';
+      };
+      if (inductionMath) {
+        // Premise and conclusion labels end the previous chain. \Ri ends the
+        // induction hypothesis; the next line is the induction step, not a continuation.
+        if (/^(premise|conclusion)\s*(?:\\;)?/i.test(trimmed)) {
+          flushPending();
+          continue;
+        }
+        if (isProofStepLine(line) || (pendingStep && line.match(/^\s*,?\s*[\w\s\\{}();,]+/))) {
+          const continues = /\\+\s*$/.test(line);
+          const hasRi = /\\Ri\b/.test(line);
+          const stepPart = line.replace(/\\+\s*$/, '').replace(/\\Ri\b/g, '').trim();
+          if (stepPart) {
+            pendingStep = pendingStep ? pendingStep + ' ' + stepPart : stepPart;
+            if (!continues || hasRi) flushPending();
+          }
+        } else {
+          flushPending();
+        }
+        continue;
+      }
       if (isProofStepLine(line) || (pendingStep && line.match(/^\s*,?\s*[\w\s\\{}();,]+/))) {
         const continues = /\\+\s*$/.test(line);
         const stepPart = line.replace(/\\+\s*$/, '').trim();
         if (stepPart && !/^(premise|conclusion)\s*[\\;:]?/i.test(stepPart)) {
-          if (pendingStep) {
-            pendingStep += ' ' + stepPart;
-          } else {
-            pendingStep = stepPart;
-          }
-          if (!continues) {
-            if (lastTheorem) for (const expr of extractProofSteps(pendingStep)) lastTheorem.steps.push(expr);
-            pendingStep = '';
-          }
+          pendingStep = pendingStep ? pendingStep + ' ' + stepPart : stepPart;
+          if (!continues) flushPending();
         }
       } else {
-        if (pendingStep && lastTheorem) for (const expr of extractProofSteps(pendingStep)) lastTheorem.steps.push(expr);
-        pendingStep = '';
+        flushPending();
       }
       continue;
     }
@@ -216,8 +280,33 @@ function main() {
   const outPath = path.join(__dirname, '..', 'proof-steps-table.json');
   const publicPath = path.join(__dirname, '..', 'public', 'proof-steps-table.json');
   const json = JSON.stringify(table, null, 2);
-  fs.writeFileSync(outPath, json, 'utf-8');
-  fs.writeFileSync(publicPath, json, 'utf-8');
+  // Atomic write + retry: Windows often locks proof-steps-table.json while the
+  // verifier or IDE has it open (UNKNOWN errno on writeFileSync).
+  const writeAtomic = (dest) => {
+    const tmp = dest + '.tmp';
+    let lastErr;
+    for (let i = 0; i < 8; i++) {
+      try {
+        fs.writeFileSync(tmp, json, 'utf-8');
+        fs.renameSync(tmp, dest);
+        return;
+      } catch (e) {
+        lastErr = e;
+        const waitUntil = Date.now() + 150 * (i + 1);
+        while (Date.now() < waitUntil) {
+          /* spin for Windows lock release */
+        }
+      }
+    }
+    // Fallback: direct write after retries
+    try {
+      fs.writeFileSync(dest, json, 'utf-8');
+    } catch (e) {
+      throw lastErr || e;
+    }
+  };
+  writeAtomic(outPath);
+  writeAtomic(publicPath);
   console.log(`\nTable written to ${outPath} and ${publicPath}`);
 }
 

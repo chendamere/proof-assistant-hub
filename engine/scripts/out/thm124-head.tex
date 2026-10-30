@@ -1,0 +1,68 @@
+, i \Pc j, i \On,\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1),i_1 \Ps j_1, i_1 \Os, j_1 \Os, i \On,\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), i_1 \Ps j_1, i_1 \Os, j_1 \Os, i \On, i \Oc i_2, i_2 \Os,\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, R(i_1), R(j_1), i_1 \Ps j_1, i_1 \Os, j_1 \Os, i \On, i \Oc i_2, R(i_2), i_2 \Os,\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2), i_2 \Os, i_1 \Os, j_1 \Os,\\\\\\
+\Rq, i \Oc i_1, i \Ps i_1, j \Oc j_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2), i_2 \Os, i_1 \Os, j_1 \Os,\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1, i \Ps i_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2), i_2 \Os, i_1 \Os, j_1 \Os,\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1,  \Bb{if(i \Pu)}{,}{,}, i \Ps i_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2), i_2 \Os, i_1 \Os, j_1 \Os,\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1,  \\\\
+\Bb{if(i \Pu)}{, i \Ps i_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),}{, i \Ps i_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),}, i_2 \Os, i_1 \Os, j_1 \Os,\\\\\\
+\Rq, i \Oc i_1, j \Oc j_1,  \\\\
+\Bb{if(i \Pu)}{, i \Pu, i \Ps i_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),}{, i \nPu, i \Ps i_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),}, i_2 \Os, i_1 \Os, j_1 \Os,\\\\\\
+\Rq <1>\\\\\\
+<2> \Rq , i \Pu, i \Ps i_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\
+<3> \Rq , i \nPu, i \Ps i_1, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+<2>\\\\
+\Rq , i \Ps i_1, i \Pu, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i \Ps i_1, i_1 \Pu, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i \Ps i_1, i \On, i \Oc i_2, i_1 \Pu, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i \Ps i_1, i \On, i \Oc i_2, i_1 \Pu, R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i \Ps i_1, i \On, i \Oc i_2, i_1 \Pu, R\_(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i \Ps i_1, i \On, i \Oc i_2, i_1 \Pu, i_1 \On, i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Oc i_2, i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Ps i_1, i \Oc i_2, i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Ps i_1, i \Oc i_2, i \Ps i_2, i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Oc i_2, i \Ps i_1, i \Ps i_2, i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Oc i_2, i \Ps i_1, i_1 \Ps i_2, i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Oc i_2, i \Ps i_1, i_1 \Ps i_2, R(i_2), i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps j_1, \\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Oc i_2, i \Ps i_1, i_1 \Ps i_2, R(i_2), i_1 \Op, R\_(i_1),i_1 \Ps i_2, R(j_1),  i_1 \Ps j_1, \\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Oc i_2, i \Ps i_1, i_1 \Ps i_2, R(i_2), i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps i_2, i_1 \Ps j_1, \\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Oc i_2, i \Ps i_1, i_1 \Ps i_2, R(i_2), i_1 \Op, R\_(i_1), R(j_1), i_1 \Ps i_2, i_2 \Ps j_1, \\\\\\
+\Rq , i_1 \Pu, i \Ps i_1, i \On, i_1 \On, i \Oc i_2, R(i_2), i_1 \Op, R\_(i_1), R(j_1), i_2 \Ps j_1, \\\\\\
+\Rq , i \Ps i_1, i \On, i_1 \Pu, i_1 \On, i_1 \Op, R\_(i_1), i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, \\\\\\
+\Rq , i \Ps i_1, i_1 \Pu, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, \\\\\\
+\Rq , i \Ps i_1, i \Pu, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, \\\\\\
+\Rq , i \Pu, i \Ps i_1, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, \\\\\\
+<3>\\\\
+\Rq , i \Ps i_1, i \nPu, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i \Ps i_1, i_1 \nPu, i \On, i \Oc i_2, R(i_1), R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i \Ps i_1, i \On, i_1 \nPu, R(i_1), i \Oc i_2, R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i \Ps i_1, i \On, i_1 \nPu, i_1 \On, R(i_1), i \Oc i_2, R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On, R(i_1), i \Oc i_2, R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,i \Ps i_1, R(i_1), i \Oc i_2, R(j_1), i_1 \Ps j_1, R(i_2),\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,i \Ps i_1,  i \Oc i_2,R(i_1), R(i_2), R(j_1), i_1 \Ps j_1,\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,i \Ps i_1,  i \Oc i_2, i \Ps i_2, R(i_1), R(i_2), R(j_1), i_1 \Ps j_1,\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,  i \Oc i_2,i \Ps i_1, i \Ps i_2, R(i_1), R(i_2), R(j_1), i_1 \Ps j_1,\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,  i \Oc i_2,i \Ps i_1, i_1 \Ps i_2, R(i_1), R(i_2), R(j_1), i_1 \Ps j_1,\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,  i \Oc i_2,i \Ps i_1, i_1 \Ps i_2, R(i_1), R(i_2),i_1 \Ps i_2, R(j_1), i_1 \Ps j_1,\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,  i \Oc i_2,i \Ps i_1, i_1 \Ps i_2, R(i_1), R(i_2), R(j_1),i_1 \Ps i_2, i_1 \Ps j_1,\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,  i \Oc i_2,i \Ps i_1, i_1 \Ps i_2, R(i_1), R(i_2), R(j_1),i_1 \Ps i_2, i_2 \Ps j_1,\\\\\\
+\Rq , i_1 \nPu, i \Ps i_1, i \On, i_1 \On,  i \Oc i_2,  R(i_1), R(i_2), R(j_1), i_2 \Ps j_1,\\\\\\
+\Rq , i \Ps i_1, i_1 \nPu, i_1 \On,  R(i_1), i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,\\\\\\
+\Rq , i \Ps i_1, i_1 \nPu,  R(i_1), i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,\\\\\\
+\Rq , i \Ps i_1, i \nPu,  R(i_1), i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,\\\\\\
+\Rq , i \nPu, i \Ps i_1,  R(i_1), i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,\\\\\\\\
+<1>\\\\
+\Rq ,  i \Oc i_1, j \Oc j_1,  \\\\
+\Bb{if(i \Pu)}{, i \Pu, i \Ps i_1, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, }{,  i \nPu, i \Ps i_1,  R(i_1), i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,}, i_2 \Os, i_1 \Os, j_1 \Os,\\\\\\\\
+\Rq ,  i \Oc i_1, j \Oc j_1, \\\\
+\Bb{if(i \Pu)}{, i \Ps i_1, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, }{, i \Ps i_1,  R(i_1), i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,}, i_2 \Os, i_1 \Os, j_1 \Os,\\\\\\\\
+\Rq ,  i \Oc i_1, i \Ps i_1, j \Oc j_1,  \Bb{if(i \Pu)}{, i_1 \Os, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, }{,  R(i_1), i_1 \Os, i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,}, i_2 \Os, j_1 \Os,\\\\\\\\
+\Rq ,  i \Oc i_1, j \Oc j_1,  \Bb{if(i \Pu)}{, i_1 \Os, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, }{, i_1 \Os, i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,}, i_2 \Os, j_1 \Os,\\\\\\\\
+\Rq ,  i \Oc i_1, i_1 \Os, j \Oc j_1,  \Bb{if(i \Pu)}{, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, }{, i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,}, i_2 \Os, j_1 \Os,\\\\\\\\
+\Rq , j \Oc j_1,  \Bb{if(i \Pu)}{, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, }{, i \On,  i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1,}, i_2 \Os, j_1 \Os,\\\\\\\\
+\Rq , j \Oc j_1,  \Bb{if(i \Pu)}{, }{,}, i \On, i \Oc i_2, R(i_2), R(j_1), i_2 \Ps j_1, i_2 \Os, j_1 \Os,\\\\\\\\
+\Rq , i \On, i \Oc i_2,j \Oc j_1, R(i_2), R(j_1), i_2 \Ps j_1, i_2 \Os, j_1 \Os,\\\\\\\\
+\Rq , i \On, i \Pc j,\\\\\\\\
+\end{math}

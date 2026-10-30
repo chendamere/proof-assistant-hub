@@ -16,6 +16,8 @@
 import { MatchPosition } from './types';
 import { ensureCommaWrapped, normalizeSpacing } from './utils';
 import { tcBindings, type TcBindingEntry } from './tcBindings';
+import { expandSim } from './sim';
+import { isFlagOperand, parseOperatorFirstFlat, popExpressionParse, pushExpressionParse } from './operatorFirst';
 
 const NULLARY = new Set(['\\Or', '\\Ri', '\\Rq']);
 const OPERAND_FIRST = new Set(['\\Os', '\\Oc', '\\Od', '\\Ob', '\\Og', '\\Oa', '\\Pu', '\\nPu']);
@@ -24,6 +26,9 @@ const UNARY_NULL = new Set(['\\Pu', '\\nPu']);
 
 /** Stop automatic enumeration past this many hole/fragment combinations. */
 const MAX_COMBINATIONS = 20000;
+/** Deep nests: prefer alignHoleBindings; keep the blind product small. */
+const MAX_COMBINATIONS_DEPTH2 = 500;
+const MAX_COMBINATIONS_DEPTH3 = 100;
 
 type BranchKind = 'Bb' | 'Blb' | 'Brb';
 
@@ -107,16 +112,25 @@ function isIdent(s: string): boolean {
 }
 
 function parseAtom(item: string, tcAsHole: boolean): Item | null {
-  const s = item.trim();
+  // Same call as exprToDAG: R\_(i) is R_(i), function R_ with one operand.
+  const s = item.trim().replace(/R\\_\(/g, 'R_(');
   if (!s) return null;
+  if (s === '\\sim' || s === '~') return { type: 'atom', op: '\\sim', operands: [], ground: false };
   const plus = s.match(/^([A-Za-z0-9_]+)\+([A-Za-z0-9_]+):([A-Za-z0-9_]+)$/);
   if (plus) return { type: 'atom', op: '\\+', operands: [plus[1]!, plus[2]!, plus[3]!], ground: false };
   const times = s.match(/^([A-Za-z0-9_]+)\s*(?:\\times|×)\s*([A-Za-z0-9_]+)\s*:\s*([A-Za-z0-9_]+)$/);
   if (times) return { type: 'atom', op: '\\times', operands: [times[1]!, times[2]!, times[3]!], ground: false };
-  const fn = s.match(/^([A-Z][A-Za-z0-9]*)\(([^)]*)\)$/);
+  const fn = s.match(/^([A-Z][A-Za-z0-9_]*)\(([^)]*)\)$/);
   if (fn) {
     const args = fn[2]!.split(';').map((x) => x.trim()).filter(Boolean);
     return { type: 'atom', op: fn[1]!, operands: args, ground: false };
+  }
+  const flat = parseOperatorFirstFlat(s);
+  if (flat) {
+    if (tcAsHole && flat.op === '\\Tc' && flat.operands.length === 1 && !isFlagOperand(flat.operands[0]!)) {
+      return { type: 'hole', name: flat.operands[0]! };
+    }
+    return { type: 'atom', op: flat.op, operands: flat.operands, ground: false };
   }
   const opMatch = s.match(/\\(n?[A-Z][a-zA-Z]*)/);
   if (!opMatch || opMatch.index == null) return null;
@@ -200,10 +214,13 @@ function parseBranch(expr: string, tcAsHole: boolean): { item: Branch; end: numb
 }
 
 function parseExpr(expr: string, tcAsHole: boolean): Seq | null {
+  const raw = pushExpressionParse(expr);
   try {
-    return parseSequence(normalizeSpacing(expr), tcAsHole);
+    return parseSequence(normalizeSpacing(raw), tcAsHole);
   } catch {
     return null;
+  } finally {
+    popExpressionParse();
   }
 }
 
@@ -225,6 +242,21 @@ function collectSequences(seq: Seq, out: Seq[]): void {
       collectSequences(item.bottom, out);
     }
   }
+}
+
+function nestDepth(seq: Seq): number {
+  let max = 0;
+  for (const item of seq) {
+    if (item.type !== 'branch') continue;
+    max = Math.max(max, 1 + nestDepth(item.top), 1 + nestDepth(item.bottom));
+  }
+  return max;
+}
+
+function combinationBudget(depth: number): number {
+  if (depth >= 3) return MAX_COMBINATIONS_DEPTH3;
+  if (depth >= 2) return MAX_COMBINATIONS_DEPTH2;
+  return MAX_COMBINATIONS;
 }
 
 function seqKey(seq: Seq): string {
@@ -325,6 +357,11 @@ function matchAtom(pattern: Atom, target: Atom, bind: Map<string, string>, used:
   for (let i = 0; i < pattern.operands.length; i++) {
     const pv = pattern.operands[i]!;
     const tv = target.operands[i]!;
+    // BOOKMARK: schematic operands do not match flag operands. \In matches only \In.
+    if (isFlagOperand(pv) || isFlagOperand(tv)) {
+      if (pv !== tv) return false;
+      continue;
+    }
     if (bind.has(pv)) {
       if (bind.get(pv) !== tv) return false;
       continue;
@@ -424,6 +461,12 @@ function applyItem(item: Item, bind: Map<string, string>): Item | null {
     if (item.ground) return { type: 'atom', op: item.op, operands: [...item.operands], ground: true };
     const operands: string[] = [];
     for (const pv of item.operands) {
+      // Flags are identical tokens, never schematic bindings. matchAtom does not
+      // put them in `bind`, so a rewrite keeps the flag that is written here.
+      if (isFlagOperand(pv)) {
+        operands.push(pv);
+        continue;
+      }
       const tv = bind.get(pv);
       if (tv == null) return null;
       operands.push(tv);
@@ -587,6 +630,7 @@ function showAtom(atom: Atom): string {
   const ops = atom.operands;
   if (atom.op === '\\+' && ops.length === 3) return `${ops[0]}+${ops[1]}:${ops[2]}`;
   if (atom.op === '\\times' && ops.length === 3) return `${ops[0]} \\times ${ops[1]} : ${ops[2]}`;
+  if (!atom.op.startsWith('\\')) return `${atom.op}(${ops.join(';')})`;
   if (ops.length === 0) return atom.op;
   if (ops.length === 1 && OPERAND_FIRST.has(atom.op)) return `${ops[0]} ${atom.op}`;
   if (ops.length === 1) return `${atom.op} ${ops[0]}`;
@@ -949,11 +993,15 @@ export function tryTcSubexpressionSubstitution(
     if (hit) return resultFor(aligned, targetRight, hit);
   }
 
+  const depth = Math.max(nestDepth(stepL), nestDepth(stepR));
+  const budget = combinationBudget(depth);
+  // Multi-hole blind search on deep nests almost never pays; alignHoleBindings already ran.
+  if (names.length >= 3 && depth >= 2) return null;
   const candidates = candidateFragments(stepL, stepR);
   let product = 1;
   for (let i = 0; i < names.length; i++) {
     product *= candidates.length;
-    if (product > MAX_COMBINATIONS) return null;
+    if (product > budget) return null;
   }
 
   const chosen = new Map<string, Seq>();
@@ -1295,16 +1343,17 @@ const parsedTcRuleCache = new Map<string, { l: Seq; r: Seq } | null>();
 export function oneStepRewrites(expr: string, ruleLeft: string, ruleRight: string): string[] {
   const seq = parseExpr(expr, false);
   if (!seq) return [];
+  const resolved = expandSim(ruleLeft, ruleRight);
   const out = new Set<string>();
   const add = (nexts: Seq[]) => {
     for (const next of nexts) out.add(normalizeSpacing(ensureCommaWrapped(showSeq(next))));
   };
-  if (!/\\Tc\b/.test(ruleLeft) && !/\\Tc\b/.test(ruleRight)) {
-    const key = ruleLeft + '\n' + ruleRight;
+  if (!/\\Tc\b/.test(resolved.left) && !/\\Tc\b/.test(resolved.right)) {
+    const key = resolved.left + '\n' + resolved.right;
     let parsed = parsedRuleCache.get(key);
     if (parsed === undefined) {
-      const ruleL = parseExpr(ruleLeft, false);
-      const ruleR = parseExpr(ruleRight, false);
+      const ruleL = parseExpr(resolved.left, false);
+      const ruleR = parseExpr(resolved.right, false);
       parsed = ruleL && ruleR && ruleL.length > 0 && ruleR.length > 0 ? { l: ruleL, r: ruleR } : null;
       parsedRuleCache.set(key, parsed);
     }
@@ -1317,11 +1366,11 @@ export function oneStepRewrites(expr: string, ruleLeft: string, ruleRight: strin
       ]);
     }
   } else {
-    const key = ruleLeft + '\n' + ruleRight;
+    const key = resolved.left + '\n' + resolved.right;
     let parsed = parsedTcRuleCache.get(key);
     if (parsed === undefined) {
-      const ruleL = parseExpr(ruleLeft, true);
-      const ruleR = parseExpr(ruleRight, true);
+      const ruleL = parseExpr(resolved.left, true);
+      const ruleR = parseExpr(resolved.right, true);
       parsed = ruleL && ruleR && ruleL.length > 0 && ruleR.length > 0 ? { l: ruleL, r: ruleR } : null;
       parsedTcRuleCache.set(key, parsed);
     }
@@ -1398,15 +1447,17 @@ function stepItem(a: Item, b: Item): Item | null {
   if (a.kind !== b.kind) return null;
   if ((a.cond == null) !== (b.cond == null)) return null;
   if (a.cond && b.cond && !equalAtom(a.cond, b.cond)) return null;
+  // Only return a single peeled step. Do not replace a whole arm with the goal
+  // arm in one shot — that invented multi-rule jumps the filler then could not justify.
   if (!equalSeq(a.top, b.top)) {
     const peeled = stepToward(a.top, b.top);
-    if (peeled) return { ...a, top: peeled, bottom: a.bottom };
-    return { ...a, top: b.top, bottom: a.bottom };
+    if (peeled && !equalSeq(peeled, a.top)) return { ...a, top: peeled, bottom: a.bottom };
+    return null;
   }
   if (!equalSeq(a.bottom, b.bottom)) {
     const peeled = stepToward(a.bottom, b.bottom);
-    if (peeled) return { ...a, top: a.top, bottom: peeled };
-    return { ...a, top: a.top, bottom: b.bottom };
+    if (peeled && !equalSeq(peeled, a.bottom)) return { ...a, top: a.top, bottom: peeled };
+    return null;
   }
   return null;
 }

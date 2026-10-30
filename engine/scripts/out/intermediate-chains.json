@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "key": "Rules_of_Node_Connectivity::124::, i \\Pc j, i \\On, ⟺ , i \\On, i \\Pc j,",
+    "step": 8,
+    "part": "flat",
+    "rulesTried": 130,
+    "left": ",i \\Oc i_1,j \\Oc j_1,\\Bb{i \\Pu}{,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),}{,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),},i_2 \\Os,i_1 \\Os,j_1 \\Os,",
+    "right": ",i \\Oc i_1,j \\Oc j_1,\\Bb{i \\Pu}{,i \\Pu,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),}{,i \\nPu,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),},i_2 \\Os,i_1 \\Os,j_1 \\Os,",
+    "intermediates": [
+      ",i \\Oc i_1,j \\Oc j_1,\\Bb{i \\Pu}{,i \\Pu,i \\Ps i_1,\\On i,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),}{,i \\Ps i_1,\\On i,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),},i_2 \\Os,i_1 \\Os,j_1 \\Os,"
+    ],
+    "ruleIds": [
+      "theorems-of-node-null-comparison-52-bifiu",
+      "theorems-of-node-null-comparison-53-bifiu"
+    ]
+  }
+]

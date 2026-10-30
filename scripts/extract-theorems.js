@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -150,8 +150,6 @@ function parseLatexFile(filePath) {
   let currentSection = '';
   let currentSubsection = '';
   let ruleIndex = 0;
-  let lastRuleLeftSide = ''; // Track previous rule's left side for \sim expansion
-  let lastRuleRightSide = ''; // Track previous rule's right side for \sim expansion
   let emptyLeftRuleCount = 0; // Track consecutive empty left rules (proof steps)
   let hasProofBlock = false; // Track if current section has a proof block
   let seenProofBlock = false; // Track if we've seen a proof block in current section
@@ -187,8 +185,6 @@ function parseLatexFile(filePath) {
       currentChapter = chapterMatch[1];
       currentSection = '';
       currentSubsection = '';
-      lastRuleLeftSide = ''; // Reset when new chapter
-      lastRuleRightSide = ''; // Reset when new chapter
       emptyLeftRuleCount = 0;
       hasProofBlock = false;
       seenProofBlock = false;
@@ -199,8 +195,6 @@ function parseLatexFile(filePath) {
     if (sectionMatch) {
       currentSection = sectionMatch[1];
       currentSubsection = '';
-      lastRuleLeftSide = ''; // Reset when new section
-      lastRuleRightSide = ''; // Reset when new section
       emptyLeftRuleCount = 0;
       hasProofBlock = false;
       seenProofBlock = false;
@@ -210,11 +204,15 @@ function parseLatexFile(filePath) {
     const subsectionMatch = line.match(/\\subsection\{([^}]+)\}/);
     if (subsectionMatch) {
       currentSubsection = subsectionMatch[1];
-      lastRuleLeftSide = ''; // Reset when new subsection
-      lastRuleRightSide = ''; // Reset when new subsection
       emptyLeftRuleCount = 0;
       hasProofBlock = false;
       seenProofBlock = false;
+    }
+
+    // The axiom of inference is the induction method (two premises, then a
+    // conclusion). It is not a citable equivalence rule.
+    if (/axiom of inference/i.test(currentSubsection)) {
+      continue;
     }
     
     // Extract rules - pattern: \[, leftSide, \Rq , rightSide,\]
@@ -234,57 +232,19 @@ function parseLatexFile(filePath) {
       const endIdx = line.lastIndexOf('\\]');
       
       if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
-        const ruleContent = line.substring(startIdx + 2, endIdx); // Content between \[ and \]
-        
-        // Find \Rq position - handle both with and without comma before \Rq
-        // Pattern: (comma or start), spaces, \Rq, optional \sim, spaces, comma
-        let rqMatch = ruleContent.match(/,\s*\\Rq(?:\s*\\sim)?\s*,/);
-        
-        // If no match with comma before, try without comma (space before \Rq)
-        if (!rqMatch) {
-          rqMatch = ruleContent.match(/\s+\\Rq(?:\s*\\sim)?\s*,/);
-        }
-        
-        // If still no match, try just \Rq followed by comma or end
-        if (!rqMatch) {
-          rqMatch = ruleContent.match(/\\Rq(?:\s*\\sim)?\s*,/);
-        }
-        
+        const ruleContent = line.substring(startIdx + 2, endIdx);
+        const rqMatch = ruleContent.match(/,\s*\\Rq(\s*\\sim)?\s*,/)
+          || ruleContent.match(/\s+\\Rq(\s*\\sim)?\s*,/)
+          || ruleContent.match(/\\Rq(\s*\\sim)?\s*,/);
+
         if (rqMatch) {
           const rqPos = rqMatch.index;
           let leftSide = ruleContent.substring(0, rqPos).trim();
           let rightSide = ruleContent.substring(rqPos + rqMatch[0].length).trim();
-          
-          // Remove leading comma from leftSide if present
-          leftSide = leftSide.replace(/^,\s*/, '');
-          // Remove trailing comma from rightSide if present
-          rightSide = rightSide.replace(/,\s*$/, '');
-          
-          // Remove leading/trailing commas and whitespace
           leftSide = leftSide.replace(/^,\s*|,\s*$/g, '').trim();
           rightSide = rightSide.replace(/^,\s*|,\s*$/g, '').trim();
-          
-          ruleMatch = [null, leftSide, rightSide]; // Create array-like match result
-        }
-        
-        // Handle empty left side: \[, \Rq , ... ,\]
-        if (!ruleMatch) {
-          const emptyLeftMatch = ruleContent.match(/,\s*\\Rq(?:\s*\\sim)?\s*,\s*(.*?)\s*,?\s*$/);
-          if (emptyLeftMatch) {
-            let rightSide = emptyLeftMatch[1].trim();
-            rightSide = rightSide.replace(/,\s*$/, '').trim();
-            ruleMatch = [null, '', rightSide];
-          }
-        }
-        
-        // Handle case where \Rq is at the start (no comma before)
-        if (!ruleMatch) {
-          const startRqMatch = ruleContent.match(/^\\Rq(?:\s*\\sim)?\s*,\s*(.*?)\s*,?\s*$/);
-          if (startRqMatch) {
-            let rightSide = startRqMatch[1].trim();
-            rightSide = rightSide.replace(/,\s*$/, '').trim();
-            ruleMatch = [null, '', rightSide];
-          }
+          if (rqMatch[1]) rightSide = rightSide ? `\\sim, ${rightSide}` : '\\sim';
+          ruleMatch = { leftSide, rightSide, hadSim: ruleContent.includes('\\sim') };
         }
       }
     }
@@ -295,9 +255,8 @@ function parseLatexFile(filePath) {
     }
     
     if (ruleMatch) {
-      let leftSide = ruleMatch[1] ? ruleMatch[1].trim() : '';
-      let rightSide = ruleMatch[2] ? ruleMatch[2].trim() : '';
-      const hasSim = ruleMatch[0] && ruleMatch[0].includes('\\sim');
+      let leftSide = ruleMatch.leftSide ? ruleMatch.leftSide.trim() : '';
+      let rightSide = ruleMatch.rightSide ? ruleMatch.rightSide.trim() : '';
       
       // Check if left side is empty (just comma or whitespace)
       const isEmptyLeft = !leftSide || leftSide.trim() === '' || leftSide.trim() === ',';
@@ -311,32 +270,11 @@ function parseLatexFile(filePath) {
           continue;
         }
       } else {
-        emptyLeftRuleCount = 0; // Reset counter when we see a non-empty left rule
+        emptyLeftRuleCount = 0;
       }
-      
-      // Handle \sim - it's an abbreviation meaning "contains whatever the previous rule on the same side contains"
-      // If \sim is on the right side (after \Rq), replace right side with previous rule's right side
-      // If \sim is on the left side (before \Rq), replace left side with previous rule's left side
-      let expandedRightSide = rightSide; // Track if right side was expanded
-      if (hasSim) {
-        // Check if \sim appears after \Rq (on right side)
-        const simAfterRq = ruleMatch[0].includes('\\Rq') && ruleMatch[0].indexOf('\\sim') > ruleMatch[0].indexOf('\\Rq');
-        
-        if (simAfterRq && lastRuleRightSide) {
-          // Expand right side with previous rule's right side
-          rightSide = lastRuleRightSide;
-          expandedRightSide = rightSide;
-        } else if (!simAfterRq && lastRuleLeftSide) {
-          // Expand left side with previous rule's left side
-          leftSide = lastRuleLeftSide;
-        }
-      }
-      
-      // Clean up sides - remove leading/trailing commas, whitespace, and trailing backslashes
+
       leftSide = leftSide.replace(/^,\s*|,\s*$/g, '').replace(/\\+$/, '').trim();
       rightSide = rightSide.replace(/^,\s*|,\s*$/g, '').replace(/\\+$/, '').trim();
-      
-      // Skip if both sides are empty or if this is clearly a proof step (single empty left in sequence that's after a proof block)
       if ((!leftSide && !rightSide) || (isEmptyLeft && hasProofBlock && emptyLeftRuleCount === 1)) {
         continue;
       }
@@ -354,7 +292,10 @@ function parseLatexFile(filePath) {
       } else {
         rightSide = ',';
       }
-      
+
+      const plainLeft = leftSide;
+      const plainRight = rightSide;
+
       // Escape backslashes for TypeScript strings
       leftSide = leftSide.replace(/\\/g, '\\\\');
       rightSide = rightSide.replace(/\\/g, '\\\\');
@@ -374,43 +315,23 @@ function parseLatexFile(filePath) {
         description: `${currentSection || currentChapter}${currentSubsection ? ' - ' + currentSubsection : ''}`,
         leftSide,
         rightSide,
+        plainLeft,
+        plainRight,
+        hadSim: Boolean(ruleMatch.hadSim),
         section: currentSection || undefined,
         subsection: currentSubsection || undefined,
       };
       
       rules.push(rule);
       ruleIndex++;
-      
-      // Update last rule's sides for \sim expansion (for next rule)
-      // Store the cleaned but not yet escaped versions
-      const originalLeftSide = ruleMatch[1] ? ruleMatch[1].trim().replace(/^,\s*|,\s*$/g, '') : '';
-      const originalRightSide = ruleMatch[2] ? ruleMatch[2].trim().replace(/^,\s*|,\s*$/g, '') : '';
-      
-      // Update last rule's left side (for \sim on left side expansion)
-      if (originalLeftSide && originalLeftSide.length > 0) {
-        lastRuleLeftSide = ',' + originalLeftSide + ',';
-      }
-      
-      // Update last rule's right side (for \sim on right side expansion)
-      // Store the final right side (after expansion if \sim was used) before escaping
-      // We need to store the version BEFORE escaping backslashes
-      if (hasSim && ruleMatch[0].includes('\\Rq') && ruleMatch[0].indexOf('\\sim') > ruleMatch[0].indexOf('\\Rq')) {
-        // Right side was expanded from previous rule (which was already stored), so just keep it
-        // lastRuleRightSide already has the correct value
-      } else {
-        // Store the cleaned right side before escaping
-        const cleanedRightSide = originalRightSide.trim().replace(/^,\s*|,\s*$/g, '');
-        if (cleanedRightSide && cleanedRightSide.length > 0) {
-          lastRuleRightSide = ',' + cleanedRightSide + ',';
-        }
-      }
     }
   }
   
   return rules;
 }
 
-// Main function
+export { parseLatexFile };
+
 function main() {
   const theoremsDir = path.join(__dirname, '../src/data/theorems');
   const outputFile = path.join(__dirname, '../src/data/theorems.ts');
@@ -480,4 +401,5 @@ ${allRules.map(rule => {
   console.log(`\nOutput written to: ${outputFile}`);
 }
 
-main();
+const isDirectRun = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+if (isDirectRun) main();

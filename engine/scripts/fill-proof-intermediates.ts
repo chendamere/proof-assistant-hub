@@ -16,6 +16,7 @@ import { theorems } from '../../src/data/theorems';
 import { checkInferenceRules } from '../src/inferenceRules';
 import { armFactorStep, oneSiteToward, oneStepRewrites } from '../src/inferenceRules/tcSubstitution';
 import { normalizeSpacing } from '../src/inferenceRules/utils';
+import { earlyRulePosition } from '../../src/data/rulePosition';
 
 const CHAPTER_ORDER = [
   'Rules_of_Operators',
@@ -56,6 +57,8 @@ const definitionIds = new Set(definitions.map((r) => r.id));
 const allRules = [...axioms, ...definitions, ...theorems];
 
 function getPositionForRule(rule: { id: string }): number {
+  const early = earlyRulePosition(rule.id, CHAPTER_ORDER);
+  if (early != null) return early;
   if (axiomIds.has(rule.id) || definitionIds.has(rule.id)) return -1;
   const m = rule.id.match(/^(.+)-(\d+)-[a-z0-9]+$/);
   if (!m) return 999999999;
@@ -368,8 +371,10 @@ for (const [file, items] of byFile) {
     for (const chunk of list) {
       chunk.steps.forEach((norm, offset) => flat.push({ chunk, offset, norm }));
     }
-    const left = flat[item.step];
-    const right = flat[item.step + 1];
+    let pairAt = flat.findIndex((s, i) => s.norm === item.left && flat[i + 1]?.norm === item.right);
+    if (pairAt < 0) pairAt = item.step;
+    const left = flat[pairAt];
+    const right = flat[pairAt + 1];
     if (!left || !right || left.norm !== item.left || right.norm !== item.right) {
       console.log('locate miss', item.key, 'step', item.step);
       continue;

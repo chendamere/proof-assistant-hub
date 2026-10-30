@@ -10,6 +10,7 @@ function pushEdge(edges: DAGEdge[], from: string, to: string, edgeType: EdgeType
   edges.push({ from, to, edgeType });
 }
 import { normalizeSpacing } from '../inferenceRules/utils';
+import { parseOperatorFirstFlat, popExpressionParse, pushExpressionParse } from '../inferenceRules/operatorFirst';
 
 function parseOneBraced(expr: string, pos: number): { content: string; end: number } | null {
   if (pos >= expr.length || expr[pos] !== '{') return null;
@@ -28,7 +29,7 @@ function parseOneBraced(expr: string, pos: number): { content: string; end: numb
 }
 
 /** Operators that take no operands (nullary) */
-const NULLARY_OPERATORS = new Set(['\\Or', '\\Ri', '\\Rq']);
+const NULLARY_OPERATORS = new Set(['\\Or', '\\Ri', '\\Rq', '\\sim']);
 
 /** \\Pu / \\nPu take one operand: that operand points to null (unary form of \\Pe / \\nPe). */
 const UNARY_NULL_OPS = new Set(['\\Pu', '\\nPu']);
@@ -68,7 +69,9 @@ function extractTimesOperations(expr: string): Array<{ op: string; operands: str
 }
 
 /** Function-like ops: Name(arg1;arg2;...). No backslash prefix. Accepts Rcpm, Rcpo, IsCpo, Rc, R, Ins, Del, In, etc. */
-const FUNCLIKE_PATTERN = /\b([A-Z][a-zA-Z0-9]*)\s*\(([^)]*)\)/g;
+// R_(i) is the previous-order recursive function. The name includes the underscore.
+// LaTeX writes the same call as R\_(i); exprToDAG folds that spelling before this runs.
+const FUNCLIKE_PATTERN = /\b([A-Z][A-Za-z0-9_]*)\s*\(([^)]*)\)/g;
 
 function extractFunctionLikeOperations(expr: string): Array<{ op: string; operands: string[]; start: number; end: number }> {
   const ops: Array<{ op: string; operands: string[]; start: number; end: number }> = [];
@@ -92,13 +95,13 @@ function extractOperations(expr: string): Array<{ op: string; operands: string[]
   const specialOps = [...plusOps, ...timesOps, ...funcLikeOps];
   const ops: Array<{ op: string; operands: string[]; start: number; end: number }> = [];
   // Match \Op, \On, \nPs, \nPu, etc. The optional leading 'n' captures negated operators (\nPs, \nPu, \nPe, ...).
-  const operatorPattern = /\\(n?[A-Z][a-z]*)\b/g;
+  const operatorPattern = /\\(n?[A-Z][a-z]*|sim)\b|~/g;
   let match;
 
   while ((match = operatorPattern.exec(expr)) !== null) {
     const opStart = match.index;
     if (specialOps.some((p) => opStart >= p.start && opStart < p.end)) continue;
-    const opFull = '\\' + match[1];
+    const opFull = match[1] ? '\\' + match[1] : '\\sim';
     const opEnd = match.index + match[0].length;
 
     let operandBefore: string | undefined;
@@ -190,6 +193,8 @@ function normalizeBranchCondition(cond: string): string {
 /** Parse a condition like "i \\Oe j" into { op: "\\Oe", operands: ["i","j"] }. Returns null if no op found. */
 function parseConditionOp(cond: string): { op: string; operands: string[] } | null {
   const normalized = normalizeBranchCondition(cond);
+  const flat = parseOperatorFirstFlat(normalized.trim());
+  if (flat) return flat;
   const ops = extractOperations(normalized.trim());
   if (ops.length === 0) return null;
   const first = ops[0];
@@ -430,6 +435,42 @@ function buildItem(
     if (prev) return prev;
   }
 
+  const core = trimmed.replace(/^[\s,]+|[\s,]+$/g, '').trim();
+  if (core.includes(',')) {
+    const parts = splitSequence(core);
+    const meaningful = parts.filter((p) => p.item.trim());
+    if (meaningful.length > 1) {
+      let first: BuildResult = null;
+      let prev: BuildResult = null;
+      for (const { item, start } of meaningful) {
+        const partTrimmed = item.trim();
+        if (!partTrimmed) continue;
+        const result = buildItem(partTrimmed, nodes, edges, nextId, trimmedOffset + start, depth + 1);
+        if (result) {
+          if (prev) chain(prev, result, edges);
+          if (!first) first = result;
+          prev = result;
+        }
+      }
+      if (first && prev && first !== prev) {
+        const fid = first.firstId ?? first.firstIds?.[0] ?? first.lastId!;
+        const lid = prev.lastId ?? prev.lastIds?.[0] ?? prev.firstId!;
+        return { firstId: fid, lastId: lid };
+      }
+      if (prev) return prev;
+    }
+  }
+
+  const flat = parseOperatorFirstFlat(core || trimmed);
+  if (flat) {
+    const nodeId = `n${nextId.n++}`;
+    nodes.push({
+      id: nodeId,
+      data: { op: flat.op, operands: [...flat.operands], start: trimmedOffset, end: trimmedOffset + trimmed.length },
+    });
+    return { firstId: nodeId, lastId: nodeId };
+  }
+
   const ops = extractOperations(trimmed);
   if (ops.length === 0) return null;
 
@@ -492,15 +533,24 @@ function buildDAGRec(
  * @param expr - Expression (already in pattern form A,B,C for rules, or integers for target)
  */
 export function exprToDAG(expr: string): DAGStructure<ExprNodeData> {
-  const normalized = normalizeSpacing(expr);
+  const raw = pushExpressionParse(expr);
+  // R\_(i) in the book is the same call as R_(i): function R_, one operand.
+  const normalized = normalizeSpacing(raw).replace(/R\\_\(/g, 'R_(');
   const nodes: DAGNode<ExprNodeData>[] = [];
   const edges: DAGEdge[] = [];
 
-  if (!normalized.trim()) {
+  try {
+    // Informal proof placeholders like <1> used to vanish into an empty DAG.
+    // They are not part of the formal language; reject them instead.
+    if (/<\d+>/.test(normalized)) {
+      throw new Error(`Informal subexpression placeholder is not allowed: ${normalized.match(/<\d+>/)?.[0]}`);
+    }
+    if (!normalized.trim()) {
+      return { nodes, edges };
+    }
+    buildDAGRec(normalized, nodes, edges, { n: 0 });
     return { nodes, edges };
+  } finally {
+    popExpressionParse();
   }
-
-  buildDAGRec(normalized, nodes, edges, { n: 0 });
-
-  return { nodes, edges };
 }

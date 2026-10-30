@@ -22,12 +22,12 @@ import { axioms } from '@/data/axioms';
 import { definitions } from '@/data/definitions';
 import { theorems } from '@/data/theorems';
 import type { DAGStructure, ExprNodeData } from '@engine/dag';
-import { normalizeSpacing } from '@engine/inferenceRules/utils';
 import { usePanelContext } from '@/contexts/PanelContext';
+import { useExpressionParseMode } from '@/contexts/ExpressionParseContext';
 
 function safeExprToDAG(expr: string): DAGStructure<ExprNodeData> | null {
   try {
-    return exprToDAG(normalizeSpacing(expr));
+    return exprToDAG(expr);
   } catch {
     return null;
   }
@@ -72,6 +72,7 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
   initialRight = '',
 }) => {
   const ctx = usePanelContext();
+  const { prepare } = useExpressionParseMode();
   const [localLeft, setLocalLeft] = React.useState(initialLeft);
   const [localRight, setLocalRight] = React.useState(initialRight);
   const [leftDragOver, setLeftDragOver] = React.useState(false);
@@ -99,10 +100,10 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
     setSnapshot({ left: leftExpr, right: rightExpr, ruleLeft, ruleRight });
   }, [leftExpr, rightExpr, ruleLeft, ruleRight]);
 
-  const leftDAG = useMemo(() => (snapshot.left.trim() ? safeExprToDAG(snapshot.left) : null), [snapshot.left]);
-  const rightDAG = useMemo(() => (snapshot.right.trim() ? safeExprToDAG(snapshot.right) : null), [snapshot.right]);
-  const ruleLeftDAG = useMemo(() => (snapshot.ruleLeft.trim() ? safeExprToDAG(snapshot.ruleLeft) : null), [snapshot.ruleLeft]);
-  const ruleRightDAG = useMemo(() => (snapshot.ruleRight.trim() ? safeExprToDAG(snapshot.ruleRight) : null), [snapshot.ruleRight]);
+  const leftDAG = useMemo(() => (snapshot.left.trim() ? safeExprToDAG(prepare(snapshot.left)) : null), [snapshot.left, prepare]);
+  const rightDAG = useMemo(() => (snapshot.right.trim() ? safeExprToDAG(prepare(snapshot.right)) : null), [snapshot.right, prepare]);
+  const ruleLeftDAG = useMemo(() => (snapshot.ruleLeft.trim() ? safeExprToDAG(prepare(snapshot.ruleLeft)) : null), [snapshot.ruleLeft, prepare]);
+  const ruleRightDAG = useMemo(() => (snapshot.ruleRight.trim() ? safeExprToDAG(prepare(snapshot.ruleRight)) : null), [snapshot.ruleRight, prepare]);
 
   const hasRule = snapshot.ruleLeft.trim() && snapshot.ruleRight.trim();
 
@@ -144,10 +145,10 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
     }
     try {
       const r = trySubstitutionByMatchPairs(
-        snapshot.left,
-        snapshot.right,
-        snapshot.ruleLeft,
-        snapshot.ruleRight,
+        prepare(snapshot.left),
+        prepare(snapshot.right),
+        prepare(snapshot.ruleLeft),
+        prepare(snapshot.ruleRight),
         undefined
       );
       if (r?.match && r.reconstructedExpr != null) {
@@ -163,7 +164,7 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
       // ignore
     }
     return { match: false };
-  }, [hasRule, hasIsomorphismMatch, snapshot.left, snapshot.right, snapshot.ruleLeft, snapshot.ruleRight]);
+  }, [hasRule, hasIsomorphismMatch, snapshot.left, snapshot.right, snapshot.ruleLeft, snapshot.ruleRight, prepare]);
 
   const showEquivalentSubstitution = hasRule && hasIsomorphismMatch;
 
@@ -171,10 +172,10 @@ const DebugWorkbench: React.FC<DebugWorkbenchProps> = ({
     if (!snapshot.left.trim() || !snapshot.right.trim() || hasRule) return [];
     const allRules = [...axioms, ...definitions, ...theorems];
     return allRules.map((r) => {
-      const result = checkInferenceRules(snapshot.left, snapshot.right, r.leftSide, r.rightSide);
+      const result = checkInferenceRules(prepare(snapshot.left), prepare(snapshot.right), r.leftSide, r.rightSide);
       return { rule: r, match: result.match, inferenceRule: result.inferenceRule };
     });
-  }, [snapshot.left, snapshot.right, hasRule]);
+  }, [snapshot.left, snapshot.right, hasRule, prepare]);
 
   const content = (
         <div className="h-[calc(100%-3rem)] flex overflow-hidden">

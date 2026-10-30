@@ -132,9 +132,17 @@ export function diagnoseFailure(
     };
   }
 
-  // Analyze rules tried
+  // Counts come from the index built for this check. Re-parsing every rule here
+  // runs on the page thread and freezes Check all once the library is large.
+  const triedIds = new Set(rulesTried.map((attempt) => attempt.ruleId));
+  const rulesById = new Map(allRules.map((rule) => [rule.id, rule]));
+  const deltaById = new Map<string, number>();
+  for (const [delta, bucket] of ruleIndex.byDelta) {
+    for (const rule of bucket) deltaById.set(rule.id, delta);
+  }
+
   const ruleAttempts: RuleAttemptInfo[] = rulesTried.map((attempt) => {
-    const rule = allRules.find((r) => r.id === attempt.ruleId);
+    const rule = rulesById.get(attempt.ruleId);
     if (!rule) {
       return {
         ruleId: attempt.ruleId,
@@ -144,39 +152,28 @@ export function diagnoseFailure(
       };
     }
 
-    // Determine why rule was considered
     let reason = 'Matched filter criteria';
     const ruleOps = ruleIndex.ruleOpSets.get(rule.id);
     if (ruleOps) {
-      const overlap = [...characteristics.operatorsAll].filter((op) =>
-        ruleOps.has(op)
-      ).length;
+      const overlap = [...characteristics.operatorsAll].filter((op) => ruleOps.has(op)).length;
       if (overlap > 0) {
         reason = `Operator overlap (${overlap} operators)`;
       }
     }
 
-    // Determine why it failed
     let failureReason: string | undefined;
-    try {
-      const ruleLeftDAG = exprToDAG(normalizeSpacing(rule.leftSide));
-      const ruleRightDAG = exprToDAG(normalizeSpacing(rule.rightSide));
-      const ruleOpLeft = countOperations(ruleLeftDAG);
-      const ruleOpRight = countOperations(ruleRightDAG);
-      const ruleDelta = ruleOpRight - ruleOpLeft;
-
-      if (ruleDelta !== characteristics.delta && ruleDelta !== -characteristics.delta) {
-        failureReason = `Delta mismatch (rule: ${ruleDelta}, target: ${characteristics.delta})`;
-      } else if (ruleOps && characteristics.operatorsAll.size > 0) {
-        const missingOps = [...ruleOps].filter(
-          (op) => !characteristics.operatorsAll.has(op)
-        );
-        if (missingOps.length > 0) {
-          failureReason = `Missing operators in target: ${missingOps.slice(0, 3).join(', ')}`;
-        }
+    const ruleDelta = deltaById.get(rule.id);
+    if (
+      ruleDelta !== undefined &&
+      ruleDelta !== characteristics.delta &&
+      ruleDelta !== -characteristics.delta
+    ) {
+      failureReason = `Delta mismatch (rule: ${ruleDelta}, target: ${characteristics.delta})`;
+    } else if (ruleOps && characteristics.operatorsAll.size > 0) {
+      const missingOps = [...ruleOps].filter((op) => !characteristics.operatorsAll.has(op));
+      if (missingOps.length > 0) {
+        failureReason = `Missing operators in target: ${missingOps.slice(0, 3).join(', ')}`;
       }
-    } catch (e) {
-      failureReason = 'Failed to analyze rule';
     }
 
     return {
@@ -243,71 +240,51 @@ export function diagnoseFailure(
     similarity: number;
     reason: string;
   }> = [];
+  const targetPatternSize = Math.min(characteristics.opCountLeft, characteristics.opCountRight);
   for (const rule of allRules) {
-    if (rulesTried.some((r) => r.ruleId === rule.id)) continue;
+    if (triedIds.has(rule.id)) continue;
 
-    try {
-      const ruleLeftDAG = exprToDAG(normalizeSpacing(rule.leftSide));
-      const ruleRightDAG = exprToDAG(normalizeSpacing(rule.rightSide));
-      const ruleOpLeft = countOperations(ruleLeftDAG);
-      const ruleOpRight = countOperations(ruleRightDAG);
-      const ruleDelta = ruleOpRight - ruleOpLeft;
+    const ruleDelta = deltaById.get(rule.id);
+    const ruleOps = ruleIndex.ruleOpSets.get(rule.id);
+    const rulePatternSize = ruleIndex.rulePatternSize.get(rule.id);
+    if (ruleDelta === undefined && !ruleOps && rulePatternSize === undefined) continue;
 
-      const ruleOps = ruleIndex.ruleOpSets.get(rule.id);
-      let similarity = 0;
+    let similarity = 0;
 
-      // Delta similarity
+    if (ruleDelta === characteristics.delta || ruleDelta === -characteristics.delta) {
+      similarity += 0.4;
+    }
+
+    if (ruleOps) {
+      const overlap = [...characteristics.operatorsAll].filter((op) => ruleOps.has(op)).length;
+      const union = new Set([...characteristics.operatorsAll, ...ruleOps]).size;
+      if (union > 0) {
+        similarity += 0.3 * (overlap / union);
+      }
+    }
+
+    if (rulePatternSize !== undefined && targetPatternSize > 0 && rulePatternSize > 0) {
+      const sizeRatio =
+        Math.min(rulePatternSize, targetPatternSize) / Math.max(rulePatternSize, targetPatternSize);
+      similarity += 0.3 * sizeRatio;
+    }
+
+    if (similarity > 0.3) {
+      let reason = '';
       if (ruleDelta === characteristics.delta || ruleDelta === -characteristics.delta) {
-        similarity += 0.4;
-      }
-
-      // Operator overlap
-      if (ruleOps) {
-        const overlap = [...characteristics.operatorsAll].filter((op) =>
-          ruleOps.has(op)
-        ).length;
-        const union = new Set([
-          ...characteristics.operatorsAll,
-          ...ruleOps,
-        ]).size;
-        if (union > 0) {
-          similarity += 0.3 * (overlap / union);
+        reason = 'Same delta';
+      } else if (ruleOps) {
+        const overlap = [...characteristics.operatorsAll].filter((op) => ruleOps.has(op)).length;
+        if (overlap > 0) {
+          reason = `${overlap} operator(s) overlap`;
         }
       }
 
-      // Pattern size similarity
-      const rulePatternSize = Math.min(ruleOpLeft, ruleOpRight);
-      const targetPatternSize = Math.min(
-        characteristics.opCountLeft,
-        characteristics.opCountRight
-      );
-      if (targetPatternSize > 0) {
-        const sizeRatio = Math.min(rulePatternSize, targetPatternSize) /
-          Math.max(rulePatternSize, targetPatternSize);
-        similarity += 0.3 * sizeRatio;
-      }
-
-      if (similarity > 0.3) {
-        let reason = '';
-        if (ruleDelta === characteristics.delta || ruleDelta === -characteristics.delta) {
-          reason = 'Same delta';
-        } else if (ruleOps) {
-          const overlap = [...characteristics.operatorsAll].filter((op) =>
-            ruleOps.has(op)
-          ).length;
-          if (overlap > 0) {
-            reason = `${overlap} operator(s) overlap`;
-          }
-        }
-
-        similarRules.push({
-          ruleId: rule.id,
-          similarity,
-          reason: reason || 'Similar characteristics',
-        });
-      }
-    } catch (e) {
-      // Skip rules that can't be analyzed
+      similarRules.push({
+        ruleId: rule.id,
+        similarity,
+        reason: reason || 'Similar characteristics',
+      });
     }
   }
 

@@ -1,0 +1,138 @@
+[
+  {
+    "key": "Rules_of_Node_Connectivity::24::, \\Bb{if(i \\Pc j)}{,\\Bb{if(m \\Pc n)}{,\\Tc c_1,}{,\\Tc c_2,},}{,\\Bb{if(m \\Pc n)}{,\\Tc c_3,}{,\\Tc c_4,},}, ⟺ , \\Bb{if(m \\Pc n)}{,\\Bb{if(i \\Pc j)}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Bb{if(i \\Pc j)}{,\\Tc c_2,}{,\\Tc c_4,},},",
+    "step": 8,
+    "part": "flat",
+    "rulesTried": 261,
+    "left": ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_3,},}{,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},",
+    "right": ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,i_1 \\Os,j_1 \\Os,m_1 \\Os,n_1 \\Os,\\Tc c_1,}{,i_1 \\Os,j_1 \\Os,m_1 \\Os,n_1 \\Os,\\Tc c_3,},}{,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,i_1 \\Os,j_1 \\Os,m_1 \\Os,n_1 \\Os,\\Tc c_2,}{,i_1 \\Os,j_1 \\Os,m_1 \\Os,n_1 \\Os,\\Tc c_4,},},"
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::100::, \\Bb{if(i \\Pc j)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , \\Bb{if(i \\Pc j)}{,\\Bb{if(i \\Pc j)}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Tc c_2,},",
+    "step": 30,
+    "part": "flat",
+    "rulesTried": 282,
+    "left": ",i \\Oc i_1,i \\Oc i_2,R(i_2),R(i_1),j \\Oc j_1,j \\Oc j_2,j \\Ps j_1,j_1 \\Ps j_2,R(j_2),R(j_1),j_1 \\Ps j_2,\\Bb{i_2 \\Ps j_1}{,i_2 \\Os,j_2 \\Os,\\Bb{i_1 \\Ps j_1}{,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,i_1 \\Os,j_1 \\Os,\\Tc c_3,},}{,i_2 \\Os,j_2 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,},",
+    "right": ",i \\Oc i_1,i \\Oc i_2,R(i_2),R(i_1),j \\Oc j_1,j \\Oc j_2,j \\Ps j_1,j_1 \\Ps j_2,R(j_2),R(j_1),j_1 \\Ps j_2,\\Bb{i_2 \\Ps j_2}{,i_2 \\Os,j_2 \\Os,\\Bb{i_1 \\Ps j_1}{,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,i_1 \\Os,j_1 \\Os,\\Tc c_3,},}{,i_2 \\Os,j_2 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,},"
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::108::, i \\Pc j, \\Bb{if(j \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Pc j, \\Bb{if(i \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 6,
+    "part": "flat",
+    "rulesTried": 282,
+    "left": ",i \\Oc i_1,j \\Oc j_1,j \\Oc j_2,j_1 \\Ps j_2,R(j_1),R(j_2),R(i_1),j_1 \\Ps j_2,i_1 \\Ps j_1,i_1 \\Os,j_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{j_2 \\Ps m_2}{,j_2 \\Os,m_2 \\Os,\\Tc c_1,}{,j_2 \\Os,m_2 \\Os,\\Tc c_2,},",
+    "right": ",i \\Oc i_1,j \\Oc j_1,j \\Oc j_2,j_1 \\Ps j_2,R(j_1),R(j_2),R(i_1),j_1 \\Ps j_2,i_1 \\Ps j_2,i_1 \\Os,j_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{j_2 \\Ps m_2}{,j_2 \\Os,m_2 \\Os,\\Tc c_1,}{,j_2 \\Os,m_2 \\Os,\\Tc c_2,},"
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::108::, i \\Pc j, \\Bb{if(j \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Pc j, \\Bb{if(i \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 21,
+    "part": "flat",
+    "rulesTried": 282,
+    "left": ",j \\Oc j_1,j \\Oc j_2,j_1 \\Ps j_2,R(j_1),R(j_2),i \\Oc i_1,i \\Oc i_2,R(i_1),R(i_2),j_1 \\Ps j_2,i_1 \\Ps j_2,i_1 \\Os,j_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,i_2 \\Os,j_2 \\Os,m_2 \\Os,\\Tc c_1,}{,i_2 \\Os,j_2 \\Os,m_2 \\Os,\\Tc c_2,},",
+    "right": ",j \\Oc j_1,j \\Oc j_2,j_1 \\Ps j_2,R(j_1),R(j_2),i \\Oc i_1,i \\Oc i_2,R(i_1),R(i_2),j_1 \\Ps j_2,i_1 \\Ps j_1,i_1 \\Os,j_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,i_2 \\Os,j_2 \\Os,m_2 \\Os,\\Tc c_1,}{,i_2 \\Os,j_2 \\Os,m_2 \\Os,\\Tc c_2,},"
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::108::, i \\Pc j, \\Bb{if(j \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Pc j, \\Bb{if(i \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 26,
+    "part": "flat",
+    "rulesTried": 94,
+    "left": ",i \\Oc i_1 j \\Oc j_1,R(i_1),R(j_1),i_1 \\Ps j_1,i_1 \\Os,j_1 \\Os,,i \\Oc i_2,R(i_2),j \\Oc j_2,R(j_2),m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,i_2 \\Os,j_2 \\Os,m_2 \\Os,\\Tc c_1,}{,i_2 \\Os,j_2 \\Os,m_2 \\Os,\\Tc c_2,},",
+    "right": ",i \\Pc j,i \\Oc i_2,R(i_2),j \\Oc j_2,R(j_2),j_2 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,i_2 \\Os,m_2 \\Os,\\Tc c_1,}{,i_2 \\Os,m_2 \\Os,\\Tc c_2,},"
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::124::, i \\Pc j, i \\On, ⟺ , i \\On, i \\Pc j,",
+    "step": 3,
+    "part": "flat",
+    "rulesTried": 234,
+    "left": ",i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),i_1 \\Ps j_1,i_1 \\Os,j_1 \\Os,i \\On,i \\Oc i_2,R(i_2),i_2 \\Os,",
+    "right": ",i \\Oc i_1,j \\Oc j_1,i \\On,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),i_2 \\Os,i_1 \\Os,j_1 \\Os,"
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::124::, i \\Pc j, i \\On, ⟺ , i \\On, i \\Pc j,",
+    "step": 20,
+    "part": "flat",
+    "rulesTried": 428,
+    "left": ",i \\Oc i_1,j \\Oc j_1,\\Bb{i \\Pu}{,i_1 \\Ps i,i_1 \\Pu,i \\On,i_1 \\On,i \\Oc i_2,i_1 \\Op,R\\_(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),}{,i \\nPu,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),},i_2 \\Os,i_1 \\Os,j_1 \\Os,",
+    "right": ",i \\Oc i_1,j \\Oc j_1,\\Bb{i \\Pu}{,i_1 \\Pu,i \\Ps i_1,i \\On,i_1 \\On,i \\Oc i_2,i_1 \\Op,R\\_(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),}{,i \\nPu,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),},i_2 \\Os,i_1 \\Os,j_1 \\Os,"
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::124::, i \\Pc j, i \\On, ⟺ , i \\On, i \\Pc j,",
+    "step": 55,
+    "part": "flat",
+    "rulesTried": 399,
+    "left": ",i \\Oc i_1,j \\Oc j_1,\\Bb{i \\Pu}{,i \\Pu,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_2),R(j_1),i_2 \\Ps j_1,}{,i_1 \\Ps i,i_1 \\nPu,i \\On,i_1 \\On,R(i_1),i \\Oc i_2,R(j_1),i_1 \\Ps j_1,R(i_2),},i_2 \\Os,i_1 \\Os,j_1 \\Os,",
+    "right": ",i \\Oc i_1,j \\Oc j_1,\\Bb{i \\Pu}{,i \\Pu,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_2),R(j_1),i_2 \\Ps j_1,}{,i_1 \\nPu,i \\Ps i_1,i \\On,i_1 \\On,R(i_1),i \\Oc i_2,R(j_1),i_1 \\Ps j_1,R(i_2),},i_2 \\Os,i_1 \\Os,j_1 \\Os,"
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::124::, i \\Pc j, i \\On, ⟺ , i \\On, i \\Pc j,",
+    "step": 67,
+    "part": "flat",
+    "rulesTried": 121,
+    "left": ",i \\Oc i_1,j \\Oc j_1,\\Bb{i \\Pu}{,i \\Pu,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_2),R(j_1),i_2 \\Ps j_1,}{,i_1 \\nPu,i \\Ps i_1,i \\On,i_1 \\On,i \\Oc i_2,i \\Ps i_1,i_1 \\Ps i_2,R(i_1),R(i_2),R(j_1),i_1 \\Ps i_2,i_2 \\Ps j_1,},i_2 \\Os,i_1 \\Os,j_1 \\Os,",
+    "right": ",i \\Oc i_1,j \\Oc j_1,\\Bb{i \\Pu}{,i \\Pu,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_2),R(j_1),i_2 \\Ps j_1,}{,i_1 \\nPu,i \\Ps i_1,i \\On,i_1 \\On,i \\Oc i_2,R(i_1),R(i_2),R(j_1),i_2 \\Ps j_1,},i_2 \\Os,i_1 \\Os,j_1 \\Os,"
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::124::, i \\Pc j, i \\On, ⟺ , i \\On, i \\Pc j,",
+    "step": 72,
+    "part": "flat",
+    "rulesTried": 399,
+    "left": ",i \\Oc i_1,j \\Oc j_1,\\Bb{i \\Pu}{,i \\Pu,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_2),R(j_1),i_2 \\Ps j_1,}{,i_1 \\nPu,i_1 \\Ps i,i_1 \\On,R(i_1),i \\On,i \\Oc i_2,R(i_2),R(j_1),i_2 \\Ps j_1,},i_2 \\Os,i_1 \\Os,j_1 \\Os,",
+    "right": ",i \\Oc i_1,j \\Oc j_1,\\Bb{i \\Pu}{,i \\Pu,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_2),R(j_1),i_2 \\Ps j_1,}{,i \\Ps i_1,i_1 \\nPu,i_1 \\On,R(i_1),i \\On,i \\Oc i_2,R(i_2),R(j_1),i_2 \\Ps j_1,},i_2 \\Os,i_1 \\Os,j_1 \\Os,"
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::197::, i \\Pu, j \\Pu,  \\Blb{if(i \\Ps j)}{,}{,}, ⟺ , i \\Pu, j \\Pu,  \\Blb{if(i \\Pc j)}{,}{,},",
+    "step": 17,
+    "part": "flat",
+    "rulesTried": 362,
+    "left": ",i \\Pu,j \\Pu,i \\Oc i_1,j \\Oc j_1,j \\Ps j_1,\\Blb{i \\Ps j_1}{,i_1 \\Os,j_1 \\Os,}{,i_1 \\Os,j_1 \\Os,},",
+    "right": ",i \\Pu,j \\Pu,i \\Oc i_1,j \\Oc j_1,j \\Ps j_1,\\Blb{i \\Ps j}{,i_1 \\Os,j_1 \\Os,}{,i_1 \\Os,j_1 \\Os,},"
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::197::, i \\Pu, j \\Pu,  \\Blb{if(i \\Ps j)}{,}{,}, ⟺ , i \\Pu, j \\Pu,  \\Blb{if(i \\Pc j)}{,}{,},",
+    "step": 20,
+    "part": "flat",
+    "rulesTried": 121,
+    "left": ",i \\Pu,j \\Pu,i \\Oc i_1,i_1 \\Os,j \\Oc j_1,j_1 \\Os,\\Blb{i \\Ps j}{,}{,},",
+    "right": ",i \\Pu,j \\Pu,\\Blb{i \\Ps j}{,}{,},"
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::200::, \\Ot i, ⟺ , \\sim, i \\nPc j,",
+    "step": 13,
+    "part": "flat",
+    "rulesTried": 171,
+    "left": ",j \\Oc j_1,R(j_1),\\Ot i,i \\Oc i_1,R(i_1),i_1 \\nPs j_1,i_1 \\Os,j_1 \\Os,",
+    "right": ",\\Ot i,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),i_1 \\nPs j_1,i_1 \\Os,j_1 \\Os,"
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::202::, \\Blb{if(i \\Pc j)}{,}{,}, ⟺ , i \\Oc i_1, j \\Oc j_1, R(i_1), R\\_(j_1), \\Blb{if(i_1 \\Ps j_1)}{, i_1 \\Os, j_1 \\Os,}{, i_1 \\Os, j_1 \\Os,},",
+    "step": 3,
+    "part": "flat",
+    "rulesTried": 150,
+    "left": ",i \\Oc i_1,j \\Oc j_2,j \\Oc j_1,R\\_(j_1),j_1 \\Os,R(i_1),R(j_2),\\Blb{i_1 \\Ps j_2}{,i_1 \\Os,j_2 \\Os,}{,i_1 \\Os,j_2 \\Os,},",
+    "right": ",i \\Oc i_1,R(i_1),j \\Oc j_2,j \\Oc j_1,R(j_2),R\\_(j_1),\\Blb{i_1 \\Ps j_2}{,i_1 \\Os,j_1 \\Os,j_2 \\Os,}{,i_1 \\Os,j_1 \\Os,j_2 \\Os,},"
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::202::, \\Blb{if(i \\Pc j)}{,}{,}, ⟺ , i \\Oc i_1, j \\Oc j_1, R(i_1), R\\_(j_1), \\Blb{if(i_1 \\Ps j_1)}{, i_1 \\Os, j_1 \\Os,}{, i_1 \\Os, j_1 \\Os,},",
+    "step": 5,
+    "part": "flat",
+    "rulesTried": 150,
+    "left": ",i \\Oc i_1,R(i_1),j \\Oc j_2,j \\Oc j_1,j_2 \\Ps j_1,R(j_2),R\\_(j_1),\\Blb{i_1 \\Ps j_2}{,i_1 \\Os,j_1 \\Os,j_2 \\Os,}{,i_1 \\Os,j_1 \\Os,j_2 \\Os,},",
+    "right": ",i \\Oc i_1,R(i_1),j \\Oc j_2,j \\Oc j_1,j_2 \\Ps j_1,R(j_2),R\\_(j_1),j_2 \\Ps j_1,\\Blb{i_1 \\Ps j_2}{,i_1 \\Os,j_1 \\Os,j_2 \\Os,}{,i_1 \\Os,j_1 \\Os,j_2 \\Os,},"
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::202::, \\Blb{if(i \\Pc j)}{,}{,}, ⟺ , i \\Oc i_1, j \\Oc j_1, R(i_1), R\\_(j_1), \\Blb{if(i_1 \\Ps j_1)}{, i_1 \\Os, j_1 \\Os,}{, i_1 \\Os, j_1 \\Os,},",
+    "step": 6,
+    "part": "flat",
+    "rulesTried": 327,
+    "left": ",i \\Oc i_1,R(i_1),j \\Oc j_2,j \\Oc j_1,j_2 \\Ps j_1,R(j_2),R\\_(j_1),j_2 \\Ps j_1,\\Blb{i_1 \\Ps j_2}{,i_1 \\Os,j_1 \\Os,j_2 \\Os,}{,i_1 \\Os,j_1 \\Os,j_2 \\Os,},",
+    "right": ",i \\Oc i_1,R(i_1),j \\Oc j_2,j \\Oc j_1,j_2 \\Ps j_1,R(j_2),R\\_(j_1),j_2 \\Ps j_1,\\Blb{i_1 \\Ps j_1}{,i_1 \\Os,j_1 \\Os,j_2 \\Os,}{,i_1 \\Os,j_1 \\Os,j_2 \\Os,},"
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::202::, \\Blb{if(i \\Pc j)}{,}{,}, ⟺ , i \\Oc i_1, j \\Oc j_1, R(i_1), R\\_(j_1), \\Blb{if(i_1 \\Ps j_1)}{, i_1 \\Os, j_1 \\Os,}{, i_1 \\Os, j_1 \\Os,},",
+    "step": 9,
+    "part": "flat",
+    "rulesTried": 150,
+    "left": ",i \\Oc i_1,R(i_1),j \\Oc j_2,j \\Oc j_1,R(j_2),R\\_(j_1),\\Blb{i_1 \\Ps j_1}{,i_1 \\Os,j_1 \\Os,j_2 \\Os,}{,i_1 \\Os,j_1 \\Os,j_2 \\Os,},",
+    "right": ",i \\Oc i_1,R(i_1),j \\Oc j_2,R(j_2),j_2 \\Os,j \\Oc j_1,R\\_(j_1),\\Blb{i_1 \\Ps j_1}{,i_1 \\Os,j_1 \\Os,}{,i_1 \\Os,j_1 \\Os,},"
+  }
+]

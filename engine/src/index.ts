@@ -19,7 +19,7 @@ export type { CheckInferenceRulesOptions, MatchPosition, InferenceRule } from '.
 export { normalizeSpacing, ensureCommaWrapped } from './inferenceRules/utils';
 export { trySubstitutionByMatchPairs } from './inferenceRules/substitution';
 export { buildRuleIndex, getRulesForTransition } from './inferenceRules/ruleIndex';
-export type { IndexedRule, RuleIndex } from './inferenceRules/ruleIndex';
+export type { IndexedRule, RuleIndex, TcRuleMeta } from './inferenceRules/ruleIndex';
 export { diagnoseFailure } from './inferenceRules/errorDiagnosis';
 export type { DiagnosisResult } from './inferenceRules/errorDiagnosis';
 export { ruleStatistics } from './inferenceRules/ruleStatistics';

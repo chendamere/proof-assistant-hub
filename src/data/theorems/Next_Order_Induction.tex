@@ -108,14 +108,24 @@ proof:\\
 \begin{math} 
 ,\In \Ps i, \Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,},\\\\\\
 \Rq, i \Oc i_0, i_0 \Os, \In \Ps i, \Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0, \In \Ps i, i_0 \Os, \Bb{if(i \Pe j)}{,\Tc c_1,}{,\Tc c_2,},\\\\\\\\
 \Rq, i \Oc i_0, \In \Ps i, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_2,},\\\\\\\\
 \Rq, i \Oc i_0, i \Ps i_0, \In \Ps i, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_2,},\\\\\\\\
 \Rq, i \Oc i_0, i \Ps i_0, \In \Ps i_0, \Bb{if(i \Pe j)}{, i_0 \Os,\Tc c_1,}{, i_0 \Os,\Tc c_2,},\\\\\\\\
 \Rq, i \Oc i_0, i \Ps i_0, \Bb{if(i \Pe j)}{, \In \Ps i_0, i_0 \Os,\Tc c_1,}{, \In \Ps i_0, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0, i_0 \Ps i, \Bb{if(i \Pe j)}{, \In \Ps i_0, i_0 \Os,\Tc c_1,}{, \In \Ps i_0, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0, \Bb{if(i \Pe j)}{, i_0 \Ps i, \In \Ps i_0, i_0 \Os,\Tc c_1,}{, i_0 \Ps i, \In \Ps i_0, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0, \Bb{if(i \Pe j)}{, i \Ps i_0, \In \Ps i_0, i_0 \Os,\Tc c_1,}{, i_0 \Ps i, \In \Ps i_0, i_0 \Os,\Tc c_2,},\\\\\\\\
 \Rq, i \Oc i_0,  \Bb{if(i \Pe j)}{,i \Ps i_0, \In \Ps i_0, i_0 \Os,\Tc c_1,}{,i \Ps i_0, \In \Ps i_0, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0,  \Bb{if(i \Pe j)}{,i \Ps i_0, \In \Ps i, i_0 \Os,\Tc c_1,}{,i \Ps i_0, \In \Ps i_0, i_0 \Os,\Tc c_2,},\\\\\\\\
 \Rq, i \Oc i_0,  \Bb{if(i \Pe j)}{,i \Ps i_0, \In \Ps i, i_0 \Os,\Tc c_1,}{,i \Ps i_0, \In \Ps i, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0, \Bb{if(i \Pe j)}{,i \Ps i_0, \In \Ps i, i_0 \Os,\Tc c_1,}{,i_0 \Ps i, \In \Ps i, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0, \Bb{if(i \Pe j)}{,i_0 \Ps i, \In \Ps i, i_0 \Os,\Tc c_1,}{,i_0 \Ps i, \In \Ps i, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0, i_0 \Ps i, \Bb{if(i \Pe j)}{, \In \Ps i, i_0 \Os,\Tc c_1,}{, \In \Ps i, i_0 \Os,\Tc c_2,},\\\\\\\\
 \Rq, i \Oc i_0, i \Ps i_0, \Bb{if(i \Pe j)}{, \In \Ps i, i_0 \Os,\Tc c_1,}{, \In \Ps i, i_0 \Os,\Tc c_2,},\\\\\\\\
 \Rq, i \Oc i_0, \Bb{if(i \Pe j)}{, \In \Ps i, i_0 \Os,\Tc c_1,}{, \In \Ps i, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0, \Bb{if(i \Pe j)}{, i_0 \Os, \In \Ps i, \Tc c_1,}{, \In \Ps i, i_0 \Os,\Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_0, \Bb{if(i \Pe j)}{, i_0 \Os, \In \Ps i, \Tc c_1,}{, i_0 \Os, \In \Ps i, \Tc c_2,},\\\\\\\\
 \Rq, i \Oc i_0,  i_0 \Os,\Bb{if(i \Pe j)}{, \In \Ps i,\Tc c_1,}{, \In \Ps i,\Tc c_2,},\\\\\\\\
 \Rq,\Bb{if(i \Pe j)}{, \In \Ps i,\Tc c_1,}{, \In \Ps i,\Tc c_2,},
 \end{math}
@@ -164,12 +174,16 @@ proof:\\
 \Rq, i \On, i \Op, \In \Ps i, i \On,\\\\\\
 \Rq, i \On,  i \Oc i_0, i_0 \Os, i \Op, \In \Ps i, i \On,\\\\\\
 \Rq, i \On,  i \Oc i_0, i_0 \Op, i_0 \Os, i \Op, \In \Ps i, i \On,\\\\\\
+\Rq, i \On,  i \Oc i_0, i_0 \Op, i \Op, i_0 \Os, \In \Ps i, i \On,\\\\\\
 \Rq, i \On,  i \Oc i_0, i \Op, i_0 \Op, i_0 \Os, \In \Ps i, i \On,\\\\\\
 \Rq, i \On,  i \Oc i_0, i \Op, i_0 \Op, \In \Ps i, i_0 \Os, i \On,\\\\\\
 \Rq, i \On,  i \Oc i_0, i \Ps i_0, i \Op, i_0 \Op, \In \Ps i, i_0 \Os, i \On,\\\\\\
 \Rq, i \On,  i \Oc i_0, i \Op, i_0 \Op, i \Ps i_0, \In \Ps i, i_0 \Os, i \On,\\\\\\
 \Rq, i \On,  i \Oc i_0, i \Op, i_0 \Op, i \Ps i_0, \In \Ps i_0, i_0 \Os, i \On,\\\\\\
+\Rq, i \On,  i \Oc i_0, i \Ps i_0, i \Op, i_0 \Op, \In \Ps i_0, i_0 \Os, i \On,\\\\\\
 \Rq, i \On,  i \Oc i_0, i \Op, i_0 \Op, \In \Ps i_0, i_0 \Os, i \On,\\\\\\
+\Rq, i \On,  i \Oc i_0, i_0 \Op, i \Op, \In \Ps i_0, i_0 \Os, i \On,\\\\\\
+\Rq, i \On,  i \Oc i_0, i_0 \Op, \In \Ps i_0, i \Op, i_0 \Os, i \On,\\\\\\
 \Rq, i \On,  i \Oc i_0, i_0 \Op, \In \Ps i_0, i_0 \Os, i \Op, i \On,\\\\\\
 \Rq, i \On, \In \Pn i,  i \Op, i \On,\\\\\\
 \Rq, i \On, \In \Pn i, i \On,  i \Op,\\\\\\

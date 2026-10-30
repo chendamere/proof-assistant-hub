@@ -15,6 +15,7 @@ import { theorems } from '../../src/data/theorems';
 import { checkInferenceRules } from '../src/inferenceRules';
 import { buildRuleIndex, getRulesForTransition } from '../src/inferenceRules/ruleIndex';
 import { normalizeSpacing } from '../src/inferenceRules/utils';
+import { earlyRulePosition } from '../../src/data/rulePosition';
 
 const CHAPTER_ORDER = [
   'Rules_of_Operators',
@@ -54,6 +55,8 @@ const axiomIds = new Set(axioms.map((r) => r.id));
 const definitionIds = new Set(definitions.map((r) => r.id));
 
 function getPositionForRule(rule: { id: string }): number {
+  const early = earlyRulePosition(rule.id, CHAPTER_ORDER);
+  if (early != null) return early;
   if (axiomIds.has(rule.id) || definitionIds.has(rule.id)) return -1;
   const m = rule.id.match(/^(.+)-(\d+)-[a-z0-9]+$/);
   if (!m) return 999999999;

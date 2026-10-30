@@ -9,6 +9,7 @@ import type { DAGStructure } from '../dag';
 import type { ExprNodeData } from '../dag/types';
 import { MatchPosition } from './types';
 import { InferenceRules } from './rules';
+import { expandSim } from './sim';
 
 // Re-export types and interfaces
 export type { MatchPosition, InferenceRule } from './types';
@@ -55,10 +56,12 @@ export const checkInferenceRules = (
 
   const stepCounter = options?.onProgress ? { count: 0 } : undefined;
   const context = { stepCounter, dagCache: options?.dagCache };
+  const rule = expandSim(ruleLeft, ruleRight);
+  const target = expandSim(targetLeft, targetRight);
 
   for (const infRule of InferenceRules) {
     if (stepCounter) stepCounter.count = 0;
-    const result = infRule.check(targetLeft, targetRight, ruleLeft, ruleRight, context);
+    const result = infRule.check(target.left, target.right, rule.left, rule.right, context);
     options?.onProgress?.({
       inferenceRule: infRule.name,
       matched: result.match,

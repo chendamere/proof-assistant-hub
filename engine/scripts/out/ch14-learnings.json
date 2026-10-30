@@ -1,0 +1,236 @@
+{
+  "rounds": [
+    {
+      "round": 1,
+      "passed": 429,
+      "failed": 33,
+      "inserted": 44,
+      "complete": 2,
+      "strategies": {
+        "oneSite": 14,
+        "rewrite": 29,
+        "armFactor": 3
+      }
+    },
+    {
+      "round": 2,
+      "passed": 475,
+      "failed": 31,
+      "inserted": 24,
+      "complete": 1,
+      "strategies": {
+        "oneSite": 7,
+        "rewrite": 18
+      }
+    },
+    {
+      "round": 1,
+      "passed": 503,
+      "failed": 28,
+      "inserted": 41,
+      "complete": 7,
+      "strategies": {
+        "oneSite": 19,
+        "rewrite": 29
+      }
+    },
+    {
+      "round": 2,
+      "passed": 551,
+      "failed": 21,
+      "inserted": 2,
+      "complete": 1,
+      "strategies": {
+        "oneSite": 1,
+        "rewrite": 2
+      }
+    },
+    {
+      "round": 1,
+      "passed": 553,
+      "failed": 21,
+      "inserted": 41,
+      "complete": 1,
+      "strategies": {
+        "rewrite": 39,
+        "oneSite": 3
+      }
+    },
+    {
+      "round": 2,
+      "passed": 594,
+      "failed": 21,
+      "inserted": 18,
+      "complete": 2,
+      "strategies": {
+        "rewrite": 16,
+        "oneSite": 4
+      }
+    },
+    {
+      "round": 1,
+      "passed": 612,
+      "failed": 21,
+      "inserted": 20,
+      "complete": 1,
+      "strategies": {
+        "rewrite": 16,
+        "oneSite": 5
+      }
+    },
+    {
+      "round": 1,
+      "passed": 631,
+      "failed": 22,
+      "inserted": 24,
+      "complete": 3,
+      "strategies": {
+        "rewrite": 21,
+        "oneSite": 6
+      }
+    },
+    {
+      "round": 1,
+      "passed": 656,
+      "failed": 21,
+      "inserted": 157,
+      "complete": 2,
+      "strategies": {
+        "rewrite": 156,
+        "oneSite": 3
+      }
+    },
+    {
+      "round": 2,
+      "passed": 813,
+      "failed": 21,
+      "inserted": 52,
+      "complete": 1,
+      "strategies": {
+        "rewrite": 46,
+        "armFactor": 4,
+        "oneSite": 3
+      }
+    },
+    {
+      "round": 1,
+      "passed": 864,
+      "failed": 22,
+      "inserted": 21,
+      "complete": 2,
+      "strategies": {
+        "rewrite": 22,
+        "oneSite": 5
+      }
+    },
+    {
+      "round": 1,
+      "passed": 888,
+      "failed": 21,
+      "inserted": 14,
+      "complete": 1,
+      "strategies": {
+        "rewrite": 13,
+        "oneSite": 2
+      }
+    },
+    {
+      "round": 1,
+      "passed": 904,
+      "failed": 21,
+      "inserted": 18,
+      "complete": 2,
+      "strategies": {
+        "oneSite": 5,
+        "rewrite": 19
+      }
+    },
+    {
+      "round": 2,
+      "passed": 920,
+      "failed": 23,
+      "inserted": 19,
+      "complete": 4,
+      "strategies": {
+        "rewrite": 21,
+        "oneSite": 10
+      }
+    },
+    {
+      "round": 3,
+      "passed": 936,
+      "failed": 26,
+      "inserted": 17,
+      "complete": 7,
+      "strategies": {
+        "oneSite": 18,
+        "rewrite": 24
+      }
+    },
+    {
+      "round": 4,
+      "passed": 951,
+      "failed": 28,
+      "inserted": 19,
+      "complete": 9,
+      "strategies": {
+        "oneSite": 23,
+        "rewrite": 25
+      }
+    },
+    {
+      "at": "2026-10-30T01:35:21.592Z",
+      "passed": 574,
+      "failed": 0,
+      "note": "complete"
+    }
+  ],
+  "successfulRules": {
+    "swap-release-release": 198,
+    "swap-copy-copy": 16,
+    "recursive-function-r-24-ijj": 49,
+    "recursive-function-r-10-ijcnj": 76,
+    "swap-theorems-of-same-operand-19-icmicn": 4,
+    "recursive-function-r-22-msnii": 73,
+    "swap-copy-release": 13,
+    "theorems-of-identical-node-comparison-33-isjmcn": 54,
+    "theorems-of-node-null-comparison-52-bifiu": 38,
+    "theorems-of-node-null-comparison-53-bifiu": 18,
+    "theorems-of-operators-and-relationships-5-jujcj0": 1,
+    "theorems-of-operators-and-relationships-3-titii": 1,
+    "theorems-of-identical-node-comparison-15-mslbifi": 13,
+    "recursive-function-r-prev-25-ijj": 3,
+    "thm-Ps-symmetric": 12,
+    "recursive-function-r-13-ijpj": 1,
+    "swap-theorems-of-same-operand-3-isjjsk": 3,
+    "recursive-function-r-prev-14-ijsj": 2,
+    "theorems-of-operators-and-relationships-7-isjjcj": 1,
+    "swap-theorems-of-same-operand-14-isjicn": 1,
+    "recursive-function-r-14-ijsj": 16,
+    "theorems-of-identical-node-comparison-36-isjmsm": 2,
+    "swap-next-release": 3,
+    "theorems-of-node-null-comparison-9-mcnlbif": 1,
+    "release-next": 8,
+    "swap-next-next": 1,
+    "theorems-of-identical-node-comparison-37-isjmnm": 1,
+    "recursive-function-r-12-ijnj": 2,
+    "def-identical-prop": 3,
+    "thm-R-i-result": 1,
+    "thm-R-i-release": 6,
+    "recursive-function-r-prev-10-ijcnj": 1,
+    "theorems-of-identical-node-comparison-12-mcnlbif": 1,
+    "rules-of-empty-branch-function-3-lbifisj": 7,
+    "theorems-of-identical-node-comparison-7-lsifisj": 1
+  },
+  "gapKinds": {
+    "arm-local": 153,
+    "oc-move": 61,
+    "reorder": 74,
+    "null-flag": 86,
+    "r-move": 7
+  },
+  "notes": [
+    "Stalled at round 2 with 22 fails",
+    "Chapter 14 cleared: passed=574 failed=0 parseFailures=0"
+  ]
+}

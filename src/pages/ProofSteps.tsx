@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import WorkbenchContainer from '@/components/workbench/WorkbenchContainer';
@@ -17,16 +17,25 @@ import { axioms } from '@/data/axioms';
 import { normalizeSpacing } from '@engine/inferenceRules/utils';
 import { normalizeOperands } from '@engine/operandNormalizer';
 import { trySubstitutionByMatchPairs } from '@engine/inferenceRules/substitution';
+import { checkInferenceRules } from '@engine/inferenceRules';
 import { verifyTransitionWorker, type VerifyTransitionResult } from '@/lib/transitionVerificationWorkerClient';
 import type { MatchInfo } from '@/workers/transitionVerificationWorker';
 import type { DiagnosisResult } from '@engine/inferenceRules/errorDiagnosis';
 // LLM diagnosis hidden for now. Re-enable: import { generateLLMDiagnosis } from '@engine/inferenceRules/llmDiagnosis';
 import { definitions } from '@/data/definitions';
 import { theorems } from '@/data/theorems';
+import { earlyRulePosition } from '@/data/rulePosition';
+import { useExpressionParseMode, type ExpressionParseMode } from '@/contexts/ExpressionParseContext';
 import { Button } from '@/components/ui/button';
 import { Search, ChevronDown, ChevronRight, FileText, ListOrdered, CheckCircle2, Check, X, AlertTriangle, Info, Plus, Trash2, CheckCheck, PlayCircle, Loader2, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import {
+  InductionProofView,
+  InductionSchemaCard,
+  type InductionDisplayData,
+  type InductionProof,
+} from '@/components/proof/InductionDisplay';
 
 type ProofStepsTable = Record<string, string[]>;
 
@@ -86,6 +95,47 @@ interface TheoremWithSteps {
 interface VerificationResult {
   passed: number;
   total: number;
+}
+
+type ProofStatus = 'proven' | 'failed' | 'open' | 'none';
+type DisplaySort = 'book' | 'proven' | 'failed' | 'none';
+
+const STATUS_LABEL: Record<ProofStatus, string> = {
+  proven: 'Proven',
+  failed: 'Failed',
+  open: 'Not checked',
+  none: 'No proofs',
+};
+
+const SORT_ORDER: Record<Exclude<DisplaySort, 'book'>, ProofStatus[]> = {
+  proven: ['proven', 'failed', 'open', 'none'],
+  failed: ['failed', 'proven', 'open', 'none'],
+  none: ['none', 'proven', 'failed', 'open'],
+};
+
+function transitionCount(steps: string[], proofs: InductionProof[] | undefined): number {
+  if (proofs && proofs.length > 0) {
+    let count = 0;
+    for (const proof of proofs) {
+      if (proof.base.length >= 2) count += proof.base.length - 1;
+      if (proof.then.length >= 2) count += proof.then.length - 1;
+    }
+    return count;
+  }
+  return steps.length >= 2 ? steps.length - 1 : 0;
+}
+
+function proofStatus(
+  steps: string[],
+  proofs: InductionProof[] | undefined,
+  verification: VerificationResult | undefined
+): ProofStatus {
+  const count = transitionCount(steps, proofs);
+  if (count === 0) return 'none';
+  if (!verification || verification.total === 0) return 'open';
+  if (verification.passed < verification.total) return 'failed';
+  if (verification.passed === count && verification.total === count) return 'proven';
+  return 'open';
 }
 
 /** True when the query contains an operator (\\Pe, \\Bb, \\Or, …), so operand names should be ignored. */
@@ -154,6 +204,8 @@ const definitionIds = new Set(definitions.map((r) => r.id));
  * Theorem IDs in theorems.ts are 0-based; JSON/site keys are 1-based — add 1 so they align.
  */
 function getPositionForRule(rule: { id: string }): number {
+  const early = earlyRulePosition(rule.id, CHAPTER_ORDER);
+  if (early != null) return early;
   if (axiomIds.has(rule.id) || definitionIds.has(rule.id)) return -1;
   const m = rule.id.match(/^(.+)-(\d+)-[a-z0-9]+$/);
   if (!m) return 999999999;
@@ -216,11 +268,14 @@ const ProofSteps: React.FC = () => {
   const { isWorkbenchExpanded, isRulesPanelOpen, setDebugWorkbenchExpressions } = usePanelContext();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { prepare, display, toBook, mode } = useExpressionParseMode();
   const [table, setTable] = useState<ProofStepsTable | null>(null);
+  const [induction, setInduction] = useState<InductionDisplayData>({ schemas: [], proofs: {} });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [chapter, setChapter] = useState<string>('all');
+  const [displaySort, setDisplaySort] = useState<DisplaySort>('book');
   const [ruleInput, setRuleInput] = useState('');
   const [transitionVerifying, setTransitionVerifying] = useState<string | null>(null);
   const [transitionResults, setTransitionResults] = useState<Record<string, Record<number, boolean>>>({});
@@ -230,6 +285,9 @@ const ProofSteps: React.FC = () => {
   const [customTransitionResults, setCustomTransitionResults] = useState<Record<string, boolean>>({});
   /** Which theorem is currently verifying all transitions (theorem key). */
   const [theoremVerifyingAll, setTheoremVerifyingAll] = useState<string | null>(null);
+  const theoremVerifyingAllRef = useRef<string | null>(null);
+  const transitionVerifyingRef = useRef<string | null>(null);
+  const chapterCheckingAllRef = useRef(false);
   /** Per-transition optional rule override (key: transitionId or customId). Separate left/right fields. */
   const [customRuleInputs, setCustomRuleInputs] = useState<Record<string, { left: string; right: string }>>({});
   /** Error when user-entered rule is not in database (key: transitionId or customId). */
@@ -247,6 +305,12 @@ const ProofSteps: React.FC = () => {
 
   useEffect(() => {
     const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
+    fetch(`${base}induction-display.json`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: InductionDisplayData | null) => {
+        if (data?.schemas && data?.proofs) setInduction(data);
+      })
+      .catch(() => { /* the chapter still lists ordinary proofs */ });
     fetch(`${base}proof-steps-table.json`)
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load proof steps data');
@@ -266,9 +330,10 @@ const ProofSteps: React.FC = () => {
   const verifySingleTransition = React.useCallback(
     async (key: string, transitionIndex: number, ruleOverride?: string) => {
       const transitionId = `${key}::${transitionIndex}`;
-      if (transitionVerifying) return;
+      if (transitionVerifyingRef.current || theoremVerifyingAllRef.current) return;
       const steps = table?.[key];
       if (!steps || transitionIndex < 0 || transitionIndex >= steps.length - 1) return;
+      transitionVerifyingRef.current = transitionId;
       setTransitionVerifying(transitionId);
       const left = steps[transitionIndex];
       const right = steps[transitionIndex + 1];
@@ -282,12 +347,14 @@ const ProofSteps: React.FC = () => {
         };
         setTransitionResults((prev) => ({ ...prev, [key]: { ...prev[key], [transitionIndex]: true } }));
         setTransitionMatchInfo((prev) => ({ ...prev, [key]: { ...prev[key], [transitionIndex]: matchInfo } }));
+        transitionVerifyingRef.current = null;
         setTransitionVerifying(null);
         return;
       }
       const parsedOverride = parseRuleOverride(ruleOverride ?? '', `${key}-override`);
-      if (parsedOverride && !ruleExistsInDatabase(parsedOverride.leftSide, parsedOverride.rightSide)) {
+      if (parsedOverride && !ruleExistsInDatabase(toBook(parsedOverride.leftSide), toBook(parsedOverride.rightSide))) {
         setRuleValidationError((prev) => ({ ...prev, [transitionId]: 'Rule not found in database' }));
+        transitionVerifyingRef.current = null;
         setTransitionVerifying(null);
         return;
       }
@@ -324,7 +391,9 @@ const ProofSteps: React.FC = () => {
       // Try preferred rule with trySubstitutionByMatchPairs (handles both pair directions)
       if (preferredRule && !preferredRuleIsCurrentTheorem) {
         try {
-          const r = trySubstitutionByMatchPairs(left, right, preferredRule.leftSide, preferredRule.rightSide, undefined);
+          const ruleLeftForCheck = parsedOverride ? prepare(preferredRule.leftSide) : preferredRule.leftSide;
+          const ruleRightForCheck = parsedOverride ? prepare(preferredRule.rightSide) : preferredRule.rightSide;
+          const r = trySubstitutionByMatchPairs(left, right, ruleLeftForCheck, ruleRightForCheck, undefined);
           if (r?.match && r.reconstructedExpr != null) {
             const pos = r.position;
             const matchInfo: MatchInfo = {
@@ -332,8 +401,8 @@ const ProofSteps: React.FC = () => {
               description: pos?.description,
               startPosition: pos?.position,
               side: pos?.side,
-              ruleLeft: preferredRule.leftSide,
-              ruleRight: preferredRule.rightSide,
+              ruleLeft: parsedOverride ? toBook(preferredRule.leftSide) : preferredRule.leftSide,
+              ruleRight: parsedOverride ? toBook(preferredRule.rightSide) : preferredRule.rightSide,
               instantiatedPatternLeft: pos?.instantiatedPatternLeft,
               instantiatedPatternRight: pos?.instantiatedPatternRight,
               inferenceRuleName: 'Equivalent Substitution',
@@ -343,6 +412,7 @@ const ProofSteps: React.FC = () => {
             };
             setTransitionResults((prev) => ({ ...prev, [key]: { ...prev[key], [transitionIndex]: true } }));
             setTransitionMatchInfo((prev) => ({ ...prev, [key]: { ...prev[key], [transitionIndex]: matchInfo } }));
+            transitionVerifyingRef.current = null;
             setTransitionVerifying(null);
             return;
           }
@@ -406,17 +476,18 @@ const ProofSteps: React.FC = () => {
           [key]: { ...prev[key], [transitionIndex]: false },
         }));
       } finally {
+        transitionVerifyingRef.current = null;
         setTransitionVerifying(null);
       }
     },
-    [table, transitionVerifying, rulesForWorker]
+    [table, rulesForWorker, prepare, toBook]
   );
 
   const verifyCustomTransition = React.useCallback(
     async (customId: string, left: string, right: string, ruleOverride?: string) => {
       if (customTransitionVerifying) return;
       const parsedOverride = parseRuleOverride(ruleOverride ?? '', `${customId}-override`);
-      if (parsedOverride && !ruleExistsInDatabase(parsedOverride.leftSide, parsedOverride.rightSide)) {
+      if (parsedOverride && !ruleExistsInDatabase(toBook(parsedOverride.leftSide), toBook(parsedOverride.rightSide))) {
         setRuleValidationError((prev) => ({ ...prev, [customId]: 'Rule not found in database' }));
         return;
       }
@@ -434,7 +505,7 @@ const ProofSteps: React.FC = () => {
 
       if (preferredRule) {
         try {
-          const r = trySubstitutionByMatchPairs(left, right, preferredRule.leftSide, preferredRule.rightSide, undefined);
+          const r = trySubstitutionByMatchPairs(left, right, prepare(preferredRule.leftSide), prepare(preferredRule.rightSide), undefined);
           if (r?.match && r.reconstructedExpr != null) {
             setCustomTransitionResults((prev) => ({ ...prev, [customId]: true }));
             setCustomTransitionVerifying(null);
@@ -459,24 +530,52 @@ const ProofSteps: React.FC = () => {
         setCustomTransitionVerifying(null);
       }
     },
-    [customTransitionVerifying, rulesForWorker]
+    [customTransitionVerifying, rulesForWorker, prepare, toBook]
   );
 
   const verifyAllTransitions = React.useCallback(
     async (key: string): Promise<Record<number, boolean>> => {
-      if (theoremVerifyingAll || transitionVerifying) return {};
+      if (theoremVerifyingAllRef.current || transitionVerifyingRef.current) return {};
       const steps = table?.[key];
-      if (!steps || steps.length < 2) return {};
-      
+      const proofs = induction.proofs[key] ?? [];
+      const pairs: Array<{ left: string; right: string; hypothesis: { left: string; right: string } | null }> = [];
+      if (proofs.length > 0) {
+        for (const proof of proofs) {
+          for (let i = 0; i < proof.base.length - 1; i++) {
+            pairs.push({ left: proof.base[i]!, right: proof.base[i + 1]!, hypothesis: null });
+          }
+          const hyp =
+            proof.hypothesis?.left && proof.hypothesis.right
+              ? { left: proof.hypothesis.left, right: proof.hypothesis.right }
+              : null;
+          for (let i = 0; i < proof.then.length - 1; i++) {
+            pairs.push({ left: proof.then[i]!, right: proof.then[i + 1]!, hypothesis: hyp });
+          }
+        }
+      } else if (steps && steps.length >= 2) {
+        for (let i = 0; i < steps.length - 1; i++) {
+          pairs.push({ left: steps[i]!, right: steps[i + 1]!, hypothesis: null });
+        }
+      }
+      if (pairs.length === 0) return {};
+
+      theoremVerifyingAllRef.current = key;
       setTheoremVerifyingAll(key);
       const results: Record<number, boolean> = {};
-      
+      const rulesToUse = getRulesBeforeKey(key, rulesForWorker);
+
       try {
-        // Verify all transitions sequentially
-        for (let i = 0; i < steps.length - 1; i++) {
+        // Let the spinner paint before the first rule index is built.
+        await new Promise<void>((resolve) => {
+          setTimeout(resolve, 0);
+        });
+
+        // Induction proofs are two chains. The hypothesis is an assumption of the
+        // induction step, not a step between the base case and the conclusion.
+        for (let i = 0; i < pairs.length; i++) {
           const transitionId = `${key}::${i}`;
-          const left = steps[i];
-          const right = steps[i + 1];
+          const left = pairs[i]!.left;
+          const right = pairs[i]!.right;
           if (left != null && right != null && normalizeSpacing(left) === normalizeSpacing(right)) {
             results[i] = true;
             const matchInfo: MatchInfo = {
@@ -498,7 +597,7 @@ const ProofSteps: React.FC = () => {
           })();
           
           const parsedOverride = parseRuleOverride(ruleOverride ?? '', `${key}-override`);
-          if (parsedOverride && !ruleExistsInDatabase(parsedOverride.leftSide, parsedOverride.rightSide)) {
+          if (parsedOverride && !ruleExistsInDatabase(toBook(parsedOverride.leftSide), toBook(parsedOverride.rightSide))) {
             setRuleValidationError((prev) => ({ ...prev, [transitionId]: 'Rule not found in database' }));
             results[i] = false;
             setTransitionResults((prev) => ({
@@ -508,11 +607,12 @@ const ProofSteps: React.FC = () => {
             continue;
           }
           setRuleValidationError((prev) => {
+            if (!(transitionId in prev)) return prev;
             const next = { ...prev };
             delete next[transitionId];
             return next;
           });
-          
+
           const preferredRule =
             parsedOverride ??
             (() => {
@@ -535,13 +635,37 @@ const ProofSteps: React.FC = () => {
               return (pLeft === kLeft && pRight === kRight) || (pLeft === kRight && pRight === kLeft);
             })();
 
-          const rulesToUse = getRulesBeforeKey(key, rulesForWorker);
+          let matched = false;
+          const hypothesis = pairs[i]!.hypothesis;
+          if (hypothesis) {
+            try {
+              const hypResult = checkInferenceRules(left, right, hypothesis.left, hypothesis.right);
+              if (hypResult.match && (hypResult.matchPosition?.instantiatedPatternLeft ?? hypothesis.left).trim()) {
+                const matchInfo: MatchInfo = {
+                  matchedRuleId: 'induction-hypothesis',
+                  description: 'Induction hypothesis, used only inside this induction step',
+                  ruleLeft: hypothesis.left,
+                  ruleRight: hypothesis.right,
+                  instantiatedPatternLeft: hypResult.matchPosition?.instantiatedPatternLeft,
+                  instantiatedPatternRight: hypResult.matchPosition?.instantiatedPatternRight,
+                  inferenceRuleName: hypResult.inferenceRule,
+                };
+                results[i] = true;
+                setTransitionResults((prev) => ({ ...prev, [key]: { ...prev[key], [i]: true } }));
+                setTransitionMatchInfo((prev) => ({ ...prev, [key]: { ...prev[key], [i]: matchInfo } }));
+                matched = true;
+              }
+            } catch {
+              // fall through to the library rules
+            }
+          }
 
           // Try preferred rule first (same as verifySingleTransition)
-          let matched = false;
           if (preferredRule && !preferredRuleIsCurrentTheorem) {
             try {
-              const r = trySubstitutionByMatchPairs(left, right, preferredRule.leftSide, preferredRule.rightSide, undefined);
+              const ruleLeftForCheck = parsedOverride ? prepare(preferredRule.leftSide) : preferredRule.leftSide;
+              const ruleRightForCheck = parsedOverride ? prepare(preferredRule.rightSide) : preferredRule.rightSide;
+              const r = trySubstitutionByMatchPairs(left, right, ruleLeftForCheck, ruleRightForCheck, undefined);
               if (r?.match && r.reconstructedExpr != null) {
                 const pos = r.position;
                 const matchInfo: MatchInfo = {
@@ -549,8 +673,8 @@ const ProofSteps: React.FC = () => {
                   description: pos?.description,
                   startPosition: pos?.position,
                   side: pos?.side,
-                  ruleLeft: preferredRule.leftSide,
-                  ruleRight: preferredRule.rightSide,
+                  ruleLeft: parsedOverride ? toBook(preferredRule.leftSide) : preferredRule.leftSide,
+                  ruleRight: parsedOverride ? toBook(preferredRule.rightSide) : preferredRule.rightSide,
                   instantiatedPatternLeft: pos?.instantiatedPatternLeft,
                   instantiatedPatternRight: pos?.instantiatedPatternRight,
                   inferenceRuleName: 'Equivalent Substitution',
@@ -610,13 +734,17 @@ const ProofSteps: React.FC = () => {
               }));
             }
           }
+          await new Promise<void>((resolve) => {
+            setTimeout(resolve, 0);
+          });
         }
         return results;
       } finally {
+        theoremVerifyingAllRef.current = null;
         setTheoremVerifyingAll(null);
       }
     },
-    [table, theoremVerifyingAll, transitionVerifying, rulesForWorker, customRuleInputs]
+    [table, induction, rulesForWorker, customRuleInputs, prepare, toBook]
   );
 
   const [chapterCheckingAll, setChapterCheckingAll] = useState(false);
@@ -645,14 +773,22 @@ const ProofSteps: React.FC = () => {
     setCustomTransitionResults({});
   }, [chapter]);
 
+  const verificationCache = useRef<Record<string, VerificationResult>>({});
   const verificationResults = React.useMemo(() => {
+    const prev = verificationCache.current;
     const out: Record<string, VerificationResult> = {};
     for (const [key, results] of Object.entries(transitionResults)) {
-      const indices = Object.keys(results).map(Number);
+      const indices = Object.keys(results);
       if (indices.length === 0) continue;
-      const passed = indices.filter((i) => results[i] === true).length;
-      out[key] = { passed, total: indices.length };
+      let passed = 0;
+      for (const index of indices) {
+        if (results[Number(index)] === true) passed++;
+      }
+      const total = indices.length;
+      const old = prev[key];
+      out[key] = old && old.passed === passed && old.total === total ? old : { passed, total };
     }
+    verificationCache.current = out;
     return out;
   }, [transitionResults]);
 
@@ -720,9 +856,10 @@ const ProofSteps: React.FC = () => {
   }, [theoremsWithSteps, chapter, search, normalizedContent]);
 
   const checkAllProofStepsInChapter = React.useCallback(async () => {
-    if (chapter === 'all' || chapterCheckingAll || theoremVerifyingAll || transitionVerifying) return;
+    if (chapter === 'all' || chapterCheckingAllRef.current || theoremVerifyingAllRef.current || transitionVerifyingRef.current) return;
     const toCheck = filtered.filter((t) => (table?.[t.key]?.length ?? 0) >= 2);
     if (toCheck.length === 0) return;
+    chapterCheckingAllRef.current = true;
     setChapterCheckingAll(true);
     try {
       let theoremsWithFailures = 0;
@@ -745,9 +882,10 @@ const ProofSteps: React.FC = () => {
         });
       }
     } finally {
+      chapterCheckingAllRef.current = false;
       setChapterCheckingAll(false);
     }
-  }, [chapter, chapterCheckingAll, theoremVerifyingAll, transitionVerifying, filtered, table, verifyAllTransitions, toast]);
+  }, [chapter, filtered, table, verifyAllTransitions, toast]);
 
   const downloadChapterResults = React.useCallback(() => {
     if (chapter === 'all') return;
@@ -796,16 +934,33 @@ const ProofSteps: React.FC = () => {
     URL.revokeObjectURL(a.href);
   }, [chapter, filtered, table, transitionResults, transitionMatchInfo]);
 
+  const statusFor = React.useCallback(
+    (theorem: TheoremWithSteps): ProofStatus =>
+      proofStatus(theorem.steps, induction.proofs[theorem.key], verificationResults[theorem.key]),
+    [induction.proofs, verificationResults]
+  );
+
   const groupedByChapter = React.useMemo(() => {
     const groups: Record<string, TheoremWithSteps[]> = {};
     for (const t of filtered) {
       if (!groups[t.filename]) groups[t.filename] = [];
       groups[t.filename].push(t);
     }
+    if (displaySort !== 'book') {
+      const order = SORT_ORDER[displaySort];
+      for (const name of Object.keys(groups)) {
+        groups[name].sort((a, b) => {
+          const rankA = order.indexOf(statusFor(a));
+          const rankB = order.indexOf(statusFor(b));
+          if (rankA !== rankB) return rankA - rankB;
+          return a.index - b.index;
+        });
+      }
+    }
     return Object.entries(groups).sort(
       ([a], [b]) => getChapterIndex(a) - getChapterIndex(b)
     );
-  }, [filtered]);
+  }, [filtered, displaySort, statusFor]);
 
   /** Theorem # as on the site: 1-based index within the chapter (same as JSON key ::N::). */
   const theoremDisplayNumber = React.useMemo(() => {
@@ -912,7 +1067,7 @@ const ProofSteps: React.FC = () => {
               </div>
               {ruleInput.trim() && (
                 <div className="p-2 rounded-md border bg-muted/20 overflow-x-auto">
-                  <ExpressionRenderer expression={ruleInput} size={14} />
+                  <ExpressionRenderer expression={display(ruleInput)} size={14} />
                 </div>
               )}
             </CardContent>
@@ -939,6 +1094,17 @@ const ProofSteps: React.FC = () => {
                     {chapterDisplayIndex[ch]}. {ch}
                   </SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+            <Select value={displaySort} onValueChange={(value) => setDisplaySort(value as DisplaySort)}>
+              <SelectTrigger className="w-full sm:w-[200px]" aria-label="Sort theorems">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="book">Book order</SelectItem>
+                <SelectItem value="proven">Proven first</SelectItem>
+                <SelectItem value="failed">Failed first</SelectItem>
+                <SelectItem value="none">No proofs first</SelectItem>
               </SelectContent>
             </Select>
             {chapter !== 'all' && (
@@ -986,31 +1152,54 @@ const ProofSteps: React.FC = () => {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="px-4 pb-4 space-y-3">
-                        {theorems.map((t) => (
-                          <TheoremCard
-                            key={t.key}
-                            theorem={t}
-                            theoremNumber={theoremDisplayNumber[t.key]}
-                            verification={verificationResults[t.key]}
-                            transitionMatchInfo={transitionMatchInfo[t.key]}
-                            onVerifyTransition={verifySingleTransition}
-                            onVerifyAllTransitions={verifyAllTransitions}
-                            onVerifyCustomTransition={verifyCustomTransition}
-                            onCopyToDebug={setDebugWorkbenchExpressions}
-                            onInsertStep={handleInsertStep}
-                            onDeleteStep={handleDeleteStep}
-                            transitionVerifying={transitionVerifying}
-                            theoremVerifyingAll={theoremVerifyingAll}
-                            customTransitionVerifying={customTransitionVerifying}
-                            transitionResults={transitionResults[t.key]}
-                            customTransitionResults={customTransitionResults}
-                            transitionDiagnoses={transitionDiagnoses[t.key]}
-                            customRuleInputs={customRuleInputs}
-                            setCustomRuleInputs={setCustomRuleInputs}
-                            ruleValidationError={ruleValidationError}
-                            setRuleValidationError={setRuleValidationError}
-                          />
-                        ))}
+                        {induction.schemas
+                          .filter((schema) => schema.filename === chapterName)
+                          .map((schema) => (
+                            <InductionSchemaCard key={schema.title} schema={schema} />
+                          ))}
+                        {theorems.map((t, theoremIndex) => {
+                          const status = displaySort === 'book' ? null : statusFor(t);
+                          const previous = status != null && theoremIndex > 0 ? statusFor(theorems[theoremIndex - 1]!) : null;
+                          const showHeading = status != null && status !== previous;
+                          const headingCount = showHeading
+                            ? theorems.filter((item) => statusFor(item) === status).length
+                            : 0;
+                          return (
+                            <React.Fragment key={t.key}>
+                              {showHeading && status != null && (
+                                <div className="pt-2 text-xs font-medium text-muted-foreground">
+                                  {STATUS_LABEL[status]}
+                                  <span className="ml-1.5 tabular-nums">{headingCount}</span>
+                                </div>
+                              )}
+                              <TheoremCard
+                                theorem={t}
+                                inductionProofs={induction.proofs[t.key]}
+                                theoremNumber={theoremDisplayNumber[t.key]}
+                                parseMode={mode}
+                                verification={verificationResults[t.key]}
+                                transitionMatchInfo={transitionMatchInfo[t.key]}
+                                onVerifyTransition={verifySingleTransition}
+                                onVerifyAllTransitions={verifyAllTransitions}
+                                onVerifyCustomTransition={verifyCustomTransition}
+                                onCopyToDebug={setDebugWorkbenchExpressions}
+                                onInsertStep={handleInsertStep}
+                                onDeleteStep={handleDeleteStep}
+                                transitionVerifying={transitionVerifying}
+                                verifyingThis={theoremVerifyingAll === t.key}
+                                checksLocked={chapterCheckingAll || theoremVerifyingAll !== null || transitionVerifying !== null}
+                                customTransitionVerifying={customTransitionVerifying}
+                                transitionResults={transitionResults[t.key]}
+                                customTransitionResults={customTransitionResults}
+                                transitionDiagnoses={transitionDiagnoses[t.key]}
+                                customRuleInputs={customRuleInputs}
+                                setCustomRuleInputs={setCustomRuleInputs}
+                                ruleValidationError={ruleValidationError}
+                                setRuleValidationError={setRuleValidationError}
+                              />
+                            </React.Fragment>
+                          );
+                        })}
                       </div>
                     </CollapsibleContent>
                   </div>
@@ -1031,9 +1220,11 @@ const ProofSteps: React.FC = () => {
   );
 };
 
-function TheoremCard({
+const TheoremCard = React.memo(function TheoremCard({
   theorem,
+  inductionProofs,
   theoremNumber,
+  parseMode,
   verification,
   transitionMatchInfo = {},
   onVerifyTransition,
@@ -1043,7 +1234,8 @@ function TheoremCard({
   onInsertStep,
   onDeleteStep,
   transitionVerifying,
-  theoremVerifyingAll,
+  verifyingThis,
+  checksLocked,
   customTransitionVerifying,
   transitionResults = {},
   customTransitionResults = {},
@@ -1054,7 +1246,9 @@ function TheoremCard({
   setRuleValidationError,
 }: {
   theorem: TheoremWithSteps;
+  inductionProofs?: InductionProof[];
   theoremNumber?: number;
+  parseMode: ExpressionParseMode;
   verification?: VerificationResult;
   transitionMatchInfo?: Record<number, MatchInfo>;
   onVerifyTransition?: (key: string, transitionIndex: number, ruleOverride?: string) => void;
@@ -1064,7 +1258,8 @@ function TheoremCard({
   onInsertStep?: (key: string, insertAtIndex: number, newExpr: string) => void;
   onDeleteStep?: (key: string, stepIndex: number) => void;
   transitionVerifying?: string | null;
-  theoremVerifyingAll?: string | null;
+  verifyingThis?: boolean;
+  checksLocked?: boolean;
   customTransitionVerifying?: string | null;
   transitionResults?: Record<number, boolean>;
   customTransitionResults?: Record<string, boolean>;
@@ -1074,6 +1269,7 @@ function TheoremCard({
   ruleValidationError?: Record<string, string>;
   setRuleValidationError?: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 }) {
+  const { prepare, display, toBook } = useExpressionParseMode();
   const [open, setOpen] = useState(false);
   const [expandedDiagnosis, setExpandedDiagnosis] = useState<number | null>(null);
   const [expandedMatchInfo, setExpandedMatchInfo] = useState<number | null>(null);
@@ -1087,7 +1283,7 @@ function TheoremCard({
   const isFullyVerified = verification && verification.total > 0 && verification.passed === verification.total;
 
   return (
-    <Card>
+    <Card key={parseMode}>
       <Collapsible open={open} onOpenChange={setOpen}>
         <CardHeader className="py-3 px-4 cursor-pointer" onClick={() => setOpen(!open)}>
           <div className="flex items-start gap-2">
@@ -1144,10 +1340,10 @@ function TheoremCard({
                       e.stopPropagation();
                       onVerifyAllTransitions(theorem.key);
                     }}
-                    disabled={theoremVerifyingAll !== null || transitionVerifying !== null}
+                    disabled={!!checksLocked}
                     title="Verify all transitions in this theorem"
                   >
-                    {theoremVerifyingAll === theorem.key ? (
+                    {verifyingThis ? (
                       <>
                         <Loader2 className="w-3 h-3 animate-spin" />
                         Verifying...
@@ -1176,7 +1372,9 @@ function TheoremCard({
         <CollapsibleContent>
           <CardContent className="pt-0 px-4 pb-4">
             <div className="border-t border-border pt-3 space-y-1">
-              {theorem.steps.map((step, i) => (
+              {inductionProofs && inductionProofs.length > 0 ? (
+                <InductionProofView proofs={inductionProofs} results={transitionResults} />
+              ) : theorem.steps.map((step, i) => (
                 <React.Fragment key={i}>
                   {i > 0 && (onVerifyTransition || onCopyToDebug) && (
                     <div className="space-y-2 py-1">
@@ -1212,7 +1410,7 @@ function TheoremCard({
                                   className="h-7 px-2 text-xs gap-1.5"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    onVerifyCustomTransition(customIdAbove, firstRowLeft, firstRowRight, (() => { const r = customRuleInputs[customIdAbove]; return (r?.left?.trim() && r?.right?.trim()) ? `${r.left.trim()} ⟺ ${r.right.trim()}` : undefined; })());
+                                    onVerifyCustomTransition(customIdAbove, firstRowLeft, prepare(firstRowRight), (() => { const r = customRuleInputs[customIdAbove]; return (r?.left?.trim() && r?.right?.trim()) ? `${r.left.trim()} ⟺ ${r.right.trim()}` : undefined; })());
                                   }}
                                   disabled={customTransitionVerifying !== null}
                                   title="Verify: step above → inserted expression"
@@ -1245,7 +1443,7 @@ function TheoremCard({
                                     e.stopPropagation();
                                     onVerifyTransition(theorem.key, i - 1, (() => { const r = customRuleInputs[transitionId]; return (r?.left?.trim() && r?.right?.trim()) ? `${r.left.trim()} ⟺ ${r.right.trim()}` : undefined; })());
                                   }}
-                                  disabled={transitionVerifying !== null}
+                                  disabled={!!checksLocked}
                                 >
                                   {transitionVerifying === transitionId ? (
                                     <>Checking...</>
@@ -1338,6 +1536,21 @@ function TheoremCard({
                                     {ruleValidationError[isInsertOpen ? customIdAbove : transitionId]}
                                   </span>
                                 )}
+                                {(() => {
+                                  const id = isInsertOpen ? customIdAbove : transitionId;
+                                  const r = customRuleInputs[id];
+                                  const leftText = r?.left ?? '';
+                                  const rightText = r?.right ?? '';
+                                  if (!leftText.trim() && !rightText.trim()) return null;
+                                  if (display(leftText) === leftText && display(rightText) === rightText) return null;
+                                  return (
+                                    <div className="flex items-center gap-1 text-xs" onClick={(e) => e.stopPropagation()}>
+                                      <ExpressionRenderer expression={display(leftText) || ','} size={11} />
+                                      <EquivalenceSymbol size={10} className="text-muted-foreground" />
+                                      <ExpressionRenderer expression={display(rightText) || ','} size={11} />
+                                    </div>
+                                  );
+                                })()}
                               </div>
                             )}
                             {onCopyToDebug && (
@@ -1379,7 +1592,7 @@ function TheoremCard({
                                 className="h-7 px-2 text-xs gap-1.5"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  onVerifyCustomTransition(customId, draft, nextExpr, (() => { const r = customRuleInputs[customId]; return (r?.left?.trim() && r?.right?.trim()) ? `${r.left.trim()} ⟺ ${r.right.trim()}` : undefined; })());
+                                  onVerifyCustomTransition(customId, prepare(draft), nextExpr, (() => { const r = customRuleInputs[customId]; return (r?.left?.trim() && r?.right?.trim()) ? `${r.left.trim()} ⟺ ${r.right.trim()}` : undefined; })());
                                 }}
                                 disabled={customTransitionVerifying !== null}
                                 title="Verify: inserted expression → step below"
@@ -1470,6 +1683,20 @@ function TheoremCard({
                                     {ruleValidationError[customId]}
                                   </span>
                                 )}
+                                {(() => {
+                                  const r = customRuleInputs[customId];
+                                  const leftText = r?.left ?? '';
+                                  const rightText = r?.right ?? '';
+                                  if (!leftText.trim() && !rightText.trim()) return null;
+                                  if (display(leftText) === leftText && display(rightText) === rightText) return null;
+                                  return (
+                                    <div className="flex items-center gap-1 text-xs" onClick={(e) => e.stopPropagation()}>
+                                      <ExpressionRenderer expression={display(leftText) || ','} size={11} />
+                                      <EquivalenceSymbol size={10} className="text-muted-foreground" />
+                                      <ExpressionRenderer expression={display(rightText) || ','} size={11} />
+                                    </div>
+                                  );
+                                })()}
                               </div>
                             )}
                             {onCopyToDebug && (
@@ -1522,7 +1749,7 @@ function TheoremCard({
                                 <div className="text-sm">
                                   <span className="text-muted-foreground mr-1">Rendered:</span>
                                   <span className="font-mono inline-flex items-baseline">
-                                    <ExpressionRenderer expression={draft || ','} size={12} />
+                                    <ExpressionRenderer expression={display(draft) || ','} size={12} />
                                   </span>
                                 </div>
                                 {onInsertStep && (
@@ -1532,7 +1759,7 @@ function TheoremCard({
                                     className="h-7 px-2 text-xs gap-1.5"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      onInsertStep(theorem.key, i, draft);
+                                      onInsertStep(theorem.key, i, toBook(draft));
                                       setInsertStepOpen(null);
                                       setInsertStepDrafts((prev) => {
                                         const next = { ...prev };
@@ -1599,7 +1826,7 @@ function TheoremCard({
       </Collapsible>
     </Card>
   );
-}
+});
 
 function MatchInfoDisplay({
   matchInfo,

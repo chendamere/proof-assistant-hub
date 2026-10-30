@@ -1,0 +1,26 @@
+{
+  "allOk": false,
+  "sequenceLen": 68,
+  "sample": [
+    {
+      "label": "seed",
+      "then": ",i \\Pu,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),",
+      "else_": ",i \\nPu,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),"
+    },
+    {
+      "label": "pu-1",
+      "then": ",i \\Ps i_1,i \\Pu,i \\On,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),",
+      "else_": ",i \\nPu,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),"
+    },
+    {
+      "label": "pu-2",
+      "then": ",i \\Ps i_1,i_1 \\Pu,i \\On,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),",
+      "else_": ",i \\nPu,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),"
+    },
+    {
+      "label": "pu-3-mid1",
+      "then": ",i \\Ps i_1,i \\On,i_1 \\Pu,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),",
+      "else_": ",i \\nPu,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_1),R(j_1),i_1 \\Ps j_1,R(i_2),"
+    }
+  ]
+}

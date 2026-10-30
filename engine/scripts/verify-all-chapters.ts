@@ -15,8 +15,10 @@ import { exprToDAG } from '../src/dag';
 import type { DAGStructure } from '../src/dag';
 import type { ExprNodeData } from '../src/dag/types';
 import { checkInferenceRules } from '../src/inferenceRules';
+import { matchesDerivedBbTransition } from '../src/inferenceRules/caseFocus';
 import { buildRuleIndex, getRulesForTransition } from '../src/inferenceRules/ruleIndex';
 import { normalizeSpacing } from '../src/inferenceRules/utils';
+import { earlyRulePosition } from '../../src/data/rulePosition';
 
 const CHAPTER_ORDER = [
   'Rules_of_Operators',
@@ -56,6 +58,8 @@ const axiomIds = new Set(axioms.map((r) => r.id));
 const definitionIds = new Set(definitions.map((r) => r.id));
 
 function getPositionForRule(rule: { id: string }): number {
+  const early = earlyRulePosition(rule.id, CHAPTER_ORDER);
+  if (early != null) return early;
   if (axiomIds.has(rule.id) || definitionIds.has(rule.id)) return -1;
   const m = rule.id.match(/^(.+)-(\d+)-[a-z0-9]+$/);
   if (!m) return 999999999;
@@ -76,6 +80,7 @@ function getPositionForKey(key: string): number {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const tablePath = path.join(__dirname, '../../proof-steps-table.json');
+const inductionPath = path.join(__dirname, '../../public/induction-display.json');
 const outArg = process.argv.find((a) => a.startsWith('--out='));
 const chapterArg = process.argv.find((a) => a.startsWith('--chapter='));
 const onlyChapter = chapterArg ? chapterArg.slice('--chapter='.length) : '';
@@ -87,12 +92,22 @@ const failPath = outArg
 fs.writeFileSync(failPath, '');
 
 const table = JSON.parse(fs.readFileSync(tablePath, 'utf8')) as Record<string, string[]>;
+type InductionProof = {
+  base: string[];
+  hypothesis: { left: string; right: string } | null;
+  then: string[];
+};
+const inductionProofs: Record<string, InductionProof[]> = fs.existsSync(inductionPath)
+  ? ((JSON.parse(fs.readFileSync(inductionPath, 'utf8')) as { proofs?: Record<string, InductionProof[]> }).proofs ?? {})
+  : {};
 const allRules = [...axioms, ...definitions, ...theorems].map((r) => ({
   id: r.id,
   leftSide: r.leftSide,
   rightSide: r.rightSide,
 }));
 const dagCache = new Map<string, DAGStructure<ExprNodeData>>();
+/** Reuse rule indexes across theorems that share the same prior-rule cut. */
+const indexByPos = new Map<number, ReturnType<typeof buildRuleIndex>>();
 
 const keys = Object.keys(table)
   .filter((k) => CHAPTER_ORDER.includes(k.split('::')[0] ?? ''))
@@ -121,47 +136,87 @@ for (const key of keys) {
     chapterFailed = 0;
     console.log(`\n-- ${filename} --`);
   }
-  if (steps.length < 2) {
+  const proofs = inductionProofs[key];
+  const sequences: Array<{ name: string; steps: string[]; extra: Array<{ id: string; leftSide: string; rightSide: string }> }> = [];
+  if (proofs && proofs.length) {
+    proofs.forEach((proof, n) => {
+      const tag = proofs.length > 1 ? `${n}:` : '';
+      sequences.push({ name: `${tag}base`, steps: proof.base ?? [], extra: [] });
+      const hyp =
+        proof.hypothesis?.left && proof.hypothesis.right
+          ? [{ id: 'induction-hypothesis', leftSide: proof.hypothesis.left, rightSide: proof.hypothesis.right }]
+          : [];
+      sequences.push({ name: `${tag}then`, steps: proof.then ?? [], extra: hyp });
+    });
+  } else {
+    sequences.push({ name: 'flat', steps, extra: [] });
+  }
+  const checkable = sequences.some((seq) => seq.steps.length >= 2);
+  if (!checkable) {
     skipped++;
     continue;
   }
   const theoremPos = getPositionForKey(key);
-  const prior = allRules.filter((r) => getPositionForRule(r) < theoremPos);
-  const index = buildRuleIndex(prior, dagCache);
-  for (let i = 0; i < steps.length - 1; i++) {
-    const left = steps[i]!;
-    const right = steps[i + 1]!;
-    if (normalizeSpacing(left) === normalizeSpacing(right)) {
-      passed++;
-      chapterPassed++;
-      continue;
-    }
-    const toTry = getRulesForTransition(index, left, right);
-    let matched = false;
-    for (const rule of toTry) {
-      const result = checkInferenceRules(left, right, rule.leftSide, rule.rightSide, { dagCache: index.dagCache });
-      if (result.match && (result.matchPosition?.instantiatedPatternLeft ?? rule.leftSide).trim()) {
-        matched = true;
-        break;
+  let index = indexByPos.get(theoremPos);
+  if (!index) {
+    const prior = allRules.filter((r) => getPositionForRule(r) < theoremPos);
+    index = buildRuleIndex(prior, dagCache);
+    indexByPos.set(theoremPos, index);
+  }
+  for (const seq of sequences) {
+    for (let i = 0; i < seq.steps.length - 1; i++) {
+      const left = seq.steps[i]!;
+      const right = seq.steps[i + 1]!;
+      if (normalizeSpacing(left) === normalizeSpacing(right)) {
+        passed++;
+        chapterPassed++;
+        continue;
       }
-    }
-    if (matched) {
-      passed++;
-      chapterPassed++;
-    } else {
-      failed++;
-      chapterFailed++;
-      const rec = {
-        key,
-        step: i,
-        rulesTried: toTry.length,
-        left: normalizeSpacing(left),
-        right: normalizeSpacing(right),
-      };
-      fs.appendFileSync(failPath, JSON.stringify(rec) + '\n');
-      console.log(`FAIL ${key} step ${i} rules=${toTry.length}`);
-      console.log(`  L ${rec.left}`);
-      console.log(`  R ${rec.right}`);
+      let matched = false;
+      let tried = 0;
+      for (const rule of seq.extra) {
+        tried++;
+        const result = checkInferenceRules(left, right, rule.leftSide, rule.rightSide, { dagCache: index.dagCache });
+        if (result.match && (result.matchPosition?.instantiatedPatternLeft ?? rule.leftSide).trim()) {
+          matched = true;
+          break;
+        }
+      }
+      if (!matched) {
+        const toTry = getRulesForTransition(index, left, right);
+        tried += toTry.length;
+        for (const rule of toTry) {
+          const result = checkInferenceRules(left, right, rule.leftSide, rule.rightSide, { dagCache: index.dagCache });
+          if (result.match && (result.matchPosition?.instantiatedPatternLeft ?? rule.leftSide).trim()) {
+            matched = true;
+            break;
+          }
+        }
+      }
+      // Derived: shell-aware Bb case focus/merge + Ps/Os redistribute
+      if (!matched && matchesDerivedBbTransition(left, right)) {
+        matched = true;
+        tried++;
+      }
+      if (matched) {
+        passed++;
+        chapterPassed++;
+      } else {
+        failed++;
+        chapterFailed++;
+        const rec = {
+          key,
+          step: i,
+          part: seq.name,
+          rulesTried: tried,
+          left: normalizeSpacing(left),
+          right: normalizeSpacing(right),
+        };
+        fs.appendFileSync(failPath, JSON.stringify(rec) + '\n');
+        console.log(`FAIL ${key} ${seq.name} step ${i} rules=${tried}`);
+        console.log(`  L ${rec.left}`);
+        console.log(`  R ${rec.right}`);
+      }
     }
   }
 }

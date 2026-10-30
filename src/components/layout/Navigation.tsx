@@ -3,6 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { BookOpen, ListOrdered, Library, Sun, Moon } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { useExpressionParseMode } from '@/contexts/ExpressionParseContext';
 
 interface NavItem {
   path: string;
@@ -13,6 +15,7 @@ interface NavItem {
 const Navigation: React.FC = () => {
   const location = useLocation();
   const { theme, setTheme } = useTheme();
+  const { mode, setMode } = useExpressionParseMode();
   
   const navItems: NavItem[] = [
     { path: '/', label: 'Introduction', icon: <BookOpen className="w-4 h-4" /> },
@@ -50,6 +53,17 @@ const Navigation: React.FC = () => {
                 <span className="text-sm hidden sm:block">{item.label}</span>
               </Link>
             ))}
+            <label
+              className="ml-2 flex items-center gap-2 px-2 text-xs text-muted-foreground"
+              title="Off: book order, the known command is the operator. On: the first \\ in each item is the operator and later \\ tokens are flag operands. Applies to typed expressions only."
+            >
+              <span className="hidden md:inline">Operator first</span>
+              <Switch
+                checked={mode === 'operator-first'}
+                onCheckedChange={(on) => setMode(on ? 'operator-first' : 'normal')}
+                aria-label="Operator-first parsing"
+              />
+            </label>
             <Button
               variant="ghost"
               size="icon"

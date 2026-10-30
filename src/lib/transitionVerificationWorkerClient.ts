@@ -11,7 +11,7 @@ import type {
   TransitionVerificationResponse,
   MatchInfo,
 } from '@/workers/transitionVerificationWorker';
-import { buildRuleIndex, getRulesForTransition } from '@engine/inferenceRules/ruleIndex';
+import { buildRuleIndex, getRulesForTransition, type RuleIndex } from '@engine/inferenceRules/ruleIndex';
 import { ruleStatistics } from '@engine/inferenceRules/ruleStatistics';
 import { diagnoseFailure } from '@engine/inferenceRules/errorDiagnosis';
 import { normalizeSpacing } from '@engine/inferenceRules/utils';
@@ -47,6 +47,18 @@ function getWorkerFromPool(): Worker | null {
 }
 
 let requestId = 0;
+
+/** DAG parses survive across checks. The index itself is rebuilt only when the rule list changes. */
+const sharedDagCache: RuleIndex['dagCache'] = new Map();
+let indexedRules: VerifyTransitionParams['rules'] | null = null;
+let indexed: RuleIndex | null = null;
+
+function indexFor(rules: VerifyTransitionParams['rules']): RuleIndex {
+  if (indexed && indexedRules === rules) return indexed;
+  indexed = buildRuleIndex(rules, sharedDagCache);
+  indexedRules = rules;
+  return indexed;
+}
 
 export type VerifyTransitionParams = {
   targetLeft: string;
@@ -104,13 +116,13 @@ export interface VerifyTransitionResult {
 }
 
 /** Run transition verification on the main thread (fallback when worker fails to load). */
-function verifyTransitionMainThread(
+async function verifyTransitionMainThread(
   targetLeft: string,
   targetRight: string,
   rules: Array<{ id: string; leftSide: string; rightSide: string }>,
   index: ReturnType<typeof buildRuleIndex>,
   rulesToTry: Array<{ id: string; leftSide: string; rightSide: string }>
-): VerifyTransitionResult {
+): Promise<VerifyTransitionResult> {
   if (normalizeSpacing(targetLeft) === normalizeSpacing(targetRight)) {
     return {
       matched: true,
@@ -124,7 +136,13 @@ function verifyTransitionMainThread(
     };
   }
   const rulesTried: Array<{ ruleId: string; matched: boolean; matchTime: number }> = [];
-  for (const rule of rulesToTry) {
+  for (let n = 0; n < rulesToTry.length; n++) {
+    if (n > 0 && n % 8 === 0) {
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 0);
+      });
+    }
+    const rule = rulesToTry[n]!;
     const ruleStartTime = performance.now();
     const result = checkInferenceRules(
       targetLeft,
@@ -180,7 +198,7 @@ export function verifyTransitionWorker(
   if (cached !== undefined) return Promise.resolve(cached);
 
   // Build index and get filtered rules on main thread (fast, no VF2)
-  const index = buildRuleIndex(rules);
+  const index = indexFor(rules);
   const rulesToTry = getRulesForTransition(index, targetLeft, targetRight);
 
   if (rulesToTry.length === 0) {
@@ -191,12 +209,14 @@ export function verifyTransitionWorker(
     return Promise.resolve(result);
   }
 
+  const runOnMainThread = () =>
+    verifyTransitionMainThread(targetLeft, targetRight, rules, index, rulesToTry).then((result) => {
+      if (!result.matched) cacheFalseResult(cacheKey, result);
+      return result;
+    });
+
   // Fallback when worker failed to load (e.g. 404 or wrong MIME on static host)
-  if (workerFailed) {
-    const result = verifyTransitionMainThread(targetLeft, targetRight, rules, index, rulesToTry);
-    if (!result.matched) cacheFalseResult(cacheKey, result);
-    return Promise.resolve(result);
-  }
+  if (workerFailed) return runOnMainThread();
 
   // Split into parallel chunks
   const chunkCount = Math.min(PARALLEL_WORKERS, rulesToTry.length);
@@ -216,11 +236,7 @@ export function verifyTransitionWorker(
   
   if (chunks.length === 1) {
     const w = getWorkerFromPool();
-    if (!w) {
-      const result = verifyTransitionMainThread(targetLeft, targetRight, rules, index, rulesToTry);
-      if (!result.matched) cacheFalseResult(cacheKey, result);
-      return Promise.resolve(result);
-    }
+    if (!w) return runOnMainThread();
     return verifyChunk(
       w,
       baseId,
@@ -250,11 +266,7 @@ export function verifyTransitionWorker(
 
   // Run chunks in parallel; resolve true as soon as any matches, false when all done
   const workers = chunks.map(() => getWorkerFromPool());
-  if (workers.some((w) => w === null)) {
-    const result = verifyTransitionMainThread(targetLeft, targetRight, rules, index, rulesToTry);
-    if (!result.matched) cacheFalseResult(cacheKey, result);
-    return Promise.resolve(result);
-  }
+  if (workers.some((w) => w === null)) return runOnMainThread();
 
   return new Promise((resolve, reject) => {
     let settled = 0;

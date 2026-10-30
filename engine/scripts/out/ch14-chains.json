@@ -1,0 +1,228 @@
+[
+  {
+    "key": "Rules_of_Node_Connectivity::108::, i \\Pc j, \\Bb{if(j \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Pc j, \\Bb{if(i \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 139,
+    "part": "flat",
+    "rulesTried": 282,
+    "left": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i_1 \\Ps j_1,i \\Oc i_2,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "right": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,R(j_2),i_1 \\Ps j_1,R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "intermediates": [
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,i_1 \\Ps j_1,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,i_1 \\Ps j_1,R(j_2),R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},"
+    ],
+    "complete": true,
+    "ruleIds": [
+      "theorems-of-identical-node-comparison-33-isjmcn",
+      "recursive-function-r-24-ijj",
+      "recursive-function-r-22-msnii"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::108::, i \\Pc j, \\Bb{if(j \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Pc j, \\Bb{if(i \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 135,
+    "part": "flat",
+    "rulesTried": 282,
+    "left": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i_1 \\Ps j_1,i \\Oc i_2,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "right": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,R(j_2),i_1 \\Ps j_1,R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "intermediates": [
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,i_1 \\Ps j_1,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,i_1 \\Ps j_1,R(j_2),R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},"
+    ],
+    "complete": true,
+    "ruleIds": [
+      "theorems-of-identical-node-comparison-33-isjmcn",
+      "recursive-function-r-24-ijj",
+      "recursive-function-r-22-msnii"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::108::, i \\Pc j, \\Bb{if(j \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Pc j, \\Bb{if(i \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 107,
+    "part": "flat",
+    "rulesTried": 96,
+    "left": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),i_1 \\Ps j_1,j \\Oc j_2,i \\Oc i_2,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{}{,i_2 \\Ps m_2,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,i_2 \\nPs m_2,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "right": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,R(j_2),i \\Oc i_2,R(i_2),i_1 \\Ps j_1,i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "intermediates": [
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),i_1 \\Ps j_1,j \\Oc j_2,i \\Oc i_2,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i_1 \\Ps j_1,i \\Oc i_2,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},"
+    ],
+    "complete": false,
+    "ruleIds": [
+      "rules-of-empty-branch-function-3-lbifisj",
+      "theorems-of-identical-node-comparison-33-isjmcn"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::108::, i \\Pc j, \\Bb{if(j \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Pc j, \\Bb{if(i \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 312,
+    "part": "flat",
+    "rulesTried": 282,
+    "left": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,R(j_2),i \\Oc i_2,R(i_2),i_1 \\Ps j_1,i_1 \\Os,m \\Oc m_2,R(m_2),j_1 \\Os,\\Bb{i_2 \\Ps m_2}{,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "right": ",i \\Oc i_1 j \\Oc j_1,R(i_1),R(j_1),i_1 \\Ps j_1,i_1 \\Os,j_1 \\Os,,i \\Oc i_2,R(i_2),j \\Oc j_2,R(j_2),m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,i_2 \\Os,j_2 \\Os,m_2 \\Os,\\Tc c_1,}{,i_2 \\Os,j_2 \\Os,m_2 \\Os,\\Tc c_2,},",
+    "intermediates": [
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,R(j_2),i \\Oc i_2,R(i_2),i_1 \\Ps j_1,i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,R(j_2),i \\Oc i_2,R(i_2),i_1 \\Ps j_1,i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{}{,i_2 \\Ps m_2,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,i_2 \\nPs m_2,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,R(j_2),i \\Oc i_2,i_1 \\Ps j_1,R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{}{,i_2 \\Ps m_2,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,i_2 \\nPs m_2,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,R(j_2),i_1 \\Ps j_1,i \\Oc i_2,R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{}{,i_2 \\Ps m_2,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,i_2 \\nPs m_2,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i_1 \\Ps j_1,R(j_2),i \\Oc i_2,R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{}{,i_2 \\Ps m_2,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,i_2 \\nPs m_2,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),i_1 \\Ps j_1,j \\Oc j_2,R(j_2),i \\Oc i_2,R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{}{,i_2 \\Ps m_2,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,i_2 \\nPs m_2,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),i_1 \\Ps j_1,j \\Oc j_2,i \\Oc i_2,R(j_2),R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{}{,i_2 \\Ps m_2,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,i_2 \\nPs m_2,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),i_1 \\Ps j_1,j \\Oc j_2,i \\Oc i_2,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{}{,i_2 \\Ps m_2,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,i_2 \\nPs m_2,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},"
+    ],
+    "complete": false,
+    "ruleIds": [
+      "theorems-of-identical-node-comparison-15-mslbifi",
+      "rules-of-empty-branch-function-3-lbifisj",
+      "recursive-function-r-22-msnii",
+      "theorems-of-identical-node-comparison-33-isjmcn",
+      "recursive-function-r-22-msnii",
+      "theorems-of-identical-node-comparison-33-isjmcn",
+      "recursive-function-r-10-ijcnj",
+      "recursive-function-r-24-ijj",
+      "recursive-function-r-14-ijsj",
+      "swap-release-release",
+      "swap-release-release",
+      "swap-release-release"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::108::, i \\Pc j, \\Bb{if(j \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Pc j, \\Bb{if(i \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 165,
+    "part": "flat",
+    "rulesTried": 282,
+    "left": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i_1 \\Ps j_1,i \\Oc i_2,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "right": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,R(j_2),i \\Oc i_2,R(i_2),i_1 \\Ps j_1,i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "intermediates": [
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,i_1 \\Ps j_1,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,R(i_2),i_1 \\Ps j_1,R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,R(i_2),R(j_2),i_1 \\Ps j_1,i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,R(j_2),R(i_2),i_1 \\Ps j_1,i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},"
+    ],
+    "complete": true,
+    "ruleIds": [
+      "theorems-of-identical-node-comparison-33-isjmcn",
+      "recursive-function-r-22-msnii",
+      "recursive-function-r-22-msnii",
+      "recursive-function-r-24-ijj",
+      "recursive-function-r-10-ijcnj"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::108::, i \\Pc j, \\Bb{if(j \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Pc j, \\Bb{if(i \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 155,
+    "part": "flat",
+    "rulesTried": 282,
+    "left": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i_1 \\Ps j_1,i \\Oc i_2,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "right": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,R(j_2),i \\Oc i_2,R(i_2),i_1 \\Ps j_1,i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "intermediates": [
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,i_1 \\Ps j_1,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,R(i_2),i_1 \\Ps j_1,R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,R(i_2),R(j_2),i_1 \\Ps j_1,i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,R(j_2),R(i_2),i_1 \\Ps j_1,i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},"
+    ],
+    "complete": true,
+    "ruleIds": [
+      "theorems-of-identical-node-comparison-33-isjmcn",
+      "recursive-function-r-22-msnii",
+      "recursive-function-r-22-msnii",
+      "recursive-function-r-24-ijj",
+      "recursive-function-r-10-ijcnj"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::108::, i \\Pc j, \\Bb{if(j \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Pc j, \\Bb{if(i \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 151,
+    "part": "flat",
+    "rulesTried": 282,
+    "left": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,R(j_2),i \\Oc i_2,i_1 \\Ps j_1,R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "right": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),i_1 \\Ps j_1,j \\Oc j_2,i \\Oc i_2,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "intermediates": [
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,R(j_2),i_1 \\Ps j_1,R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,i_1 \\Ps j_1,R(j_2),R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,i_1 \\Ps j_1,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i_1 \\Ps j_1,i \\Oc i_2,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},"
+    ],
+    "complete": true,
+    "ruleIds": [
+      "recursive-function-r-10-ijcnj",
+      "recursive-function-r-22-msnii",
+      "recursive-function-r-24-ijj",
+      "theorems-of-identical-node-comparison-33-isjmcn",
+      "theorems-of-identical-node-comparison-33-isjmcn"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::108::, i \\Pc j, \\Bb{if(j \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Pc j, \\Bb{if(i \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 147,
+    "part": "flat",
+    "rulesTried": 282,
+    "left": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,R(j_2),i \\Oc i_2,i_1 \\Ps j_1,R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "right": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i_1 \\Ps j_1,i \\Oc i_2,R(j_2),R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "intermediates": [
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,R(j_2),i_1 \\Ps j_1,R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,i_1 \\Ps j_1,R(j_2),R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},"
+    ],
+    "complete": true,
+    "ruleIds": [
+      "recursive-function-r-10-ijcnj",
+      "recursive-function-r-22-msnii",
+      "theorems-of-identical-node-comparison-33-isjmcn"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::108::, i \\Pc j, \\Bb{if(j \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Pc j, \\Bb{if(i \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 129,
+    "part": "flat",
+    "rulesTried": 282,
+    "left": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,i_1 \\Ps j_1,R(j_2),R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "right": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,R(j_2),i \\Oc i_2,R(i_2),i_1 \\Ps j_1,i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "intermediates": [
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,R(j_2),i_1 \\Ps j_1,R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,R(j_2),i \\Oc i_2,i_1 \\Ps j_1,R(i_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},"
+    ],
+    "complete": true,
+    "ruleIds": [
+      "recursive-function-r-22-msnii",
+      "recursive-function-r-10-ijcnj",
+      "recursive-function-r-22-msnii"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::108::, i \\Pc j, \\Bb{if(j \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Pc j, \\Bb{if(i \\Pc m)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 117,
+    "part": "flat",
+    "rulesTried": 282,
+    "left": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i_1 \\Ps j_1,i \\Oc i_2,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "right": ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,R(j_2),i \\Oc i_2,R(i_2),i_1 \\Ps j_1,i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+    "intermediates": [
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,i_1 \\Ps j_1,R(i_2),R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,R(i_2),i_1 \\Ps j_1,R(j_2),i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,R(i_2),R(j_2),i_1 \\Ps j_1,i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,R(i_1),j \\Oc j_1,R(j_1),j \\Oc j_2,i \\Oc i_2,R(j_2),R(i_2),i_1 \\Ps j_1,i_1 \\Os,m \\Oc m_2,R(m_2),\\Bb{i_2 \\Ps m_2}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_1,}{,j_1 \\Os,j_2 \\Os,m_2 \\Os,i_2 \\Os,\\Tc c_2,},"
+    ],
+    "complete": true,
+    "ruleIds": [
+      "theorems-of-identical-node-comparison-33-isjmcn",
+      "recursive-function-r-22-msnii",
+      "recursive-function-r-22-msnii",
+      "recursive-function-r-24-ijj",
+      "recursive-function-r-10-ijcnj"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::124::, i \\Pc j, i \\On, ⟺ , i \\On, i \\Pc j,",
+    "step": 143,
+    "part": "flat",
+    "rulesTried": 130,
+    "left": ",i \\Oc i_1,j \\Oc j_1,\\Bb{i \\Pu}{,i \\Pu,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_2),R(j_1),i_2 \\Ps j_1,}{,i \\nPu,i \\Ps i_1,R(i_1),i \\On,i \\Oc i_2,R(i_2),R(j_1),i_2 \\Ps j_1,},i_2 \\Os,i_1 \\Os,j_1 \\Os,",
+    "right": ",i \\Oc i_1,j \\Oc j_1,\\Bb{i \\Pu}{,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_2),R(j_1),i_2 \\Ps j_1,}{,i \\Ps i_1,R(i_1),i \\On,i \\Oc i_2,R(i_2),R(j_1),i_2 \\Ps j_1,},i_2 \\Os,i_1 \\Os,j_1 \\Os,",
+    "intermediates": [
+      ",i \\Oc i_1,j \\Oc j_1,\\Bb{i \\Pu}{,i \\Ps i_1,i \\On,i \\Oc i_2,R(i_2),R(j_1),i_2 \\Ps j_1,}{,i \\nPu,i \\Ps i_1,R(i_1),i \\On,i \\Oc i_2,R(i_2),R(j_1),i_2 \\Ps j_1,},i_2 \\Os,i_1 \\Os,j_1 \\Os,"
+    ],
+    "complete": true,
+    "ruleIds": [
+      "theorems-of-node-null-comparison-52-bifiu",
+      "theorems-of-node-null-comparison-53-bifiu"
+    ]
+  }
+]

@@ -1,0 +1,177 @@
+[
+  {
+    "key": "Rules_of_Node_Connectivity::9::, \\Blb{if(i \\Pc j)}{,}{,}, ⟺ , \\Blb{}{, i \\Pc j,}{, i \\nPc j,},",
+    "step": 3,
+    "part": "flat",
+    "rulesTried": 71,
+    "left": ",\\Blb{}{,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),i_1 \\Ps j_1,i_1 \\Os,j_1 \\Os,}{,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),i_1 \\nPs j_1,i_1 \\Os,j_1 \\Os,},",
+    "right": ",\\Blb{}{,i \\Pc j,}{,i \\nPc j,},",
+    "mids": [
+      ",\\Blb{}{,i \\Pc j,}{,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),i_1 \\nPs j_1,i_1 \\Os,j_1 \\Os,},"
+    ],
+    "ids": [
+      "rules-of-node-connectivity-4-icjici",
+      "rules-of-node-connectivity-5-incjici"
+    ],
+    "complete": true
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::24::, \\Bb{if(i \\Pc j)}{,\\Bb{if(m \\Pc n)}{,\\Tc c_1,}{,\\Tc c_2,},}{,\\Bb{if(m \\Pc n)}{,\\Tc c_3,}{,\\Tc c_4,},}, ⟺ , \\Bb{if(m \\Pc n)}{,\\Bb{if(i \\Pc j)}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Bb{if(i \\Pc j)}{,\\Tc c_2,}{,\\Tc c_4,},},",
+    "step": 1,
+    "part": "flat",
+    "rulesTried": 67,
+    "left": ",i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,i_1 \\Os,j_1 \\Os,\\Bb{m \\Pc n}{,\\Tc c_1,}{,\\Tc c_2,},}{,i_1 \\Os,j_1 \\Os,\\Bb{m \\Pc n}{,\\Tc c_3,}{,\\Tc c_4,},},",
+    "right": ",i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,\\Bb{m \\Pc n}{,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,i_1 \\Os,j_1 \\Os,\\Tc c_2,},}{,\\Bb{m \\Pc n}{,i_1 \\Os,j_1 \\Os,\\Tc c_3,}{,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},",
+    "mids": [
+      ",i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,i_1 \\Os,\\Bb{m \\Pc n}{,j_1 \\Os,\\Tc c_1,}{,j_1 \\Os,\\Tc c_2,},}{,i_1 \\Os,j_1 \\Os,\\Bb{m \\Pc n}{,\\Tc c_3,}{,\\Tc c_4,},},",
+      ",i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,\\Bb{m \\Pc n}{,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,i_1 \\Os,j_1 \\Os,\\Tc c_2,},}{,i_1 \\Os,j_1 \\Os,\\Bb{m \\Pc n}{,\\Tc c_3,}{,\\Tc c_4,},},",
+      ",i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,\\Bb{m \\Pc n}{,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,i_1 \\Os,j_1 \\Os,\\Tc c_2,},}{,i_1 \\Os,\\Bb{m \\Pc n}{,j_1 \\Os,\\Tc c_3,}{,j_1 \\Os,\\Tc c_4,},},"
+    ],
+    "ids": [
+      "rules-of-node-connectivity-20-mslbifi",
+      "rules-of-node-connectivity-20-mslbifi",
+      "rules-of-node-connectivity-20-mslbifi",
+      "rules-of-node-connectivity-20-mslbifi"
+    ],
+    "complete": true
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::24::, \\Bb{if(i \\Pc j)}{,\\Bb{if(m \\Pc n)}{,\\Tc c_1,}{,\\Tc c_2,},}{,\\Bb{if(m \\Pc n)}{,\\Tc c_3,}{,\\Tc c_4,},}, ⟺ , \\Bb{if(m \\Pc n)}{,\\Bb{if(i \\Pc j)}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Bb{if(i \\Pc j)}{,\\Tc c_2,}{,\\Tc c_4,},},",
+    "step": 2,
+    "part": "flat",
+    "rulesTried": 65,
+    "left": ",i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,\\Bb{m \\Pc n}{,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,i_1 \\Os,j_1 \\Os,\\Tc c_2,},}{,\\Bb{m \\Pc n}{,i_1 \\Os,j_1 \\Os,\\Tc c_3,}{,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},",
+    "right": ",i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,},}{,m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_3,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},",
+    "mids": [
+      ",i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,},}{,\\Bb{m \\Pc n}{,i_1 \\Os,j_1 \\Os,\\Tc c_3,}{,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},"
+    ],
+    "ids": [
+      "rules-of-node-connectivity-0-lbificj",
+      "rules-of-node-connectivity-0-lbificj"
+    ],
+    "complete": true
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::24::, \\Bb{if(i \\Pc j)}{,\\Bb{if(m \\Pc n)}{,\\Tc c_1,}{,\\Tc c_2,},}{,\\Bb{if(m \\Pc n)}{,\\Tc c_3,}{,\\Tc c_4,},}, ⟺ , \\Bb{if(m \\Pc n)}{,\\Bb{if(i \\Pc j)}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Bb{if(i \\Pc j)}{,\\Tc c_2,}{,\\Tc c_4,},},",
+    "step": 3,
+    "part": "flat",
+    "rulesTried": 79,
+    "left": ",i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,},}{,m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_3,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},",
+    "right": ",m \\Oc m_1,n \\Oc n_1,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,},}{,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_3,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},",
+    "mids": [
+      ",i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,},}{,\\Bb{m \\Pc n}{,i_1 \\Os,j_1 \\Os,\\Tc c_3,}{,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},"
+    ],
+    "ids": [
+      "rules-of-node-connectivity-0-lbificj"
+    ],
+    "complete": false
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::24::, \\Bb{if(i \\Pc j)}{,\\Bb{if(m \\Pc n)}{,\\Tc c_1,}{,\\Tc c_2,},}{,\\Bb{if(m \\Pc n)}{,\\Tc c_3,}{,\\Tc c_4,},}, ⟺ , \\Bb{if(m \\Pc n)}{,\\Bb{if(i \\Pc j)}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Bb{if(i \\Pc j)}{,\\Tc c_2,}{,\\Tc c_4,},},",
+    "step": 4,
+    "part": "flat",
+    "rulesTried": 79,
+    "left": ",m \\Oc m_1,n \\Oc n_1,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,},}{,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_3,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},",
+    "right": ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,\\Bb{m_1 \\Ps n_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,},}{,\\Bb{m_1 \\Ps n_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_3,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},",
+    "mids": [],
+    "ids": [],
+    "complete": false
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::24::, \\Bb{if(i \\Pc j)}{,\\Bb{if(m \\Pc n)}{,\\Tc c_1,}{,\\Tc c_2,},}{,\\Bb{if(m \\Pc n)}{,\\Tc c_3,}{,\\Tc c_4,},}, ⟺ , \\Bb{if(m \\Pc n)}{,\\Bb{if(i \\Pc j)}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Bb{if(i \\Pc j)}{,\\Tc c_2,}{,\\Tc c_4,},},",
+    "step": 6,
+    "part": "flat",
+    "rulesTried": 79,
+    "left": ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{m_1 \\Ps n_1}{,\\Bb{i_1 \\Ps j_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_3,},}{,\\Bb{i_1 \\Ps j_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},",
+    "right": ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),i \\Oc i_1,j \\Oc j_1,\\Bb{m_1 \\Ps n_1}{,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_3,},}{,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},",
+    "mids": [
+      ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),i \\Oc i_1,j \\Oc j_1,R(i_1),\\Bb{m_1 \\Ps n_1}{,R(j_1),\\Bb{i_1 \\Ps j_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_3,},}{,R(j_1),\\Bb{i_1 \\Ps j_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},"
+    ],
+    "ids": [
+      "recursive-function-r-17-ibifm",
+      "recursive-function-r-17-ibifm"
+    ],
+    "complete": true
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::24::, \\Bb{if(i \\Pc j)}{,\\Bb{if(m \\Pc n)}{,\\Tc c_1,}{,\\Tc c_2,},}{,\\Bb{if(m \\Pc n)}{,\\Tc c_3,}{,\\Tc c_4,},}, ⟺ , \\Bb{if(m \\Pc n)}{,\\Bb{if(i \\Pc j)}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Bb{if(i \\Pc j)}{,\\Tc c_2,}{,\\Tc c_4,},},",
+    "step": 7,
+    "part": "flat",
+    "rulesTried": 79,
+    "left": ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),i \\Oc i_1,j \\Oc j_1,\\Bb{m_1 \\Ps n_1}{,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_3,},}{,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},",
+    "right": ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_3,},}{,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},",
+    "mids": [
+      ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),i \\Oc i_1,\\Bb{m_1 \\Ps n_1}{,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_3,},}{,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},"
+    ],
+    "ids": [
+      "theorems-of-identical-node-comparison-12-mcnlbif",
+      "theorems-of-identical-node-comparison-12-mcnlbif"
+    ],
+    "complete": true
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::24::, \\Bb{if(i \\Pc j)}{,\\Bb{if(m \\Pc n)}{,\\Tc c_1,}{,\\Tc c_2,},}{,\\Bb{if(m \\Pc n)}{,\\Tc c_3,}{,\\Tc c_4,},}, ⟺ , \\Bb{if(m \\Pc n)}{,\\Bb{if(i \\Pc j)}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Bb{if(i \\Pc j)}{,\\Tc c_2,}{,\\Tc c_4,},},",
+    "step": 8,
+    "part": "flat",
+    "rulesTried": 261,
+    "left": ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_3,},}{,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_2,}{,m_1 \\Os,n_1 \\Os,i_1 \\Os,j_1 \\Os,\\Tc c_4,},},",
+    "right": ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,i_1 \\Os,j_1 \\Os,m_1 \\Os,n_1 \\Os,\\Tc c_1,}{,i_1 \\Os,j_1 \\Os,m_1 \\Os,n_1 \\Os,\\Tc c_3,},}{,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,i_1 \\Os,j_1 \\Os,m_1 \\Os,n_1 \\Os,\\Tc c_2,}{,i_1 \\Os,j_1 \\Os,m_1 \\Os,n_1 \\Os,\\Tc c_4,},},",
+    "mids": [],
+    "ids": [],
+    "complete": false
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::24::, \\Bb{if(i \\Pc j)}{,\\Bb{if(m \\Pc n)}{,\\Tc c_1,}{,\\Tc c_2,},}{,\\Bb{if(m \\Pc n)}{,\\Tc c_3,}{,\\Tc c_4,},}, ⟺ , \\Bb{if(m \\Pc n)}{,\\Bb{if(i \\Pc j)}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Bb{if(i \\Pc j)}{,\\Tc c_2,}{,\\Tc c_4,},},",
+    "step": 9,
+    "part": "flat",
+    "rulesTried": 65,
+    "left": ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,i_1 \\Os,j_1 \\Os,m_1 \\Os,n_1 \\Os,\\Tc c_1,}{,i_1 \\Os,j_1 \\Os,m_1 \\Os,n_1 \\Os,\\Tc c_3,},}{,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,i_1 \\Os,j_1 \\Os,m_1 \\Os,n_1 \\Os,\\Tc c_2,}{,i_1 \\Os,j_1 \\Os,m_1 \\Os,n_1 \\Os,\\Tc c_4,},},",
+    "right": ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,\\Bb{i \\Pc j}{,m_1 \\Os,n_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,\\Tc c_3,},}{,\\Bb{i \\Pc j}{,m_1 \\Os,n_1 \\Os,\\Tc c_2,}{,m_1 \\Os,n_1 \\Os,\\Tc c_4,},},",
+    "mids": [
+      ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,\\Bb{i \\Pc j}{,m_1 \\Os,n_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,\\Tc c_3,},}{,i \\Oc i_1,j \\Oc j_1,R(i_1),R(j_1),\\Bb{i_1 \\Ps j_1}{,i_1 \\Os,j_1 \\Os,m_1 \\Os,n_1 \\Os,\\Tc c_2,}{,i_1 \\Os,j_1 \\Os,m_1 \\Os,n_1 \\Os,\\Tc c_4,},},"
+    ],
+    "ids": [
+      "rules-of-node-connectivity-0-lbificj",
+      "rules-of-node-connectivity-0-lbificj"
+    ],
+    "complete": true
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::24::, \\Bb{if(i \\Pc j)}{,\\Bb{if(m \\Pc n)}{,\\Tc c_1,}{,\\Tc c_2,},}{,\\Bb{if(m \\Pc n)}{,\\Tc c_3,}{,\\Tc c_4,},}, ⟺ , \\Bb{if(m \\Pc n)}{,\\Bb{if(i \\Pc j)}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Bb{if(i \\Pc j)}{,\\Tc c_2,}{,\\Tc c_4,},},",
+    "step": 10,
+    "part": "flat",
+    "rulesTried": 67,
+    "left": ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,\\Bb{i \\Pc j}{,m_1 \\Os,n_1 \\Os,\\Tc c_1,}{,m_1 \\Os,n_1 \\Os,\\Tc c_3,},}{,\\Bb{i \\Pc j}{,m_1 \\Os,n_1 \\Os,\\Tc c_2,}{,m_1 \\Os,n_1 \\Os,\\Tc c_4,},},",
+    "right": ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,m_1 \\Os,n_1 \\Os,\\Bb{i \\Pc j}{,\\Tc c_1,}{,\\Tc c_3,},}{,m_1 \\Os,n_1 \\Os,\\Bb{i \\Pc j}{,\\Tc c_2,}{,\\Tc c_4,},},",
+    "mids": [
+      ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,m_1 \\Os,\\Bb{i \\Pc j}{,n_1 \\Os,\\Tc c_1,}{,n_1 \\Os,\\Tc c_3,},}{,\\Bb{i \\Pc j}{,m_1 \\Os,n_1 \\Os,\\Tc c_2,}{,m_1 \\Os,n_1 \\Os,\\Tc c_4,},},",
+      ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,m_1 \\Os,n_1 \\Os,\\Bb{i \\Pc j}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Bb{i \\Pc j}{,m_1 \\Os,n_1 \\Os,\\Tc c_2,}{,m_1 \\Os,n_1 \\Os,\\Tc c_4,},},",
+      ",m \\Oc m_1,n \\Oc n_1,R(m_1),R(n_1),\\Bb{m_1 \\Ps n_1}{,m_1 \\Os,n_1 \\Os,\\Bb{i \\Pc j}{,\\Tc c_1,}{,\\Tc c_3,},}{,m_1 \\Os,\\Bb{i \\Pc j}{,n_1 \\Os,\\Tc c_2,}{,n_1 \\Os,\\Tc c_4,},},"
+    ],
+    "ids": [
+      "rules-of-node-connectivity-20-mslbifi",
+      "rules-of-node-connectivity-20-mslbifi",
+      "rules-of-node-connectivity-20-mslbifi",
+      "rules-of-node-connectivity-20-mslbifi"
+    ],
+    "complete": true
+  },
+  {
+    "key": "Rules_of_Node_Connectivity::200::, \\Ot i, ⟺ , \\sim, i \\nPc j,",
+    "step": 14,
+    "part": "flat",
+    "rulesTried": 19,
+    "left": ",j \\Oc j_1,R(j_1),\\Ot i,i \\Oc i_1,i \\Ps i_1,i_1 \\Pu,R(i_1),i_1 \\nPs j_1,i_1 \\Os,j_1 \\Os,",
+    "right": ",j \\Oc j_1,R(j_1),\\Ot i,i \\Oc i_1,R(i_1),i_1 \\nPs j_1,i_1 \\Os,j_1 \\Os,",
+    "mids": [
+      ",j \\Oc j_1,R(j_1),\\Ot i,i \\Oc i_1,i_1 \\Pu,R(i_1),i_1 \\nPs j_1,i_1 \\Os,j_1 \\Os,",
+      ",j \\Oc j_1,R(j_1),\\Ot i,i \\Oc i_1,R(i_1),i_1 \\Pu,i_1 \\nPs j_1,i_1 \\Os,j_1 \\Os,"
+    ],
+    "ids": [
+      "copy-identical",
+      "recursive-function-r-20-muii",
+      "thm-R-i-result"
+    ],
+    "complete": true
+  }
+]

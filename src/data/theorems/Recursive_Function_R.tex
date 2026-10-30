@@ -132,8 +132,10 @@ premise \; 2:\\
 \Rq,i \nPu, i \On, \In \Pn i, j \On, R(i),\\\\
 \Rq,i \nPu, \In \Ps i, i \On, j \On, R(i),\\\\
 \Rq,i \nPu, \In \Ps i, j \On, i \On, R(i),\\\\
+\Rq, \In \Ps i, i \nPu, j \On, i \On, R(i),\\\\
 \Rq, \In \Ps i, j \On,i \nPu, i \On, R(i),\\\\
 \Rq, \In \Ps i, j \On,i \nPu, R(i),\\\\
+\Rq, \In \Ps i, i \nPu, j \On, R(i),\\\\
 \Rq,i \nPu, \In \Ps i, j \On, R(i),\\\\\\
 conclusion:\\
 , R(i), j \On, \Rq , j \On, R(i),
@@ -154,6 +156,7 @@ premise \; 1:\\
 , i \Pu, R(i), \Bb{if(m \Pe n)}{,\Tc c_1,}{,\Tc c_2,},\\\\
 \Rq, i \Pu, \Bb{if(m \Pe n)}{,\Tc c_1,}{,\Tc c_2,},\\\\
 \Rq, \Bb{if(m \Pe n)}{, i \Pu, \Tc c_1,}{, i \Pu, \Tc c_2,},\\\\
+\Rq, \Bb{if(m \Pe n)}{, i \Pu, R(i), \Tc c_1,}{, i \Pu, \Tc c_2,},\\\\
 \Rq, \Bb{if(m \Pe n)}{, i \Pu, R(i), \Tc c_1,}{, i \Pu, R(i), \Tc c_2,},\\\\
 \Rq, i \Pu, \Bb{if(m \Pe n)}{, R(i), \Tc c_1,}{, R(i), \Tc c_2,},\\\\\\
 premise \; 2:\\
@@ -168,6 +171,7 @@ premise \; 2:\\
 \Rq, \In \Ps i, i \nPu,  i \On, \Bb{if(m \Pe n)}{, R(i), \Tc c_1,}{, R(i), \Tc c_2,},\\\\\\
 \Rq, \In \Ps i, i \nPu, \Bb{if(m \Pe n)}{,  i \On, R(i), \Tc c_1,}{,  i \On, R(i), \Tc c_2,},\\\\\\
 \Rq, \In \Ps i, \Bb{if(m \Pe n)}{, i \nPu,  i \On, R(i), \Tc c_1,}{, i \nPu,  i \On, R(i), \Tc c_2,},\\\\\\
+\Rq, \In \Ps i, \Bb{if(m \Pe n)}{, i \nPu, R(i), \Tc c_1,}{, i \nPu,  i \On, R(i), \Tc c_2,},\\\\\\
 \Rq, \In \Ps i, \Bb{if(m \Pe n)}{, i \nPu, R(i), \Tc c_1,}{, i \nPu, R(i), \Tc c_2,},\\\\\\
 \Rq, \In \Ps i, i \nPu, \Bb{if(m \Pe n)}{, R(i), \Tc c_1,}{, R(i), \Tc c_2,},\\\\\\
 \Rq, i \nPu, \In \Ps i, \Bb{if(m \Pe n)}{, R(i), \Tc c_1,}{, R(i), \Tc c_2,},\\\\\\
@@ -192,6 +196,7 @@ proof:\\
 \begin{math} 
 , m \Pe n, R(i),\\\\
 \Rq,\Bb{if(m \Pe n)}{,}{, \Or,}, R(i),\\\\\\
+\Rq,\Bb{if(m \Pe n)}{, R(i),}{, \Or, R(i),},\\\\\\
 \Rq,\Bb{if(m \Pe n)}{, R(i),}{, \Or,},\\\\\\
 \Rq,\Bb{if(m \Pe n)}{, R(i),}{, R(i), \Or,},\\\\\\
 \Rq, R(i),\Bb{if(m \Pe n)}{,}{, \Or,},\\\\\\
@@ -230,8 +235,10 @@ premise \; 2:\\
 \Rq,i \nPu, i \On, \In \Pn i, R(j), R(i),\\\\
 \Rq,i \nPu, \In \Ps i, i \On, R(j), R(i),\\\\
 \Rq,i \nPu, \In \Ps i, R(j), i \On, R(i),\\\\
+\Rq, \In \Ps i, i \nPu, R(j), i \On, R(i),\\\\
 \Rq, \In \Ps i, R(j),i \nPu, i \On, R(i),\\\\
 \Rq, \In \Ps i, R(j),i \nPu, R(i),\\\\
+\Rq, \In \Ps i, i \nPu, R(j), R(i),\\\\
 \Rq,i \nPu, \In \Ps i, R(j), R(i),\\\\\\
 conclusion:\\
 , R(i), R(j), \Rq , R(j), R(i),
@@ -261,8 +268,10 @@ premise \; 2:\\
 \Rq,i \nPu, i \On, \In \Pn i, \In \Ps j, R(i),\\\\
 \Rq,i \nPu, \In \Ps i, i \On, \In \Ps j, R(i),\\\\
 \Rq,i \nPu, \In \Ps i, \In \Ps j, i \On, R(i),\\\\
+\Rq, \In \Ps i, i \nPu, \In \Ps j, i \On, R(i),\\\\
 \Rq, \In \Ps i, \In \Ps j,i \nPu, i \On, R(i),\\\\
 \Rq, \In \Ps i, \In \Ps j,i \nPu, R(i),\\\\
+\Rq, \In \Ps i, i \nPu, \In \Ps j, R(i),\\\\
 \Rq,i \nPu, \In \Ps i, \In \Ps j, R(i),\\\\\\
 conclusion:\\
 , R(i), \In \Ps j, \Rq , \In \Ps j, R(i),
@@ -303,20 +312,33 @@ premise \; 2:\\
 \Rq, \In \Ps i, i \Ps j, i \On, j \nPu, R(i), R(j),\\\\
 \Rq, \In \Ps i, i \Ps j, i \On,  R(i), j \nPu, R(j),\\\\
 \Rq, \In \Ps i, i \Ps j, i \On,  R(i), j \nPu, j \On, R(j),\\\\
+\Rq, \In \Ps i, i \Ps j, i \On, j \nPu, R(i), j \On, R(j),\\\\
+\Rq, \In \Ps i, i \Ps j, j \nPu, i \On, R(i), j \On, R(j),\\\\
+\Rq, \In \Ps i, j \Ps i, j \nPu, i \On, R(i), j \On, R(j),\\\\
+\Rq, \In \Ps i, j \nPu, j \Ps i, i \On, R(i), j \On, R(j),\\\\
+\Rq, \In \Ps i, j \nPu, i \Ps j, i \On, R(i), j \On, R(j),\\\\
 \Rq, j \nPu, \In \Ps i, i \Ps j, i \On,  R(i), j \On, R(j),\\\\
 \Rq, j \nPu, \In \Ps i, i \Ps j, i \On, j \On,  R(i), R(j),\\\\
 \Rq, j \nPu, \In \Ps i, i \On, j \On, i \Ps j,  R(i), R(j),\\\\
 \Rq, j \nPu, i \On, \In \Pn i, j \On, i \Ps j,  R(i), R(j),\\\\
 \Rq, j \nPu, i \On, j \On, \In \Pn i, i \Ps j,  R(i), R(j),\\\\
 \Rq, j \nPu, i \On, j \On, \In \Pn i, i \Ps j, R(i),  R(j), i \Ps j,\\\\
+\Rq, j \nPu, i \On, \In \Pn i, j \On, i \Ps j, R(i),  R(j), i \Ps j,\\\\
+\Rq, j \nPu, \In \Ps i, i \On, j \On, i \Ps j, R(i),  R(j), i \Ps j,\\\\
 \Rq, \In \Ps i, j \nPu, i \On, j \On, i \Ps j, R(i),  R(j), i \Ps j,\\\\
+\Rq, \In \Ps i, j \nPu, i \Ps j, i \On, j \On, R(i),  R(j), i \Ps j,\\\\
+\Rq, \In \Ps i, j \nPu, j \Ps i, i \On, j \On, R(i),  R(j), i \Ps j,\\\\
+\Rq, \In \Ps i, j \Ps i, j \nPu, i \On, j \On, R(i),  R(j), i \Ps j,\\\\
 \Rq, \In \Ps i, i \Ps j, j \nPu, i \On, j \On, R(i),  R(j), i \Ps j,\\\\
 \Rq, \In \Ps i, i \Ps j, j \nPu, i \On, R(i), j \On,  R(j), i \Ps j,\\\\
+\Rq, \In \Ps i, i \Ps j, i \On, j \nPu, R(i), j \On,  R(j), i \Ps j,\\\\
 \Rq, \In \Ps i, i \Ps j, i \On, R(i), j \nPu, j \On,  R(j), i \Ps j,\\\\
 \Rq, \In \Ps i, i \Ps j, i \On, R(i), j \nPu, R(j), i \Ps j,\\\\
+\Rq, \In \Ps i, i \Ps j, i \On, j \nPu, R(i), R(j), i \Ps j,\\\\
 \Rq, \In \Ps i, i \Ps j, j \nPu, i \On, R(i), R(j), i \Ps j,\\\\
 \Rq, \In \Ps i, i \Ps j, i \nPu, i \On, R(i), R(j), i \Ps j,\\\\
 \Rq, \In \Ps i, i \Ps j, i \nPu, R(i), R(j), i \Ps j,\\\\
+\Rq, \In \Ps i, i \nPu, i \Ps j, R(i), R(j), i \Ps j,\\\\
 \Rq, i \nPu, \In \Ps i, i \Ps j, R(i), R(j), i \Ps j,\\\\
 conclusion:\\
 ,i \Ps j, R(i), R(j), \Rq ,i \Ps j, R(i), R(j), i \Ps j,

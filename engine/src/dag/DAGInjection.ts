@@ -5,6 +5,7 @@
 
 import type { DAGStructure, ExprNodeData } from './types';
 import { buildAdjacency, buildEdgeTypeMap, reachableFrom } from './utils';
+import { isFlagOperand } from '../inferenceRules/operatorFirst';
 
 /**
  * Normalize branch structural op for comparison.
@@ -17,8 +18,13 @@ function normalizeBranchOp(op: string): string {
   return m ? m[1] : op;
 }
 
-/** Pattern operands bind to target operands. One-to-one: each rule operand -> unique target operand, each target operand -> at most one rule operand.
- * \Tc in target is treated as literal (op + operands). When fixedOperandMapping is provided, uses existing bindings for those keys. */
+/**
+ * Pattern operands bind to target operands.
+ * Each rule operand maps to exactly one target operand (functional).
+ * Multiple rule operands MAY bind to the same target (non-injective): e.g. rule
+ * `i \\Ps j, m \\Pu` must apply when j and m are the same concrete name.
+ * \Tc in target is treated as literal (op + operands). When fixedOperandMapping is provided, uses existing bindings for those keys.
+ */
 function exprDataMatches(
   pData: ExprNodeData,
   tData: ExprNodeData,
@@ -27,15 +33,17 @@ function exprDataMatches(
   fixedOperandMapping?: Map<string, string>
 ): boolean {
   const checkOrBind = (pOp: string, tOp: string): boolean => {
+    // BOOKMARK: schematic operands do not match flag operands. \In matches only \In.
+    if (isFlagOperand(pOp) || isFlagOperand(tOp)) return pOp === tOp;
     if (fixedOperandMapping?.has(pOp)) {
       return fixedOperandMapping.get(pOp) === tOp;
     }
     if (varToTarget.has(pOp)) {
       return varToTarget.get(pOp) === tOp;
     }
-    if (targetToVar.has(tOp) && targetToVar.get(tOp) !== pOp) return false;
+    // Allow several pattern vars to share one target operand (j=m unification).
     varToTarget.set(pOp, tOp);
-    targetToVar.set(tOp, pOp);
+    if (!targetToVar.has(tOp)) targetToVar.set(tOp, pOp);
     return true;
   };
 

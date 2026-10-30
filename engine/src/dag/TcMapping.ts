@@ -28,9 +28,9 @@ function exprDataMatches(
     if (varToTarget.has(pOp)) {
       return varToTarget.get(pOp) === tOp;
     }
-    if (targetToVar.has(tOp) && targetToVar.get(tOp) !== pOp) return false;
+    // Allow several pattern vars to share one target operand (non-injective unification).
     varToTarget.set(pOp, tOp);
-    targetToVar.set(tOp, pOp);
+    if (!targetToVar.has(tOp)) targetToVar.set(tOp, pOp);
     return true;
   };
 

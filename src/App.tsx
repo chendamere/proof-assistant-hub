@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PanelProvider } from "@/contexts/PanelContext";
+import { ExpressionParseProvider } from "@/contexts/ExpressionParseContext";
 import Index from "./pages/Index";
 import ProofStep from "./pages/ProofStep";
 import ProofSteps from "./pages/ProofSteps";
@@ -20,6 +21,7 @@ const App = () => (
     <TooltipProvider>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
       <PanelProvider>
+      <ExpressionParseProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
@@ -32,6 +34,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
+      </ExpressionParseProvider>
       </PanelProvider>
       </ThemeProvider>
     </TooltipProvider>
