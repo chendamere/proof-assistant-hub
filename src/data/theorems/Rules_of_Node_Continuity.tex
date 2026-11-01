@@ -45,20 +45,31 @@ proof:\\
 ,\Blb{if(i \Pn j)}{,}{,}\\\\
 \Rq, i \Oc i_1, i_1 \On, \Blb{if(i_1 \Ps j)}{, i_1 \Os,}{, i_1 \Os,}\\\\\\
 \Rq, i \Oc i_1, i_1 \On, j \Oc j_1, j_1 \Os, \Blb{if(i_1 \Ps j)}{, i_1 \Os,}{, i_1 \Os,}\\\\\\
+\Rq, i \Oc i_1, i_1 \On, j \Oc j_1, \Blb{i_1 \Ps j}{, j_1 \Os, i_1 \Os, }{, j_1 \Os, i_1 \Os, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, j \Oc j_1, \Blb{i_1 \Ps j}{, i_1 \Os, j_1 \Os, }{, j_1 \Os, i_1 \Os, },\\\\\\
 \Rq, i \Oc i_1, i_1 \On, j \Oc j_1, \Blb{if(i_1 \Ps j)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\
 \Rq, i \Oc i_1, i_1 \On, j \Oc j_1, j \Ps j_1, \Blb{if(i_1 \Ps j)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\
+\Rq, i \Oc i_1, i_1 \On, j \Oc j_1, j \Ps j_1, \Blb{j \Ps i_1}{, i_1 \Os, j_1 \Os, }{, i_1 \Os, j_1 \Os, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, j \Oc j_1, j \Ps j_1, \Blb{j_1 \Ps i_1}{, i_1 \Os, j_1 \Os, }{, i_1 \Os, j_1 \Os, },\\\\\\
 \Rq, i \Oc i_1, i_1 \On, j \Oc j_1, j \Ps j_1, \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\
 \Rq, i \Oc i_1, i_1 \On, j \Oc j_1, \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\
+\Rq, i \Oc i_1, i_1 \On, j \Oc j_1, \Blb{i_1 \Ps j_1}{, i_1 \Op, i_1 \Os, j_1 \Os, }{, i_1 \Os, j_1 \Os, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, j \Oc j_1, \Blb{i_1 \Ps j_1}{, i_1 \Op, i_1 \Os, j_1 \Os, }{, i_1 \Op, i_1 \Os, j_1 \Os, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, j \Oc j_1, \Blb{i_1 \Ps j_1}{, i_1 \Op, i_1 \Os, j_1 \Op, j_1 \Os, }{, i_1 \Op, i_1 \Os, j_1 \Os, },\\\\\\
 \Rq, i \Oc i_1, i_1 \On, j \Oc j_1, \Blb{if(i_1 \Ps j_1)}{, i_1 \Op, i_1 \Os, j_1 \Op, j_1 \Os,}{, i_1 \Op, i_1 \Os, j_1 \Op, j_1 \Os,}\\\\\\
+\Rq, i \Oc i_1, i_1 \On, j \Oc j_1, \Blb{i_1 \Ps j_1}{, i_1 \Op, j_1 \Op, i_1 \Os, j_1 \Os, }{, i_1 \Op, i_1 \Os, j_1 \Op, j_1 \Os, },\\\\\\
 \Rq, i \Oc i_1, i_1 \On, j \Oc j_1, \Blb{if(i_1 \Ps j_1)}{, i_1 \Op, j_1 \Op, i_1 \Os, j_1 \Os,}{, i_1 \Op, j_1 \Op, i_1 \Os, j_1 \Os,}\\\\\\
 \Rq, i \Oc i_1, i_1 \On, j \Oc j_1, i_1 \Op, j_1 \Op, \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\
 \Rq, i \Oc i_1, i_1 \On, i_1 \Op, j \Oc j_1, j_1 \Op, \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\
 \Rq, i \Oc i_1, j \Oc j_1, j_1 \Op, \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\
+\Rq, j \Oc j_1, i \Oc i_1, j_1 \Op, \Blb{i_1 \Ps j_1}{, i_1 \Os, j_1 \Os, }{, i_1 \Os, j_1 \Os, },\\\\\\
 \Rq, j \Oc j_1, j_1 \Op, i \Oc i_1, \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\
 \Rq, j \Oc j_1, j_1 \Op, i \Oc i_1, i \Ps i_1, \Blb{if(i_1 \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\
 \Rq, j \Oc j_1, j_1 \Op, i \Oc i_1, i \Ps i_1, \Blb{if(i \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\
 \Rq, j \Oc j_1, j_1 \Op, i \Oc i_1,  \Blb{if(i \Ps j_1)}{, i_1 \Os, j_1 \Os,}{, i_1 \Os, j_1 \Os,}\\\\\\
 \Rq, j \Oc j_1, j_1 \Op,  \Blb{if(i \Ps j_1)}{, i \Oc i_1, i_1 \Os, j_1 \Os,}{, i \Oc i_1, i_1 \Os, j_1 \Os,}\\\\\\
+\Rq, j \Oc j_1, j_1 \Op, i \Oc i_1, \Blb{i \Ps j_1}{, i_1 \Os, j_1 \Os, }{, i_1 \Os, j_1 \Os, },\\\\\\
+\Rq, j \Oc j_1, j_1 \Op, i \Oc i_1, i_1 \Os, \Blb{i \Ps j_1}{, j_1 \Os, }{, j_1 \Os, },\\\\\\
 \Rq, j \Oc j_1, j_1 \Op,  \Blb{if( i \Ps j_1)}{, j_1 \Os,}{, j_1 \Os,}\\\\\\
 \Rq, j \Oc j_1, j_1 \Op,  \Blb{if( j_1 \Ps i)}{, j_1 \Os,}{, j_1 \Os,}\\\\\\
 \Rq, \Blb{if(j \Pp i)}{,}{,}
@@ -138,6 +149,10 @@ proof:\\
 \begin{math} 
 ,\Ot m, \Blb{if(i \Pn j)}{,}{,}\\\\
 \Rq, \Ot m, i \Oc i_1, i_1 \On, \Blb{if(i_1 \Ps j)}{, i_1 \Os,}{, i_1 \Os,}\\\\\\
+\Rq, i \Oc i_1, \Ot m, i_1 \On, \Blb{i_1 \Ps j}{, i_1 \Os, }{, i_1 \Os, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, \Ot m, \Blb{i_1 \Ps j}{, i_1 \Os, }{, i_1 \Os, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, \Blb{i_1 \Ps j}{, \Ot m, i_1 \Os, }{, \Ot m, i_1 \Os, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, \Blb{i_1 \Ps j}{, i_1 \Os, \Ot m, }{, \Ot m, i_1 \Os, },\\\\\\
 \Rq, i \Oc i_1, i_1 \On, \Blb{if(i_1 \Ps j)}{, i_1 \Os, \Ot m,}{, i_1 \Os, \Ot m,}\\\\\\
 \Rq , \Blb{if(i \Pn j)}{,\Ot m,}{,\Ot m,}
 \end{math}
@@ -181,12 +196,37 @@ proof:\\
 \begin{math} 
 , \Bb{if(i \Pn j)}{,\Bb{if(m \Pn n)}{,\Tc c_1,}{,\Tc c_2,},}{,\Bb{if(m \Pn n)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\
 \Rq, i \Oc i_1, i_1 \On,  \Bb{if(i_1 \Ps j)}{, i_1 \Os, \Bb{if(m \Pn n)}{,\Tc c_1,}{,\Tc c_2,},}{, i_1 \Os, \Bb{if(m \Pn n)}{,\Tc c_3,}{,\Tc c_4,},},\\\\\\\\
+\Rq, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, i_1 \Os, m \Oc m_1, m_1 \On, \Bb{m_1 \Ps n}{, m_1 \Os, \Tc c_1, }{, m_1 \Os, \Tc c_2, }, }{, i_1 \Os, \Bb{m \Pn n}{, \Tc c_3, }{, \Tc c_4, }, },\\\\\\\\
 \Rq, i \Oc i_1, i_1 \On,  \Bb{if(i_1 \Ps j)}{, i_1 \Os, m \Oc m_1, m_1 \On, \Bb{if(m_1 \Ps n)}{, m_1 \Os, \Tc c_1,}{, m_1 \Os, \Tc c_2,},}{, i_1 \Os,  m \Oc m_1, m_1 \On, \Bb{if(m_1 \Ps n)}{, m_1 \Os, \Tc c_3,}{, m_1 \Os, \Tc c_4,},},\\\\\\\\
+\Rq, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, m \Oc m_1, i_1 \Os, m_1 \On, \Bb{m_1 \Ps n}{, m_1 \Os, \Tc c_1, }{, m_1 \Os, \Tc c_2, }, }{, i_1 \Os, m \Oc m_1, m_1 \On, \Bb{m_1 \Ps n}{, m_1 \Os, \Tc c_3, }{, m_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, m \Oc m_1, i_1 \Os, m_1 \On, \Bb{m_1 \Ps n}{, m_1 \Os, \Tc c_1, }{, m_1 \Os, \Tc c_2, }, }{, m \Oc m_1, i_1 \Os, m_1 \On, \Bb{m_1 \Ps n}{, m_1 \Os, \Tc c_3, }{, m_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, \Bb{i_1 \Ps j}{, i_1 \Os, m_1 \On, \Bb{m_1 \Ps n}{, m_1 \Os, \Tc c_1, }{, m_1 \Os, \Tc c_2, }, }{, i_1 \Os, m_1 \On, \Bb{m_1 \Ps n}{, m_1 \Os, \Tc c_3, }{, m_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, \Bb{i_1 \Ps j}{, m_1 \On, i_1 \Os, \Bb{m_1 \Ps n}{, m_1 \Os, \Tc c_1, }{, m_1 \Os, \Tc c_2, }, }{, i_1 \Os, m_1 \On, \Bb{m_1 \Ps n}{, m_1 \Os, \Tc c_3, }{, m_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, \Bb{i_1 \Ps j}{, m_1 \On, i_1 \Os, \Bb{m_1 \Ps n}{, m_1 \Os, \Tc c_1, }{, m_1 \Os, \Tc c_2, }, }{, m_1 \On, i_1 \Os, \Bb{m_1 \Ps n}{, m_1 \Os, \Tc c_3, }{, m_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, m_1 \On, \Bb{i_1 \Ps j}{, i_1 \Os, \Bb{m_1 \Ps n}{, m_1 \Os, \Tc c_1, }{, m_1 \Os, \Tc c_2, }, }{, i_1 \Os, \Bb{m_1 \Ps n}{, m_1 \Os, \Tc c_3, }{, m_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, m_1 \On, \Bb{i_1 \Ps j}{, \Bb{m_1 \Ps n}{, i_1 \Os, m_1 \Os, \Tc c_1, }{, i_1 \Os, m_1 \Os, \Tc c_2, }, }{, i_1 \Os, \Bb{m_1 \Ps n}{, m_1 \Os, \Tc c_3, }{, m_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, m_1 \On, \Bb{i_1 \Ps j}{, \Bb{m_1 \Ps n}{, i_1 \Os, m_1 \Os, \Tc c_1, }{, i_1 \Os, m_1 \Os, \Tc c_2, }, }{, \Bb{m_1 \Ps n}{, i_1 \Os, m_1 \Os, \Tc c_3, }{, i_1 \Os, m_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, m_1 \On, \Bb{i_1 \Ps j}{, \Bb{m_1 \Ps n}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, i_1 \Os, m_1 \Os, \Tc c_2, }, }{, \Bb{m_1 \Ps n}{, i_1 \Os, m_1 \Os, \Tc c_3, }{, i_1 \Os, m_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, m_1 \On, \Bb{i_1 \Ps j}{, \Bb{m_1 \Ps n}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, }, }{, \Bb{m_1 \Ps n}{, i_1 \Os, m_1 \Os, \Tc c_3, }{, i_1 \Os, m_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, m_1 \On, \Bb{i_1 \Ps j}{, \Bb{m_1 \Ps n}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, }, }{, \Bb{m_1 \Ps n}{, m_1 \Os, i_1 \Os, \Tc c_3, }{, i_1 \Os, m_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, m_1 \On, \Bb{i_1 \Ps j}{, \Bb{m_1 \Ps n}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, }, }{, \Bb{m_1 \Ps n}{, m_1 \Os, i_1 \Os, \Tc c_3, }{, m_1 \Os, i_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, i \Oc i_1, m \Oc m_1, i_1 \On, m_1 \On, \Bb{i_1 \Ps j}{, \Bb{m_1 \Ps n}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, }, }{, \Bb{m_1 \Ps n}{, m_1 \Os, i_1 \Os, \Tc c_3, }{, m_1 \Os, i_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, m \Oc m_1, i \Oc i_1, i_1 \On, m_1 \On, \Bb{i_1 \Ps j}{, \Bb{m_1 \Ps n}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, }, }{, \Bb{m_1 \Ps n}{, m_1 \Os, i_1 \Os, \Tc c_3, }{, m_1 \Os, i_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, m \Oc m_1, i \Oc i_1, m_1 \On, i_1 \On, \Bb{i_1 \Ps j}{, \Bb{m_1 \Ps n}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, }, }{, \Bb{m_1 \Ps n}{, m_1 \Os, i_1 \Os, \Tc c_3, }{, m_1 \Os, i_1 \Os, \Tc c_4, }, },\\\\\\\\
 \Rq, m \Oc m_1, m_1 \On, i \Oc i_1, i_1 \On,  \\\\
 \Bb{if(i_1 \Ps j)}{, \Bb{if(m_1 \Ps n)}{, m_1 \Os, i_1 \Os, \Tc c_1,}{, m_1 \Os, i_1 \Os, \Tc c_2,},}{,  \Bb{if(m_1 \Ps n)}{, m_1 \Os, i_1 \Os, \Tc c_3,}{, m_1 \Os, i_1 \Os, \Tc c_4,},},\\\\\\\\
 \Rq, m \Oc m_1, m_1 \On, i \Oc i_1, i_1 \On,  \\\\
 \Bb{if(m_1 \Ps n)}{, \Bb{if(i_1 \Ps j)}{, m_1 \Os, i_1 \Os, \Tc c_1,}{, m_1 \Os, i_1 \Os, \Tc c_3,},}{,  \Bb{if(i_1 \Ps j)}{, m_1 \Os, i_1 \Os, \Tc c_2,}{, m_1 \Os, i_1 \Os, \Tc c_4,},},\\\\\\\\
+\Rq, m \Oc m_1, m_1 \On, i \Oc i_1, \Bb{m_1 \Ps n}{, i_1 \On, \Bb{i_1 \Ps j}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_3, }, }{, i_1 \On, \Bb{i_1 \Ps j}{, m_1 \Os, i_1 \Os, \Tc c_2, }{, m_1 \Os, i_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, m \Oc m_1, m_1 \On, \Bb{m_1 \Ps n}{, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_3, }, }{, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, m_1 \Os, i_1 \Os, \Tc c_2, }{, m_1 \Os, i_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, m \Oc m_1, m_1 \On, \Bb{m_1 \Ps n}{, i \Oc i_1, i_1 \On, m_1 \Os, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, m_1 \Os, i_1 \Os, \Tc c_2, }{, m_1 \Os, i_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, m \Oc m_1, m_1 \On, \Bb{m_1 \Ps n}{, i \Oc i_1, i_1 \On, m_1 \Os, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i \Oc i_1, i_1 \On, m_1 \Os, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_2, }{, i_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, m \Oc m_1, m_1 \On, \Bb{m_1 \Ps n}{, i \Oc i_1, m_1 \Os, i_1 \On, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i \Oc i_1, i_1 \On, m_1 \Os, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_2, }{, i_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, m \Oc m_1, m_1 \On, \Bb{m_1 \Ps n}{, m_1 \Os, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i \Oc i_1, i_1 \On, m_1 \Os, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_2, }{, i_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, m \Oc m_1, m_1 \On, \Bb{m_1 \Ps n}{, m_1 \Os, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i \Oc i_1, m_1 \Os, i_1 \On, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_2, }{, i_1 \Os, \Tc c_4, }, },\\\\\\\\
 \Rq, m \Oc m_1, m_1 \On, \Bb{if(m_1 \Ps n)}{, m_1 \Os, i \Oc i_1, i_1 \On, \Bb{if(i_1 \Ps j)}{, i_1 \Os, \Tc c_1,}{, i_1 \Os, \Tc c_3,},}{, m_1 \Os, i \Oc i_1, i_1 \On,  \Bb{if(i_1 \Ps j)}{, i_1 \Os, \Tc c_2,}{, i_1 \Os, \Tc c_4,},},\\\\\\\\
+\Rq, \Bb{m \Pn n}{, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_2, }{, i_1 \Os, \Tc c_4, }, },\\\\\\\\
+\Rq, \Bb{m \Pn n}{, \Bb{i \Pn j}{, \Tc c_1, }{, \Tc c_3, }, }{, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_2, }{, i_1 \Os, \Tc c_4, }, },\\\\\\\\
  \Rq , \Bb{if(m \Pn n)}{,\Bb{if(i \Pn j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{if(i \Pn j)}{,\Tc c_2,}{,\Tc c_4,},},
 \end{math}
 \bigskip
@@ -502,6 +542,8 @@ proof:\\
 \Bb{if(i_1 \Ps j)}{, \Bb{if(i_1 \Ps j)}{, i_1 \Os,\Tc c_1,}{, i_1 \Os,\Tc c_3,},}{, i_1 \Os, \Tc c_2,},\\\\\\\\
 \Rq, i \Oc i_1, i \Oc i_2, i_2 \On, i_2 \Os,  i_1 \On,  \\\\
 \Bb{if(i_1 \Ps j)}{, \Bb{if(i_1 \Ps j)}{, i_1 \Os,\Tc c_1,}{, i_1 \Os,\Tc c_3,},}{, i_1 \Os, \Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i_2 \On, i_1 \On, i_2 \Os, \Bb{i_1 \Ps j}{, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i_1 \Os, \Tc c_2, },\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i_2 \On, i_1 \On, \Bb{i_1 \Ps j}{, i_2 \Os, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i_2 \Os, i_1 \Os, \Tc c_2, },\\\\\\\\
 \Rq, i \Oc i_1, i \Oc i_2,  i_1 \On, i_2 \On,  \\\\
 \Bb{if(i_1 \Ps j)}{, i_2 \Os, \Bb{if(i_1 \Ps j)}{, i_1 \Os,\Tc c_1,}{, i_1 \Os,\Tc c_3,},}{, i_2 \Os, i_1 \Os, \Tc c_2,},\\\\\\\\
 \Rq, i \Oc i_1, i \Oc i_2,  i_1 \Ps i_2, i_1 \On, i_2 \On,  \\\\
@@ -510,11 +552,22 @@ proof:\\
 \Bb{if(i_1 \Ps j)}{, i_2 \Os, \Bb{if(i_1 \Ps j)}{, i_1 \Os,\Tc c_1,}{, i_1 \Os,\Tc c_3,},}{, i_2 \Os, i_1 \Os, \Tc c_2,},\\\\\\\\
 \Rq, i \Oc i_1, i \Oc i_2, i_1 \On, i_2 \On,  i_1 \Ps i_2,  \\\\
 \Bb{if(i_2 \Ps j)}{, i_2 \Os, \Bb{if(i_1 \Ps j)}{, i_1 \Os,\Tc c_1,}{, i_1 \Os,\Tc c_3,},}{, i_2 \Os, i_1 \Os, \Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i_1 \Ps i_2, i_1 \On, i_2 \On, \Bb{i_2 \Ps j}{, i_2 \Os, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i_2 \Os, i_1 \Os, \Tc c_2, },\\\\\\\\
 \Rq, i \Oc i_1, i \Oc i_2, i_1 \On, i_2 \On,  \\\\
 \Bb{if(i_2 \Ps j)}{, i_2 \Os, \Bb{if(i_1 \Ps j)}{, i_1 \Os,\Tc c_1,}{, i_1 \Os,\Tc c_3,},}{, i_2 \Os, i_1 \Os, \Tc c_2,},\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i_2 \On, i_1 \On, \Bb{i_2 \Ps j}{, i_2 \Os, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i_2 \Os, i_1 \Os, \Tc c_2, },\\\\\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i_2 \On, \Bb{i_2 \Ps j}{, i_1 \On, i_2 \Os, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i_1 \On, i_2 \Os, i_1 \Os, \Tc c_2, },\\\\\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, \Bb{i_2 \Ps j}{, i_1 \On, i_2 \Os, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i_1 \On, i_2 \Os, i_1 \Os, \Tc c_2, },\\\\\\\\
+\Rq, i \Oc i_2, i_2 \On, i \Oc i_1, \Bb{i_2 \Ps j}{, i_1 \On, i_2 \Os, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i_1 \On, i_2 \Os, i_1 \Os, \Tc c_2, },\\\\\\\\
+\Rq, i \Oc i_2, i_2 \On, \Bb{i_2 \Ps j}{, i \Oc i_1, i_1 \On, i_2 \Os, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i \Oc i_1, i_1 \On, i_2 \Os, i_1 \Os, \Tc c_2, },\\\\\\\\
+\Rq, i \Oc i_2, i_2 \On, \Bb{i_2 \Ps j}{, i \Oc i_1, i_2 \Os, i_1 \On, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i \Oc i_1, i_1 \On, i_2 \Os, i_1 \Os, \Tc c_2, },\\\\\\\\
+\Rq, i \Oc i_2, i_2 \On, \Bb{i_2 \Ps j}{, i_2 \Os, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i \Oc i_1, i_1 \On, i_2 \Os, i_1 \Os, \Tc c_2, },\\\\\\\\
+\Rq, i \Oc i_2, i_2 \On, \Bb{i_2 \Ps j}{, i_2 \Os, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i \Oc i_1, i_2 \Os, i_1 \On, i_1 \Os, \Tc c_2, },\\\\\\\\
 \Rq, i \Oc i_2, i_2 \On,  \\\\
 \Bb{if(i_2 \Ps j)}{, i_2 \Os, i \Oc i_1, i_1 \On, \Bb{if(i_1 \Ps j)}{, i_1 \Os,\Tc c_1,}{, i_1 \Os,\Tc c_3,},}{, i_2 \Os, i \Oc i_1, i_1 \On, i_1 \Os, \Tc c_2,},\\\\\\\\
 \Rq,\Bb{if(i \Pn j)}{, i \Oc i_1, i_1 \On, \Bb{if(i_1 \Ps j)}{, i_1 \Os,\Tc c_1,}{, i_1 \Os,\Tc c_3,},}{, i \Oc i_1, i_1 \On, i_1 \Os, \Tc c_2,},\\\\\\\\
+\Rq, \Bb{i \Pn j}{, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, i \Oc i_1, i_1 \Os, \Tc c_2, },\\\\\\\\
+\Rq, \Bb{i \Pn j}{, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_3, }, }{, \Tc c_2, },\\\\\\\\
 \Rq , \Bb{if(i \Pn j)}{,\Bb{if(i \Pn j)}{,\Tc c_1,}{,\Tc c_3,},}{,\Tc c_2,},
 \end{math}
 \bigskip
@@ -582,21 +635,50 @@ proof:\\
 ,i \Pn j, \Bb{if(m \Pn j)}{,\Tc c_1,}{,\Tc c_2,},\\\\
 \Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, i_1 \Os, \Bb{if(m \Pn j)}{,\Tc c_1,}{,\Tc c_2,},\\\\\\
 \Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, i_1 \Os, m \Oc m_1, m_1 \On, \Bb{if(m_1 \Ps j)}{, m_1 \Os, \Tc c_1,}{, m_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, m \Oc m_1, i_1 \Os, m_1 \On, \Bb{m_1 \Ps j}{, m_1 \Os, \Tc c_1, }{, m_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, m \Oc m_1, m_1 \On, i_1 \Os, \Bb{m_1 \Ps j}{, m_1 \Os, \Tc c_1, }{, m_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, m \Oc m_1, m_1 \On, \Bb{m_1 \Ps j}{, i_1 \Os, m_1 \Os, \Tc c_1, }{, i_1 \Os, m_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, m \Oc m_1, m_1 \On, \Bb{m_1 \Ps j}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, i_1 \Os, m_1 \Os, \Tc c_2, },\\\\\\
 \Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, m \Oc m_1, m_1 \On,\Bb{if(m_1 \Ps j)}{, m_1 \Os, i_1 \Os, \Tc c_1,}{, m_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, i_1 \Ps j, m_1 \On, \Bb{m_1 \Ps j}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
 \Rq, i \Oc i_1, i_1 \On, m \Oc m_1, m_1 \On, i_1 \Ps j, \Bb{if(m_1 \Ps j)}{, m_1 \Os, i_1 \Os, \Tc c_1,}{, m_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, m_1 \On, i_1 \Ps j, \Bb{j \Ps m_1}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, m_1 \On, i_1 \Ps j, \Bb{i_1 \Ps m_1}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
 \Rq, i \Oc i_1, i_1 \On, m \Oc m_1, m_1 \On, i_1 \Ps j, \Bb{if(m_1 \Ps i_1)}{, m_1 \Os, i_1 \Os, \Tc c_1,}{, m_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Oc i_1, i \On, i \Op, i_1 \On, m \Oc m_1, m_1 \On, i_1 \Ps j, \Bb{m_1 \Ps i_1}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
 \Rq, i \Oc i_1, i \On, i \Op, i_1 \On, m \Oc m_1, m \On, m \Op,  m_1 \On, i_1 \Ps j, \\\\
 \Bb{if(m_1 \Ps i_1)}{, m_1 \Os, i_1 \Os, \Tc c_1,}{, m_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Oc i_1, i \On, i \Op, i_1 \On, m \Oc m_1, m \On, m_1 \On, m \Op, i_1 \Ps j, \Bb{m_1 \Ps i_1}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i \Op, i_1 \On, m \Oc m_1, m \On, m_1 \On, i_1 \Ps j, m \Op, \Bb{m_1 \Ps i_1}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i \Op, i_1 \On, m \Oc m_1, m \On, m_1 \On, i_1 \Ps j, \Bb{m_1 \Ps i_1}{, m \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, i \Op, m \Oc m_1, m \On, m_1 \On, i_1 \Ps j, \Bb{m_1 \Ps i_1}{, m \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, i \Op, m \On, m_1 \On, i_1 \Ps j, \Bb{m_1 \Ps i_1}{, m \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, i \Op, m_1 \On, i_1 \Ps j, \Bb{m_1 \Ps i_1}{, m \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, m_1 \On, i \Op, i_1 \Ps j, \Bb{m_1 \Ps i_1}{, m \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, m_1 \On, i_1 \Ps j, i \Op, \Bb{m_1 \Ps i_1}{, m \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, m_1 \On, i_1 \Ps j, \Bb{m_1 \Ps i_1}{, i \Op, m \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, i \Op, m \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, m_1 \On, i_1 \Ps j, \Bb{m_1 \Ps i_1}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, i \Op, m \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On,  m_1 \On, i_1 \Ps j, \\\\
 \Bb{if(m_1 \Ps i_1)}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1,}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
 \Rq, i \Oc i_1, i \Ps i_1, i \On, i_1 \On, m \Oc m_1, m \On,  m_1 \On, i_1 \Ps j, \\\\
 \Bb{if(m_1 \Ps i_1)}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1,}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On, i \Ps i_1, m \Oc m_1, m \On,  m_1 \On, i_1 \Ps j, \\\\
 \Bb{if(m_1 \Ps i_1)}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1,}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, i \Ps i_1, m \On, m_1 \On, i_1 \Ps j, \Bb{m_1 \Ps i_1}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, i \Ps i_1, m_1 \On, i_1 \Ps j, \Bb{m_1 \Ps i_1}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, m_1 \On, i \Ps i_1, i_1 \Ps j, \Bb{m_1 \Ps i_1}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On,  m_1 \On, i_1 \Ps j,  i \Ps i_1,\\\\
 \Bb{if(m_1 \Ps i_1)}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1,}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, m_1 \On, i_1 \Ps j, i \Ps i_1, \Bb{i_1 \Ps m_1}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, m_1 \On, i_1 \Ps j, i \Ps i_1, \Bb{i \Ps m_1}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On,  m_1 \On, i_1 \Ps j,  i \Ps i_1,\\\\
 \Bb{if(m_1 \Ps i)}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1,}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, m_1 \On, i \Ps i_1, i_1 \Ps j, \Bb{m_1 \Ps i}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, i \Ps i_1, m_1 \On, i_1 \Ps j, \Bb{m_1 \Ps i}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, i \Ps i_1, m \On, m_1 \On, i_1 \Ps j, \Bb{m_1 \Ps i}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, i \Ps i_1, m \Oc m_1, m \On, m_1 \On, i_1 \Ps j, \Bb{m_1 \Ps i}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i \Ps i_1, i_1 \On, m \Oc m_1, m \On, m_1 \On, i_1 \Ps j, \Bb{m_1 \Ps i}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \Ps i_1, i \On, i_1 \On, m \Oc m_1, m \On, m_1 \On, i_1 \Ps j, \Bb{m_1 \Ps i}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On,  m_1 \On, i_1 \Ps j,\\\\
 \Bb{if(m_1 \Ps i)}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1,}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \Ps m_1, m \On,  m_1 \On, i_1 \Ps j,\\\\
@@ -607,14 +689,32 @@ proof:\\
 \Bb{if(m_1 \Ps i)}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1,}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On,  m_1 \On, i_1 \Ps j, m \Ps m_1,\\\\
 \Bb{if(m \Ps i)}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1,}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, m_1 \On, m \Ps m_1, i_1 \Ps j, \Bb{m \Ps i}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, m \Ps m_1, m_1 \On, i_1 \Ps j, \Bb{m \Ps i}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \Ps m_1, m \On, m_1 \On, i_1 \Ps j, \Bb{m \Ps i}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1, }{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On,  m_1 \On, i_1 \Ps j,\\\\
 \Bb{if(m \Ps i)}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_1,}{, m \Op, i \Op, m_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On,  m_1 \On, i_1 \Ps j, m \Op, i \Op,\\\\
 \Bb{if(m \Ps i)}{, m_1 \Os, i_1 \Os, \Tc c_1,}{, m_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, m_1 \On, m \Op, i_1 \Ps j, i \Op, \Bb{m \Ps i}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, m \Op, m_1 \On, i_1 \Ps j, i \Op, \Bb{m \Ps i}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, m \Op, m_1 \On, i \Op, i_1 \Ps j, \Bb{m \Ps i}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, m \Op, i \Op, m_1 \On, i_1 \Ps j, \Bb{m \Ps i}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, m \On, i \Op, m \Op, m_1 \On, i_1 \Ps j, \Bb{m \Ps i}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, m \Oc m_1, i \Op, m \On, m \Op, m_1 \On, i_1 \Ps j, \Bb{m \Ps i}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, i \Op, m \Oc m_1, m \On, m \Op, m_1 \On, i_1 \Ps j, \Bb{m \Ps i}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
 \Rq, i \Oc i_1, i \On, i \Op, i_1 \On, m \Oc m_1, m \On, m \Op,  m_1 \On, i_1 \Ps j,\\\\
 \Bb{if(m \Ps i)}{, m_1 \Os, i_1 \Os, \Tc c_1,}{, m_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, m \On, m \Op, m_1 \On, i_1 \Ps j, \Bb{m \Ps i}{, m_1 \Os, i_1 \Os, \Tc c_1, }{, m_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
 \Rq, i \Oc i_1, i_1 \On, m \Oc m_1,  m_1 \On, i_1 \Ps j,\Bb{if(m \Ps i)}{, m_1 \Os, i_1 \Os, \Tc c_1,}{, m_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, m_1 \On, i_1 \Ps j, m_1 \Os, \Bb{m \Ps i}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, m_1 \On, i_1 \Ps j, m_1 \Os, i_1 \Os, \Bb{m \Ps i}{, \Tc c_1, }{, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, m_1 \On, i_1 \Ps j, i_1 \Os, m_1 \Os, \Bb{m \Ps i}{, \Tc c_1, }{, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, m \Oc m_1, i_1 \Ps j, m_1 \On, i_1 \Os, m_1 \Os, \Bb{m \Ps i}{, \Tc c_1, }{, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, m \Oc m_1, m_1 \On, i_1 \Os, m_1 \Os, \Bb{m \Ps i}{, \Tc c_1, }{, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, m \Oc m_1, i_1 \Os, m_1 \On, m_1 \Os, \Bb{m \Ps i}{, \Tc c_1, }{, \Tc c_2, },\\\\\\
 \Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, i_1 \Os, m \Oc m_1,  m_1 \On, m_1 \Os,\Bb{if(m \Ps i)}{, \Tc c_1,}{, \Tc c_2,},\\\\\\
+\Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, i_1 \Os, m \Oc m_1, m_1 \Os, \Bb{m \Ps i}{, \Tc c_1, }{, \Tc c_2, },\\\\\\
 \Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, i_1 \Os,\Bb{if(m \Ps i)}{, \Tc c_1,}{, \Tc c_2,},\\\\\\
 \Rq ,i \Pn j, \Bb{if(m \Ps i)}{,\Tc c_1,}{,\Tc c_2,},
 \end{math}
@@ -656,6 +756,10 @@ proof:\\
 \Rq, i \Ps j, j \Oc j_1, j_1 \On, \Bb{if(j_1 \Ps m)}{, j_1 \Os, \Tc c_1,}{, j_1 \Os, \Tc c_2,},\\\\\\
 \Rq, i \Ps j, i \Oc i_1, i_1 \Os, j \Oc j_1, j_1 \On, \Bb{if(j_1 \Ps m)}{, j_1 \Os, \Tc c_1,}{, j_1 \Os, \Tc c_2,},\\\\\\
 \Rq, i \Ps j, i \Oc i_1, i_1 \On, i_1 \Os, j \Oc j_1, j_1 \On, \Bb{if(j_1 \Ps m)}{, j_1 \Os, \Tc c_1,}{, j_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Ps j, i \Oc i_1, i_1 \On, j \Oc j_1, i_1 \Os, j_1 \On, \Bb{j_1 \Ps m}{, j_1 \Os, \Tc c_1, }{, j_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Ps j, i \Oc i_1, i_1 \On, j \Oc j_1, j_1 \On, i_1 \Os, \Bb{j_1 \Ps m}{, j_1 \Os, \Tc c_1, }{, j_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Ps j, i \Oc i_1, i_1 \On, j \Oc j_1, j_1 \On, \Bb{j_1 \Ps m}{, i_1 \Os, j_1 \Os, \Tc c_1, }{, i_1 \Os, j_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Ps j, i \Oc i_1, i_1 \On, j \Oc j_1, j_1 \On, \Bb{j_1 \Ps m}{, j_1 \Os, i_1 \Os, \Tc c_1, }{, i_1 \Os, j_1 \Os, \Tc c_2, },\\\\\\
 \Rq, i \Ps j, i \Oc i_1, i_1 \On, j \Oc j_1, j_1 \On, \Bb{if(j_1 \Ps m)}{, j_1 \Os, i_1 \Os, \Tc c_1,}{, j_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
 \Rq, i \Ps j, i \Oc i_1, j \Oc j_1, i_1 \On, j_1 \On, \Bb{if(j_1 \Ps m)}{, j_1 \Os, i_1 \Os, \Tc c_1,}{, j_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
 \Rq, i \Ps j, i \Oc i_1, i \Ps i_1, j \Oc j_1, i_1 \On, j_1 \On, \Bb{if(j_1 \Ps m)}{, j_1 \Os, i_1 \Os, \Tc c_1,}{, j_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
@@ -666,8 +770,22 @@ proof:\\
 \Rq, i \Oc i_1, i \Ps j, j \Oc j_1, j \Ps i_1, i_1 \Ps j_1, i_1 \On, j_1 \On, \Bb{if(j_1 \Ps m)}{, j_1 \Os, i_1 \Os, \Tc c_1,}{, j_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
 \Rq, i \Oc i_1, i \Ps j, j \Oc j_1, j \Ps i_1, i_1 \On, j_1 \On, i_1 \Ps j_1, \Bb{if(j_1 \Ps m)}{, j_1 \Os, i_1 \Os, \Tc c_1,}{, j_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
 \Rq, i \Oc i_1, i \Ps j, j \Oc j_1, j \Ps i_1, i_1 \On, j_1 \On, i_1 \Ps j_1, \Bb{if(i_1 \Ps m)}{, j_1 \Os, i_1 \Os, \Tc c_1,}{, j_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Oc i_1, i \Ps j, j \Oc j_1, j \Ps i_1, i_1 \Ps j_1, i_1 \On, j_1 \On, \Bb{i_1 \Ps m}{, j_1 \Os, i_1 \Os, \Tc c_1, }{, j_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \Ps j, j \Oc j_1, j \Ps i_1, j \Ps j_1, i_1 \On, j_1 \On, \Bb{i_1 \Ps m}{, j_1 \Os, i_1 \Os, \Tc c_1, }{, j_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \Ps j, j \Oc j_1, j \Ps j_1, j \Ps i_1, i_1 \On, j_1 \On, \Bb{i_1 \Ps m}{, j_1 \Os, i_1 \Os, \Tc c_1, }{, j_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \Ps j, j \Oc j_1, j \Ps i_1, i_1 \On, j_1 \On, \Bb{i_1 \Ps m}{, j_1 \Os, i_1 \Os, \Tc c_1, }{, j_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \Ps j, j \Ps i_1, j \Oc j_1, i_1 \On, j_1 \On, \Bb{i_1 \Ps m}{, j_1 \Os, i_1 \Os, \Tc c_1, }{, j_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \Ps j, i \Ps i_1, j \Oc j_1, i_1 \On, j_1 \On, \Bb{i_1 \Ps m}{, j_1 \Os, i_1 \Os, \Tc c_1, }{, j_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \Ps i_1, i \Ps j, j \Oc j_1, i_1 \On, j_1 \On, \Bb{i_1 \Ps m}{, j_1 \Os, i_1 \Os, \Tc c_1, }{, j_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i \Ps j, j \Oc j_1, i_1 \On, j_1 \On, \Bb{i_1 \Ps m}{, j_1 \Os, i_1 \Os, \Tc c_1, }{, j_1 \Os, i_1 \Os, \Tc c_2, },\\\\\\
 \Rq, i \Ps j, i \Oc i_1, j \Oc j_1, i_1 \On, j_1 \On, \Bb{if(i_1 \Ps m)}{, j_1 \Os, i_1 \Os, \Tc c_1,}{, j_1 \Os, i_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Ps j, i \Oc i_1, j \Oc j_1, i_1 \On, j_1 \On, j_1 \Os, \Bb{i_1 \Ps m}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Ps j, j \Oc j_1, i \Oc i_1, i_1 \On, j_1 \On, j_1 \Os, \Bb{i_1 \Ps m}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Ps j, j \Oc j_1, i \Oc i_1, j_1 \On, i_1 \On, j_1 \Os, \Bb{i_1 \Ps m}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Ps j, j \Oc j_1, j_1 \On, i \Oc i_1, i_1 \On, j_1 \Os, \Bb{i_1 \Ps m}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Ps j, j \Oc j_1, j_1 \On, i \Oc i_1, j_1 \Os, i_1 \On, \Bb{i_1 \Ps m}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_2, },\\\\\\
 \Rq, i \Ps j, j \Oc j_1, j_1 \On, j_1 \Os, i \Oc i_1, i_1 \On, \Bb{if(i_1 \Ps m)}{, i_1 \Os, \Tc c_1,}{, i_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Ps j, j \Oc j_1, j_1 \Os, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps m}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_2, },\\\\\\
 \Rq, i \Ps j, i \Oc i_1, i_1 \On, \Bb{if(i_1 \Ps m)}{, i_1 \Os, \Tc c_1,}{, i_1 \Os, \Tc c_2,},\\\\\\
 \Rq ,i \Ps j, \Bb{if(i \Pn m)}{,\Tc c_1,}{,\Tc c_2,},
 \end{math}
@@ -727,6 +845,9 @@ proof:\\
 , i \Oc m, \Bb{if(i \Pn j)}{, \Tc c_1,}{, \Tc c_2,},\\\\
 \Rq,  i \Oc m, i \Oc i_1, i_1 \On, \Bb{if(i_1 \Ps j)}{, i_1 \Os, \Tc c_1,}{, i_1 \Os, \Tc c_2,},\\\\\\
 \Rq, i \Oc i_1,  i \Oc m, i_1 \On, \Bb{if(i_1 \Ps j)}{, i_1 \Os, \Tc c_1,}{, i_1 \Os, \Tc c_2,},\\\\\\
+\Rq, i \Oc i_1, i_1 \On, i \Oc m, \Bb{i_1 \Ps j}{, i_1 \Os, \Tc c_1, }{, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, i \Oc m, i_1 \Os, \Tc c_1, }{, i \Oc m, i_1 \Os, \Tc c_2, },\\\\\\
+\Rq, i \Oc i_1, i_1 \On, \Bb{i_1 \Ps j}{, i_1 \Os, i \Oc m, \Tc c_1, }{, i \Oc m, i_1 \Os, \Tc c_2, },\\\\\\
 \Rq, i \Oc i_1,  i_1 \On, \Bb{if(i_1 \Ps j)}{, i_1 \Os, i \Oc m, \Tc c_1,}{, i_1 \Os, i \Oc m, \Tc c_2,},\\\\\\
 \Rq , \Bb{if(i \Pn j)}{,i \Oc m, \Tc c_1,}{,i \Oc m, \Tc c_2,},
 \end{math}
@@ -1397,6 +1518,8 @@ proof:\\
 \Rq, i \Oc i_1, i \Pc i_1, i_1 \On,i_1 \Ps j, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i_1 \On, i \Pc i_1, i_1 \Ps j, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, i \Pc i_1, i_1 \Os,\\\\
+\Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, i_1 \Pc i, i_1 \Os,\\\\
+\Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, j \Pc i, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, i \Pc j, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, i_1 \Os, i \Pc j,\\\\
 \Rq, i \Pn j, i \Pc j,
@@ -1415,13 +1538,18 @@ proof:\\
 \begin{math} 
 , i \Pn j, i \On,\\
 \Rq, i \Oc i_1, i_1 \On,i_1 \Ps j, i_1 \Os, i \On,\\\\
+\Rq, i \Oc i_1, i_1 \On, i_1 \Ps j, i \On, i_1 \Os,\\\\
+\Rq, i \Oc i_1, i_1 \On, i \On, i_1 \Ps j, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On,i_1 \Ps j, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \Ps i_1, i \On, i_1 \On,i_1 \Ps j, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On, i \Ps i_1, i_1 \Ps j, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On, i \Ps i_1, i \Ps j, i_1 \Os,\\\\
+\Rq, i \Oc i_1, i \Ps i_1, i \On, i_1 \On, i \Ps j, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On, i \Ps j, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On, i_1 \Os, i \Ps j,\\\\
+\Rq, i \Oc i_1, i_1 \On, i \On, i_1 \Os, i \Ps j,\\\\
 \Rq, i \Oc i_1, i_1 \On, i_1 \Os, i \On, i \Ps j,\\\\
+\Rq, i \Oc i_1, i_1 \Os, i \On, i \Ps j,\\\\
 \Rq, i \On, i \Ps j,
 \end{math}
 \bigskip
@@ -1451,23 +1579,38 @@ proof:\\
 , i \Ps j, i \On, i \Ps j, j \On,\\
 \Rq, i \Oc i_0, i_0 \Os, i \Ps j, i \On, i \Ps j, j \On,\\\\
 \Rq, i \Oc i_0, i_0 \On, i_0 \Os, i \Ps j, i \On, i \Ps j, j \On,\\\\
+\Rq, i \Oc i_0, i_0 \On, i \Ps j, i_0 \Os, i \On, i \Ps j, j \On,\\\\
+\Rq, i \Oc i_0, i \Ps j, i_0 \On, i_0 \Os, i \On, i \Ps j, j \On,\\\\
+\Rq, i \Oc i_0, i \Ps j, i_0 \On, i \On, i_0 \Os, i \Ps j, j \On,\\\\
+\Rq, i \Oc i_0, i \Ps j, i_0 \On, i \On, i \Ps j, i_0 \Os, j \On,\\\\
 \Rq, i \Oc i_0, i \Ps j, i_0 \On, i \On, i \Ps j, j \On, i_0 \Os,\\\\
 \Rq, i \Oc i_0, i \Ps i_0, i \Ps j, i_0 \On, i \On, i \Ps j, j \On, i_0 \Os,\\\\
 \Rq, i \Oc i_0, i \Ps j, i \Ps i_0, i_0 \On, i \On, i \Ps j, j \On, i_0 \Os,\\\\
+\Rq, i \Oc i_0, i \Ps j, i_0 \On, i \Ps i_0, i \On, i \Ps j, j \On, i_0 \Os,\\\\
 \Rq, i \Oc i_0, i \Ps j, i_0 \On, i \On, i \Ps i_0, i \Ps j, j \On, i_0 \Os,\\\\
+\Rq, i \Oc i_0, i \Ps j, i_0 \On, i \On, i \Ps j, i \Ps i_0, j \On, i_0 \Os,\\\\
 \Rq, i \Oc i_0, i \Ps j, i_0 \On, i \On, i \Ps j, j \On, i \Ps i_0, i_0 \Os,\\\\
 \Rq, i \Oc i_0, i \Ps i_0, i \Ps j, i_0 \On, i \On, i \Ps j, j \On, i \Ps i_0, i_0 \Os,\\\\
 \Rq, i \Oc i_0, i \Ps i_0, i_0 \Ps j, i_0 \On, i \On, i \Ps j, j \On, i \Ps i_0, i_0 \Os,\\\\
+\Rq, i \Oc i_0, i_0 \Ps j, i_0 \On, i \On, i \Ps j, j \On, i \Ps i_0, i_0 \Os,\\\\
+\Rq, i \Oc i_0, i_0 \Ps j, i \On, i_0 \On, i \Ps j, j \On, i \Ps i_0, i_0 \Os,\\\\
 \Rq, i \Oc i_0, i_0 \Ps j, i \On, i \Ps j, i_0 \On, j \On, i \Ps i_0, i_0 \Os,\\\\
+\Rq, i \Oc i_0, i \On, i_0 \Ps j, i \Ps j, i_0 \On, j \On, i \Ps i_0, i_0 \Os,\\\\
 \Rq, i \Oc i_0, i \On, i \Ps j, i_0 \Ps j, i_0 \On, j \On, i \Ps i_0, i_0 \Os,\\\\
 \Rq, i \Oc i_0, i \On, i \Ps j, i_0 \On, j \On, i_0 \Ps j, i \Ps i_0, i_0 \Os,\\\\
 \Rq, i \Oc i_0, i \On, i \Ps j, i_0 \On, j \On, i \Ps i_0, i_0 \Ps j, i_0 \Os,\\\\
 \Rq, i \Oc i_0, i \On, i \Ps j, i_0 \On, j \On, i \Ps i_0, i \Ps j, i_0 \Os,\\\\
 \Rq, i \Oc i_0, i \On, i_0 \On, i \Ps j, j \On, i \Ps i_0, i \Ps j, i_0 \Os,\\\\
+\Rq, i \Oc i_0, i \On, i_0 \On, i \Ps j, i \Ps i_0, j \On, i \Ps j, i_0 \Os,\\\\
 \Rq, i \Oc i_0, i \On, i_0 \On, i \Ps i_0, i \Ps j, j \On, i \Ps j, i_0 \Os,\\\\
 \Rq, i \Oc i_0, i \Ps i_0, i \On, i_0 \On, i \Ps j, j \On, i \Ps j, i_0 \Os,\\\\
 \Rq, i \Oc i_0, i \On, i_0 \On, i \Ps j, j \On, i \Ps j, i_0 \Os,\\\\
+\Rq, i \Oc i_0, i_0 \On, i \On, i \Ps j, j \On, i \Ps j, i_0 \Os,\\\\
+\Rq, i \Oc i_0, i_0 \On, i \On, i \Ps j, j \On, i_0 \Os, i \Ps j,\\\\
+\Rq, i \Oc i_0, i_0 \On, i \On, i \Ps j, i_0 \Os, j \On, i \Ps j,\\\\
+\Rq, i \Oc i_0, i_0 \On, i \On, i_0 \Os, i \Ps j, j \On, i \Ps j,\\\\
 \Rq, i \Oc i_0, i_0 \On, i_0 \Os, i \On, i \Ps j, j \On, i \Ps j,\\\\
+\Rq, i \Oc i_0, i_0 \Os, i \On, i \Ps j, j \On, i \Ps j,\\\\
 \Rq, i \On, i \Ps j, j \On, i \Ps j,
 \end{math}
 \bigskip
@@ -1483,17 +1626,25 @@ proof:\\
 \begin{math} 
 ,i \Pn i, i \Ps i_1, i \On,\\
 \Rq, i \Oc i_2, i_2 \On , i_2 \Ps i, i_2 \Os, i \Ps i_1, i \On,\\\\
+\Rq, i \Oc i_2, i_2 \On, i_2 \Ps i, i \Ps i_1, i_2 \Os, i \On,\\\\
+\Rq, i \Oc i_2, i_2 \On, i \Ps i_1, i_2 \Ps i, i_2 \Os, i \On,\\\\
+\Rq, i \Oc i_2, i \Ps i_1, i_2 \On, i_2 \Ps i, i_2 \Os, i \On,\\\\
 \Rq, i \Ps i_1, i \Oc i_2, i_2 \On , i_2 \Ps i, i_2 \Os, i \On,\\\\
 \Rq, i \Ps i_1, i \Oc i_2, i \Ps i_2, i_2 \On , i_2 \Ps i, i_2 \Os, i \On,\\\\
 \Rq, i \Ps i_1, i \Oc i_2, i_2 \Ps i, i_2 \On , i_2 \Ps i, i_2 \Os, i \On,\\\\
 \Rq, i \Ps i_1, i \Oc i_2, i_2 \Ps i, i_2 \On , i_2 \Ps i, i \On, i_2 \Os,\\\\
 \Rq, i \Ps i_1, i \Oc i_2, i_2 \On , i_2 \Ps i, i \On, i_2 \Ps i, i_2 \Os,\\\\
+\Rq, i \Oc i_2, i \Ps i_1, i_2 \On, i_2 \Ps i, i \On, i_2 \Ps i, i_2 \Os,\\\\
+\Rq, i \Oc i_2, i_2 \On, i \Ps i_1, i_2 \Ps i, i \On, i_2 \Ps i, i_2 \Os,\\\\
 \Rq, i \Oc i_2, i_2 \On , i_2 \Ps i, i \Ps i_1, i \On, i_2 \Ps i, i_2 \Os,\\\\
 \Rq, i \Oc i_2, i_2 \On , i_2 \Ps i, i_2 \Ps i_1, i \On, i_2 \Ps i, i_2 \Os,\\\\
+\Rq, i \Oc i_2, i_2 \On, i_2 \Ps i, i \On, i_2 \Ps i_1, i_2 \Ps i, i_2 \Os,\\\\
 \Rq, i \Oc i_2, i_2 \On , i_2 \Ps i, i \On, i_2 \Ps i, i_2 \Ps i_1, i_2 \Os,\\\\
 \Rq, i \Oc i_2, i_2 \On , i_2 \Ps i, i \On, i_2 \Ps i, i \Ps i_1, i_2 \Os,\\\\
 \Rq, i \Oc i_2, i_2 \Ps i, i_2 \On , i_2 \Ps i, i \On, i \Ps i_1, i_2 \Os,\\\\
+\Rq, i \Oc i_2, i_2 \On, i_2 \Ps i, i_2 \Ps i, i \On, i \Ps i_1, i_2 \Os,\\\\
 \Rq, i \Oc i_2, i_2 \On , i_2 \Ps i, i \On, i \Ps i_1, i_2 \Os,\\\\
+\Rq, i \Oc i_2, i_2 \On, i_2 \Ps i, i \On, i_2 \Os, i \Ps i_1,\\\\
 \Rq, i \Oc i_2, i_2 \On , i_2 \Ps i, i_2 \Os, i \On, i \Ps i_1,\\\\
 \Rq,i \Pn i, i \On, i \Ps i_1,
 \end{math}
@@ -1513,11 +1664,17 @@ proof:\\
 \Rq, i \Oc i_1, i_1 \On , i_1 \Ps i, i \On, i_1 \Ps i, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \Oc i_2, i_2 \Os, i_1 \On , i_1 \Ps i, i \On, i_1 \Ps i, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \Oc i_2, i_2 \On, i_2 \Os, i_1 \On , i_1 \Ps i, i \On, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_2 \Os, i_1 \On, i_1 \Ps i, i \On, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_1 \On, i_2 \Os, i_1 \Ps i, i \On, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_1 \On, i_1 \Ps i, i_2 \Os, i \On, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_1 \On, i_1 \Ps i, i \On, i_2 \Os, i_1 \Ps i, i_1 \Os,\\\\
 \Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_1 \On , i_1 \Ps i, i \On, i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
 \Rq, i \Oc i_2, i \Oc i_1, i_2 \Ps i_1, i_2 \On, i_1 \On , i_1 \Ps i, i \On, i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
 \Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_1 \On , i_2 \Ps i_1, i_1 \Ps i, i \On, i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
 \Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_1 \On , i_2 \Ps i_1, i_2 \Ps i, i \On, i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \Ps i_1, i_2 \On, i_1 \On, i_2 \Ps i, i \On, i_1 \Ps i, i_2 \Os, i_1 \Os,\\\\
 \Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_1 \On , i_2 \Ps i, i \On, i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_2 \Ps i, i_1 \On, i \On, i_1 \Ps i, i_2 \Os, i_1 \Os,\\\\
 \Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_2 \Ps i, i \On, i_1 \On , i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
 \Rq, i \Oc i_2, i \Ps i_2, i \Oc i_1, i_2 \On, i_2 \Ps i, i \On, i_1 \On , i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
 \Rq, i \Oc i_2, i_2 \Ps i, i \Oc i_1, i_2 \On, i_2 \Ps i, i \On, i_1 \On , i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
@@ -1525,25 +1682,64 @@ proof:\\
 \Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_2 \Ps i, i \On, i_2 \Ps i, i_1 \On , i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
 \Rq, i \Oc i_2, i \Oc i_1, i \Ps i_1,  i_2 \On, i_2 \Ps i, i \On, i_2 \Ps i, i_1 \On , i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
 \Rq, i \Oc i_2, i \Oc i_1,  i_2 \On, i \Ps i_1, i_2 \Ps i, i \On, i_2 \Ps i, i_1 \On , i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_2 \Ps i, i \Ps i_1, i \On, i_2 \Ps i, i_1 \On, i_1 \Ps i, i_2 \Os, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_2 \Ps i, i \Ps i_1, i_2 \Ps i_1, i \On, i_2 \Ps i, i_1 \On, i_1 \Ps i, i_2 \Os, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i \Ps i_1, i_2 \Ps i, i_2 \Ps i_1, i \On, i_2 \Ps i, i_1 \On, i_1 \Ps i, i_2 \Os, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i \Ps i_1, i_2 \Ps i_1, i_2 \Ps i, i \On, i_2 \Ps i, i_1 \On, i_1 \Ps i, i_2 \Os, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i \Ps i_1, i_2 \Ps i_1, i \On, i_2 \Ps i, i_2 \Ps i, i_1 \On, i_1 \Ps i, i_2 \Os, i_1 \Os,\\\\
 \Rq, i \Oc i_2, i \Oc i_1,  i_2 \On, i \Ps i_1, i_2 \Ps i_1, i \On, i_2 \Ps i, i_1 \On , i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_1 \Ps i, i_2 \Ps i_1, i \On, i_2 \Ps i, i_1 \On, i_1 \Ps i, i_2 \Os, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_1 \Ps i, i_2 \Ps i_1, i \On, i_2 \Ps i, i_1 \On, i_2 \Os, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_2 \Ps i_1, i_1 \Ps i, i \On, i_2 \Ps i, i_1 \On, i_2 \Os, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_2 \Ps i_1, i_1 \Ps i, i \On, i_1 \On, i_2 \Ps i, i_2 \Os, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_2 \Ps i_1, i \Ps i_1, i \On, i_1 \On, i_2 \Ps i, i_2 \Os, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_2 \Ps i_1, i \On, i_1 \On, i \Ps i_1, i_2 \Ps i, i_2 \Os, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_2 \Ps i_1, i \On, i_1 \On, i_2 \Ps i, i \Ps i_1, i_2 \Os, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_2 \Ps i_1, i \On, i_2 \Ps i, i_1 \On, i \Ps i_1, i_2 \Os, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_2 \Ps i_1, i \On, i_2 \Ps i, i_1 \On, i_1 \Ps i, i_2 \Os, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i_2 \Ps i_1, i \On, i_2 \Ps i, i_1 \On, i_1 \Ps i, i_1 \Ps i, i_2 \Os, i_1 \Os,\\\\
 \Rq, i \Oc i_2, i \Oc i_1,  i_2 \On, i_2 \Ps i_1, i \On, i_2 \Ps i, i_1 \On , i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i \On, i_2 \Ps i_1, i_2 \Ps i, i_1 \On, i_1 \Ps i, i_2 \Os, i_1 \Os,\\\\
 \Rq, i \Oc i_2, i \Oc i_1,  i_2 \On, i \On, i_2 \Ps i, i_2 \Ps i_1, i_1 \On , i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
 \Rq, i \Oc i_2, i \Oc i_1,  i_2 \On, i \On, i_2 \Ps i, i \Ps i_1, i_1 \On , i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
 \Rq, i \Oc i_2, i \Oc i_1, i_2 \Ps i,  i_2 \On, i \On, i \Ps i_1, i_1 \On , i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
 \Rq, i \Oc i_2, i_2 \Ps i, i \Oc i_1,  i_2 \On, i \On, i \Ps i_1, i_1 \On , i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
+\Rq, i \Oc i_2, i_2 \Ps i, i_2 \On, i \Oc i_1, i \On, i \Ps i_1, i_1 \On, i_1 \Ps i, i_2 \Os, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i_2 \Ps i, i_2 \On, i \Oc i_1, i \On, i \Ps i_1, i_1 \On, i_2 \Os, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Ps i_2, i_2 \On, i \Oc i_1, i \On, i \Ps i_1, i_1 \On, i_2 \Os, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i_2 \On, i \Oc i_1, i \On, i \Ps i_1, i_1 \On, i_2 \Os, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i \Oc i_1, i_2 \On, i \On, i \Ps i_1, i_1 \On, i_2 \Os, i_1 \Ps i, i_1 \Os,\\\\
 \Rq, i \Oc i_2, i \Oc i_1,  i_2 \On, i \On, i \Ps i_1, i_1 \On , i_1 \Ps i,  i_2 \Os,i_1 \Os,\\\\
+\Rq, i \Oc i_2, i_2 \On, i \Oc i_1, i \On, i \Ps i_1, i_1 \On, i_1 \Ps i, i_2 \Os, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i_2 \On, i \Oc i_1, i \On, i \Ps i_1, i_1 \On, i_2 \Os, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i_2 \On, i \Oc i_1, i \On, i \Ps i_1, i_2 \Os, i_1 \On, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i_2 \On, i \Oc i_1, i \On, i_2 \Os, i \Ps i_1, i_1 \On, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_2, i_2 \On, i \Oc i_1, i_2 \Os, i \On, i \Ps i_1, i_1 \On, i_1 \Ps i, i_1 \Os,\\\\
 \Rq, i \Oc i_2,  i_2 \On,  i_2 \Os, i \Oc i_1, i \On, i \Ps i_1, i_1 \On , i_1 \Ps i,i_1 \Os,\\\\
+\Rq, i \Oc i_2, i_2 \Os, i \Oc i_1, i \On, i \Ps i_1, i_1 \On, i_1 \Ps i, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i \Ps i_1, i_1 \On , i_1 \Ps i,i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i \Oc i_3, i_3 \Os,  i \Ps i_1, i_1 \On , i_1 \Ps i,i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i \Oc i_3, i_3 \On, i_3 \Os,  i \Ps i_1, i_1 \On , i_1 \Ps i,i_1 \Os,\\\\
+\Rq, i \Oc i_1, i \On, i \Oc i_3, i_3 \On, i \Ps i_1, i_3 \Os, i_1 \On, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_1, i \On, i \Oc i_3, i_3 \On, i \Ps i_1, i_1 \On, i_3 \Os, i_1 \Ps i, i_1 \Os,\\\\
+\Rq, i \Oc i_1, i \On, i \Oc i_3, i_3 \On, i \Ps i_1, i_1 \On, i_1 \Ps i, i_3 \Os, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i \Oc i_3, i_3 \On,  i \Ps i_1, i_1 \On , i_1 \Ps i,i_1 \Os, i_3 \Os,\\\\
+\Rq, i \Oc i_1, i \On, i \Oc i_3, i \Ps i_1, i_3 \On, i_1 \On, i_1 \Ps i, i_1 \Os, i_3 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i \Oc i_3,  i \Ps i_1, i_1 \On , i_3 \On, i_1 \Ps i,i_1 \Os, i_3 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i \Oc i_3, i \Ps i_3, i \Ps i_1, i_1 \On , i_3 \On, i_1 \Ps i,i_1 \Os, i_3 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i \Oc i_3, i \Ps i_3, i_3 \Ps i_1, i_1 \On , i_3 \On, i_1 \Ps i,i_1 \Os, i_3 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i \Oc i_3, i_3 \Ps i_1, i_1 \On , i_3 \On, i_1 \Ps i,i_1 \Os, i_3 \Os,\\\\
+\Rq, i \Oc i_1, i \On, i \Oc i_3, i_1 \On, i_3 \Ps i_1, i_3 \On, i_1 \Ps i, i_1 \Os, i_3 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i \Oc i_3, i_1 \On , i_3 \On, i_3 \Ps i_1, i_1 \Ps i,i_1 \Os, i_3 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i \Oc i_3, i_1 \On , i_3 \On, i_1 \Ps i, i_3 \Ps i_1,i_1 \Os, i_3 \Os,\\\\
+\Rq, i \Oc i_1, i \On, i \Oc i_3, i_1 \On, i_3 \On, i_1 \Ps i, i_1 \Ps i_3, i_1 \Os, i_3 \Os,\\\\
+\Rq, i \Oc i_1, i \On, i \Oc i_3, i_1 \On, i_3 \On, i_1 \Ps i, i \Ps i_3, i_1 \Os, i_3 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i \Oc i_3, i_1 \On , i_3 \On, i_1 \Ps i, i_3 \Ps i,i_1 \Os, i_3 \Os,\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, i \Oc i_3, i_3 \On, i_1 \Ps i, i_3 \Ps i, i_1 \Os, i_3 \Os,\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, i \Oc i_3, i_3 \On, i_1 \Ps i, i_1 \Os, i_3 \Ps i, i_3 \Os,\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, i \Oc i_3, i_1 \Ps i, i_3 \On, i_1 \Os, i_3 \Ps i, i_3 \Os,\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, i_1 \Ps i, i \Oc i_3, i_3 \On, i_1 \Os, i_3 \Ps i, i_3 \Os,\\\\
+\Rq, i \Oc i_1, i \On, i_1 \On, i_1 \Ps i, i \Oc i_3, i_1 \Os, i_3 \On, i_3 \Ps i, i_3 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On , i_1 \Ps i,i_1 \Os, i \Oc i_3, i_3 \On, i_3 \Ps i, i_3 \Os,\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On , i_1 \Ps i,i_1 \Os, i \Pn i,\\\\
 \Rq, i \Oc i_1, i \On, i_1 \On , i \Ps i_1,i_1 \Os, i \Pn i,\\\\
@@ -1599,10 +1795,17 @@ proof:\\
 \begin{math} 
 ,i \Pn i, i \Pu, i \Op,\\
 \Rq, i \Oc i_2, i \Pn i_2, i_2 \Os, i \Pu, i \Op,\\\\
+\Rq, i \Oc i_2, i \Pn i_2, i \Pu, i_2 \Os, i \Op,\\\\
+\Rq, i \Oc i_2, i \Pu, i \Pn i_2, i_2 \Os, i \Op,\\\\
 \Rq, i \Pu, i \Oc i_2, i \Pn i_2, i_2 \Os, i \Op,\\\\
 \Rq, i \Pu, i \Oc i_1, i_1 \Os, i \Oc i_2, i \Pn i_2, i_2 \Os, i \Op,\\\\
+\Rq, i \Pu, i \Oc i_1, i \Oc i_2, i_1 \Os, i \Pn i_2, i_2 \Os, i \Op,\\\\
+\Rq, i \Pu, i \Oc i_1, i \Oc i_2, i \Pn i_2, i_1 \Os, i_2 \Os, i \Op,\\\\
+\Rq, i \Pu, i \Oc i_1, i \Oc i_2, i \Pn i_2, i_2 \Os, i_1 \Os, i \Op,\\\\
 \Rq, i \Pu, i \Oc i_1, i \Oc i_2, i \Pn i_2, i_2 \Os, i \Op, i_1 \Os,\\\\
 \Rq, i \Pu, i \Oc i_1, i \Ps i_1, i \Oc i_2, i \Pn i_2, i_2 \Os, i \Op, i_1 \Os,\\\\
+\Rq, i \Pu, i \Oc i_1, i \Oc i_2, i \Ps i_1, i \Pn i_2, i_2 \Os, i \Op, i_1 \Os,\\\\
+\Rq, i \Pu, i \Oc i_1, i \Oc i_2, i \Pn i_2, i \Ps i_1, i_2 \Os, i \Op, i_1 \Os,\\\\
 \Rq, i \Pu, i \Oc i_1, i \Oc i_2, i \Pn i_2, i_2 \Os, i \Ps i_1, i \Op, i_1 \Os,\\\\
 \Rq, i \Pu, i \Oc i_1, i \Pn i, i \Ps i_1, i \Op, i_1 \Os,\\\\
 \Rq, i \Pu, i \Oc i_1, i \Pn i, i \Op, i \Ps i_1, i_1 \Os,\\\\
@@ -1611,12 +1814,18 @@ proof:\\
 \Rq, i \Oc i_1, i \Ps i_1, i_1 \Pu, i \Pn i, i \Op, i \Ps i_1, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i_1 \Pu, i \Pn i, i \Op, i \Ps i_1, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i_1 \Pu, i \Oc i_2, i \Pn i_2, i_2 \Os, i \Op, i \Ps i_1, i_1 \Os,\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i_1 \Pu, i \Pn i_2, i_2 \Os, i \Op, i \Ps i_1, i_1 \Os,\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Pn i_2, i_1 \Pu, i_2 \Os, i \Op, i \Ps i_1, i_1 \Os,\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Pn i_2, i_2 \Os, i_1 \Pu, i \Op, i \Ps i_1, i_1 \Os,\\\\
+\Rq, i \Oc i_1, i \Oc i_2, i \Pn i_2, i_2 \Os, i \Op, i_1 \Pu, i \Ps i_1, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \Oc i_2, i \Pn i_2, i_2 \Os, i \Op, i \Ps i_1, i_1 \Pu, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \Pn i, i \Op, i \Ps i_1, i_1 \Pu, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \Pn i, i \Op, i \Ps i_1, i \Pu, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \Pn i, i \Ps i_1, i \Op, i \Pu, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \Ps i_1, i \Pn i, i \Op, i \Pu, i_1 \Os,\\\\
 \Rq, i \Oc i_1, i \Pn i, i \Op, i \Pu, i_1 \Os,\\\\
+\Rq, i \Oc i_1, i \Pn i, i \Op, i_1 \Os, i \Pu,\\\\
+\Rq, i \Oc i_1, i \Pn i, i_1 \Os, i \Op, i \Pu,\\\\
 \Rq, i \Oc i_1, i_1 \Os, i \Pn i, i \Op, i \Pu,\\\\
 \Rq,i \Pn i, i \Op, i \Pu,
 \end{math}
@@ -1649,25 +1858,36 @@ proof:\\
 , i \Pu, i \On, i \Pu,\\
 \Rq, i \Pu, i \Oc i_1, i_1 \Os, i \On, i \Pu,\\\\
 \Rq, i \Pu, i \Oc i_1, i_1 \On, i_1 \Os, i \On, i \Pu,\\\\
+\Rq, i \Pu, i \Oc i_1, i_1 \On, i \On, i_1 \Os, i \Pu,\\\\
 \Rq, i \Pu, i \Oc i_1, i_1 \On, i \On, i \Pu, i_1 \Os,\\\\
 \Rq, i \Pu, i \Oc i_1, i \Ps i_1, i_1 \On, i \On, i \Pu, i_1 \Os,\\\\
+\Rq, i \Pu, i \Oc i_1, i_1 \On, i \Ps i_1, i \On, i \Pu, i_1 \Os,\\\\
 \Rq, i \Pu, i \Oc i_1, i_1 \On, i \On, i \Ps i_1, i \Pu, i_1 \Os,\\\\
 \Rq, i \Pu, i \Oc i_1, i_1 \On, i \On, i \Ps i_1, i \Pu,i \Pu, i_1 \Os,\\\\
 \Rq, i \Pu, i \Oc i_1, i_1 \On, i \On, i \Ps i_1, i_1 \Pu,i \Pu, i_1 \Os,\\\\
+\Rq, i \Pu, i \Oc i_1, i_1 \On, i \Ps i_1, i \On, i_1 \Pu, i \Pu, i_1 \Os,\\\\
+\Rq, i \Pu, i \Oc i_1, i \Ps i_1, i_1 \On, i \On, i_1 \Pu, i \Pu, i_1 \Os,\\\\
 \Rq, i \Pu, i \Oc i_1, i_1 \On, i \On, i_1 \Pu,i \Pu, i_1 \Os,\\\\
+\Rq, i \Pu, i \Oc i_1, i_1 \On, i_1 \Pu, i \On, i \Pu, i_1 \Os,\\\\
 \Rq, i \Pu, i \Oc i_1, i_1 \On, i_1 \Pu, i \On, i_1 \Os, i \Pu,\\\\
 \Rq, i \Oc i_1, i \Pu, i_1 \On, i_1 \Pu, i \On, i_1 \Os, i \Pu,\\\\
 \Rq, i \Oc i_1, i \Ps i_1, i \Pu, i_1 \On, i_1 \Pu, i \On, i_1 \Os, i \Pu,\\\\
 \Rq, i \Oc i_1, i \Ps i_1, i_1 \Pu, i_1 \On, i_1 \Pu, i \On, i_1 \Os, i \Pu,\\\\
+\Rq, i \Oc i_1, i \Ps i_1, i \Ps i_1, i_1 \Pu, i_1 \On, i_1 \Pu, i \On, i_1 \Os, i \Pu,\\\\
+\Rq, i \Oc i_1, i \Ps i_1, i_1 \Pu, i \Ps i_1, i_1 \On, i_1 \Pu, i \On, i_1 \Os, i \Pu,\\\\
+\Rq, i \Oc i_1, i \Ps i_1, i_1 \Pu, i_1 \On, i \Ps i_1, i_1 \Pu, i \On, i_1 \Os, i \Pu,\\\\
 \Rq, i \Oc i_1, i \Ps i_1, i_1 \Pu, i_1 \On, i_1 \Pu, i \Ps i_1, i \On, i_1 \Os, i \Pu,\\\\
 \Rq, i \Oc i_1, i \Ps i_1, i \Pu, i_1 \On, i_1 \Pu, i \Ps i_1, i \On, i_1 \Os, i \Pu,\\\\
 \Rq, i \Oc i_1, i \Pu, i_1 \On, i_1 \Pu, i \Ps i_1, i \On, i_1 \Os, i \Pu,\\\\
 \Rq, i \Pu, i \Oc i_1, i_1 \On, i_1 \Pu, i \Ps i_1, i \On, i_1 \Os, i \Pu,\\\\
 \Rq, i \Pu, i \Oc i_1, i_1 \On, i \Ps i_1, i_1 \Pu, i \On, i_1 \Os, i \Pu,\\\\
 \Rq, i \Pu, i \Oc i_1, i_1 \On, i \Ps i_1, i \Pu, i \On, i_1 \Os, i \Pu,\\\\
+\Rq, i \Pu, i \Oc i_1, i_1 \On, i \Pu, i \Ps i_1, i \On, i_1 \Os, i \Pu,\\\\
+\Rq, i \Pu, i \Oc i_1, i \Pu, i_1 \On, i \Ps i_1, i \On, i_1 \Os, i \Pu,\\\\
 \Rq, i \Pu, i \Pu, i \Oc i_1, i_1 \On, i \Ps i_1, i \On, i_1 \Os, i \Pu,\\\\
 \Rq, i \Pu, i \Oc i_1, i_1 \On, i \Ps i_1, i \On, i_1 \Os, i \Pu,\\\\
 \Rq, i \Pu, i \Oc i_1, i_1 \On, i \Ps i_1, i_1 \Os, i \On, i \Pu,\\\\
+\Rq, i \Pu, i \Oc i_1, i_1 \On, i_1 \Ps i, i_1 \Os, i \On, i \Pu,\\\\
 \Rq, i \Pu, i \Pn i, i \On, i \Pu,\\\\
 \Rq, i \Pu, i \On, i \Pn i, i \Pu,\\\\
 \Rq, i \Pu, i \On, i \Pu, i \Pn i,
@@ -1688,6 +1908,7 @@ proof:\\
 \Rq, \Ot i, i \Pu, i \On, i \Pu, i \Op, \\\\
 \Rq, \Ot i, i \Pu, i \On, i \Pu, i \Pn i, i \Op, \\\\
 \Rq, \Ot i, i \Pu, i \On, i \Pu, i \Op, i \Pn i, \\\\
+\Rq, \Ot i, i \On, i \Pu, i \Op, i \Pn i,\\\\
 \Rq, \Ot i, i \On, i \Op, i \Pn i, \\\\
 \Rq, \Ot i, i \Pn i,
 \end{math}

@@ -37,11 +37,11 @@ function EqRow({ left, right, mapHoles }: { left: string; right: string; mapHole
   const show = (s: string) => (mapHoles ? holeAsTc(s) : s);
   return (
     <div className="flex items-center gap-2 flex-wrap text-sm">
-      <ExpressionRenderer expression={show(left) || ','} size={12} />
+      <ExpressionRenderer expression={show(left) || ','} size={18} />
       {right ? (
         <>
-          <EquivalenceSymbol size={12} className="shrink-0 text-muted-foreground" />
-          <ExpressionRenderer expression={show(right)} size={12} />
+          <EquivalenceSymbol size={18} className="shrink-0 text-muted-foreground" />
+          <ExpressionRenderer expression={show(right)} size={18} />
         </>
       ) : null}
     </div>
@@ -66,7 +66,7 @@ function StepList({
           <React.Fragment key={i}>
             {i > 0 && (
               <li className="flex items-center gap-2 pl-8 text-xs list-none">
-                <EquivalenceSymbol size={12} className="text-muted-foreground" />
+                <EquivalenceSymbol size={18} className="text-muted-foreground" />
                 {verdict === true && <span className="text-green-600">passed</span>}
                 {verdict === false && <span className="text-destructive">failed</span>}
               </li>
@@ -77,7 +77,7 @@ function StepList({
               }`}
             >
               <span className="text-muted-foreground shrink-0 font-mono w-6">{i + 1}.</span>
-              <ExpressionRenderer expression={step} size={12} />
+              <ExpressionRenderer expression={step} size={18} />
             </li>
           </React.Fragment>
         );

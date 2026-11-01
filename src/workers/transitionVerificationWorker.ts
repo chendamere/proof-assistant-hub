@@ -5,6 +5,7 @@
  */
 
 import { checkInferenceRules } from '@engine/inferenceRules';
+import { matchesDerivedBbTransition } from '@engine/inferenceRules/caseFocus';
 import { buildRuleIndex, getRulesForTransition } from '@engine/inferenceRules/ruleIndex';
 import { normalizeSpacing } from '@engine/inferenceRules/utils';
 
@@ -121,6 +122,26 @@ self.onmessage = (e: MessageEvent<TransitionVerificationRequest>) => {
       }
     }
     
+    // Same fallback as verify-all-chapters: compound Bb shell/arm hops
+    // (case focus/merge, Ps/Os redistribute, etc.) that are not a single library rule.
+    if (matchesDerivedBbTransition(targetLeft, targetRight)) {
+      const response: TransitionVerificationResponse = {
+        id,
+        matched: true,
+        matchedRuleId: 'derived-bb',
+        matchInfo: {
+          matchedRuleId: 'derived-bb',
+          description: 'Derived Bb transition (case focus/merge or shell redistribute)',
+          ruleLeft: targetLeft,
+          ruleRight: targetRight,
+          inferenceRuleName: 'Derived Bb',
+        },
+        rulesTried,
+      };
+      self.postMessage(response);
+      return;
+    }
+
     const response: TransitionVerificationResponse = {
       id,
       matched: false,

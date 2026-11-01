@@ -1,0 +1,96 @@
+{
+  "rounds": [
+    {
+      "round": 1,
+      "passed": 185,
+      "failed": 78,
+      "inserted": 117,
+      "complete": 44,
+      "strategies": {
+        "oneSite": 116,
+        "armFactor": 34,
+        "rewrite": 75,
+        "shrink": 5
+      }
+    },
+    {
+      "round": 2,
+      "passed": 349,
+      "failed": 31,
+      "inserted": 18,
+      "complete": 7,
+      "strategies": {
+        "rewrite": 51,
+        "armFactor": 17,
+        "oneSite": 13,
+        "shrink": 5
+      }
+    }
+  ],
+  "successfulRules": {
+    "swap-copy-copy": 6,
+    "rules-of-operators-1-icmjpj": 5,
+    "rules-of-operators-7-ipjsj": 3,
+    "theorems-of-identical-node-comparison-15-mslbifi": 16,
+    "swap-copy-temp": 1,
+    "swap-temp-next": 1,
+    "theorems-of-identical-node-comparison-10-tmlbifi": 1,
+    "swap-temp-release": 1,
+    "theorems-of-identical-node-comparison-7-lsifisj": 21,
+    "theorems-of-identical-node-comparison-16-mnlbifi": 6,
+    "theorems-of-identical-node-comparison-12-mcnlbif": 7,
+    "swap-copy-next": 18,
+    "swap-next-next": 11,
+    "swap-next-release": 36,
+    "swap-release-release": 9,
+    "create-next-prev": 9,
+    "theorems-of-identical-node-comparison-33-isjmcn": 4,
+    "theorems-of-identical-node-comparison-37-isjmnm": 29,
+    "swap-copy-release": 14,
+    "release-next": 25,
+    "theorems-of-identical-node-comparison-36-isjmsm": 29,
+    "theorems-of-identical-node-comparison-47-isjmsn": 5,
+    "copy-identical": 4,
+    "thm-Ps-symmetric": 13,
+    "swap-theorems-of-same-operand-14-isjicn": 3,
+    "swap-theorems-of-same-operand-3-isjjsk": 5,
+    "theorems-of-node-null-comparison-28-iumsm": 5,
+    "rules-of-node-continuity-61-injmsm": 2,
+    "theorems-of-node-null-comparison-25-iumcnm": 1,
+    "rules-of-node-continuity-87-injmum": 2,
+    "theorems-of-node-null-comparison-30-iumpm": 1,
+    "theorems-of-identical-node-comparison-54-isjmum": 3,
+    "rules-of-node-continuity-79-injmsn": 1,
+    "swap-theorems-of-same-operand-58-iuicni": 2,
+    "swap-theorems-of-same-operand-69-isjiui": 1,
+    "theorems-of-node-null-comparison-29-iumnm": 2,
+    "rules-of-node-continuity-0-lbifinj": 13,
+    "rules-of-node-continuity-8-lbifinj": 10,
+    "thm-R-i-release": 6,
+    "thm-R-i-result": 4,
+    "thm-R-i-null": 2,
+    "theorems-of-operators-and-relationships-12-isjin": 4,
+    "swap-theorems-of-same-operand-15-icmicn": 2,
+    "theorems-of-identical-node-comparison-38-isjmpm": 5,
+    "rules-of-operators-5-injpj": 10,
+    "rules-of-operators-6-ipjpj": 1,
+    "theorems-of-identical-node-comparison-72-isjbifj": 2,
+    "theorems-of-identical-node-comparison-66-bifisj": 3,
+    "theorems-of-identical-node-comparison-17-mplbifi": 3,
+    "rules-of-node-continuity-24-mslbifi": 3,
+    "subst-identical-copy": 4,
+    "theorems-of-identical-node-comparison-73-isjjsm": 1,
+    "rules-of-node-continuity-310-iniici": 1,
+    "theorems-of-identical-node-comparison-70-isjisj": 1
+  },
+  "gapKinds": {
+    "oc-move": 30,
+    "reorder": 68,
+    "arm-os-factor": 6,
+    "arm-local": 13,
+    "null-flag": 16
+  },
+  "notes": [
+    "Round 3: no insertable chains (10 open, 14 solved/partial)"
+  ]
+}

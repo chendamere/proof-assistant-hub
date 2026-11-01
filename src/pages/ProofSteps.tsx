@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
-import WorkbenchContainer from '@/components/workbench/WorkbenchContainer';
 import RulesSidePanel from '@/components/rules/RulesSidePanel';
 import { usePanelContext } from '@/contexts/PanelContext';
-import { Copy, Play } from 'lucide-react';
 import { ExpressionRenderer } from '@/components/operators/ExpressionRenderer';
 import { EquivalenceSymbol } from '@/components/operators/OperatorSymbols';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { axioms } from '@/data/axioms';
 import { normalizeSpacing } from '@engine/inferenceRules/utils';
@@ -27,8 +25,7 @@ import { theorems } from '@/data/theorems';
 import { earlyRulePosition } from '@/data/rulePosition';
 import { useExpressionParseMode, type ExpressionParseMode } from '@/contexts/ExpressionParseContext';
 import { Button } from '@/components/ui/button';
-import { Search, ChevronDown, ChevronRight, FileText, ListOrdered, CheckCircle2, Check, X, AlertTriangle, Info, Plus, Trash2, CheckCheck, PlayCircle, Loader2, Download } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Search, ChevronDown, ChevronLeft, ChevronRight, FileText, ListOrdered, CheckCircle2, Check, X, AlertTriangle, Info, Plus, Trash2, CheckCheck, PlayCircle, Loader2, Download, Square, LocateFixed } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   InductionProofView,
@@ -99,6 +96,10 @@ interface VerificationResult {
 
 type ProofStatus = 'proven' | 'failed' | 'open' | 'none';
 type DisplaySort = 'book' | 'proven' | 'failed' | 'none';
+
+/** Expression glyph size on this page (~50% larger than the prior 12/11 defaults). */
+const EXPR_SIZE = 18;
+const EXPR_SIZE_SM = 17;
 
 const STATUS_LABEL: Record<ProofStatus, string> = {
   proven: 'Proven',
@@ -265,10 +266,9 @@ function getRuleNameForRuleStr(ruleStr: string): string | undefined {
 }
 
 const ProofSteps: React.FC = () => {
-  const { isWorkbenchExpanded, isRulesPanelOpen, setDebugWorkbenchExpressions } = usePanelContext();
-  const navigate = useNavigate();
+  const { isRulesPanelOpen } = usePanelContext();
   const { toast } = useToast();
-  const { prepare, display, toBook, mode } = useExpressionParseMode();
+  const { prepare, toBook, mode } = useExpressionParseMode();
   const [table, setTable] = useState<ProofStepsTable | null>(null);
   const [induction, setInduction] = useState<InductionDisplayData>({ schemas: [], proofs: {} });
   const [loading, setLoading] = useState(true);
@@ -276,7 +276,8 @@ const ProofSteps: React.FC = () => {
   const [search, setSearch] = useState('');
   const [chapter, setChapter] = useState<string>('all');
   const [displaySort, setDisplaySort] = useState<DisplaySort>('book');
-  const [ruleInput, setRuleInput] = useState('');
+  const listScrollRef = useRef<HTMLDivElement>(null);
+  const [activeTheoremKey, setActiveTheoremKey] = useState<string | null>(null);
   const [transitionVerifying, setTransitionVerifying] = useState<string | null>(null);
   const [transitionResults, setTransitionResults] = useState<Record<string, Record<number, boolean>>>({});
   const [transitionMatchInfo, setTransitionMatchInfo] = useState<Record<string, Record<number, MatchInfo>>>({});
@@ -288,6 +289,8 @@ const ProofSteps: React.FC = () => {
   const theoremVerifyingAllRef = useRef<string | null>(null);
   const transitionVerifyingRef = useRef<string | null>(null);
   const chapterCheckingAllRef = useRef(false);
+  /** Bumped on Stop / chapter change so in-flight Check all runs become stale and cannot resume. */
+  const chapterCheckRunIdRef = useRef(0);
   /** Per-transition optional rule override (key: transitionId or customId). Separate left/right fields. */
   const [customRuleInputs, setCustomRuleInputs] = useState<Record<string, { left: string; right: string }>>({});
   /** Error when user-entered rule is not in database (key: transitionId or customId). */
@@ -470,11 +473,9 @@ const ProofSteps: React.FC = () => {
           //   .catch(() => { /* ignore LLM errors */ });
         }
       } catch (err) {
+        // Infrastructure errors (e.g. worker cold start) are not match failures.
+        // Leave the result unset so the UI does not show a false ❌.
         console.error('Transition verification error:', err);
-        setTransitionResults((prev) => ({
-          ...prev,
-          [key]: { ...prev[key], [transitionIndex]: false },
-        }));
       } finally {
         transitionVerifyingRef.current = null;
         setTransitionVerifying(null);
@@ -524,8 +525,8 @@ const ProofSteps: React.FC = () => {
         });
         setCustomTransitionResults((prev) => ({ ...prev, [customId]: result.matched }));
       } catch (err) {
+        // Infrastructure errors are not match failures; leave result unset.
         console.error('Custom transition verification error:', err);
-        setCustomTransitionResults((prev) => ({ ...prev, [customId]: false }));
       } finally {
         setCustomTransitionVerifying(null);
       }
@@ -534,8 +535,9 @@ const ProofSteps: React.FC = () => {
   );
 
   const verifyAllTransitions = React.useCallback(
-    async (key: string): Promise<Record<number, boolean>> => {
+    async (key: string, runId?: number): Promise<Record<number, boolean>> => {
       if (theoremVerifyingAllRef.current || transitionVerifyingRef.current) return {};
+      const isStale = () => runId != null && chapterCheckRunIdRef.current !== runId;
       const steps = table?.[key];
       const proofs = induction.proofs[key] ?? [];
       const pairs: Array<{ left: string; right: string; hypothesis: { left: string; right: string } | null }> = [];
@@ -569,10 +571,12 @@ const ProofSteps: React.FC = () => {
         await new Promise<void>((resolve) => {
           setTimeout(resolve, 0);
         });
+        if (isStale()) return results;
 
         // Induction proofs are two chains. The hypothesis is an assumption of the
         // induction step, not a step between the base case and the conclusion.
         for (let i = 0; i < pairs.length; i++) {
+          if (isStale()) break;
           const transitionId = `${key}::${i}`;
           const left = pairs[i]!.left;
           const right = pairs[i]!.right;
@@ -726,12 +730,8 @@ const ProofSteps: React.FC = () => {
                 }));
               }
             } catch (err) {
+              // Infrastructure errors are not match failures; leave result unset.
               console.error(`Transition ${i} verification error:`, err);
-              results[i] = false;
-              setTransitionResults((prev) => ({
-                ...prev,
-                [key]: { ...prev[key], [i]: false },
-              }));
             }
           }
           await new Promise<void>((resolve) => {
@@ -748,6 +748,14 @@ const ProofSteps: React.FC = () => {
   );
 
   const [chapterCheckingAll, setChapterCheckingAll] = useState(false);
+
+  const stopChapterCheck = React.useCallback(() => {
+    chapterCheckRunIdRef.current += 1;
+    chapterCheckingAllRef.current = false;
+    setChapterCheckingAll(false);
+    theoremVerifyingAllRef.current = null;
+    setTheoremVerifyingAll(null);
+  }, []);
 
   const handleInsertStep = React.useCallback((key: string, insertAtIndex: number, newExpr: string) => {
     setTable((prev) => {
@@ -767,11 +775,28 @@ const ProofSteps: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    stopChapterCheck();
     setTransitionResults({});
     setTransitionMatchInfo({});
     setTransitionDiagnoses({});
     setCustomTransitionResults({});
-  }, [chapter]);
+    setActiveTheoremKey(null);
+    const viewport = listScrollRef.current?.querySelector(
+      '[data-radix-scroll-area-viewport]'
+    ) as HTMLElement | null;
+    if (viewport) viewport.scrollTop = 0;
+  }, [chapter, stopChapterCheck]);
+
+  const scrollToTheorem = React.useCallback((key: string, behavior: ScrollBehavior = 'smooth') => {
+    const viewport = listScrollRef.current?.querySelector(
+      '[data-radix-scroll-area-viewport]'
+    ) as HTMLElement | null;
+    const el = viewport?.querySelector(`[data-theorem-key="${CSS.escape(key)}"]`) as HTMLElement | null;
+    if (!el || !viewport) return;
+    const delta = el.getBoundingClientRect().top - viewport.getBoundingClientRect().top;
+    viewport.scrollTo({ top: Math.max(0, viewport.scrollTop + delta - 8), behavior });
+    setActiveTheoremKey(key);
+  }, []);
 
   const verificationCache = useRef<Record<string, VerificationResult>>({});
   const verificationResults = React.useMemo(() => {
@@ -859,31 +884,62 @@ const ProofSteps: React.FC = () => {
     if (chapter === 'all' || chapterCheckingAllRef.current || theoremVerifyingAllRef.current || transitionVerifyingRef.current) return;
     const toCheck = filtered.filter((t) => (table?.[t.key]?.length ?? 0) >= 2);
     if (toCheck.length === 0) return;
+    const runId = ++chapterCheckRunIdRef.current;
     chapterCheckingAllRef.current = true;
     setChapterCheckingAll(true);
+    // Fresh run from the first theorem — clear prior chapter results so Stop cannot "resume"
+    const keys = new Set(toCheck.map((t) => t.key));
+    setTransitionResults((prev) => {
+      const next = { ...prev };
+      for (const k of keys) delete next[k];
+      return next;
+    });
+    setTransitionMatchInfo((prev) => {
+      const next = { ...prev };
+      for (const k of keys) delete next[k];
+      return next;
+    });
+    setTransitionDiagnoses((prev) => {
+      const next = { ...prev };
+      for (const k of keys) delete next[k];
+      return next;
+    });
+    const viewport = listScrollRef.current?.querySelector(
+      '[data-radix-scroll-area-viewport]'
+    ) as HTMLElement | null;
+    if (viewport) viewport.scrollTop = 0;
+    if (toCheck[0]) setActiveTheoremKey(toCheck[0].key);
+
     try {
       let theoremsWithFailures = 0;
       for (const t of toCheck) {
-        const results = await verifyAllTransitions(t.key);
+        if (chapterCheckRunIdRef.current !== runId) break;
+        const results = await verifyAllTransitions(t.key, runId);
+        if (chapterCheckRunIdRef.current !== runId) break;
         const hasFailure = Object.values(results).some((v) => v === false);
         if (hasFailure) theoremsWithFailures++;
       }
-      if (theoremsWithFailures > 0) {
-        toast({
-          title: 'Check complete',
-          description: `${theoremsWithFailures} of ${toCheck.length} theorem(s) contain failing step(s).`,
-          variant: 'default',
-        });
-      } else {
-        toast({
-          title: 'Check complete',
-          description: `All ${toCheck.length} theorems verified successfully.`,
-          variant: 'default',
-        });
+      // Only toast on a finished run — stop/chapter-switch must not overlay the toolbar
+      if (chapterCheckRunIdRef.current === runId) {
+        if (theoremsWithFailures > 0) {
+          toast({
+            title: 'Check complete',
+            description: `${theoremsWithFailures} of ${toCheck.length} theorem(s) contain failing step(s).`,
+            variant: 'default',
+          });
+        } else {
+          toast({
+            title: 'Check complete',
+            description: `All ${toCheck.length} theorems verified successfully.`,
+            variant: 'default',
+          });
+        }
       }
     } finally {
-      chapterCheckingAllRef.current = false;
-      setChapterCheckingAll(false);
+      if (chapterCheckRunIdRef.current === runId) {
+        chapterCheckingAllRef.current = false;
+        setChapterCheckingAll(false);
+      }
     }
   }, [chapter, filtered, table, verifyAllTransitions, toast]);
 
@@ -971,15 +1027,88 @@ const ProofSteps: React.FC = () => {
     return map;
   }, [theoremsWithSteps]);
 
-  const handleBeginProof = React.useCallback(() => {
-    const parts = ruleInput.split(/\s*⟺\s*/);
-    const left = parts[0]?.trim() || '';
-    const right = parts.slice(1).join('⟺').trim() || '';
-    const params = new URLSearchParams();
-    if (left) params.set('start', left);
-    if (right) params.set('end', right);
-    navigate(`/proof-step?${params.toString()}`);
-  }, [ruleInput, navigate]);
+  const chapterTheorems = React.useMemo(() => {
+    if (chapter === 'all') return [] as TheoremWithSteps[];
+    return groupedByChapter.find(([name]) => name === chapter)?.[1] ?? [];
+  }, [chapter, groupedByChapter]);
+
+  // Track active theorem + one-wheel-step = one theorem (height-independent)
+  useEffect(() => {
+    if (chapter === 'all' || chapterTheorems.length === 0) return;
+    let viewport: HTMLElement | null = null;
+    let raf = 0;
+    let locked = false;
+    let unlockTimer = 0;
+    let acc = 0;
+
+    const theoremNodes = () =>
+      Array.from(viewport?.querySelectorAll<HTMLElement>('[data-theorem-key]') ?? []);
+
+    const indexAtTop = () => {
+      const nodes = theoremNodes();
+      if (nodes.length === 0 || !viewport) return 0;
+      const line = viewport.getBoundingClientRect().top + 32;
+      let idx = 0;
+      for (let i = 0; i < nodes.length; i++) {
+        if (nodes[i]!.getBoundingClientRect().top <= line) idx = i;
+        else break;
+      }
+      return idx;
+    };
+
+    const updateActive = () => {
+      const nodes = theoremNodes();
+      if (nodes.length === 0) return;
+      const key = nodes[indexAtTop()]!.getAttribute('data-theorem-key');
+      if (key) setActiveTheoremKey((prev) => (prev === key ? prev : key));
+    };
+
+    const onScroll = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(updateActive);
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (!viewport) return;
+      e.preventDefault();
+      if (locked) return;
+      // Normalize mouse notches vs trackpad pixel deltas
+      const step = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+      acc += step;
+      if (Math.abs(acc) < 24) return;
+      const dir = acc > 0 ? 1 : -1;
+      acc = 0;
+      const nodes = theoremNodes();
+      const next = nodes[indexAtTop() + dir];
+      if (!next) return;
+      const key = next.getAttribute('data-theorem-key');
+      if (!key) return;
+      locked = true;
+      scrollToTheorem(key, 'auto');
+      window.clearTimeout(unlockTimer);
+      unlockTimer = window.setTimeout(() => {
+        locked = false;
+      }, 280);
+    };
+
+    const timer = window.setTimeout(() => {
+      viewport = listScrollRef.current?.querySelector(
+        '[data-radix-scroll-area-viewport]'
+      ) as HTMLElement | null;
+      if (!viewport) return;
+      viewport.addEventListener('scroll', onScroll, { passive: true });
+      viewport.addEventListener('wheel', onWheel, { passive: false });
+      updateActive();
+    }, 50);
+
+    return () => {
+      window.clearTimeout(timer);
+      window.clearTimeout(unlockTimer);
+      if (raf) cancelAnimationFrame(raf);
+      viewport?.removeEventListener('scroll', onScroll);
+      viewport?.removeEventListener('wheel', onWheel);
+    };
+  }, [chapter, chapterTheorems, scrollToTheorem]);
 
   if (loading) {
     return (
@@ -1016,64 +1145,76 @@ const ProofSteps: React.FC = () => {
     );
   }
 
+  const renderTheoremList = (theorems: TheoremWithSteps[]) =>
+    theorems.map((t, theoremIndex) => {
+      const status = displaySort === 'book' ? null : statusFor(t);
+      const previous = status != null && theoremIndex > 0 ? statusFor(theorems[theoremIndex - 1]!) : null;
+      const showHeading = status != null && status !== previous;
+      const headingCount = showHeading
+        ? theorems.filter((item) => statusFor(item) === status).length
+        : 0;
+      return (
+        <React.Fragment key={t.key}>
+          {showHeading && status != null && (
+            <div className="pt-2 text-xs font-medium text-muted-foreground">
+              {STATUS_LABEL[status]}
+              <span className="ml-1.5 tabular-nums">{headingCount}</span>
+            </div>
+          )}
+          <div data-theorem-key={t.key}>
+            <TheoremCard
+              theorem={t}
+              inductionProofs={induction.proofs[t.key]}
+              theoremNumber={theoremDisplayNumber[t.key]}
+              parseMode={mode}
+              verification={verificationResults[t.key]}
+              transitionMatchInfo={transitionMatchInfo[t.key]}
+              onVerifyTransition={verifySingleTransition}
+              onVerifyAllTransitions={verifyAllTransitions}
+              onVerifyCustomTransition={verifyCustomTransition}
+              onInsertStep={handleInsertStep}
+              onDeleteStep={handleDeleteStep}
+              transitionVerifying={transitionVerifying}
+              verifyingThis={theoremVerifyingAll === t.key}
+              checksLocked={chapterCheckingAll || theoremVerifyingAll !== null || transitionVerifying !== null}
+              customTransitionVerifying={customTransitionVerifying}
+              transitionResults={transitionResults[t.key]}
+              customTransitionResults={customTransitionResults}
+              transitionDiagnoses={transitionDiagnoses[t.key]}
+              customRuleInputs={customRuleInputs}
+              setCustomRuleInputs={setCustomRuleInputs}
+              ruleValidationError={ruleValidationError}
+              setRuleValidationError={setRuleValidationError}
+            />
+          </div>
+        </React.Fragment>
+      );
+    });
+
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="h-dvh flex flex-col overflow-hidden bg-background">
       <Navigation />
       <RulesSidePanel />
       <main
-        className="flex-1 pt-24 pb-12 px-6 transition-all duration-300"
+        className="flex-1 min-h-0 flex flex-col pt-24 px-6 transition-all duration-300"
         style={{
           marginRight: isRulesPanelOpen ? '380px' : '0',
-          marginBottom: isWorkbenchExpanded ? '50vh' : '48px',
         }}
       >
-        <div className="max-w-4xl mx-auto">
-          <div className="mb-4 flex items-start gap-3 rounded-lg border border-yellow-500/40 bg-yellow-500/10 p-3">
+        <div className="max-w-7xl mx-auto w-full flex-1 min-h-0 flex flex-col">
+          <div className="shrink-0 mb-3 flex items-start gap-3 rounded-lg border border-yellow-500/40 bg-yellow-500/10 p-3">
             <AlertTriangle className="h-5 w-5 text-yellow-500 shrink-0 mt-0.5" />
             <p className="text-sm text-yellow-700 dark:text-yellow-400">
               This page is under development. Features may be incomplete or change without notice.
             </p>
           </div>
-          <div className="mb-6">
-            <h1 className="text-2xl font-semibold text-foreground mb-1">
+          <div className="shrink-0 mb-4">
+            <h1 className="text-2xl font-semibold text-foreground">
               Theorems with Proof Steps
             </h1>
-            <p className="text-sm text-muted-foreground">
-              {theoremsWithSteps.length} theorems have proofs extracted from the LaTeX sources. Use &quot;Check step&quot; to verify each transition.
-            </p>
           </div>
 
-          {/* Rule input + Begin Proof */}
-          <Card className="mb-6">
-            <CardContent className="pt-5 pb-4 space-y-3">
-              <div className="flex flex-col sm:flex-row gap-3 items-start">
-                <div className="flex-1 w-full">
-                  <label className="text-sm font-medium text-foreground mb-1.5 block">Enter a rule to prove</label>
-                  <Input
-                    placeholder=", i \Op, ⟺ , j \Op,"
-                    value={ruleInput}
-                    onChange={(e) => setRuleInput(e.target.value)}
-                    className="font-mono"
-                  />
-                </div>
-                <Button
-                  onClick={handleBeginProof}
-                  disabled={!ruleInput.trim()}
-                  className="sm:mt-6 shrink-0"
-                >
-                  <Play className="w-4 h-4 mr-2" />
-                  Begin Proof Step
-                </Button>
-              </div>
-              {ruleInput.trim() && (
-                <div className="p-2 rounded-md border bg-muted/20 overflow-x-auto">
-                  <ExpressionRenderer expression={display(ruleInput)} size={14} />
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <div className="flex flex-col sm:flex-row gap-3 mb-6">
+          <div className="shrink-0 flex flex-col sm:flex-row gap-3 mb-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
@@ -1112,16 +1253,40 @@ const ProofSteps: React.FC = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={checkAllProofStepsInChapter}
-                  disabled={chapterCheckingAll || !!theoremVerifyingAll || !!transitionVerifying || filtered.filter((t) => (table?.[t.key]?.length ?? 0) >= 2).length === 0}
+                  className="min-w-[7.5rem]"
+                  onClick={chapterCheckingAll ? stopChapterCheck : checkAllProofStepsInChapter}
+                  disabled={
+                    !chapterCheckingAll &&
+                    (!!theoremVerifyingAll ||
+                      !!transitionVerifying ||
+                      filtered.filter((t) => (table?.[t.key]?.length ?? 0) >= 2).length === 0)
+                  }
                 >
                   {chapterCheckingAll ? (
-                    <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
+                    <>
+                      <Square className="h-3.5 w-3.5 mr-1.5 fill-current" />
+                      Stop
+                    </>
                   ) : (
-                    <CheckCheck className="h-4 w-4 mr-1.5" />
+                    <>
+                      <CheckCheck className="h-4 w-4 mr-1.5" />
+                      Check all
+                    </>
                   )}
-                  Check all
                 </Button>
+                {chapterCheckingAll && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      if (theoremVerifyingAll) scrollToTheorem(theoremVerifyingAll, 'smooth');
+                    }}
+                    disabled={!theoremVerifyingAll}
+                  >
+                    <LocateFixed className="h-4 w-4 mr-1.5" />
+                    Jump to current
+                  </Button>
+                )}
                 <Button
                   variant="outline"
                   size="sm"
@@ -1135,90 +1300,142 @@ const ProofSteps: React.FC = () => {
             )}
           </div>
 
-          <ScrollArea className="h-[calc(100vh-14rem)]">
-            <div className="space-y-3 pr-4">
-              {groupedByChapter.map(([chapterName, theorems]) => (
-                <Collapsible key={chapterName}>
-                  <div className="rounded-lg border bg-card">
-                    <CollapsibleTrigger className="flex w-full items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors rounded-t-lg [&[data-state=open]>div>svg:first-child]:rotate-90">
-                      <div className="flex items-center gap-2">
-                        <ChevronRight className="h-4 w-4 transition-transform" />
-                        <span className="font-semibold text-sm">
+          {chapter !== 'all' &&
+            groupedByChapter.map(([chapterName, theorems]) => (
+              <div
+                key={`hdr-${chapterName}`}
+                className="shrink-0 mb-3 flex items-center gap-2 flex-wrap px-1 py-2"
+              >
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-2 gap-1"
+                  onClick={() => setChapter('all')}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  All chapters
+                </Button>
+                <span className="font-semibold text-sm">
+                  {chapterDisplayIndex[chapterName] != null ? `Ch. ${chapterDisplayIndex[chapterName]}: ` : ''}
+                  {chapterName.replace(/_/g, ' ')}
+                </span>
+                <Badge variant="secondary" className="text-xs">{theorems.length}</Badge>
+              </div>
+            ))}
+
+          <div className="flex flex-1 min-h-0 gap-2">
+            {chapter !== 'all' && chapterTheorems.length > 0 && (
+              <TheoremMinimap
+                theorems={chapterTheorems}
+                statusFor={statusFor}
+                activeKey={activeTheoremKey}
+                theoremNumber={theoremDisplayNumber}
+                onSelect={scrollToTheorem}
+              />
+            )}
+            <ScrollArea ref={listScrollRef} className="flex-1 min-h-0">
+              <div className="space-y-6 pr-4 pb-4">
+                {chapter === 'all' ? (
+                  groupedByChapter.map(([chapterName, theorems]) => (
+                    <button
+                      key={chapterName}
+                      type="button"
+                      onClick={() => setChapter(chapterName)}
+                      className="flex w-full items-center justify-between bg-transparent border-0 px-1 py-3 text-left hover:bg-muted/30 transition-colors rounded-md"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        <span className="font-semibold text-sm truncate">
                           {chapterDisplayIndex[chapterName] != null ? `Ch. ${chapterDisplayIndex[chapterName]}: ` : ''}
                           {chapterName.replace(/_/g, ' ')}
                         </span>
-                        <Badge variant="secondary" className="text-xs">{theorems.length}</Badge>
+                        <Badge variant="secondary" className="text-xs shrink-0">{theorems.length}</Badge>
                       </div>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <div className="px-4 pb-4 space-y-3">
-                        {induction.schemas
-                          .filter((schema) => schema.filename === chapterName)
-                          .map((schema) => (
-                            <InductionSchemaCard key={schema.title} schema={schema} />
-                          ))}
-                        {theorems.map((t, theoremIndex) => {
-                          const status = displaySort === 'book' ? null : statusFor(t);
-                          const previous = status != null && theoremIndex > 0 ? statusFor(theorems[theoremIndex - 1]!) : null;
-                          const showHeading = status != null && status !== previous;
-                          const headingCount = showHeading
-                            ? theorems.filter((item) => statusFor(item) === status).length
-                            : 0;
-                          return (
-                            <React.Fragment key={t.key}>
-                              {showHeading && status != null && (
-                                <div className="pt-2 text-xs font-medium text-muted-foreground">
-                                  {STATUS_LABEL[status]}
-                                  <span className="ml-1.5 tabular-nums">{headingCount}</span>
-                                </div>
-                              )}
-                              <TheoremCard
-                                theorem={t}
-                                inductionProofs={induction.proofs[t.key]}
-                                theoremNumber={theoremDisplayNumber[t.key]}
-                                parseMode={mode}
-                                verification={verificationResults[t.key]}
-                                transitionMatchInfo={transitionMatchInfo[t.key]}
-                                onVerifyTransition={verifySingleTransition}
-                                onVerifyAllTransitions={verifyAllTransitions}
-                                onVerifyCustomTransition={verifyCustomTransition}
-                                onCopyToDebug={setDebugWorkbenchExpressions}
-                                onInsertStep={handleInsertStep}
-                                onDeleteStep={handleDeleteStep}
-                                transitionVerifying={transitionVerifying}
-                                verifyingThis={theoremVerifyingAll === t.key}
-                                checksLocked={chapterCheckingAll || theoremVerifyingAll !== null || transitionVerifying !== null}
-                                customTransitionVerifying={customTransitionVerifying}
-                                transitionResults={transitionResults[t.key]}
-                                customTransitionResults={customTransitionResults}
-                                transitionDiagnoses={transitionDiagnoses[t.key]}
-                                customRuleInputs={customRuleInputs}
-                                setCustomRuleInputs={setCustomRuleInputs}
-                                ruleValidationError={ruleValidationError}
-                                setRuleValidationError={setRuleValidationError}
-                              />
-                            </React.Fragment>
-                          );
-                        })}
-                      </div>
-                    </CollapsibleContent>
-                  </div>
-                </Collapsible>
-              ))}
-              {filtered.length === 0 && (
-                <p className="text-muted-foreground py-8 text-center">
-                  No theorems match your search
-                </p>
-              )}
-            </div>
-          </ScrollArea>
+                    </button>
+                  ))
+                ) : (
+                  groupedByChapter.map(([chapterName, theorems]) => (
+                    <div key={chapterName} className="space-y-6">
+                      {induction.schemas
+                        .filter((schema) => schema.filename === chapterName)
+                        .map((schema) => (
+                          <InductionSchemaCard key={schema.title} schema={schema} />
+                        ))}
+                      {renderTheoremList(theorems)}
+                    </div>
+                  ))
+                )}
+                {filtered.length === 0 && (
+                  <p className="text-muted-foreground py-8 text-center">
+                    No theorems match your search
+                  </p>
+                )}
+                {/* Lets each theorem (including the last) align to the top for one-step paging */}
+                {chapter !== 'all' && (
+                  <div className="shrink-0 pointer-events-none h-[70vh]" aria-hidden />
+                )}
+              </div>
+            </ScrollArea>
+          </div>
         </div>
       </main>
-      <Footer />
-      <WorkbenchContainer />
     </div>
   );
 };
+
+/** Compact left-rail minimap: click a tick to jump to that theorem. */
+const TheoremMinimap = React.memo(function TheoremMinimap({
+  theorems,
+  statusFor,
+  activeKey,
+  theoremNumber,
+  onSelect,
+}: {
+  theorems: TheoremWithSteps[];
+  statusFor: (t: TheoremWithSteps) => ProofStatus;
+  activeKey: string | null;
+  theoremNumber: Record<string, number>;
+  onSelect: (key: string) => void;
+}) {
+  return (
+    <aside
+      className="shrink-0 w-9 flex flex-col items-center py-1 select-none"
+      aria-label="Theorem navigator"
+    >
+      <div className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden flex flex-col items-center gap-1 py-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        {theorems.map((t) => {
+          const status = statusFor(t);
+          const active = activeKey === t.key;
+          const num = theoremNumber[t.key];
+          // ~50% larger than the first minimap tick sizes
+          const tickClass = active
+            ? 'w-6 h-[5px] bg-foreground'
+            : status === 'proven'
+              ? 'w-[18px] h-[3px] bg-emerald-500/85'
+              : status === 'failed'
+                ? 'w-[18px] h-[3px] bg-destructive/80'
+                : status === 'none'
+                  ? 'w-[9px] h-[3px] bg-muted-foreground/25'
+                  : 'w-[15px] h-[3px] bg-muted-foreground/45';
+          return (
+            <button
+              key={t.key}
+              type="button"
+              onClick={() => onSelect(t.key)}
+              title={`#${num ?? '?'} · ${STATUS_LABEL[status]}`}
+              aria-label={`Go to theorem ${num ?? t.key} (${STATUS_LABEL[status]})`}
+              aria-current={active ? 'true' : undefined}
+              className="group flex items-center justify-center w-full h-[11px] rounded-sm hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            >
+              <span className={`block rounded-full transition-all ${tickClass} group-hover:bg-foreground/80`} />
+            </button>
+          );
+        })}
+      </div>
+    </aside>
+  );
+});
 
 const TheoremCard = React.memo(function TheoremCard({
   theorem,
@@ -1230,7 +1447,6 @@ const TheoremCard = React.memo(function TheoremCard({
   onVerifyTransition,
   onVerifyAllTransitions,
   onVerifyCustomTransition,
-  onCopyToDebug,
   onInsertStep,
   onDeleteStep,
   transitionVerifying,
@@ -1254,7 +1470,6 @@ const TheoremCard = React.memo(function TheoremCard({
   onVerifyTransition?: (key: string, transitionIndex: number, ruleOverride?: string) => void;
   onVerifyAllTransitions?: (key: string) => void;
   onVerifyCustomTransition?: (customId: string, left: string, right: string, ruleOverride?: string) => void;
-  onCopyToDebug?: (left: string, right: string) => void;
   onInsertStep?: (key: string, insertAtIndex: number, newExpr: string) => void;
   onDeleteStep?: (key: string, stepIndex: number) => void;
   transitionVerifying?: string | null;
@@ -1269,514 +1484,170 @@ const TheoremCard = React.memo(function TheoremCard({
   ruleValidationError?: Record<string, string>;
   setRuleValidationError?: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 }) {
-  const { prepare, display, toBook } = useExpressionParseMode();
   const [open, setOpen] = useState(false);
   const [expandedDiagnosis, setExpandedDiagnosis] = useState<number | null>(null);
   const [expandedMatchInfo, setExpandedMatchInfo] = useState<number | null>(null);
-  const [insertStepOpen, setInsertStepOpen] = useState<string | null>(null);
-  const [insertStepDrafts, setInsertStepDrafts] = useState<Record<string, string>>({});
-  /** Which rule input is being dragged over: `${id}::left` or `${id}::right` */
-  const [ruleDropTarget, setRuleDropTarget] = useState<string | null>(null);
   const parts = theorem.ruleStr.split(/\s*⟺\s*/);
   const left = parts[0]?.trim() ?? '';
   const right = parts.slice(1).join('⟺').trim();
   const isFullyVerified = verification && verification.total > 0 && verification.passed === verification.total;
+  const canOpenProof =
+    theorem.steps.length > 0 || (inductionProofs != null && inductionProofs.length > 0);
+
+  const theoremBadges = (
+    <div className="flex items-center gap-2 flex-wrap mb-1">
+      {theoremNumber != null && (
+        <Badge variant="outline" className="text-xs font-mono shrink-0">
+          #{theoremNumber}
+        </Badge>
+      )}
+      <Badge variant="secondary" className="text-xs font-mono">
+        <FileText className="w-3 h-3 mr-1" />
+        {theorem.filename}
+      </Badge>
+      {theorem.ruleName && (
+        <Badge variant="outline" className="text-xs" title="Searchable in Rules panel">
+          {theorem.ruleName}
+        </Badge>
+      )}
+      <Badge variant="outline" className="text-xs">
+        <ListOrdered className="w-3 h-3 mr-1" />
+        {theorem.steps.length} steps
+      </Badge>
+      {verification && verification.total > 0 && (
+        <Badge
+          variant={isFullyVerified ? 'default' : 'outline'}
+          className={`text-xs ${isFullyVerified ? 'bg-green-600 hover:bg-green-600' : ''}`}
+        >
+          {isFullyVerified ? (
+            <CheckCircle2 className="w-3 h-3 mr-1" />
+          ) : null}
+          {verification.passed}/{verification.total} verified
+        </Badge>
+      )}
+      {onVerifyAllTransitions && theorem.steps.length > 1 && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-6 px-2 text-xs gap-1.5"
+          onClick={(e) => {
+            e.stopPropagation();
+            onVerifyAllTransitions(theorem.key);
+          }}
+          disabled={!!checksLocked}
+          title="Verify all transitions in this theorem"
+        >
+          {verifyingThis ? (
+            <>
+              <Loader2 className="w-3 h-3 animate-spin" />
+              Verifying...
+            </>
+          ) : (
+            <>
+              <PlayCircle className="w-3 h-3" />
+              Verify all
+            </>
+          )}
+        </Button>
+      )}
+    </div>
+  );
+
+  const theoremExpression = (
+    <div className="flex items-center gap-2 flex-wrap text-sm">
+      <span className="font-mono text-foreground/90 shrink-0">
+        <ExpressionRenderer expression={left || ','} size={EXPR_SIZE} />
+      </span>
+      <EquivalenceSymbol size={EXPR_SIZE} className="shrink-0 text-muted-foreground" />
+      <span className="font-mono text-foreground/90">
+        <ExpressionRenderer expression={right || ','} size={EXPR_SIZE} />
+      </span>
+    </div>
+  );
 
   return (
-    <Card key={parseMode}>
-      <Collapsible open={open} onOpenChange={setOpen}>
-        <CardHeader className="py-3 px-4 cursor-pointer" onClick={() => setOpen(!open)}>
+    <>
+      <Card key={parseMode} className="border-0 bg-transparent shadow-none">
+        <CardHeader
+          className={`py-3 px-1 transition-colors ${
+            canOpenProof ? 'cursor-pointer hover:bg-muted/30 rounded-md' : 'cursor-default'
+          }`}
+          onClick={canOpenProof ? () => setOpen(true) : undefined}
+          aria-disabled={!canOpenProof}
+          title={canOpenProof ? 'Open proof steps' : 'No proof steps'}
+        >
           <div className="flex items-start gap-2">
-            <CollapsibleTrigger asChild>
-              <button
-                type="button"
-                className="mt-0.5 p-0.5 rounded hover:bg-muted/50 -ml-1"
-                aria-label={open ? 'Collapse' : 'Expand'}
-              >
-                {open ? (
-                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                ) : (
-                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                )}
-              </button>
-            </CollapsibleTrigger>
+            {canOpenProof ? (
+              <span className="mt-0.5 p-0.5 -ml-1 text-muted-foreground" aria-hidden>
+                <ChevronRight className="w-4 h-4" />
+              </span>
+            ) : (
+              <span className="mt-0.5 p-0.5 -ml-1 w-5" aria-hidden />
+            )}
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap mb-1">
-                {theoremNumber != null && (
-                  <Badge variant="outline" className="text-xs font-mono shrink-0">
-                    #{theoremNumber}
-                  </Badge>
-                )}
-                <Badge variant="secondary" className="text-xs font-mono">
-                  <FileText className="w-3 h-3 mr-1" />
-                  {theorem.filename}
-                </Badge>
-                {theorem.ruleName && (
-                  <Badge variant="outline" className="text-xs" title="Searchable in Rules panel">
-                    {theorem.ruleName}
-                  </Badge>
-                )}
-                <Badge variant="outline" className="text-xs">
-                  <ListOrdered className="w-3 h-3 mr-1" />
-                  {theorem.steps.length} steps
-                </Badge>
-                {verification && verification.total > 0 && (
-                  <Badge
-                    variant={isFullyVerified ? 'default' : 'outline'}
-                    className={`text-xs ${isFullyVerified ? 'bg-green-600 hover:bg-green-600' : ''}`}
-                  >
-                    {isFullyVerified ? (
-                      <CheckCircle2 className="w-3 h-3 mr-1" />
-                    ) : null}
-                    {verification.passed}/{verification.total} verified
-                  </Badge>
-                )}
-                {onVerifyAllTransitions && theorem.steps.length > 1 && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-6 px-2 text-xs gap-1.5"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onVerifyAllTransitions(theorem.key);
-                    }}
-                    disabled={!!checksLocked}
-                    title="Verify all transitions in this theorem"
-                  >
-                    {verifyingThis ? (
-                      <>
-                        <Loader2 className="w-3 h-3 animate-spin" />
-                        Verifying...
-                      </>
-                    ) : (
-                      <>
-                        <PlayCircle className="w-3 h-3" />
-                        Verify all
-                      </>
-                    )}
-                  </Button>
-                )}
-              </div>
-              <div className="flex items-center gap-2 flex-wrap text-sm">
-                <span className="font-mono text-foreground/90 shrink-0">
-                  <ExpressionRenderer expression={left || ','} size={12} />
-                </span>
-                <EquivalenceSymbol size={12} className="shrink-0 text-muted-foreground" />
-                <span className="font-mono text-foreground/90">
-                  <ExpressionRenderer expression={right || ','} size={12} />
-                </span>
-              </div>
+              {theoremBadges}
+              {theoremExpression}
             </div>
           </div>
         </CardHeader>
-        <CollapsibleContent>
-          <CardContent className="pt-0 px-4 pb-4">
-            <div className="border-t border-border pt-3 space-y-1">
+      </Card>
+
+      <Dialog open={canOpenProof && open} onOpenChange={(next) => canOpenProof && setOpen(next)}>
+        <DialogContent
+          overlayClassName="bg-background/60 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+          className="max-w-6xl w-[min(96vw,72rem)] max-h-[85vh] overflow-hidden flex flex-col gap-3 p-5 left-1/2 top-[7.5vh] translate-x-0 translate-y-0 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=open]:zoom-in-100 data-[state=closed]:zoom-out-100 data-[state=closed]:slide-out-to-left-1/2 data-[state=open]:slide-in-from-left-1/2 data-[state=closed]:slide-out-to-top-0 data-[state=open]:slide-in-from-top-0 duration-200 [backface-visibility:hidden] [-webkit-font-smoothing:antialiased] [transform:translate3d(-50%,0,0)]"
+        >
+          <DialogHeader className="shrink-0 pr-8">
+            <DialogTitle className="sr-only">
+              Proof steps{theoremNumber != null ? ` for theorem #${theoremNumber}` : ''}
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              Detailed proof steps. Click outside or press Escape to close.
+            </DialogDescription>
+            {theoremBadges}
+            {theoremExpression}
+          </DialogHeader>
+          <div className="min-h-0 flex-1 overflow-y-auto border-t border-border pt-3 space-y-1 pr-1">
               {inductionProofs && inductionProofs.length > 0 ? (
                 <InductionProofView proofs={inductionProofs} results={transitionResults} />
               ) : theorem.steps.map((step, i) => (
                 <React.Fragment key={i}>
-                  {i > 0 && (onVerifyTransition || onCopyToDebug) && (
+                  {i > 0 && onVerifyTransition && (
                     <div className="space-y-2 py-1">
                       {(() => {
                         const transitionId = `${theorem.key}::${i - 1}`;
-                        const prevExpr = theorem.steps[i - 1];
-                        const draft = insertStepDrafts[transitionId] ?? prevExpr;
-                        const isInsertOpen = insertStepOpen === transitionId;
-                        const toggleInsert = () => {
-                          if (isInsertOpen) {
-                            setInsertStepOpen(null);
-                          } else {
-                            setInsertStepOpen(transitionId);
-                            setInsertStepDrafts((prev) => ({
-                              ...prev,
-                              [transitionId]: prev[transitionId] ?? prevExpr,
-                            }));
-                          }
-                        };
-                        const customId = `${transitionId}::insert`;
-                        const customIdAbove = `${transitionId}::insert-above`;
-                        const nextExpr = theorem.steps[i];
-                        // When insert is open, first row references (step above → inserted draft)
-                        const firstRowLeft = prevExpr;
-                        const firstRowRight = isInsertOpen ? draft : nextExpr;
-                        const firstButtonRow = (
-                          <div className="flex items-center gap-2 flex-wrap">
-                            {onVerifyTransition && (
-                              isInsertOpen && onVerifyCustomTransition ? (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 px-2 text-xs gap-1.5"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    onVerifyCustomTransition(customIdAbove, firstRowLeft, prepare(firstRowRight), (() => { const r = customRuleInputs[customIdAbove]; return (r?.left?.trim() && r?.right?.trim()) ? `${r.left.trim()} ⟺ ${r.right.trim()}` : undefined; })());
-                                  }}
-                                  disabled={customTransitionVerifying !== null}
-                                  title="Verify: step above → inserted expression"
-                                >
-                                  {customTransitionVerifying === customIdAbove ? (
-                                    <>Checking...</>
-                                  ) : customTransitionResults[customIdAbove] === true ? (
-                                    <>
-                                      <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
-                                      Check step
-                                    </>
-                                  ) : customTransitionResults[customIdAbove] === false ? (
-                                    <>
-                                      <X className="w-3.5 h-3.5 text-destructive" />
-                                      Check step
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Check className="w-3.5 h-3.5" />
-                                      Check step
-                                    </>
-                                  )}
-                                </Button>
-                              ) : (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 px-2 text-xs gap-1.5"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    onVerifyTransition(theorem.key, i - 1, (() => { const r = customRuleInputs[transitionId]; return (r?.left?.trim() && r?.right?.trim()) ? `${r.left.trim()} ⟺ ${r.right.trim()}` : undefined; })());
-                                  }}
-                                  disabled={!!checksLocked}
-                                >
-                                  {transitionVerifying === transitionId ? (
-                                    <>Checking...</>
-                                  ) : transitionResults[i - 1] === true ? (
-                                    <>
-                                      <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
-                                      Check step
-                                    </>
-                                  ) : transitionResults[i - 1] === false ? (
-                                    <>
-                                      <X className="w-3.5 h-3.5 text-destructive" />
-                                      Check step
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Check className="w-3.5 h-3.5" />
-                                      Check step
-                                    </>
-                                  )}
-                                </Button>
-                              )
-                            )}
-                            {setCustomRuleInputs && (
-                              <div className="flex flex-col gap-0.5 flex-1 min-w-[320px] max-w-[520px]">
-                                <div className="flex items-center gap-1.5 flex-wrap">
-                                  <div
-                                    className={`flex-1 min-w-0 rounded border border-dashed transition-colors ${ruleDropTarget === `${isInsertOpen ? customIdAbove : transitionId}::left` ? 'border-primary bg-primary/5' : 'border-border'}`}
-                                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect = 'copy'; setRuleDropTarget(`${isInsertOpen ? customIdAbove : transitionId}::left`); }}
-                                    onDragLeave={(e) => { e.stopPropagation(); setRuleDropTarget(null); }}
-                                    onDrop={(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      setRuleDropTarget(null);
-                                      const rule = parseDroppedRule(e);
-                                      if (rule) {
-                                        const id = isInsertOpen ? customIdAbove : transitionId;
-                                        const content = rule.draggedSide === 'right' ? rule.rightSide : rule.leftSide;
-                                        setCustomRuleInputs((prev) => ({ ...prev, [id]: { left: content, right: prev[id]?.right ?? '' } }));
-                                        setRuleValidationError?.((prev) => { const next = { ...prev }; delete next[id]; return next; });
-                                      }
-                                    }}
-                                  >
-                                    <Input
-                                      value={customRuleInputs[isInsertOpen ? customIdAbove : transitionId]?.left ?? ''}
-                                      onChange={(e) => {
-                                        const id = isInsertOpen ? customIdAbove : transitionId;
-                                        setCustomRuleInputs((prev) => ({ ...prev, [id]: { left: e.target.value, right: prev[id]?.right ?? '' } }));
-                                        setRuleValidationError?.((prev) => { const next = { ...prev }; delete next[id]; return next; });
-                                      }}
-                                      placeholder="Left (optional) — or drag rule here"
-                                      className={`h-7 text-xs font-mono w-full border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 ${ruleValidationError[isInsertOpen ? customIdAbove : transitionId] ? 'border-destructive' : ''}`}
-                                      onClick={(e) => e.stopPropagation()}
-                                      title="Rule left side (drag from rules panel or type)"
-                                    />
-                                  </div>
-                                  <EquivalenceSymbol size={12} className="flex-shrink-0 text-muted-foreground" />
-                                  <div
-                                    className={`flex-1 min-w-0 rounded border border-dashed transition-colors ${ruleDropTarget === `${isInsertOpen ? customIdAbove : transitionId}::right` ? 'border-primary bg-primary/5' : 'border-border'}`}
-                                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect = 'copy'; setRuleDropTarget(`${isInsertOpen ? customIdAbove : transitionId}::right`); }}
-                                    onDragLeave={(e) => { e.stopPropagation(); setRuleDropTarget(null); }}
-                                    onDrop={(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      setRuleDropTarget(null);
-                                      const rule = parseDroppedRule(e);
-                                      if (rule) {
-                                        const id = isInsertOpen ? customIdAbove : transitionId;
-                                        const content = rule.draggedSide === 'right' ? rule.rightSide : rule.leftSide;
-                                        setCustomRuleInputs((prev) => ({ ...prev, [id]: { left: prev[id]?.left ?? '', right: content } }));
-                                        setRuleValidationError?.((prev) => { const next = { ...prev }; delete next[id]; return next; });
-                                      }
-                                    }}
-                                  >
-                                    <Input
-                                      value={customRuleInputs[isInsertOpen ? customIdAbove : transitionId]?.right ?? ''}
-                                      onChange={(e) => {
-                                        const id = isInsertOpen ? customIdAbove : transitionId;
-                                        setCustomRuleInputs((prev) => ({ ...prev, [id]: { left: prev[id]?.left ?? '', right: e.target.value } }));
-                                        setRuleValidationError?.((prev) => { const next = { ...prev }; delete next[id]; return next; });
-                                      }}
-                                      placeholder="Right (optional) — or drag rule here"
-                                      className={`h-7 text-xs font-mono w-full border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 ${ruleValidationError[isInsertOpen ? customIdAbove : transitionId] ? 'border-destructive' : ''}`}
-                                      onClick={(e) => e.stopPropagation()}
-                                      title="Rule right side (drag from rules panel or type)"
-                                    />
-                                  </div>
-                                </div>
-                                {ruleValidationError[isInsertOpen ? customIdAbove : transitionId] && (
-                                  <span className="text-xs text-destructive" onClick={(e) => e.stopPropagation()}>
-                                    {ruleValidationError[isInsertOpen ? customIdAbove : transitionId]}
-                                  </span>
-                                )}
-                                {(() => {
-                                  const id = isInsertOpen ? customIdAbove : transitionId;
-                                  const r = customRuleInputs[id];
-                                  const leftText = r?.left ?? '';
-                                  const rightText = r?.right ?? '';
-                                  if (!leftText.trim() && !rightText.trim()) return null;
-                                  if (display(leftText) === leftText && display(rightText) === rightText) return null;
-                                  return (
-                                    <div className="flex items-center gap-1 text-xs" onClick={(e) => e.stopPropagation()}>
-                                      <ExpressionRenderer expression={display(leftText) || ','} size={11} />
-                                      <EquivalenceSymbol size={10} className="text-muted-foreground" />
-                                      <ExpressionRenderer expression={display(rightText) || ','} size={11} />
-                                    </div>
-                                  );
-                                })()}
-                              </div>
-                            )}
-                            {onCopyToDebug && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-7 px-2 text-xs gap-1.5"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onCopyToDebug(firstRowLeft, firstRowRight);
-                                }}
-                                title={isInsertOpen ? 'Copy to Debug: step above → inserted expression' : 'Copy to Debug workbench'}
-                              >
-                                <Copy className="w-3.5 h-3.5" />
-                                Copy to Debug
-                              </Button>
-                            )}
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-7 px-2 text-xs gap-1.5"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleInsert();
-                              }}
-                              title="Insert step: edit expression and see rendered preview"
-                            >
-                              <Plus className="w-3.5 h-3.5" />
-                              Insert step
-                            </Button>
-                          </div>
-                        );
-                        const secondButtonRow = isInsertOpen && (
-                          <div className="flex items-center gap-2 flex-wrap">
-                            {onVerifyCustomTransition && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-7 px-2 text-xs gap-1.5"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onVerifyCustomTransition(customId, prepare(draft), nextExpr, (() => { const r = customRuleInputs[customId]; return (r?.left?.trim() && r?.right?.trim()) ? `${r.left.trim()} ⟺ ${r.right.trim()}` : undefined; })());
-                                }}
-                                disabled={customTransitionVerifying !== null}
-                                title="Verify: inserted expression → step below"
-                              >
-                                {customTransitionVerifying === customId ? (
-                                  <>Checking...</>
-                                ) : customTransitionResults[customId] === true ? (
-                                  <>
-                                    <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
-                                    Check step
-                                  </>
-                                ) : customTransitionResults[customId] === false ? (
-                                  <>
-                                    <X className="w-3.5 h-3.5 text-destructive" />
-                                    Check step
-                                  </>
-                                ) : (
-                                  <>
-                                    <Check className="w-3.5 h-3.5" />
-                                    Check step
-                                  </>
-                                )}
-                              </Button>
-                            )}
-                            {setCustomRuleInputs && (
-                              <div className="flex flex-col gap-0.5 flex-1 min-w-[320px] max-w-[520px]">
-                                <div className="flex items-center gap-1.5 flex-wrap">
-                                  <div
-                                    className={`flex-1 min-w-0 rounded border border-dashed transition-colors ${ruleDropTarget === `${customId}::left` ? 'border-primary bg-primary/5' : 'border-border'}`}
-                                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect = 'copy'; setRuleDropTarget(`${customId}::left`); }}
-                                    onDragLeave={(e) => { e.stopPropagation(); setRuleDropTarget(null); }}
-                                    onDrop={(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      setRuleDropTarget(null);
-                                      const rule = parseDroppedRule(e);
-                                      if (rule) {
-                                        const content = rule.draggedSide === 'right' ? rule.rightSide : rule.leftSide;
-                                        setCustomRuleInputs((prev) => ({ ...prev, [customId]: { left: content, right: prev[customId]?.right ?? '' } }));
-                                        setRuleValidationError?.((prev) => { const next = { ...prev }; delete next[customId]; return next; });
-                                      }
-                                    }}
-                                  >
-                                    <Input
-                                      value={customRuleInputs[customId]?.left ?? ''}
-                                      onChange={(e) => {
-                                        setCustomRuleInputs((prev) => ({ ...prev, [customId]: { left: e.target.value, right: prev[customId]?.right ?? '' } }));
-                                        setRuleValidationError?.((prev) => { const next = { ...prev }; delete next[customId]; return next; });
-                                      }}
-                                      placeholder="Left (optional) — or drag rule here"
-                                      className={`h-7 text-xs font-mono w-full border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 ${ruleValidationError[customId] ? 'border-destructive' : ''}`}
-                                      onClick={(e) => e.stopPropagation()}
-                                      title="Rule left side (drag from rules panel or type)"
-                                    />
-                                  </div>
-                                  <EquivalenceSymbol size={12} className="flex-shrink-0 text-muted-foreground" />
-                                  <div
-                                    className={`flex-1 min-w-0 rounded border border-dashed transition-colors ${ruleDropTarget === `${customId}::right` ? 'border-primary bg-primary/5' : 'border-border'}`}
-                                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect = 'copy'; setRuleDropTarget(`${customId}::right`); }}
-                                    onDragLeave={(e) => { e.stopPropagation(); setRuleDropTarget(null); }}
-                                    onDrop={(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      setRuleDropTarget(null);
-                                      const rule = parseDroppedRule(e);
-                                      if (rule) {
-                                        const content = rule.draggedSide === 'right' ? rule.rightSide : rule.leftSide;
-                                        setCustomRuleInputs((prev) => ({ ...prev, [customId]: { left: prev[customId]?.left ?? '', right: content } }));
-                                        setRuleValidationError?.((prev) => { const next = { ...prev }; delete next[customId]; return next; });
-                                      }
-                                    }}
-                                  >
-                                    <Input
-                                      value={customRuleInputs[customId]?.right ?? ''}
-                                      onChange={(e) => {
-                                        setCustomRuleInputs((prev) => ({ ...prev, [customId]: { left: prev[customId]?.left ?? '', right: e.target.value } }));
-                                        setRuleValidationError?.((prev) => { const next = { ...prev }; delete next[customId]; return next; });
-                                      }}
-                                      placeholder="Right (optional) — or drag rule here"
-                                      className={`h-7 text-xs font-mono w-full border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 ${ruleValidationError[customId] ? 'border-destructive' : ''}`}
-                                      onClick={(e) => e.stopPropagation()}
-                                      title="Rule right side (drag from rules panel or type)"
-                                    />
-                                  </div>
-                                </div>
-                                {ruleValidationError[customId] && (
-                                  <span className="text-xs text-destructive" onClick={(e) => e.stopPropagation()}>
-                                    {ruleValidationError[customId]}
-                                  </span>
-                                )}
-                                {(() => {
-                                  const r = customRuleInputs[customId];
-                                  const leftText = r?.left ?? '';
-                                  const rightText = r?.right ?? '';
-                                  if (!leftText.trim() && !rightText.trim()) return null;
-                                  if (display(leftText) === leftText && display(rightText) === rightText) return null;
-                                  return (
-                                    <div className="flex items-center gap-1 text-xs" onClick={(e) => e.stopPropagation()}>
-                                      <ExpressionRenderer expression={display(leftText) || ','} size={11} />
-                                      <EquivalenceSymbol size={10} className="text-muted-foreground" />
-                                      <ExpressionRenderer expression={display(rightText) || ','} size={11} />
-                                    </div>
-                                  );
-                                })()}
-                              </div>
-                            )}
-                            {onCopyToDebug && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-7 px-2 text-xs gap-1.5"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onCopyToDebug(draft, nextExpr);
-                                }}
-                                title="Copy to Debug: inserted expression → step below"
-                              >
-                                <Copy className="w-3.5 h-3.5" />
-                                Copy to Debug
-                              </Button>
-                            )}
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-7 px-2 text-xs gap-1.5"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleInsert();
-                              }}
-                              title="Insert step: edit expression and see rendered preview"
-                            >
-                              <Plus className="w-3.5 h-3.5" />
-                              Insert step
-                            </Button>
-                          </div>
-                        );
                         return (
-                          <>
-                            {firstButtonRow}
-                            {isInsertOpen && (
-                              <div className="pl-1 space-y-2 border border-border/50 rounded-md p-2 bg-muted/20">
-                                <Input
-                                  value={draft}
-                                  onChange={(e) =>
-                                    setInsertStepDrafts((prev) => ({
-                                      ...prev,
-                                      [transitionId]: e.target.value,
-                                    }))
-                                  }
-                                  placeholder="Expression (e.g. \\Oa(x,y))"
-                                  className="font-mono text-sm"
-                                  onClick={(e) => e.stopPropagation()}
-                                />
-                                <div className="text-sm">
-                                  <span className="text-muted-foreground mr-1">Rendered:</span>
-                                  <span className="font-mono inline-flex items-baseline">
-                                    <ExpressionRenderer expression={display(draft) || ','} size={12} />
-                                  </span>
-                                </div>
-                                {onInsertStep && (
-                                  <Button
-                                    variant="default"
-                                    size="sm"
-                                    className="h-7 px-2 text-xs gap-1.5"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      onInsertStep(theorem.key, i, toBook(draft));
-                                      setInsertStepOpen(null);
-                                      setInsertStepDrafts((prev) => {
-                                        const next = { ...prev };
-                                        delete next[transitionId];
-                                        return next;
-                                      });
-                                    }}
-                                    title="Insert this step and close"
-                                  >
-                                    <CheckCheck className="w-3.5 h-3.5" />
-                                    Finalize
-                                  </Button>
-                                )}
-                              </div>
-                            )}
-                            {secondButtonRow}
-                          </>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 px-2 text-xs gap-1.5"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onVerifyTransition(theorem.key, i - 1);
+                              }}
+                              disabled={!!checksLocked}
+                            >
+                              {transitionVerifying === transitionId ? (
+                                <>Checking...</>
+                              ) : transitionResults[i - 1] === true ? (
+                                <>
+                                  <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+                                  Check step
+                                </>
+                              ) : transitionResults[i - 1] === false ? (
+                                <>
+                                  <X className="w-3.5 h-3.5 text-destructive" />
+                                  Check step
+                                </>
+                              ) : (
+                                <>
+                                  <Check className="w-3.5 h-3.5" />
+                                  Check step
+                                </>
+                              )}
+                            </Button>
+                          </div>
                         );
                       })()}
                       {transitionResults[i - 1] === false && transitionDiagnoses[i - 1] && (
@@ -1800,7 +1671,7 @@ const TheoremCard = React.memo(function TheoremCard({
                   >
                     <span className="text-muted-foreground shrink-0 font-mono w-6">{i + 1}.</span>
                     <span className="flex-1 min-w-0">
-                      <ExpressionRenderer expression={step} size={12} />
+                      <ExpressionRenderer expression={step} size={EXPR_SIZE} />
                     </span>
                     {onDeleteStep && theorem.steps.length > 1 && (
                       <Button
@@ -1820,11 +1691,10 @@ const TheoremCard = React.memo(function TheoremCard({
                   </div>
                 </React.Fragment>
               ))}
-            </div>
-          </CardContent>
-        </CollapsibleContent>
-      </Collapsible>
-    </Card>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 });
 
@@ -1864,9 +1734,9 @@ function MatchInfoDisplay({
         <span className="font-medium text-green-700 dark:text-green-300">Check passed</span>
         {(matchInfo.ruleLeft != null || matchInfo.ruleRight != null) && (
           <span className="text-muted-foreground font-mono text-[11px] truncate flex-1 min-w-0 inline-flex items-center gap-0.5">
-            <ExpressionRenderer expression={matchInfo.ruleLeft ?? ','} size={11} />
-            <EquivalenceSymbol size={11} className="shrink-0" />
-            <ExpressionRenderer expression={matchInfo.ruleRight ?? ','} size={11} />
+            <ExpressionRenderer expression={matchInfo.ruleLeft ?? ','} size={EXPR_SIZE_SM} />
+            <EquivalenceSymbol size={EXPR_SIZE_SM} className="shrink-0" />
+            <ExpressionRenderer expression={matchInfo.ruleRight ?? ','} size={EXPR_SIZE_SM} />
           </span>
         )}
         <span className="text-muted-foreground shrink-0">
@@ -1889,9 +1759,9 @@ function MatchInfoDisplay({
             <div>
               <div className="font-medium text-foreground/80 mb-1">Pattern rule (before \Tc substitution):</div>
               <div className="text-muted-foreground text-[11px] break-all inline-flex items-center gap-0.5 flex-wrap">
-                <ExpressionRenderer expression={matchInfo.ruleLeft ?? ','} size={11} />
-                <EquivalenceSymbol size={11} className="shrink-0" />
-                <ExpressionRenderer expression={matchInfo.ruleRight ?? ','} size={11} />
+                <ExpressionRenderer expression={matchInfo.ruleLeft ?? ','} size={EXPR_SIZE_SM} />
+                <EquivalenceSymbol size={EXPR_SIZE_SM} className="shrink-0" />
+                <ExpressionRenderer expression={matchInfo.ruleRight ?? ','} size={EXPR_SIZE_SM} />
               </div>
               <div className="font-mono text-muted-foreground text-[11px] break-all mt-1">{originalPattern}</div>
             </div>
@@ -1900,9 +1770,9 @@ function MatchInfoDisplay({
             <div>
               <div className="font-medium text-foreground/80 mb-1">Pattern after \Tc substitution:</div>
               <div className="text-muted-foreground text-[11px] break-all inline-flex items-center gap-0.5 flex-wrap">
-                <ExpressionRenderer expression={instantiatedLeft ?? matchInfo.ruleLeft ?? ','} size={11} />
-                <EquivalenceSymbol size={11} className="shrink-0" />
-                <ExpressionRenderer expression={instantiatedRight ?? matchInfo.ruleRight ?? ','} size={11} />
+                <ExpressionRenderer expression={instantiatedLeft ?? matchInfo.ruleLeft ?? ','} size={EXPR_SIZE_SM} />
+                <EquivalenceSymbol size={EXPR_SIZE_SM} className="shrink-0" />
+                <ExpressionRenderer expression={instantiatedRight ?? matchInfo.ruleRight ?? ','} size={EXPR_SIZE_SM} />
               </div>
             </div>
           )}
@@ -1939,7 +1809,7 @@ function MatchInfoDisplay({
                     <div className="pl-2 space-y-0.5">
                       {exprs.map((e, i) => (
                         <div key={i} className="text-[11px] break-all">
-                          <ExpressionRenderer expression={e || ','} size={11} />
+                          <ExpressionRenderer expression={e || ','} size={EXPR_SIZE_SM} />
                         </div>
                       ))}
                     </div>

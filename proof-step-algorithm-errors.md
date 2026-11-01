@@ -56,7 +56,36 @@ Recheck after inserting one-site chains (each link an earlier rule, one arm then
 | Previous-order induction | 38 | 0 |
 | Recursive function R, previous order | 151 | 0 |
 | Node ring | 187 | 0 |
-| Node connectivity | (recheck after operand-bind fix) | |
+| Node connectivity | 574 | 0 |
+| Node continuity | 484 | 0 |
+| Relationship of subnode | ~237 (in progress) | ~39 |
+
+### Chapter 16 notes (Rules_of_Relationship_of_Subnode, in progress)
+
+Expanded informal `<1>`/`<2>` macros in thm 23/122. Fill patterns: code-dist + reverse operators-3 (`Ot i ↔ Ot i, i Pu`); create-temp / create-id arm collapses; subnode-0/1 Pb wrap+expand; Pc drop via Ps scaffold (`copy-identical` + connectivity-193).
+
+**↔ converse boundaries:** extract keeps bare `,` steps; verify splits flat sequences on `,` so empty mid-proof after one direction does not chain into the converse restart.
+
+**Derived checks** in `caseFocus.ts` (via `matchesDerivedBbTransition`):
+- `matchesObBbOsUnzip` — zip/unzip create–Bb–release sandwiches (`Ob`/`Oc`/`Od`/`Ot` + matching `Os`).
+- `matchesOsIntoOrFalseArm` — `Bb{n Pu}{Or,}{}, n Os` → `Bb{n Pu}{Or,}{n Os,}` (ecd + error-release; Or/Os have no commute).
+- `matchesNestedNullFocus` — nested null-54/55 under an outer Bb (`i nPu` next to `Bb{i Pu}{T}{F}` → false arm).
+- `matchesCreateSubnodeThroughOr` — `i Ob m, Or, m Os` → `Or` (create-subnode + Or/Os order gap).
+- `matchesPsPastUnzippedBb` — in unzipped Ob…/Bb…/Os… blocks, `t1 Ps t2` may sit between the Obs and Bbs or between the Bbs (operators-21 only adds/drops Ps beside the Ob pair).
+- `matchesPeCopyIntoPuFalseArm` — after id-value-equal puts Pe in a `Bb{…Pu…}` true arm, copy that Pe into the false arm. Full path is create-id + null-17 + Pe-into-Pc bubble; checker rejects Pe-into-Pc whenever anything trails the nested Bb.
+- `matchesPcRightSubstInBb` — `i Pc j` with `Bb{m Pc i}` → `Bb{m Pc j}` (symmetry + connectivity-106); 106 fails when the outer true arm holds `i Pc j` plus another atom.
+- `matchesAtomIntoRelBbTrailing` — push Ps/Pe/… into both arms of a following rel-Bb when a non-empty suffix trails the Bb (connectivity-29/31 gap).
+- `matchesMergedCreateBbZip` — zip merged `Ob Ob Bb{… both …} Pe Os Os` into separate sandwiches with second cond retargeted (122 ~570→571).
+- `matchesSandwichPeToTrailingOs` — drop first Ob/Bb/Os sandwich and replace trailing `s1 Pe s2` with `s2 Os` (122 ~571→572). Micro-path uses create-temp×2, Pe/Ot bubbles, temp-value-equal, sandwich collapse; checker gaps on create-temp when the same Ot also sits inside a Bb.
+- `matchesObBbOsUnzip` — also accepts zip/unzip inside a Bb arm when the outer frame matches.
+- `matchesAdjacentCreateBbOsSwap` — swap two adjacent create–Bb–Os sandwiches (optional trailing shell), including inside a Bb arm; serializes as unzip + permute + zip.
+- `matchesPeSubstNestedPuBb` — null-58 Pe-subst of `Bb{i Pu}→Bb{j Pu}` when the Pe+Bb pair sits inside another Bb arm (122 converse ~43).
+- `matchesPeDropBothArmsWithWitness` — drop the same Pe from both Bb arms when Od/Ot witnesses for both Pe names are present (122 converse ~44).
+- `matchesPuNpbWitnessFold` — fold expanded `i Pu` + nested Od/Pc witness + `Bb{n Pu}{…Or…}` to `i Pu, i nPb t` (144 ~951→952). Od discharge via null-0 leaves a residual `Ot n` after the Os is spent on create-id.
+
+**122 Pe from double Pn:** `Ot i` ↔ `Ot i, i Pn i` (continuity-320 `\sim`); drop Pn then `temp-value-equal` / `id-value-equal` for Pe.
+
+**Still open (36):** 138×13, 145×7, 135×7, 122 converse×5, 23×4. Cleared this pass: 122 flat:1 s2 (create-id sandwich + adjacent swap); 122 ~43 Pe-subst nested Pu; 122 ~44 Pe-drop with Od witness.
 
 ### Verification fix: non-injective operand unification (critical)
 
@@ -121,3 +150,15 @@ Recursive function R, previous order: 151 passed, 0 failed. The proofs are the p
 Node ring: 187 passed, 0 failed. The filled arrows are earlier swaps, one neighbor at a time: `R_(j)` past copy, next, null, and release; `i \Ps j` past null and operators, flipping when the same-operand swap is the one that applies; the two nexts around `i \Ps i_0` by swapping the nexts, moving the comparison, and swapping the nexts back. The ring axiom moves the front `i \Ps j` to the end, so a kept front copy is the identical-node duplicate first. In theorem 5 the source had a single `t_0 \Os`. No earlier rule introduces that name. It is now `i_0 \Os`, which is release-next (`i \On, i \Os ⟺ i \Os`) and then `R(i), i \Os ⟺ i \Os`. The last arrow of theorem 5 adds `i_0 \Ps j` after `R_(j)`. `j \Ps i_0` is duplicated, the copy is flipped to `i_0 \Ps j`, and the node-ring axiom carries that copy across `i_0 \On, R(i_0), R_(j)`. The previous-order identical-node rule `,i \Ps j, R_(i), R_(j), ⟺ ,i \Ps j, R_(i), R_(j), i \Ps j,` needs `R_(i_0)` in the first slot. This line has `R(i_0)`, and neither that comparison nor `R_(i_0)` can pass `i_0 \On`.
 
 Recursive function R: 151 passed, 0 failed. An induction proof is checked as two chains. The base case uses only earlier rules. The induction step may also use its hypothesis, which is an assumption of that proof and not a library rule. The hypothesis is applied by substitution, including when a flag such as `\In` sits in the same expression. A flag is the same token on both sides of that substitution; it is not a schematic operand. `\Ri` only separates the hypothesis from the induction step. `i \nPu` moves past `\In \Ps i` and past `j \On` or `R(j)` one neighbor at a time. `R(i)` is added inside one arm, then the other. `j \nPu` crosses `i \Ps j` by flipping the comparison, using the same-operand swap, and flipping back. Code after `\Bb{m \Pe n}{,}{,\Or,}` enters both arms by Code Distribution, and Error Code then drops the copy that landed after `\Or`.
+
+### Chapter 15 fill notes (Rules_of_Node_Continuity)
+
+**Status:** `passed=484 failed=0 parseFailures=0` via `verify-all-chapters.ts --chapter=Rules_of_Node_Continuity` after re-extract. Same process as ch14: verify → solve complete justified chains from earlier rules only → exact-fingerprint `\Rq` anchor → extract → recheck. No new axioms; `theorems.ts` not regenerated.
+
+**Learned patterns:**
+- flip72 / reverse operators-9 Op-into-arm; release-next+create-copy shell drop; create-next-prev; identical-15/16/17 arm push/pull; Pc right-subst (Pc flip + rev connectivity-110 + flip); Ps scaffold (73 + reverse copy-identical); continuity-0 reverse collapse.
+- Nested Bb pulls (thm 28): bubble Oc/On to arm front one arm at a time → pull via identical-12/16 → push Os into inner Bb → arm Os reorder (`swap-*-release`) → **outer** reorder only by adjacent swaps (`swap-copy-next` / `swap-copy-copy` / `swap-next-next`), never multi-item jumps.
+- Thm 115 Oc/On into Bb: push **On before Oc** (identical-16 then identical-12); then Os to front inside each arm via `swap-next-release` then `swap-copy-release` (one arm at a time). Pushing On after Oc failed when arms were unequal for identical-16 adjacency.
+- Naive greedy outer reorder can oscillate (equal distance); prefer an explicit adjacent path that reduces a known permutation (e.g. ABCD→CDAB as B↔C, A↔C, B↔D, A↔D).
+
+**Checker watchlist (no change required for clear):** empty-LHS create / BFS hangs in fill search — skip empty-LHS when expression grows; Soft/wrong anchors still forbidden. No new derived Bb case checks were needed for ch15.

@@ -16,6 +16,25 @@ import { ruleStatistics } from '@engine/inferenceRules/ruleStatistics';
 import { diagnoseFailure } from '@engine/inferenceRules/errorDiagnosis';
 import { normalizeSpacing } from '@engine/inferenceRules/utils';
 import { checkInferenceRules } from '@engine/inferenceRules';
+import { matchesDerivedBbTransition } from '@engine/inferenceRules/caseFocus';
+
+const DERIVED_BB_MATCH: MatchInfo = {
+  matchedRuleId: 'derived-bb',
+  description: 'Derived Bb transition (case focus/merge or shell redistribute)',
+  inferenceRuleName: 'Derived Bb',
+};
+
+function tryDerivedBb(targetLeft: string, targetRight: string): VerifyTransitionResult | null {
+  if (!matchesDerivedBbTransition(targetLeft, targetRight)) return null;
+  return {
+    matched: true,
+    matchInfo: {
+      ...DERIVED_BB_MATCH,
+      ruleLeft: targetLeft,
+      ruleRight: targetRight,
+    },
+  };
+}
 
 // Relative path so Vite resolves the worker correctly in dev and production (avoids alias/MIME issues)
 const WORKER_URL = new URL('../workers/transitionVerificationWorker.ts', import.meta.url);
@@ -31,6 +50,20 @@ const PARALLEL_WORKERS = Math.min(4, Math.max(1, navigator.hardwareConcurrency ?
 const workerPool: Worker[] = [];
 let poolIndex = 0;
 
+/** Disable the pool after a load/runtime failure so later calls skip straight to main thread. */
+function markWorkerFailed(): void {
+  workerFailed = true;
+  for (const w of workerPool) {
+    try {
+      w.terminate();
+    } catch {
+      /* ignore */
+    }
+  }
+  workerPool.length = 0;
+  poolIndex = 0;
+}
+
 function getWorkerFromPool(): Worker | null {
   if (workerFailed) return null;
   try {
@@ -41,7 +74,7 @@ function getWorkerFromPool(): Worker | null {
     poolIndex += 1;
     return w;
   } catch {
-    workerFailed = true;
+    markWorkerFailed();
     return null;
   }
 }
@@ -81,6 +114,7 @@ function verifyChunk(
       worker.removeEventListener('message', handler);
       worker.removeEventListener('error', errorHandler);
       if (e.data.error) {
+        markWorkerFailed();
         reject(new Error(e.data.error));
       } else {
         resolve({ matched: e.data.matched, response: e.data });
@@ -88,7 +122,9 @@ function verifyChunk(
     };
 
     const errorHandler = (ev: ErrorEvent) => {
-      workerFailed = true;
+      // Cold-start / MIME / compile failures land here. Mark the pool dead and
+      // reject so the caller can fall back to main-thread verify for THIS request.
+      markWorkerFailed();
       worker.removeEventListener('message', handler);
       worker.removeEventListener('error', errorHandler);
       reject(new Error(ev.message ?? 'Worker error'));
@@ -104,7 +140,14 @@ function verifyChunk(
       rules: [],
       rulesToTry: rulesChunk,
     };
-    worker.postMessage(request);
+    try {
+      worker.postMessage(request);
+    } catch (err) {
+      markWorkerFailed();
+      worker.removeEventListener('message', handler);
+      worker.removeEventListener('error', errorHandler);
+      reject(err instanceof Error ? err : new Error(String(err)));
+    }
   });
 }
 
@@ -175,6 +218,8 @@ async function verifyTransitionMainThread(
       };
     }
   }
+  const derived = tryDerivedBb(targetLeft, targetRight);
+  if (derived) return derived;
   const diagnosis = diagnoseFailure(targetLeft, targetRight, rulesTried, rules, index);
   return { matched: false, diagnosis };
 }
@@ -202,7 +247,8 @@ export function verifyTransitionWorker(
   const rulesToTry = getRulesForTransition(index, targetLeft, targetRight);
 
   if (rulesToTry.length === 0) {
-    // Generate diagnosis for no rules case
+    const derived = tryDerivedBb(targetLeft, targetRight);
+    if (derived) return Promise.resolve(derived);
     const diagnosis = diagnoseFailure(targetLeft, targetRight, [], rules, index);
     const result: VerifyTransitionResult = { matched: false, diagnosis };
     cacheFalseResult(cacheKey, result);
@@ -228,6 +274,8 @@ export function verifyTransitionWorker(
   }
 
   if (chunks.length === 0) {
+    const derived = tryDerivedBb(targetLeft, targetRight);
+    if (derived) return Promise.resolve(derived);
     const diagnosis = diagnoseFailure(targetLeft, targetRight, [], rules, index);
     const result: VerifyTransitionResult = { matched: false, diagnosis };
     cacheFalseResult(cacheKey, result);
@@ -243,43 +291,60 @@ export function verifyTransitionWorker(
       0,
       targetLeft,
       targetRight,
-      chunks[0]
-    ).then(({ matched, response }) => {
-      // Track statistics for all rules tried
-      if (response.rulesTried) {
-        for (const { ruleId, matched: ruleMatched, matchTime } of response.rulesTried) {
-          ruleStatistics.recordAttempt(ruleId, matchTime, ruleMatched);
+      chunks[0]!
+    )
+      .then(({ matched, response }) => {
+        // Track statistics for all rules tried
+        if (response.rulesTried) {
+          for (const { ruleId, matched: ruleMatched, matchTime } of response.rulesTried) {
+            ruleStatistics.recordAttempt(ruleId, matchTime, ruleMatched);
+          }
         }
-      }
-      
-      // Generate diagnosis if no match
-      if (!matched && response.rulesTried) {
-        const diagnosis = diagnoseFailure(targetLeft, targetRight, response.rulesTried, rules, index);
-        const result: VerifyTransitionResult = { matched: false, diagnosis };
-        cacheFalseResult(cacheKey, result);
-        return result;
-      }
-      
-      return { matched: true, matchInfo: response.matchInfo };
-    });
+
+        // Generate diagnosis if no match (after derived Bb fallback, same as CLI)
+        if (!matched) {
+          const derived = tryDerivedBb(targetLeft, targetRight);
+          if (derived) return derived;
+          if (response.rulesTried) {
+            const diagnosis = diagnoseFailure(targetLeft, targetRight, response.rulesTried, rules, index);
+            const result: VerifyTransitionResult = { matched: false, diagnosis };
+            cacheFalseResult(cacheKey, result);
+            return result;
+          }
+          return { matched: false };
+        }
+
+        return { matched: true, matchInfo: response.matchInfo };
+      })
+      // Same request must succeed on main thread when the worker dies on cold start
+      .catch(() => runOnMainThread());
   }
 
   // Run chunks in parallel; resolve true as soon as any matches, false when all done
   const workers = chunks.map(() => getWorkerFromPool());
   if (workers.some((w) => w === null)) return runOnMainThread();
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     let settled = 0;
     let foundMatch = false;
-    let rejected = false;
+    let fellBack = false;
     const allRulesTried: Array<{ ruleId: string; matched: boolean; matchTime: number }> = [];
 
+    const fallbackToMain = () => {
+      if (fellBack || foundMatch) return;
+      fellBack = true;
+      void runOnMainThread().then(resolve);
+    };
+
     const maybeSettle = () => {
-      if (foundMatch) return;
-      if (rejected) return;
+      if (foundMatch || fellBack) return;
       settled += 1;
       if (settled === chunks.length) {
-        // All chunks done, generate diagnosis
+        const derived = tryDerivedBb(targetLeft, targetRight);
+        if (derived) {
+          resolve(derived);
+          return;
+        }
         const diagnosis = diagnoseFailure(targetLeft, targetRight, allRulesTried, rules, index);
         const result: VerifyTransitionResult = { matched: false, diagnosis };
         cacheFalseResult(cacheKey, result);
@@ -297,6 +362,7 @@ export function verifyTransitionWorker(
         chunk
       )
         .then(({ matched, response }) => {
+          if (fellBack || foundMatch) return;
           // Track statistics for all rules tried in this chunk
           if (response.rulesTried) {
             for (const { ruleId, matched: ruleMatched, matchTime } of response.rulesTried) {
@@ -304,16 +370,17 @@ export function verifyTransitionWorker(
               allRulesTried.push({ ruleId, matched: ruleMatched, matchTime });
             }
           }
-          
+
           if (matched) {
             foundMatch = true;
             resolve({ matched: true, matchInfo: response.matchInfo });
+            return;
           }
           maybeSettle();
         })
-        .catch((err) => {
-          rejected = true;
-          reject(err);
+        .catch(() => {
+          // Worker cold-start/runtime failure: re-run the full rule set on main thread
+          fallbackToMain();
         });
     });
   });

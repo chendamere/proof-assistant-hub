@@ -92,6 +92,13 @@ interface ExpressionRendererProps {
   onBranchHeightChange?: (height: number) => void;
 }
 
+/** Book/TeX → on-screen glyphs (does not change stored expressions). */
+export function formatExpressionForDisplay(expr: string): string {
+  return expr
+    .replace(/\\sim\b/g, '~')
+    .replace(/R\\_/g, 'R_');
+}
+
 interface Token {
   type: 'operator' | 'text' | 'branch';
   value: string;
@@ -226,6 +233,34 @@ const parseExpression = (expr: string): Token[] => {
   return tokens;
 };
 
+/**
+ * Display-only: hide the outer comma next to half-brackets.
+ * - \Brs: comma immediately before the branch opens
+ * - \Blb: comma immediately after the branch closes
+ * Arm-internal commas are left alone.
+ */
+function hideOuterBlbBrsCommas(tokens: Token[]): Token[] {
+  const out = tokens.map((t) =>
+    t.type === 'text' ? { ...t, value: t.value } : t.type === 'branch' ? { ...t, branchData: t.branchData } : { ...t }
+  );
+  for (let i = 0; i < out.length; i++) {
+    const tok = out[i]!;
+    if (tok.type !== 'branch' || !tok.branchData) continue;
+    if (tok.branchData.type === 'Brs') {
+      const prev = out[i - 1];
+      if (prev?.type === 'text') {
+        prev.value = prev.value.replace(/,(\s*)$/, '$1');
+      }
+    } else if (tok.branchData.type === 'Blb') {
+      const next = out[i + 1];
+      if (next?.type === 'text') {
+        next.value = next.value.replace(/^(\s*),/, '$1');
+      }
+    }
+  }
+  return out;
+}
+
 // Branch component for rendering bracket-style branches
 const BranchRenderer: React.FC<{
   branchData: Token['branchData'];
@@ -293,6 +328,7 @@ const BranchRenderer: React.FC<{
   
   // Render content inside branches recursively, incrementing depth
   const renderBranchContent = (content: string, isBranch1: boolean): React.ReactNode => {
+    // Keep arm commas; outer Brs/Blb commas are hidden in ExpressionRenderer token pass.
     if (!content.trim()) return <span className="opacity-0">.</span>;
     // Increment depth for nested branches
     const childDepth = depth + 1;
@@ -436,9 +472,9 @@ export const ExpressionRenderer: React.FC<ExpressionRendererProps> = ({ expressi
     );
   }
 
-  const tokens = parseExpression(expression);
-  // Increase size by 20%
-  const adjustedSize = size * 1.2;
+  const tokens = hideOuterBlbBrsCommas(parseExpression(formatExpressionForDisplay(expression)));
+  // Increase size by 20%; round to whole pixels so glyphs stay crisp under dialog transforms
+  const adjustedSize = Math.round(size * 1.2);
 
   const minContainerHeight = size * 1.8;
   const minContainerWidth = size * 2.5;
@@ -465,15 +501,16 @@ export const ExpressionRenderer: React.FC<ExpressionRendererProps> = ({ expressi
           );
         } else if (token.type === 'operator' && token.operatorSrc) {
           const isPuOperator = token.value === '\\Pu' || token.value === '\\nPu';
-          const opSize = isPuOperator ? adjustedSize * 1.35 : adjustedSize;
+          const opSize = Math.round(isPuOperator ? adjustedSize * 1.35 : adjustedSize);
           return (
             <span key={index} className="inline-flex whitespace-nowrap">
               <img
                 src={token.operatorSrc}
                 alt={token.value}
                 title={token.value}
-                style={{ width: opSize, height: opSize, verticalAlign: 'middle' }}
+                style={{ width: opSize, height: opSize, verticalAlign: 'middle', imageRendering: 'auto' }}
                 className="inline-block align-middle dark:invert dark:brightness-0 dark:invert"
+                draggable={false}
               />
             </span>
           );

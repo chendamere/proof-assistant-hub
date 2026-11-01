@@ -1,0 +1,96 @@
+﻿ s6
+  L ,i \Oc i_1,i_1 \On,j \Oc j_1,j \Ps j_1,\Blb{i_1 \Ps j}{,i_1 \Os,j_1 \Os,}{,i_1 \Os,j_1 \Os,},
+  R ,i \Oc i_1,i_1 \On,j \Oc j_1,j \Ps j_1,\Blb{i_1 \Ps j_1}{,i_1 \Os,j_1 \Os,}{,i_1 \Os,j_1 \Os,},
+
+ s8
+  L ,i \Oc i_1,i_1 \On,j \Oc j_1,\Blb{i_1 \Ps j_1}{,i_1 \Os,j_1 \Os,}{,i_1 \Os,j_1 \Os,},
+  R ,i \Oc i_1,i_1 \On,j \Oc j_1,\Blb{i_1 \Ps j_1}{,i_1 \Op,i_1 \Os,j_1 \Op,j_1 \Os,}{,i_1 \Op,i_1 \Os,j_1 \Op,j_1 \Os,},
+
+ s20
+  L ,j \Oc j_1,j_1 \Op,\Blb{i \Ps j_1}{,i \Oc i_1,i_1 \Os,j_1 \Os,}{,i \Oc i_1,i_1 \Os,j_1 \Os,},
+  R ,j \Oc j_1,j_1 \Op,\Blb{ i \Ps j_1}{,j_1 \Os,}{,j_1 \Os,},
+
+ s3
+  L ,i \Oc i_1,i_1 \On,\Bb{i_1 \Ps j}{,i_1 \Os,m \Oc m_1,m_1 \On,\Bb{m_1 \Ps n}{,m_1 \Os,\Tc c_1,}{,m_1 \Os,\Tc c_2,},}{,i_1 \Os,m \Oc m_1,m_1 \On,\Bb{m_1 \Ps n}{,m_1 \Os,\Tc c_3,}{,m_1 \Os,\Tc c_4,},},
+  R ,m \Oc m_1,m_1 \On,i \Oc i_1,i_1 \On,\Bb{i_1 \Ps j}{,\Bb{m_1 \Ps n}{,m_1 \Os,i_1 \Os,\Tc c_1,}{,m_1 \Os,i_1 \Os,\Tc c_2,},}{,\Bb{m_1 \Ps n}{,m_1 \Os,i_1 \Os,\Tc c_3,}{,m_1 \Os,i_1 \Os,\Tc c_4,},},
+
+ s5
+  L ,m \Oc m_1,m_1 \On,i \Oc i_1,i_1 \On,\Bb{m_1 \Ps n}{,\Bb{i_1 \Ps j}{,m_1 \Os,i_1 \Os,\Tc c_1,}{,m_1 \Os,i_1 \Os,\Tc c_3,},}{,\Bb{i_1 \Ps j}{,m_1 \Os,i_1 \Os,\Tc c_2,}{,m_1 \Os,i_1 \Os,\Tc c_4,},},
+  R ,m \Oc m_1,m_1 \On,\Bb{m_1 \Ps n}{,m_1 \Os,i \Oc i_1,i_1 \On,\Bb{i_1 \Ps j}{,i_1 \Os,\Tc c_1,}{,i_1 \Os,\Tc c_3,},}{,m_1 \Os,i \Oc i_1,i_1 \On,\Bb{i_1 \Ps j}{,i_1 \Os,\Tc c_2,}{,i_1 \Os,\Tc c_4,},},
+
+ s6
+  L ,m \Oc m_1,m_1 \On,\Bb{m_1 \Ps n}{,m_1 \Os,i \Oc i_1,i_1 \On,\Bb{i_1 \Ps j}{,i_1 \Os,\Tc c_1,}{,i_1 \Os,\Tc c_3,},}{,m_1 \Os,i \Oc i_1,i_1 \On,\Bb{i_1 \Ps j}{,i_1 \Os,\Tc c_2,}{,i_1 \Os,\Tc c_4,},},
+  R ,\Bb{m \Pn n}{,\Bb{i \Pn j}{,\Tc c_1,}{,\Tc c_3,},}{,\Bb{i \Pn j}{,\Tc c_2,}{,\Tc c_4,},},
+
+ s12
+  L ,i \Oc i_1,i \Oc i_2,i_1 \On,i_2 \On,\Bb{i_2 \Ps j}{,i_2 \Os,\Bb{i_1 \Ps j}{,i_1 \Os,\Tc c_1,}{,i_1 \Os,\Tc c_3,},}{,i_2 \Os,i_1 \Os,\Tc c_2,},
+  R ,i \Oc i_2,i_2 \On,\Bb{i_2 \Ps j}{,i_2 \Os,i \Oc i_1,i_1 \On,\Bb{i_1 \Ps j}{,i_1 \Os,\Tc c_1,}{,i_1 \Os,\Tc c_3,},}{,i_2 \Os,i \Oc i_1,i_1 \On,i_1 \Os,\Tc c_2,},
+
+ s14
+  L ,\Bb{i \Pn j}{,i \Oc i_1,i_1 \On,\Bb{i_1 \Ps j}{,i_1 \Os,\Tc c_1,}{,i_1 \Os,\Tc c_3,},}{,i \Oc i_1,i_1 \On,i_1 \Os,\Tc c_2,},
+  R ,\Bb{i \Pn j}{,\Bb{i \Pn j}{,\Tc c_1,}{,\Tc c_3,},}{,\Tc c_2,},
+
+ s12
+  L ,i \Oc i_1,i_1 \On,m \Oc m_1,m_1 \On,i_1 \Ps j,\Bb{m_1 \Ps i_1}{,m_1 \Os,i_1 \Os,\Tc c_1,}{,m_1 \Os,i_1 \Os,\Tc c_2,},
+  R ,i \Oc i_1,i \On,i \Op,i_1 \On,m \Oc m_1,m \On,m \Op,m_1 \On,i_1 \Ps j,\Bb{m_1 \Ps i_1}{,m_1 \Os,i_1 \Os,\Tc c_1,}{,m_1 \Os,i_1 \Os,\Tc c_2,},
+
+ s13
+  L ,i \Oc i_1,i \On,i \Op,i_1 \On,m \Oc m_1,m \On,m \Op,m_1 \On,i_1 \Ps j,\Bb{m_1 \Ps i_1}{,m_1 \Os,i_1 \Os,\Tc c_1,}{,m_1 \Os,i_1 \Os,\Tc c_2,},
+  R ,i \Oc i_1,i \On,i_1 \On,m \Oc m_1,m \On,m_1 \On,i_1 \Ps j,\Bb{m_1 \Ps i_1}{,m \Op,i \Op,m_1 \Os,i_1 \Os,\Tc c_1,}{,m \Op,i \Op,m_1 \Os,i_1 \Os,\Tc c_2,},
+
+ s23
+  L ,i \Oc i_1,i \On,i_1 \On,m \Oc m_1,m \On,m_1 \On,i_1 \Ps j,i \Ps i_1,\Bb{m_1 \Ps i}{,m \Op,i \Op,m_1 \Os,i_1 \Os,\Tc c_1,}{,m \Op,i \Op,m_1 \Os,i_1 \Os,\Tc c_2,},
+  R ,i \Oc i_1,i \On,i_1 \On,m \Oc m_1,m \On,m_1 \On,i_1 \Ps j,\Bb{m_1 \Ps i}{,m \Op,i \Op,m_1 \Os,i_1 \Os,\Tc c_1,}{,m \Op,i \Op,m_1 \Os,i_1 \Os,\Tc c_2,},
+
+ s28
+  L ,i \Oc i_1,i \On,i_1 \On,m \Oc m_1,m \On,m_1 \On,i_1 \Ps j,m \Ps m_1,\Bb{m \Ps i}{,m \Op,i \Op,m_1 \Os,i_1 \Os,\Tc c_1,}{,m \Op,i \Op,m_1 \Os,i_1 \Os,\Tc c_2,},
+  R ,i \Oc i_1,i \On,i_1 \On,m \Oc m_1,m \On,m_1 \On,i_1 \Ps j,\Bb{m \Ps i}{,m \Op,i \Op,m_1 \Os,i_1 \Os,\Tc c_1,}{,m \Op,i \Op,m_1 \Os,i_1 \Os,\Tc c_2,},
+
+ s38
+  L ,i \Oc i_1,i \On,i \Op,i_1 \On,m \Oc m_1,m \On,m \Op,m_1 \On,i_1 \Ps j,\Bb{m \Ps i}{,m_1 \Os,i_1 \Os,\Tc c_1,}{,m_1 \Os,i_1 \Os,\Tc c_2,},
+  R ,i \Oc i_1,i_1 \On,m \Oc m_1,m_1 \On,i_1 \Ps j,\Bb{m \Ps i}{,m_1 \Os,i_1 \Os,\Tc c_1,}{,m_1 \Os,i_1 \Os,\Tc c_2,},
+
+ s46
+  L ,i \Oc i_1,i_1 \On,i_1 \Ps j,i_1 \Os,m \Oc m_1,m_1 \On,m_1 \Os,\Bb{m \Ps i}{,\Tc c_1,}{,\Tc c_2,},
+  R ,i \Oc i_1,i_1 \On,i_1 \Ps j,i_1 \Os,\Bb{m \Ps i}{,\Tc c_1,}{,\Tc c_2,},
+
+ s17
+  L ,i \Oc i_1,i \Ps j,j \Oc j_1,j \Ps i_1,i_1 \On,j_1 \On,i_1 \Ps j_1,\Bb{i_1 \Ps m}{,j_1 \Os,i_1 \Os,\Tc c_1,}{,j_1 \Os,i_1 \Os,\Tc c_2,},
+  R ,i \Ps j,i \Oc i_1,j \Oc j_1,i_1 \On,j_1 \On,\Bb{i_1 \Ps m}{,j_1 \Os,i_1 \Os,\Tc c_1,}{,j_1 \Os,i_1 \Os,\Tc c_2,},
+
+ s24
+  L ,i \Ps j,j \Oc j_1,j_1 \On,j_1 \Os,i \Oc i_1,i_1 \On,\Bb{i_1 \Ps m}{,i_1 \Os,\Tc c_1,}{,i_1 \Os,\Tc c_2,},
+  R ,i \Ps j,i \Oc i_1,i_1 \On,\Bb{i_1 \Ps m}{,i_1 \Os,\Tc c_1,}{,i_1 \Os,\Tc c_2,},
+
+ s6
+  L ,i \Oc i_1,i_1 \On,i_1 \Ps j,i \Pc i_1,i_1 \Os,
+  R ,i \Oc i_1,i_1 \On,i_1 \Ps j,i \Pc j,i_1 \Os,
+
+ s12
+  L ,i \Oc i_1,i_1 \On,i_1 \Os,i \On,i \Ps j,
+  R ,i \On,i \Ps j,
+
+ s33
+  L ,i \Oc i_0,i_0 \On,i_0 \Os,i \On,i \Ps j,j \On,i \Ps j,
+  R ,i \On,i \Ps j,j \On,i \Ps j,
+
+ s17
+  L ,i \Oc i_2,i_2 \Ps i,i_2 \On,i_2 \Ps i,i \On,i \Ps i_1,i_2 \Os,
+  R ,i \Oc i_2,i_2 \On,i_2 \Ps i,i \On,i \Ps i_1,i_2 \Os,
+
+ s25
+  L ,i \Oc i_2,i \Oc i_1,i_2 \On,i \Ps i_1,i_2 \Ps i,i \On,i_2 \Ps i,i_1 \On,i_1 \Ps i,i_2 \Os,i_1 \Os,
+  R ,i \Oc i_2,i \Oc i_1,i_2 \On,i \Ps i_1,i_2 \Ps i_1,i \On,i_2 \Ps i,i_1 \On,i_1 \Ps i,i_2 \Os,i_1 \Os,
+
+ s54
+  L ,i \Oc i_2,i_2 \On,i_2 \Os,i \Oc i_1,i \On,i \Ps i_1,i_1 \On,i_1 \Ps i,i_1 \Os,
+  R ,i \Oc i_1,i \On,i \Ps i_1,i_1 \On,i_1 \Ps i,i_1 \Os,
+
+ s9
+  L ,i \Pu,i \Oc i_1,i_1 \On,i \On,i \Ps i_1,i_1 \Pu,i \Pu,i_1 \Os,
+  R ,i \Pu,i \Oc i_1,i_1 \On,i \On,i_1 \Pu,i \Pu,i_1 \Os,
+
+ s5
+  L ,\Ot i,i \Pu,i \On,i \Pu,i \Op,i \Pn i,
+  R ,\Ot i,i \On,i \Op,i \Pn i,
+

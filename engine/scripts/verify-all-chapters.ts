@@ -149,7 +149,28 @@ for (const key of keys) {
       sequences.push({ name: `${tag}then`, steps: proof.then ?? [], extra: hyp });
     });
   } else {
-    sequences.push({ name: 'flat', steps, extra: [] });
+    // Split flat proofs on empty `,` steps (↔ converse boundaries)
+    const chunks: string[][] = [[]];
+    for (const st of steps) {
+      const n = normalizeSpacing(st);
+      if (n === ',' || n === '') {
+        if (chunks[chunks.length - 1]!.length) chunks.push([]);
+        continue;
+      }
+      chunks[chunks.length - 1]!.push(st);
+    }
+    const nonempty = chunks.filter((c) => c.length >= 2);
+    if (nonempty.length === 0) {
+      sequences.push({ name: 'flat', steps, extra: [] });
+    } else {
+      nonempty.forEach((c, n) => {
+        sequences.push({
+          name: nonempty.length > 1 ? `flat:${n}` : 'flat',
+          steps: c,
+          extra: [],
+        });
+      });
+    }
   }
   const checkable = sequences.some((seq) => seq.steps.length >= 2);
   if (!checkable) {
@@ -193,7 +214,7 @@ for (const key of keys) {
           }
         }
       }
-      // Derived: shell-aware Bb case focus/merge + Ps/Os redistribute
+      // Derived: Bb case focus/merge, Ps/Os redistribute, Ob/Bb/Os unzip, Os→Or-false-arm
       if (!matched && matchesDerivedBbTransition(left, right)) {
         matched = true;
         tried++;

@@ -47,7 +47,9 @@ function isProofStepLine(line) {
 /** Extract and normalize a single expression. */
 function normalizeExpr(s) {
   s = s.replace(/\\\\+$/, '').replace(/\\+$/, '').trim();
-  if (!s || s.length < 2) return '';
+  // Bare comma = empty proof step (end of a direction in ↔ proofs)
+  if (s === ',' || s === '') return s === ',' ? ',' : '';
+  if (s.length < 2 && s !== ',') return '';
   if (!s.endsWith(',')) s = s + ',';
   if (!s.startsWith(',')) s = ',' + s;
   return s.replace(/\s+/g, ' ').trim();
@@ -91,15 +93,16 @@ function extractProofSteps(accumulated) {
       const split = lastTopLevelJoin(text);
       if (split) {
         const head = normalizeExpr(split.head);
-        if (head && head.length > 2) steps.push(head);
+        if (head === ',' || (head && head.length > 2)) steps.push(head);
         text = split.tail;
       }
     }
     if (part.sim) text = text ? `\\sim, ${text}` : '\\sim';
     const expr = normalizeExpr(text);
-    if (expr && expr.length > 2) steps.push(expr);
+    if (expr === ',' || (expr && expr.length > 2)) steps.push(expr);
   }
-  return steps.filter((expr) => expr && expr.length > 2);
+  // Keep bare `,` as converse-boundary sentinel; drop other short junk
+  return steps.filter((expr) => expr === ',' || (expr && expr.length > 2));
 }
 
 /** Parse a LaTeX file and extract theorems with their proof steps. */

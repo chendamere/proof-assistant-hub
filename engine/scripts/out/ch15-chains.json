@@ -1,0 +1,306 @@
+[
+  {
+    "key": "Rules_of_Node_Continuity::28::, \\Bb{if(i \\Pn j)}{,\\Bb{if(m \\Pn n)}{,\\Tc c_1,}{,\\Tc c_2,},}{,\\Bb{if(m \\Pn n)}{,\\Tc c_3,}{,\\Tc c_4,},}, ⟺ , \\Bb{if(m \\Pn n)}{,\\Bb{if(i \\Pn j)}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Bb{if(i \\Pn j)}{,\\Tc c_2,}{,\\Tc c_4,},},",
+    "step": 6,
+    "part": "flat",
+    "rulesTried": 88,
+    "left": ",m \\Oc m_1,m_1 \\On,\\Bb{m_1 \\Ps n}{,m_1 \\Os,i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_3,},}{,m_1 \\Os,i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_2,}{,i_1 \\Os,\\Tc c_4,},},",
+    "right": ",\\Bb{m \\Pn n}{,\\Bb{i \\Pn j}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Bb{i \\Pn j}{,\\Tc c_2,}{,\\Tc c_4,},},",
+    "intermediates": [
+      ",m \\Oc m_1,m_1 \\On,\\Bb{m_1 \\Ps n}{,m_1 \\Os,i \\Oc i_1,i_1 \\On,\\Bb{j \\Ps i_1}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_3,},}{,m_1 \\Os,i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_2,}{,i_1 \\Os,\\Tc c_4,},},"
+    ],
+    "complete": false,
+    "ruleIds": [
+      "theorems-of-identical-node-comparison-7-lsifisj"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Continuity::28::, \\Bb{if(i \\Pn j)}{,\\Bb{if(m \\Pn n)}{,\\Tc c_1,}{,\\Tc c_2,},}{,\\Bb{if(m \\Pn n)}{,\\Tc c_3,}{,\\Tc c_4,},}, ⟺ , \\Bb{if(m \\Pn n)}{,\\Bb{if(i \\Pn j)}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Bb{if(i \\Pn j)}{,\\Tc c_2,}{,\\Tc c_4,},},",
+    "step": 5,
+    "part": "flat",
+    "rulesTried": 311,
+    "left": ",m \\Oc m_1,m_1 \\On,i \\Oc i_1,i_1 \\On,\\Bb{m_1 \\Ps n}{,\\Bb{i_1 \\Ps j}{,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_3,},}{,\\Bb{i_1 \\Ps j}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,}{,m_1 \\Os,i_1 \\Os,\\Tc c_4,},},",
+    "right": ",m \\Oc m_1,m_1 \\On,\\Bb{m_1 \\Ps n}{,m_1 \\Os,i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_3,},}{,m_1 \\Os,i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_2,}{,i_1 \\Os,\\Tc c_4,},},",
+    "intermediates": [
+      ",m \\Oc m_1,m_1 \\On,i \\Oc i_1,\\Bb{m_1 \\Ps n}{,i_1 \\On,\\Bb{i_1 \\Ps j}{,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_3,},}{,i_1 \\On,\\Bb{i_1 \\Ps j}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,}{,m_1 \\Os,i_1 \\Os,\\Tc c_4,},},",
+      ",m \\Oc m_1,m_1 \\On,\\Bb{m_1 \\Ps n}{,i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_3,},}{,i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,}{,m_1 \\Os,i_1 \\Os,\\Tc c_4,},},",
+      ",m \\Oc m_1,m_1 \\On,\\Bb{m_1 \\Ps n}{,i \\Oc i_1,i_1 \\On,m_1 \\Os,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_3,},}{,i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,}{,m_1 \\Os,i_1 \\Os,\\Tc c_4,},},",
+      ",m \\Oc m_1,m_1 \\On,\\Bb{m_1 \\Ps n}{,i \\Oc i_1,i_1 \\On,m_1 \\Os,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_3,},}{,i \\Oc i_1,i_1 \\On,m_1 \\Os,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_2,}{,i_1 \\Os,\\Tc c_4,},},",
+      ",m \\Oc m_1,m_1 \\On,\\Bb{m_1 \\Ps n}{,i_1 \\On,i \\Oc i_1,m_1 \\Os,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_3,},}{,i \\Oc i_1,i_1 \\On,m_1 \\Os,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_2,}{,i_1 \\Os,\\Tc c_4,},},"
+    ],
+    "complete": false,
+    "ruleIds": [
+      "theorems-of-identical-node-comparison-16-mnlbifi",
+      "theorems-of-identical-node-comparison-12-mcnlbif",
+      "theorems-of-identical-node-comparison-15-mslbifi",
+      "theorems-of-identical-node-comparison-15-mslbifi",
+      "swap-copy-next"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Continuity::115::, \\Bb{if(i \\Pn j)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , \\Bb{if(i \\Pn j)}{,\\Bb{if(i \\Pn j)}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Tc c_2,},",
+    "step": 12,
+    "part": "flat",
+    "rulesTried": 105,
+    "left": ",i \\Oc i_1,i \\Oc i_2,i_1 \\On,i_2 \\On,\\Bb{i_2 \\Ps j}{,i_2 \\Os,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_3,},}{,i_2 \\Os,i_1 \\Os,\\Tc c_2,},",
+    "right": ",i \\Oc i_2,i_2 \\On,\\Bb{i_2 \\Ps j}{,i_2 \\Os,i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_3,},}{,i_2 \\Os,i \\Oc i_1,i_1 \\On,i_1 \\Os,\\Tc c_2,},",
+    "intermediates": [
+      ",i \\Oc i_1,i \\Oc i_2,i_2 \\On,i_1 \\On,\\Bb{i_2 \\Ps j}{,i_2 \\Os,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_3,},}{,i_2 \\Os,i_1 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,i \\Oc i_2,i_2 \\On,\\Bb{i_2 \\Ps j}{,i_1 \\On,i_2 \\Os,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_3,},}{,i_1 \\On,i_2 \\Os,i_1 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_2,i \\Oc i_1,i_2 \\On,\\Bb{i_2 \\Ps j}{,i_1 \\On,i_2 \\Os,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_3,},}{,i_1 \\On,i_2 \\Os,i_1 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_2,i_2 \\On,i \\Oc i_1,\\Bb{i_2 \\Ps j}{,i_1 \\On,i_2 \\Os,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_3,},}{,i_1 \\On,i_2 \\Os,i_1 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_2,i_2 \\On,\\Bb{i_2 \\Ps j}{,i \\Oc i_1,i_1 \\On,i_2 \\Os,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_3,},}{,i \\Oc i_1,i_1 \\On,i_2 \\Os,i_1 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_2,i_2 \\On,\\Bb{i_2 \\Ps j}{,i_1 \\On,i \\Oc i_1,i_2 \\Os,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_3,},}{,i \\Oc i_1,i_1 \\On,i_2 \\Os,i_1 \\Os,\\Tc c_2,},"
+    ],
+    "complete": false,
+    "ruleIds": [
+      "swap-next-next",
+      "theorems-of-identical-node-comparison-16-mnlbifi",
+      "swap-copy-copy",
+      "swap-copy-next",
+      "theorems-of-identical-node-comparison-12-mcnlbif",
+      "swap-copy-next"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Continuity::123::, i \\Pn j, \\Bb{if(m \\Pn j)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Pn j, \\Bb{if(m \\Ps i)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 38,
+    "part": "flat",
+    "rulesTried": 93,
+    "left": ",i \\Oc i_1,i \\On,i \\Op,i_1 \\On,m \\Oc m_1,m \\On,m \\Op,m_1 \\On,i_1 \\Ps j,\\Bb{m \\Ps i}{,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},",
+    "right": ",i \\Oc i_1,i_1 \\On,m \\Oc m_1,m_1 \\On,i_1 \\Ps j,\\Bb{m \\Ps i}{,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},",
+    "intermediates": [
+      ",i \\Oc i_1,,i_1 \\On,m \\Oc m_1,m \\On,m \\Op,m_1 \\On,i_1 \\Ps j,\\Bb{m \\Ps i}{,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,,i_1 \\On,m \\Oc m_1,,m_1 \\On,i_1 \\Ps j,\\Bb{m \\Ps i}{,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,,i_1 \\On,m \\Oc m_1,,m_1 \\On,i_1 \\Ps j,\\Bb{i \\Ps m}{,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},"
+    ],
+    "complete": false,
+    "ruleIds": [
+      "create-next-prev",
+      "create-next-prev",
+      "theorems-of-identical-node-comparison-7-lsifisj"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Continuity::307::, i \\Pn j, i \\On, ⟺ , i \\On, i \\Ps j,",
+    "step": 12,
+    "part": "flat",
+    "rulesTried": 13,
+    "left": ",i \\Oc i_1,i_1 \\On,i_1 \\Os,i \\On,i \\Ps j,",
+    "right": ",i \\On,i \\Ps j,",
+    "intermediates": [
+      ",i \\Oc i_1,i_1 \\Os,i \\On,i \\Ps j,",
+      ",i \\Oc i_1,i \\On,i_1 \\Os,i \\Ps j,"
+    ],
+    "complete": false,
+    "ruleIds": [
+      "release-next",
+      "swap-next-release"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Continuity::314::, i \\Ps j, i \\On, i \\Ps j, j \\On, ⟺ , i \\On, i \\Ps j, j \\On, i \\Ps j,",
+    "step": 33,
+    "part": "flat",
+    "rulesTried": 14,
+    "left": ",i \\Oc i_0,i_0 \\On,i_0 \\Os,i \\On,i \\Ps j,j \\On,i \\Ps j,",
+    "right": ",i \\On,i \\Ps j,j \\On,i \\Ps j,",
+    "intermediates": [
+      ",i \\Oc i_0,i_0 \\Os,i \\On,i \\Ps j,j \\On,i \\Ps j,",
+      ",i \\Oc i_0,i \\On,i_0 \\Os,i \\Ps j,j \\On,i \\Ps j,",
+      ",i \\Oc i_0,i \\On,i \\Ps j,i_0 \\Os,j \\On,i \\Ps j,",
+      ",i \\Oc i_0,i \\On,i \\Ps j,j \\On,i_0 \\Os,i \\Ps j,"
+    ],
+    "complete": false,
+    "ruleIds": [
+      "release-next",
+      "swap-next-release",
+      "theorems-of-identical-node-comparison-36-isjmsm",
+      "swap-next-release"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Continuity::315::, i \\Pn i, i \\Ps i_1, i \\On, ⟺ , i \\Pn i, i \\On, i \\Ps i_1,",
+    "step": 17,
+    "part": "flat",
+    "rulesTried": 66,
+    "left": ",i \\Oc i_2,i_2 \\Ps i,i_2 \\On,i_2 \\Ps i,i \\On,i \\Ps i_1,i_2 \\Os,",
+    "right": ",i \\Oc i_2,i_2 \\On,i_2 \\Ps i,i \\On,i \\Ps i_1,i_2 \\Os,",
+    "intermediates": [
+      ",i \\Oc i_2,i_2 \\Ps i,i_2 \\On,i \\Ps i_2,i \\On,i \\Ps i_1,i_2 \\Os,",
+      ",i \\Oc i_2,i_2 \\Ps i,i_2 \\On,i \\Ps i_2,i \\On,i_2 \\Os,i \\Ps i_1,"
+    ],
+    "complete": false,
+    "ruleIds": [
+      "thm-Ps-symmetric",
+      "theorems-of-identical-node-comparison-36-isjmsm"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Continuity::316::, i \\Pn i, i \\On, ⟺ , i \\On, i \\Pn i,",
+    "step": 54,
+    "part": "flat",
+    "rulesTried": 14,
+    "left": ",i \\Oc i_2,i_2 \\On,i_2 \\Os,i \\Oc i_1,i \\On,i \\Ps i_1,i_1 \\On,i_1 \\Ps i,i_1 \\Os,",
+    "right": ",i \\Oc i_1,i \\On,i \\Ps i_1,i_1 \\On,i_1 \\Ps i,i_1 \\Os,",
+    "intermediates": [
+      ",i \\Oc i_2,i_2 \\Os,i \\Oc i_1,i \\On,i \\Ps i_1,i_1 \\On,i_1 \\Ps i,i_1 \\Os,",
+      ",i \\Oc i_2,i \\Oc i_1,i_2 \\Os,i \\On,i \\Ps i_1,i_1 \\On,i_1 \\Ps i,i_1 \\Os,",
+      ",i \\Oc i_2,i \\Oc i_1,i \\On,i_2 \\Os,i \\Ps i_1,i_1 \\On,i_1 \\Ps i,i_1 \\Os,",
+      ",i \\Oc i_2,i \\Oc i_1,i \\On,i \\Ps i_1,i_2 \\Os,i_1 \\On,i_1 \\Ps i,i_1 \\Os,",
+      ",i \\Oc i_2,i \\Oc i_1,i \\On,i \\Ps i_1,i_1 \\On,i_2 \\Os,i_1 \\Ps i,i_1 \\Os,",
+      ",i \\Oc i_2,i \\Oc i_1,i \\On,i \\Ps i_1,i_1 \\On,i_1 \\Ps i,i_2 \\Os,i_1 \\Os,"
+    ],
+    "complete": false,
+    "ruleIds": [
+      "release-next",
+      "swap-copy-release",
+      "swap-next-release",
+      "theorems-of-identical-node-comparison-36-isjmsm",
+      "swap-next-release",
+      "theorems-of-identical-node-comparison-36-isjmsm"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Continuity::316::, i \\Pn i, i \\On, ⟺ , i \\On, i \\Pn i,",
+    "step": 25,
+    "part": "flat",
+    "rulesTried": 275,
+    "left": ",i \\Oc i_2,i \\Oc i_1,i_2 \\On,i \\Ps i_1,i_2 \\Ps i,i \\On,i_2 \\Ps i,i_1 \\On,i_1 \\Ps i,i_2 \\Os,i_1 \\Os,",
+    "right": ",i \\Oc i_2,i \\Oc i_1,i_2 \\On,i \\Ps i_1,i_2 \\Ps i_1,i \\On,i_2 \\Ps i,i_1 \\On,i_1 \\Ps i,i_2 \\Os,i_1 \\Os,",
+    "intermediates": [
+      ",i \\Oc i_2,i \\Oc i_1,i_2 \\On,i \\Ps i_1,i_2 \\Ps i,i \\On,i \\Ps i_2,i_1 \\On,i_1 \\Ps i,i_2 \\Os,i_1 \\Os,"
+    ],
+    "complete": false,
+    "ruleIds": [
+      "thm-Ps-symmetric"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Continuity::28::, \\Bb{if(i \\Pn j)}{,\\Bb{if(m \\Pn n)}{,\\Tc c_1,}{,\\Tc c_2,},}{,\\Bb{if(m \\Pn n)}{,\\Tc c_3,}{,\\Tc c_4,},}, ⟺ , \\Bb{if(m \\Pn n)}{,\\Bb{if(i \\Pn j)}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Bb{if(i \\Pn j)}{,\\Tc c_2,}{,\\Tc c_4,},},",
+    "step": 3,
+    "part": "flat",
+    "rulesTried": 311,
+    "left": ",i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,i_1 \\Os,m \\Oc m_1,m_1 \\On,\\Bb{m_1 \\Ps n}{,m_1 \\Os,\\Tc c_1,}{,m_1 \\Os,\\Tc c_2,},}{,i_1 \\Os,m \\Oc m_1,m_1 \\On,\\Bb{m_1 \\Ps n}{,m_1 \\Os,\\Tc c_3,}{,m_1 \\Os,\\Tc c_4,},},",
+    "right": ",m \\Oc m_1,m_1 \\On,i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,\\Bb{m_1 \\Ps n}{,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},}{,\\Bb{m_1 \\Ps n}{,m_1 \\Os,i_1 \\Os,\\Tc c_3,}{,m_1 \\Os,i_1 \\Os,\\Tc c_4,},},",
+    "intermediates": [
+      ",i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,i_1 \\Os,m \\Oc m_1,m_1 \\On,\\Bb{m_1 \\Ps n}{,m_1 \\Os,\\Tc c_1,}{,m_1 \\On,m_1 \\Os,\\Tc c_2,},}{,i_1 \\Os,m \\Oc m_1,m_1 \\On,\\Bb{m_1 \\Ps n}{,m_1 \\Os,\\Tc c_3,}{,m_1 \\Os,\\Tc c_4,},},",
+      ",i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,i_1 \\Os,m \\Oc m_1,m_1 \\On,\\Bb{m_1 \\Ps n}{,m_1 \\Os,\\Tc c_1,}{,m_1 \\On,m_1 \\Os,\\Tc c_2,},}{,i_1 \\Os,\\Bb{m \\Pn n}{,\\Tc c_3,}{,\\Tc c_4,},},",
+      ",i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,m \\Oc m_1,i_1 \\Os,m_1 \\On,\\Bb{m_1 \\Ps n}{,m_1 \\Os,\\Tc c_1,}{,m_1 \\On,m_1 \\Os,\\Tc c_2,},}{,i_1 \\Os,\\Bb{m \\Pn n}{,\\Tc c_3,}{,\\Tc c_4,},},",
+      ",i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,m \\Oc m_1,m_1 \\On,i_1 \\Os,\\Bb{m_1 \\Ps n}{,m_1 \\Os,\\Tc c_1,}{,m_1 \\On,m_1 \\Os,\\Tc c_2,},}{,i_1 \\Os,\\Bb{m \\Pn n}{,\\Tc c_3,}{,\\Tc c_4,},},",
+      ",i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,m \\Oc m_1,m_1 \\On,\\Bb{m_1 \\Ps n}{,i_1 \\Os,m_1 \\Os,\\Tc c_1,}{,i_1 \\Os,m_1 \\On,m_1 \\Os,\\Tc c_2,},}{,i_1 \\Os,\\Bb{m \\Pn n}{,\\Tc c_3,}{,\\Tc c_4,},},",
+      ",i \\Oc i_1,i_1 \\On,\\Bb{j \\Ps i_1}{,m \\Oc m_1,m_1 \\On,\\Bb{m_1 \\Ps n}{,i_1 \\Os,m_1 \\Os,\\Tc c_1,}{,i_1 \\Os,m_1 \\On,m_1 \\Os,\\Tc c_2,},}{,i_1 \\Os,\\Bb{m \\Pn n}{,\\Tc c_3,}{,\\Tc c_4,},},",
+      ",i \\Oc i_1,i_1 \\On,\\Bb{j \\Ps i_1}{,m \\Oc m_1,m_1 \\On,\\Bb{n \\Ps m_1}{,i_1 \\Os,m_1 \\Os,\\Tc c_1,}{,i_1 \\Os,m_1 \\On,m_1 \\Os,\\Tc c_2,},}{,i_1 \\Os,\\Bb{m \\Pn n}{,\\Tc c_3,}{,\\Tc c_4,},},"
+    ],
+    "complete": false,
+    "ruleIds": [
+      "release-next",
+      "rules-of-node-continuity-0-lbifinj",
+      "swap-copy-release",
+      "swap-next-release",
+      "theorems-of-identical-node-comparison-15-mslbifi",
+      "theorems-of-identical-node-comparison-7-lsifisj",
+      "theorems-of-identical-node-comparison-7-lsifisj"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Continuity::115::, \\Bb{if(i \\Pn j)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , \\Bb{if(i \\Pn j)}{,\\Bb{if(i \\Pn j)}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Tc c_2,},",
+    "step": 14,
+    "part": "flat",
+    "rulesTried": 115,
+    "left": ",\\Bb{i \\Pn j}{,i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps j}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_3,},}{,i \\Oc i_1,i_1 \\On,i_1 \\Os,\\Tc c_2,},",
+    "right": ",\\Bb{i \\Pn j}{,\\Bb{i \\Pn j}{,\\Tc c_1,}{,\\Tc c_3,},}{,\\Tc c_2,},",
+    "intermediates": [
+      ",\\Bb{i \\Pn j}{,\\Bb{i \\Pn j}{,\\Tc c_1,}{,\\Tc c_3,},}{,i \\Oc i_1,i_1 \\On,i_1 \\Os,\\Tc c_2,},",
+      ",\\Bb{i \\Pn j}{,\\Bb{i \\Pn j}{,\\Tc c_1,}{,\\Tc c_3,},}{,i \\Oc i_1,i_1 \\Os,\\Tc c_2,},",
+      ",\\Bb{j \\Pp i}{,\\Bb{i \\Pn j}{,\\Tc c_1,}{,\\Tc c_3,},}{,i \\Oc i_1,i_1 \\Os,\\Tc c_2,},",
+      ",\\Bb{j \\Pp i}{,\\Bb{j \\Pp i}{,\\Tc c_1,}{,\\Tc c_3,},}{,i \\Oc i_1,i_1 \\Os,\\Tc c_2,},",
+      ",\\Bb{j \\Pp i}{,\\Bb{j \\Pp i}{,\\Tc c_1,}{,\\Tc c_3,},}{,i \\Oc i_1,R(i_1),i_1 \\Os,\\Tc c_2,},",
+      ",\\Bb{j \\Pp i}{,\\Bb{j \\Pp i}{,\\Tc c_1,}{,\\Tc c_3,},}{,i \\Oc i_1,R(i_1),i_1 \\On,i_1 \\Os,\\Tc c_2,},",
+      ",\\Bb{j \\Pp i}{,\\Bb{j \\Pp i}{,\\Tc c_1,}{,\\Tc c_3,},}{,i \\Oc i_1,R(i_1),i_1 \\On,i_1 \\On,i_1 \\Os,\\Tc c_2,},",
+      ",\\Bb{i \\Pn j}{,\\Bb{j \\Pp i}{,\\Tc c_1,}{,\\Tc c_3,},}{,i \\Oc i_1,R(i_1),i_1 \\On,i_1 \\On,i_1 \\Os,\\Tc c_2,},"
+    ],
+    "complete": false,
+    "ruleIds": [
+      "rules-of-node-continuity-0-lbifinj",
+      "release-next",
+      "rules-of-node-continuity-8-lbifinj",
+      "rules-of-node-continuity-8-lbifinj",
+      "thm-R-i-release",
+      "release-next",
+      "release-next",
+      "rules-of-node-continuity-8-lbifinj"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Continuity::123::, i \\Pn j, \\Bb{if(m \\Pn j)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Pn j, \\Bb{if(m \\Ps i)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 13,
+    "part": "flat",
+    "rulesTried": 109,
+    "left": ",i \\Oc i_1,i \\On,i \\Op,i_1 \\On,m \\Oc m_1,m \\On,m \\Op,m_1 \\On,i_1 \\Ps j,\\Bb{m_1 \\Ps i_1}{,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},",
+    "right": ",i \\Oc i_1,i \\On,i_1 \\On,m \\Oc m_1,m \\On,m_1 \\On,i_1 \\Ps j,\\Bb{m_1 \\Ps i_1}{,m \\Op,i \\Op,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m \\Op,i \\Op,m_1 \\Os,i_1 \\Os,\\Tc c_2,},",
+    "intermediates": [
+      ",i \\Oc i_1,i \\On,i \\Op,i_1 \\On,m \\Oc m_1,,m_1 \\On,i_1 \\Ps j,\\Bb{m_1 \\Ps i_1}{,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,i \\On,i \\Op,i_1 \\On,m \\Oc m_1,m_1 \\On,i_1 \\Ps j,\\Bb{m_1 \\Ps i_1}{,m_1 \\Ps i_1,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,i \\On,i_1 \\On,i \\Op,m \\Oc m_1,m_1 \\On,i_1 \\Ps j,\\Bb{m_1 \\Ps i_1}{,m_1 \\Ps i_1,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,i \\On,i_1 \\On,m \\Oc m_1,i \\Op,m_1 \\On,i_1 \\Ps j,\\Bb{m_1 \\Ps i_1}{,m_1 \\Ps i_1,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,i \\On,i_1 \\On,m \\Oc m_1,m_1 \\On,i \\Op,i_1 \\Ps j,\\Bb{m_1 \\Ps i_1}{,m_1 \\Ps i_1,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,i \\On,i_1 \\On,m \\Oc m_1,m_1 \\On,i_1 \\Ps j,i \\Op,\\Bb{m_1 \\Ps i_1}{,m_1 \\Ps i_1,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,i \\On,i_1 \\On,m \\Oc m_1,m_1 \\On,i_1 \\Ps j,\\Bb{m_1 \\Ps i_1}{,i \\Op,m_1 \\Ps i_1,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,i \\Op,m_1 \\Os,i_1 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,i \\On,i_1 \\On,m \\Oc m_1,m_1 \\On,i_1 \\Ps j,\\Bb{i_1 \\Ps m_1}{,i \\Op,m_1 \\Ps i_1,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,i \\Op,m_1 \\Os,i_1 \\Os,\\Tc c_2,},"
+    ],
+    "complete": false,
+    "ruleIds": [
+      "create-next-prev",
+      "theorems-of-identical-node-comparison-66-bifisj",
+      "rules-of-operators-5-injpj",
+      "rules-of-operators-1-icmjpj",
+      "rules-of-operators-5-injpj",
+      "theorems-of-identical-node-comparison-38-isjmpm",
+      "theorems-of-identical-node-comparison-17-mplbifi",
+      "theorems-of-identical-node-comparison-7-lsifisj"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Continuity::123::, i \\Pn j, \\Bb{if(m \\Pn j)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Pn j, \\Bb{if(m \\Ps i)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 12,
+    "part": "flat",
+    "rulesTried": 93,
+    "left": ",i \\Oc i_1,i_1 \\On,m \\Oc m_1,m_1 \\On,i_1 \\Ps j,\\Bb{m_1 \\Ps i_1}{,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},",
+    "right": ",i \\Oc i_1,i \\On,i \\Op,i_1 \\On,m \\Oc m_1,m \\On,m \\Op,m_1 \\On,i_1 \\Ps j,\\Bb{m_1 \\Ps i_1}{,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},",
+    "intermediates": [
+      ",i \\Oc i_1,i_1 \\On,m \\Oc m_1,i_1 \\Ps j,m_1 \\On,\\Bb{m_1 \\Ps i_1}{,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},",
+      ",i \\Oc i_1,m \\Oc m_1,i_1 \\On,i_1 \\Ps j,m_1 \\On,\\Bb{m_1 \\Ps i_1}{,m_1 \\Os,i_1 \\Os,\\Tc c_1,}{,m_1 \\Os,i_1 \\Os,\\Tc c_2,},"
+    ],
+    "complete": false,
+    "ruleIds": [
+      "theorems-of-identical-node-comparison-37-isjmnm",
+      "swap-copy-next"
+    ]
+  },
+  {
+    "key": "Rules_of_Node_Continuity::129::, i \\Ps j, \\Bb{if(j \\Pn m)}{,\\Tc c_1,}{,\\Tc c_2,}, ⟺ , i \\Ps j, \\Bb{if(i \\Pn m)}{,\\Tc c_1,}{,\\Tc c_2,},",
+    "step": 24,
+    "part": "flat",
+    "rulesTried": 102,
+    "left": ",i \\Ps j,j \\Oc j_1,j_1 \\On,j_1 \\Os,i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps m}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_2,},",
+    "right": ",i \\Ps j,i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps m}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_2,},",
+    "intermediates": [
+      ",i \\Ps j,j \\Oc j_1,j_1 \\Os,i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps m}{,i_1 \\Os,\\Tc c_1,}{,i_1 \\Os,\\Tc c_2,},",
+      ",i \\Ps j,j \\Oc j_1,j_1 \\Os,\\Bb{i \\Pn m}{,\\Tc c_1,}{,\\Tc c_2,},",
+      ",i \\Ps j,j \\Oc j_1,\\Bb{i \\Pn m}{,j_1 \\Os,\\Tc c_1,}{,j_1 \\Os,\\Tc c_2,},",
+      ",i \\Ps j,i \\Oc j_1,\\Bb{i \\Pn m}{,j_1 \\Os,\\Tc c_1,}{,j_1 \\Os,\\Tc c_2,},",
+      ",i \\Ps j,i \\Oc j_1,i \\Oc i_1,i_1 \\On,\\Bb{i_1 \\Ps m}{,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,i_1 \\Os,j_1 \\Os,\\Tc c_2,},",
+      ",i \\Ps j,i \\Oc j_1,i \\Oc i_1,i_1 \\On,\\Bb{m \\Ps i_1}{,i_1 \\Os,j_1 \\Os,\\Tc c_1,}{,i_1 \\Os,j_1 \\Os,\\Tc c_2,},"
+    ],
+    "complete": false,
+    "ruleIds": [
+      "release-next",
+      "rules-of-node-continuity-0-lbifinj",
+      "rules-of-node-continuity-24-mslbifi",
+      "subst-identical-copy",
+      "rules-of-node-continuity-0-lbifinj",
+      "theorems-of-identical-node-comparison-7-lsifisj"
+    ]
+  }
+]
